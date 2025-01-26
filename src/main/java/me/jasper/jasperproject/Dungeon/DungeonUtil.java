@@ -361,19 +361,20 @@ public class DungeonUtil {
         Collections.shuffle(pick);
 
         while (!pick.isEmpty()){
-            translate++;
             shape = pick.pop();
-            if(isFit(grid, i, j, shape, shapes, pastepoint)){
+            if(isFit(grid, i, j, shape, shapes, pastepoint, translate++)){
 //                Bukkit.broadcastMessage("Found shape! at "+ grid[i][j].loc.x +", "+grid[i][j].loc.y);
                 break;
             }
         }
     }
 
-    private boolean isFit(Room[][] grid, int i, int j, int[][][] shape, Map<int[][][], Room> shapes, Point pastepoint) {
+    private boolean isFit(Room[][] grid, int i, int j, int[][][] shape, Map<int[][][], Room> shapes, Point pastepoint, int trans) {
         int x, y, x2, y2, dx, dy;
         boolean valid = true;
         int rotation = 0;
+
+        trans = trans <= 0 ? 16 : 32;
         for (int[][] dir2 : shape) {
             valid = true;
             for (int[] dir : dir2) {
