@@ -156,7 +156,7 @@ public class Pattern {
         }
     }
 
-    public static boolean isStraightI(char[][] roomused, byte pathid, int i, int j){
+    public static boolean isStraightI(char[][] roomused, int pathid, int i, int j){
         if(pathid==4){
             return (j+1 < roomused[i].length) && (j-1 >= 0) &&
                     ((roomused[i][j] == 4) && (
@@ -177,7 +177,7 @@ public class Pattern {
                                 ||(roomused[i][j-1] == 3)));
 
     }
-    public static boolean isStraight_(char[][] roomused, byte pathid, int i, int j){
+    public static boolean isStraight_(char[][] roomused, int pathid, int i, int j){
         if(pathid==4){
             return  (i+1 < roomused.length) && (i-1 >= 0) &&
                     ((roomused[i][j] == 4) && (
@@ -198,7 +198,7 @@ public class Pattern {
                                         ||(roomused[i-1][j] == 3)));
 
     }
-    public static boolean is0L(char[][] roomused, byte pathid, int i, int j){
+    public static boolean is0L(char[][] roomused, int pathid, int i, int j){
         if(pathid==4){
             return  ((i-1 >= 0) && (j+1 < roomused[i].length)) &&
                     ((roomused[i][j] == 4) && (
@@ -218,7 +218,7 @@ public class Pattern {
                                 ||(roomused[i][j+1] == 3)
                                 ||(roomused[i][j+1] == 2)));
     }
-    public static boolean is_90L(char[][] roomused, byte pathid, int i, int j){
+    public static boolean is_90L(char[][] roomused, int pathid, int i, int j){
         if(pathid==4){
             return  ((i-1 >= 0) && (j-1 >= 0)) &&
                     ((roomused[i][j] == 4) && (
@@ -238,7 +238,7 @@ public class Pattern {
                                 ||(roomused[i][j-1] == 3)
                                 ||(roomused[i][j-1] == 2)));
     }
-    public static boolean is90L(char[][] roomused, byte pathid, int i, int j){
+    public static boolean is90L(char[][] roomused, int pathid, int i, int j){
         if(pathid==4){
             return  ((i+1 < roomused.length) && (j+1 < roomused[i].length)) &&
                     ((roomused[i][j] == 4) && (
@@ -258,7 +258,7 @@ public class Pattern {
                                 ||(roomused[i][j+1] == 3)
                                 ||(roomused[i][j+1] == 2)));
     }
-    public static boolean is180L(char[][] roomused, byte pathid, int i, int j){
+    public static boolean is180L(char[][] roomused, int pathid, int i, int j){
         if(pathid==4){
             return  ((i+1 < roomused.length) && (j-1 >= 0)) &&
                     ((roomused[i][j] == 4) && (
@@ -312,7 +312,7 @@ public class Pattern {
                 && roomused[i][j+1]==pathid1;
     }
 
-    public static void generate1Door(char[][] roomused, char pathid, byte x, byte y,String roomname){
+    public static void generate1Door(char[][] roomused, char pathid, int x, int y,String roomname){
         if (Pattern.isTop(roomused, pathid,'\u0000',x,y)){
             RS.loadAndPasteSchematic(roomname,
                     RS.getPastepoint(x, y),
@@ -334,7 +334,7 @@ public class Pattern {
                     90);
         }
     }
-    public static void generate1Door(char[][] roomused, char pathid1,char pathid2, byte x, byte y,String roomname){
+    public static void generate1Door(char[][] roomused, char pathid1,char pathid2, int x, int y,String roomname){
         if (Pattern.isTop(roomused, pathid1,pathid2,x,y)){
             RS.loadAndPasteSchematic(roomname,
                     RS.getPastepoint(x, y),
@@ -683,7 +683,7 @@ public class Pattern {
                 size[i][j+1]=RS.LShape90D.getID();
                 size[i+1][j]=RS.LShape90D.getID();
                 RS.loadAndPasteSchematic("Lshape",
-                        RS.getPastepoint(i,j, (byte) 2),
+                        RS.getPastepoint(i,j, (int) 2),
                         RS.LShape90D.getAngle());
             }
             return size;
@@ -705,7 +705,7 @@ public class Pattern {
                 size[i][j+1]=RS.LShape180D.getID();
                 size[i+1][j+1]=RS.LShape180D.getID();
                 RS.loadAndPasteSchematic("Lshape",
-                        RS.getPastepoint(i,j, (byte) 2),
+                        RS.getPastepoint(i,j, (int) 2),
                         RS.LShape180D.getAngle());
             }
         return size;
@@ -728,7 +728,7 @@ public class Pattern {
                 size[i+1][j+1]=RS.LShape0D.getID();
 
                 RS.loadAndPasteSchematic("Lshape",
-                        RS.LShape0D.getPastepoint(i,j, (byte) 2),
+                        RS.LShape0D.getPastepoint(i,j, (int) 2),
                         RS.LShape0D.getAngle());
             }
         return size;
@@ -750,7 +750,7 @@ public class Pattern {
                 size[i+1][j]=RS.LShape_90D.getID();
                 size[i+1][j-1]=RS.LShape_90D.getID();
                 RS.loadAndPasteSchematic("Lshape",
-                        RS.getPastepoint(i,j, (byte) 1),
+                        RS.getPastepoint(i,j, (int) 1),
                         RS.LShape_90D.getAngle());
             }
         return size;
@@ -775,7 +775,7 @@ public class Pattern {
                 size[i+1][j] =  RS.a2x2Shape.getID();
                 size[i+1][j+1] =RS.a2x2Shape.getID();
                 RS.loadAndPasteSchematic("2x2",
-                        RS.a2x2Shape.getPastepoint(i,j, (byte) 0),
+                        RS.a2x2Shape.getPastepoint(i,j, (int) 0),
                         RS.a2x1Shape.getAngle());
             }
             return size;

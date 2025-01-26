@@ -3,6 +3,7 @@ package me.jasper.jasperproject.Dungeon;
 import com.sk89q.worldedit.math.BlockVector3;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Loadschem;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,6 @@ public class GeneratorCommandExecutor implements CommandExecutor, TabCompleter {
         }if(strings[0].equalsIgnoreCase("pos2")){
             ConfigDungeon.get().set("pos.pos2",p.getLocation());
             ConfigDungeon.save();
-            p.sendMessage("pos2 being set!");
         }if(strings[0].equalsIgnoreCase("tested_jangan_di_coba")){
             p.sendMessage("generating with pos1&2");
             SetTheBlock.setBlockAT(ConfigDungeon.get().getLocation("pos.pos1"),ConfigDungeon.get().getLocation("pos.pos2"));
@@ -62,7 +62,8 @@ public class GeneratorCommandExecutor implements CommandExecutor, TabCompleter {
                 return true;
             }p.sendMessage("udah gabisa lebih dari 10 tolol bego");
         }if(strings[0].equalsIgnoreCase("generateroom")){
-            Loadschem.loadAndPasteSchematic(p,0,"clear",new BlockVector3(48, 70, 48));
+            BlockVector3 blockVector3 = new BlockVector3(48,70,48);
+            new Loadschem(p,0,blockVector3);
             if(!(Integer.parseInt(strings[1])>11) || !(Integer.parseInt(strings[2])>11)){
                 byte panjang = Byte.parseByte(strings[1]);
                 byte l = Byte.parseByte(strings[2]);

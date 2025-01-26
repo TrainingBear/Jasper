@@ -25,6 +25,7 @@ me\jasper\jasperproject\Jam\ClockUtility$1.class
 me\jasper\jasperproject\Command\Command.class
 me\jasper\jasperproject\Command\Command2$Vanishh$1.class
 me\jasper\jasperproject\Loadschem.class
+me\jasper\jasperproject\ExecuteCommand.class
 me\jasper\jasperproject\Jam\ClockConfigurationForCommands.class
 me\jasper\jasperproject\Dungeon\RS$18.class
 me\jasper\jasperproject\Dungeon\RS$9.class
@@ -38,6 +39,7 @@ me\jasper\jasperproject\Dungeon\RT.class
 me\jasper\jasperproject\Dungeon\RT$13.class
 me\jasper\jasperproject\Dungeon\SetTheBlock.class
 me\jasper\jasperproject\TabCompleter\SummonItemDisplay.class
+me\jasper\jasperproject\Dungeon\Room.class
 me\jasper\jasperproject\Dungeon\RS$11.class
 me\jasper\jasperproject\Command\Command$JoinListener.class
 me\jasper\jasperproject\Command\LaunchPad$1.class
@@ -55,6 +57,7 @@ me\jasper\jasperproject\Dungeon\RS$1.class
 me\jasper\jasperproject\Dungeon\MapRoomTypeColour.class
 me\jasper\jasperproject\Dungeon\ConfigDungeon.class
 me\jasper\jasperproject\Command\JasperItem.class
+me\jasper\jasperproject\Dungeon\Execute.class
 me\jasper\jasperproject\Jam\ClockUtility.class
 me\jasper\jasperproject\Listener\Joinmsg.class
 me\jasper\jasperproject\Dungeon\RS$13.class
@@ -77,6 +80,7 @@ me\jasper\jasperproject\Dungeon\RS$6.class
 me\jasper\jasperproject\Listener\PlayerListListener.class
 me\jasper\jasperproject\Dungeon\RT$1.class
 me\jasper\jasperproject\Dungeon\RT$4.class
+me\jasper\jasperproject\Dungeon\DungeonUtil.class
 me\jasper\jasperproject\Dungeon\RT$10.class
 me\jasper\jasperproject\FileConfiguration\Test.class
 me\jasper\jasperproject\Dungeon\TEST.class

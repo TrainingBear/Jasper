@@ -234,7 +234,7 @@ public enum RS {
         Location pastepoint = new org.bukkit.Location(Bukkit.getWorld("test"),i*32,70,j*32);
         return new BlockVector3((int)pastepoint.getX(),(int)pastepoint.getY(),(int)pastepoint.getZ());
     }
-    public static BlockVector3 getPastepoint(int i, int j,byte id){
+    public static BlockVector3 getPastepoint(int i, int j,int id){
         if(id==1){
             Location pastepoint = new org.bukkit.Location(Bukkit.getWorld("test"),((i*32)+16),70,((j*32)-16));
             return new BlockVector3((int)pastepoint.getX(),(int)pastepoint.getY(),(int)pastepoint.getZ());

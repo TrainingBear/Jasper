@@ -33,11 +33,6 @@ commands:
     usage: /r1
     aliases:
       - jr1
-  Test:
-    description: Buat Test doang
-    usage: /Test tostringd asd asdsad
-    aliases:
-      - tes
   jasper:
     description: Gimme a item
     usage: /gimme <no argument>
@@ -108,4 +103,6 @@ commands:
     description: a
   Analog:
     description: Konfigurasi Jam analog di spawn (Hanya admin)
+  test:
+    description: test
 

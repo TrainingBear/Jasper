@@ -1,0 +1,33 @@
+package me.jasper.jasperproject;
+
+import com.sk89q.worldedit.math.BlockVector3;
+import me.jasper.jasperproject.Dungeon.DungeonUtil;
+import me.jasper.jasperproject.Dungeon.Execute;
+import me.jasper.jasperproject.Dungeon.Room;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+public class ExecuteCommand implements CommandExecutor {
+    @Override
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        if(!(commandSender instanceof Player player)){
+            return false;
+        }
+        DungeonUtil util = new DungeonUtil();
+        util.loadAndPasteSchematic("clear",new BlockVector3(48,70,48),0);
+        Execute room = new Execute();
+        if(strings.length == 0){
+            room.generate(4,4);
+            return true;
+        }if(strings.length == 1){
+            room.setSeed(Long.parseLong(strings[0]));
+            room.generate(4,4);
+            return true;
+        }
+        return false;
+    }
+}

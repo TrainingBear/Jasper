@@ -78,7 +78,9 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
         this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
-        this.getCommand("loadschem").setExecutor(new Loadschem());
+
+        this.getCommand("test").setExecutor(new ExecuteCommand());
+//        this.getCommand("loadschem").setExecutor(new Loadschem());
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
 
         System.out.println("Jasper is online now!");
