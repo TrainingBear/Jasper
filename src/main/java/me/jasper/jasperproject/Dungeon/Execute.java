@@ -98,15 +98,16 @@ public class Execute {
                 }
             }
         }
-//        util.random_dir(grid,history);
 
         for (int i = 0; i < p; i++) {
             for (int j = 0; j < l; j++) {
                 if(grid[i][j] != null && (grid[i][j].ID == path1.ID || grid[i][j].ID == path2.ID) ){
-                    util.defineRoom(grid,i,j);
+                    util.defineRoom(grid,i,j,path1);
+                    util.defineRoom(grid,i,j,path2);
                 }
             }
         }
+        util.random_dir(grid,history);
 
 
 

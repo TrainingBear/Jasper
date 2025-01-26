@@ -65,18 +65,25 @@ public class DungeonUtil {
         public void buildDoor(Map<Point, Point> parentMap, Point start, Point end, Room[][] grid, Room pathid) {
         DungeonUtil util = new DungeonUtil();
         Point step = end;
+        String d1, d2;
         int x,y,x2,y2,dx,dy,rotation;
         while (!step.equals(start)) {
             x2 = step.x;
             y2 = step.y;
+            d1 = grid[x2][y2].schem_name;
+
             step = parentMap.get(step);
             x = step.x;
             y = step.y;
+            d2 = grid[x][y].schem_name;
+
             dx = -(x2-x)*16;
             dy = -(y2-y)*16;
             rotation = dx==0? 0 : 90;
-            util.loadAndPasteSchematic("door",
+            if(!Objects.equals(d1, d2)){
+                util.loadAndPasteSchematic("door",
                     new BlockVector3((x2*32)+dx,70,(y2*32)+dy),rotation);
+            }
         }
     }
 
@@ -275,28 +282,29 @@ public class DungeonUtil {
                 (n.y >= 0 && n.y < grid[0].length) && grid[n.x][n.y] == null;
     }
 
-    public void defineRoom(Room[][] grid, int i, int j) {
+    public void defineRoom(Room[][] grid, int i, int j, Room room) {
             if (!(grid[i][j] != null && (grid[i][j].ID == 4 || grid[i][j].ID == 5))){
                 Bukkit.broadcastMessage("Cant define room");
                 return;
             }
         int[][][] lshapes = {
                 // L
-                {{0, 0}, {1, 0}, {1, 1}},
-                {{0, 0}, {-1, 0}, {0, 1}},
-                {{0, 0}, {0, -1}, {-1, -1}},
+                {{0, 0}, {1, 0}, {1, 1}},//0
+
+                {{0, 0}, {0, 1}, {1, 0}},//90
+                {{0, 0}, {0, 1}, {1, 1}},//180
+                {{0, 0}, {1, 0}, {1, -1}},//270
+                {{0, 0}, {-1, 0}, {0, 1}},//0
+                {{0, 0}, {0, -1}, {1, -1}},//90
+                {{0, 0}, {0, -1}, {1, 0}},//180
+                {{0, 0}, {-1, 0}, {0, -1}},//270
+                {{0, 0}, {0, -1}, {-1, -1}},//0
                 // 90 degree of L
-                {{0, 0}, {0, 1}, {1, 0}},
-                {{0, 0}, {0, -1}, {1, -1}},
-                {{0, 0}, {-1, 0}, {-1, 1}},
+                {{0, 0}, {-1, 0}, {-1, 1}},//90
                 // 180 degree of L
-                {{0, 0}, {0, 1}, {1, 1}},
-                {{0, 0}, {0, -1}, {1, 0}},
-                {{0, 0}, {-1, 0}, {-1, -1}},
+                {{0, 0}, {-1, 0}, {-1, -1}},//180
                 // 270 degree of L
-                {{0, 0}, {1, 0}, {1, -1}},
-                {{0, 0}, {-1, 0}, {0, -1}},
-                {{0, 0}, {0, 1}, {-1, 1}},
+                {{0, 0}, {0, 1}, {-1, 1}},//270
         };
 
         int[][][] box = {
@@ -309,50 +317,50 @@ public class DungeonUtil {
 
         int[][][] four = {
                 // 4x1
+                {{0, 0}, {0, 1}, {0, 2}, {0, 3}},
                 {{0, 0}, {1, 0}, {2, 0}, {3, 0}},
+                {{0, 0}, {0, -1}, {0, 1}, {0, 2}},
                 {{0, 0}, {-1, 0}, {1, 0}, {2, 0}},
+                {{0, 0}, {0, -1}, {0, -2}, {0, 1}},
                 {{0, 0}, {-1, 0}, {-2, 0}, {1, 0}},
+                {{0, 0}, {0, -1}, {0, -2}, {0, -3}},
                 {{0, 0}, {-1, 0}, {-2, 0}, {-3, 0}},
                 // 1x4
-                {{0, 0}, {0, 1}, {0, 2}, {0, 3}},
-                {{0, 0}, {0, -1}, {0, 1}, {0, 2}},
-                {{0, 0}, {0, -1}, {0, -2}, {0, 1}},
-                {{0, 0}, {0, -1}, {0, -2}, {0, -3}},
         };
 
         int[][][] three = {
                 // 3x1
+                {{0, 0}, {0, 1}, {0, 2}},
                 {{0, 0}, {1, 0}, {2, 0}},
+                {{0, 0}, {0, -1}, {0, 1}},
                 {{0, 0}, {-1, 0}, {1, 0}},
+                {{0, 0}, {0, -1}, {0, -2}},
                 {{0, 0}, {-1, 0}, {-2, 0}},
                 // 1x3
 
-                {{0, 0}, {0, 1}, {0, 2}},
-                {{0, 0}, {0, -1}, {0, 1}},
-                {{0, 0}, {0, -1}, {0, -2}},
         };
         int[][][] two = {
                 // 2x1
-                {{0, 0}, {1, 0}},
-                {{0, 0}, {-1, 0}},
-                // 1x2
 
                 {{0, 0}, {0, 1}},
+                {{0, 0}, {1, 0}},
+                // 1x2
                 {{0, 0}, {0, -1}},
-
+                {{0, 0}, {-1, 0}},
         };
         int[][][] shape = null;
         boolean fit;
-        int translate = -1;
+        int translate = 1;
         Point pastepoint = new Point(i*32,j*32);
 
         Map<int[][][],Room> shapes = new HashMap();
         shapes.put(two, new Room("2x1 room","room",8,"1x2"));
-        shapes.put(three, new Room("3x1 room","room",9,"1x3"));
-        shapes.put(four, new Room("4x1 room","room",6,"1x4"));
-        shapes.put(box, new Room("2x2 room","room",0,"2x2"));
-        shapes.put(lshapes, new Room("L room","room",7,"Lshape"));
+        shapes.put(three, new Room("3x1 room","room",8,"1x3"));
+        shapes.put(four, new Room("4x1 room","room",8,"1x4"));
+        shapes.put(box, new Room("2x2 room","room",8,"2x2"));
+        shapes.put(lshapes, new Room("L room","room",8,"Lshape"));
         Stack<int[][][]> pick = new Stack<>();
+
         pick.add(two);
         pick.add(three);
         pick.add(four);
@@ -360,44 +368,95 @@ public class DungeonUtil {
         pick.add(lshapes);
         Collections.shuffle(pick);
 
+        boolean isL;
         while (!pick.isEmpty()){
             shape = pick.pop();
-            if(isFit(grid, i, j, shape, shapes, pastepoint, translate++)){
+            isL = Arrays.deepEquals(shape, lshapes);
+            if(isFit(grid, i, j, shape, shapes, pastepoint, room, isL)){
 //                Bukkit.broadcastMessage("Found shape! at "+ grid[i][j].loc.x +", "+grid[i][j].loc.y);
                 break;
             }
         }
     }
 
-    private boolean isFit(Room[][] grid, int i, int j, int[][][] shape, Map<int[][][], Room> shapes, Point pastepoint, int trans) {
+    private boolean isFit(Room[][] grid, int i, int j, int[][][] shape, Map<int[][][], Room> shapes, Point pastepoint, Room room, boolean isL) {
         int x, y, x2, y2, dx, dy;
+        int lx, ly;
         boolean valid = true;
-        int rotation = 0;
+        int rotation = 1;
 
-        trans = trans <= 0 ? 16 : 32;
-        for (int[][] dir2 : shape) {
+        int[][][] lshapes2 = {
+                // L
+                {{0, 0}, {1, 0}, {1, 1}},//0
+
+                {{0, 0}, {0, 1}, {1, 1}},//90
+                {{0, 0}, {0, 1}, {1, 1}},//180
+                {{0, 0}, {1, 0}, {1, -1}},//270
+                {{0, 0}, {-1, 0}, {0, 1}},//0
+                {{0, 0}, {0, -1}, {1, -1}},//90
+                {{0, 0}, {0, -1}, {1, 0}},//180
+                {{0, 0}, {-1, 0}, {0, -1}},//270
+                {{0, 0}, {0, -1}, {-1, -1}},//0
+                // 90 degree of L
+                {{0, 0}, {-1, 0}, {-1, 1}},//90
+                // 180 degree of L
+                {{0, 0}, {-1, 0}, {-1, -1}},//180
+                // 270 degree of L
+                {{0, 0}, {0, 1}, {-1, 1}},//270
+        };
+
+        for (int k = 0; k < shape.length; k++) {
             valid = true;
-            for (int[] dir : dir2) {
-                x = i + dir[0];
-                y = j + dir[1];
-                if (!isValid(grid, x, y)) {
-                    valid = false;
-                    break;
-                }
+            for (int l = 0; l < shape[k].length; l++) {
+                    x = i + shape[k][l][0];
+                    y = j + shape[k][l][1];
+                    if (!isValid(grid, x, y, room)) {
+                        valid = false;
+                        break;
+                    }
             }
             if(valid) {
+                if(isL){
+                    x2 = i;
+                    y2 = j;
+                    Bukkit.broadcastMessage("LShape Found at "+x2+", "+y2);
+                    for (int l = 0; l < shape[k].length; l++) {
+                            x = i + lshapes2[k][l][0];
+                            y = j + lshapes2[k][l][1];
+
+                            lx = i + shape[k][l][0];
+                            ly = j + shape[k][l][1];
+
+                            dx = -(x2-x)*16;
+                            dy = -(y2-y)*16;
+
+                            x2 = x;
+                            y2 = y;
+
+                            pastepoint.translate(dx,dy);
+                            grid[lx][ly] = shapes.get(shape);
+                            Bukkit.broadcastMessage(" -at "+x2+", "+y2);
+                    }
+                    shapes.get(shape).setLoc(pastepoint);
+                    shapes.get(shape).setRotation((rotation+2)*90);
+                    return valid;
+                }
                 x2 = i;
                 y2 = j;
-                for (int[] dir : dir2) {
-                    x = i + dir[0];
-                    y = j + dir[1];
+                Bukkit.broadcastMessage("Shape Found at "+x2+", "+y2);
+                for (int l = 0; l < shape[k].length; l++) {
+                        x = i + shape[k][l][0];
+                        y = j + shape[k][l][1];
 
-                    dx = -(x2-x)*trans;
-                    dy = -(y2-y)*trans;
+                        dx = -(x2-x)*16;
+                        dy = -(y2-y)*16;
 
-                    grid[x][y] = shapes.get(shape);
-                    pastepoint.translate(dx,dy);
-//                    Bukkit.broadcastMessage(grid[dx][dy].name);
+                        x2 = x;
+                        y2 = y;
+
+                        pastepoint.translate(dx,dy);
+                        grid[x][y] = shapes.get(shape);
+                        Bukkit.broadcastMessage(" -at "+x2+", "+y2);
                 }
                 shapes.get(shape).setLoc(pastepoint);
                 shapes.get(shape).setRotation(rotation*90);
@@ -405,12 +464,70 @@ public class DungeonUtil {
             }
             rotation++;
         }
+
         return valid;
     }
 
-    static boolean isValid(Room[][] grid, int x, int y){
+    static boolean isValid(Room[][] grid, int x, int y, Room room){
         return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
-                grid[x][y] != null && (grid[x][y].ID != 4);
+                grid[x][y] != null && (grid[x][y].ID == room.ID);
     }
 
 }
+
+//        for (int[][] dir2 : shape) {
+//            valid = true;
+//            for (int[] dir : dir2) {
+//                x = i + dir[0];
+//                y = j + dir[1];
+//                if (!isValid(grid, x, y, room)) {
+//                    valid = false;
+//                    break;
+//                }
+//            }
+//            if(valid) {
+//                if(isL){
+//                    x2 = i;
+//                    y2 = j;
+//                    Bukkit.broadcastMessage("Found at "+x2+", "+y2);
+//                    for (int[] dir : dir2) {
+//                        x = i + dir[0];
+//                        y = j + dir[1];
+//
+//                        dx = -(x2-x)*16;
+//                        dy = -(y2-y)*16;
+//
+//                        x2 = x;
+//                        y2 = y;
+//
+//                        pastepoint.translate(dx,dy);
+//                        grid[x][y] = shapes.get(shape);
+//                        Bukkit.broadcastMessage("Found at "+x2+", "+y2);
+//                    }
+//                    shapes.get(shape).setLoc(pastepoint);
+//                    shapes.get(shape).setRotation(4*90);
+//                    return valid;
+//                }
+//                x2 = i;
+//                y2 = j;
+//                Bukkit.broadcastMessage("Found at "+x2+", "+y2);
+//                for (int[] dir : dir2) {
+//                    x = i + dir[0];
+//                    y = j + dir[1];
+//
+//                    dx = -(x2-x)*16;
+//                    dy = -(y2-y)*16;
+//
+//                    x2 = x;
+//                    y2 = y;
+//
+//                    pastepoint.translate(dx,dy);
+//                    grid[x][y] = shapes.get(shape);
+//                    Bukkit.broadcastMessage("Found at "+x2+", "+y2);
+//                }
+//                shapes.get(shape).setLoc(pastepoint);
+//                shapes.get(shape).setRotation(4*90);
+//                return valid;
+//            }
+//            rotation++;
+//        }
