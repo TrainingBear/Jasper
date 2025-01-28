@@ -10,10 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 public class Execute {
     Random rand = new Random();
@@ -22,9 +19,9 @@ public class Execute {
         this.seed = seed;
     }
 
-    Room entrance = new Room("Entrance","special",1,"entrance");
-    Room fairy = new Room("Blood Room","special",2,"fairy");
-    Room blood = new Room("Blood Room","special",3,"blood");
+    Room entrance = new Room("Entrance","special",1,"entrance", 'E');
+    Room fairy = new Room("Blood Room","special",2,"fairy", 'F');
+    Room blood = new Room("Blood Room","special",3,"blood", 'B');
     Room path1 = new Room("PATH","path",4,"path1");
     Room path2 = new Room("PATH2","path",5,"path2");
     public void generate(int p, int l){
@@ -33,6 +30,8 @@ public class Execute {
         double distance1,distance2,distance3;
         int x,y,x2,y2,x3,y3;
         Room[][] grid = new Room[p][l];
+        Queue<Point> endpoint = new LinkedList<>();
+        Stack<Point> history = new Stack<>();
 
         do{
             x = random.nextInt(p);
@@ -57,6 +56,7 @@ public class Execute {
         int tried = 0;
         int previousx,previousy;
         Map<Point, Point> parrentMap = new HashMap<>();
+        Map<Point, Point> parrentMap2 = new HashMap<>();
         do{
             parrentMap.clear();
             previousx = x2;
@@ -76,9 +76,9 @@ public class Execute {
                 distance2 = Point.distance(x2,y2,x3,y3);
             }while (distance1 < (double) p /2 || distance2 < (double) (p /2)+1);
             grid[x2][y2] = fairy;
-            found1 = util.findPath(new Point(x,y), new Point(x2,y2), grid, path1, parrentMap);
+            found1 = util.findPath(new Point(x,y), new Point(x2,y2), grid, path1, parrentMap, history);
 //            Bukkit.broadcastMessage("path1 "+found1);
-            found2 = util.findPath(new Point(x2,y2), new Point(x3,y3), grid, path2, parrentMap);
+            found2 = util.findPath(new Point(x2,y2), new Point(x3,y3), grid, path2, parrentMap, history);
 //            Bukkit.broadcastMessage("path2 "+found2);
             tried++;
             if(tried > 100){
@@ -88,32 +88,20 @@ public class Execute {
         }while(!found2);
         grid[x2][y2].setLoc(new Point(x2*32,y2*32));
 
-        Stack<Point> queue = new Stack<>();
-        Stack<Point> history = new Stack<>();
+        util.random_dir(grid, history, endpoint, parrentMap2);
         for (int i = 0; i < p; i++) {
             for (int j = 0; j < l; j++) {
-                if(grid[i][j] != null && (grid[i][j].ID == path1.ID || grid[i][j].ID == path2.ID) ){
-                    queue.add(new Point(i,j));
-                    history.add(new Point(i,j));
-                }
+                util.defineRoom(grid, i, j, path1, history, false);
+                util.defineRoom(grid, i, j, path2, history, false);
             }
         }
 
-        for (int i = 0; i < p; i++) {
-            for (int j = 0; j < l; j++) {
-                if(grid[i][j] != null && (grid[i][j].ID == path1.ID || grid[i][j].ID == path2.ID) ){
-                    util.defineRoom(grid,i,j,path1);
-                    util.defineRoom(grid,i,j,path2);
-                }
-            }
+        util.buildDoor(parrentMap, new Point(x,y), new Point(x3,y3), grid);
+//        util.buildDoor(parrentMap, new Point(x,y), new Point(), grid);
+        for (Point end : endpoint){
+            util.buildEmtyDoor(parrentMap2, end, grid);
         }
-        util.random_dir(grid,history);
 
-
-
-//        Bukkit.broadcastMessage(x3+", "+y3 +" parrentmapsize: "+ history.size());
-        util.buildDoor(parrentMap, new Point(x2,y2), new Point(x3,y3), grid, path2);
-        util.buildDoor(parrentMap, new Point(x,y), new Point(x2,y2), grid, path1);
 
 
         for (int i = 0; i < p; i++) {

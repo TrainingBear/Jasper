@@ -30,7 +30,7 @@ public class ClockConfigurationForCommands implements CommandExecutor {
         if(strings[0].equalsIgnoreCase("set")){
             // +0.04, +1.735, +0.5
             Location clockLocation = player.getLocation();
-            clockLocation.add(0, -0.5, 0);
+            clockLocation.add(0, 0.05, 0);
             Clock.get().set("Clock.Location",clockLocation);
             player.sendMessage(ChatColor.GREEN+"Clock Location has been set!");
             Clock.save();
@@ -45,6 +45,7 @@ public class ClockConfigurationForCommands implements CommandExecutor {
                 armorstand.setGravity(false);
                 armorstand.setInvulnerable(true);
                 armorstand.setInvisible(true);
+                armorstand.setMarker(true);
                 Clock.get().set("Clock.jarum.menit.UUID_model",model.get(1).getUniqueId().toString());
                 Clock.get().set("Clock.jarum.menit.UUID_armorstand",armorstand.getUniqueId().toString());
                 Clock.save();

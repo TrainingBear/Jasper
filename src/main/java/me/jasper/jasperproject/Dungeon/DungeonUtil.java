@@ -15,7 +15,6 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Bukkit;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,9 +22,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class DungeonUtil {
-    
+
         // BFS function to find the shortest path
-        public boolean findPath(Point start, Point end, Room[][] grid, Room pathSchem, Map<Point, Point> parentMap) {
+        public boolean findPath(Point start, Point end, Room[][] grid, Room pathSchem, Map<Point, Point> parentMap, Stack<Point> history) {
             int rows = grid.length;
             int cols = grid[0].length;
 
@@ -42,7 +41,7 @@ public class DungeonUtil {
 
                 // Check if end is reached
                 if (current.equals(end)) {
-                    reconstructPath(parentMap,start,end,grid,pathSchem);
+                    reconstructPath(parentMap, start, end, grid, pathSchem, history);
                     return true;
                 }
 
@@ -62,7 +61,7 @@ public class DungeonUtil {
             return false;
         }
 
-        public void buildDoor(Map<Point, Point> parentMap, Point start, Point end, Room[][] grid, Room pathid) {
+    public void buildDoor(Map<Point, Point> parentMap, Point start, Point end, Room[][] grid) {
         DungeonUtil util = new DungeonUtil();
         Point step = end;
         String d1, d2;
@@ -70,12 +69,41 @@ public class DungeonUtil {
         while (!step.equals(start)) {
             x2 = step.x;
             y2 = step.y;
-            d1 = grid[x2][y2].schem_name;
+            d1 = grid[x2][y2].name;
 
             step = parentMap.get(step);
             x = step.x;
             y = step.y;
-            d2 = grid[x][y].schem_name;
+            d2 = grid[x][y].name;
+
+            dx = -(x2-x)*16;
+            dy = -(y2-y)*16;
+            rotation = dx==0? 0 : 90;
+            if(!Objects.equals(d1, d2)){
+                util.loadAndPasteSchematic("door",
+                        new BlockVector3((x2*32)+dx,70,(y2*32)+dy),rotation);
+            }
+        }
+    }
+    public void buildEmtyDoor(Map<Point, Point> parentMap, Point end, Room[][] grid) {
+        DungeonUtil util = new DungeonUtil();
+        Point step = end;
+        String d1, d2;
+        int x,y,x2,y2,dx,dy,rotation;
+        Bukkit.broadcastMessage("Building emty door with end of "+end.x +", "+end.y);
+        while (!parentMap.isEmpty()) {
+            x2 = step.x;
+            y2 = step.y;
+            d1 = grid[x2][y2].name;
+
+            step = parentMap.remove(step);
+            if(step == null){
+                Bukkit.broadcastMessage("Stopped at "+x2+", "+y2);
+                return;
+            }
+            x = step.x;
+            y = step.y;
+            d2 = grid[x][y].name;
 
             dx = -(x2-x)*16;
             dy = -(y2-y)*16;
@@ -88,16 +116,17 @@ public class DungeonUtil {
     }
 
         // Implements BFS function, but fill the grid after path found
-        public void random_dir(Room[][] grid, Stack<Point> history ) {
-        int[][] directions = {{1,0},{-1,0},{0,1},{0,-1}};
-        Stack<Point> queue = new Stack<>();
-        Map<Point,Point> parrentMap = new HashMap<>();
+        public void random_dir(Room[][] grid, Stack<Point> history, Queue<Point> endpoint, Map<Point,Point> parrentMap) {
+        int[][] directions;
+   //     Stack<Point> queue = new Stack<>();
         Random random = new Random();
-        queue.add(getnewPath(grid,history,parrentMap));
+ //       queue.add(getValidStartPos(grid,history));
 
         int dir;
-        while(!queue.isEmpty()){
-            Point current = queue.pop();
+        while(!history.isEmpty()){
+            Point current = getValidStartPos(grid,history);
+
+            Bukkit.broadcastMessage("getting random current room.. "+current.x+", "+current.y);
             directions = getDir(grid,current);
             do{
                 dir = random.nextInt(directions.length);
@@ -110,21 +139,23 @@ public class DungeonUtil {
             int dx = current.x + directions[dir][0];
             int dy = current.y + directions[dir][1];
             Point neighbor = new Point(dx,dy);
-
             if(isValid(grid,neighbor)){
-                grid[dx][dy] = new Room("name","room",grid[current.x][current.y].ID,"null", new Point(dx, dy));
-                queue.add(neighbor);
-                history.add(neighbor);
-                parrentMap.put(neighbor,current);
-            }
-            if(!hasDir(neighbor.x, neighbor.y, grid)){
-//                grid[dx][dy] = new Room("pojokan","p",7,"puzzle", new Point(dx, dy));
-                neighbor = getnewPath(grid,history,parrentMap);
+                defineRoom(grid, dx, dy,null, history, true);
+ //               history.add(neighbor);
+ //               queue.add(neighbor);
+
+                endpoint.add(new Point(dx,dy));
+                parrentMap.put(neighbor, current);
+            }if(!hasDir(neighbor.x, neighbor.y, grid)){
+   //             grid[dx][dy] = new Room("pojokan","p",7,"puzzle", new Point(dx*32, dy*32));
+                neighbor = getnewPath(grid ,history, parrentMap, neighbor);
                 if(neighbor!=null){
-                    queue.add(neighbor);
+ //                   queue.add(neighbor);
                     history.add(neighbor);
                 }
             }
+
+
         }
     }
 
@@ -199,9 +230,9 @@ public class DungeonUtil {
         //findPath() util
         private boolean isValid(Point p, int rows, int cols, boolean[][] visited, Room[][] grid, int target) {
         return (p.x >= 0 && p.x < rows && p.y >= 0 && p.y < cols) &&
-                !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].ID == target) ;
+                !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].ID == target);
     }
-        private void reconstructPath(Map<Point, Point> parentMap, Point start, Point end, Room[][] grid, Room pathid) {
+        private void reconstructPath(Map<Point, Point> parentMap, Point start, Point end, Room[][] grid, Room pathid, Stack<Point> history) {
         Point step = end;
 
         while (!step.equals(start)) {
@@ -209,31 +240,30 @@ public class DungeonUtil {
             if(!step.equals(start)){
                 grid[step.x][step.y] = pathid.clone();
                 grid[step.x][step.y].setLoc(new Point(step.x * 32, step.y * 32));
-
+                history.add(new Point(step.x, step.y));
             }
         }
-
-//        int x,y,x2,y2,dx,dy,rotation;
-//            while (!step.equals(start)) {
-//                x2 = step.x;
-//                y2 = step.y;
-//                step = parentMap.get(step);
-//                x = step.x;
-//                y = step.y;
-//                dx = -(x2-x)*16;
-//                dy = -(y2-y)*16;
-//                rotation = dx==0? 0 : 90;
-//                util.loadAndPasteSchematic("door",
-//                        new BlockVector3((x2*32)+dx,70,(y2*32)+dy),rotation);
-//                if(!step.equals(start)){
-//                    grid[step.x][step.y] = pathid.clone();
-//                    grid[step.x][step.y].setLoc(step);
-//                }
-//            }
     }
 
     // random dir util
-    private Point getnewPath(Room[][] grid, Stack<Point> history, Map<Point,Point> parrentMap) {
+    private Point getnewPath(Room[][] grid, Stack<Point> history, Map<Point,Point> parrentMap, Point current) {
+        Point point;
+        int x,y;
+        while (true){
+            if(history.isEmpty()){
+                return null;
+            }
+            point = history.pop();
+//            parrentMap.put(point,current);
+//            current = point;
+            x = point.x;
+            y = point.y;
+            if(hasDir(x,y,grid)){
+                return point;
+            }
+        }
+    }
+    private Point getValidStartPos(Room[][] grid, Stack<Point> history) {
         Point point;
         int x,y;
         while (true){
@@ -282,11 +312,11 @@ public class DungeonUtil {
                 (n.y >= 0 && n.y < grid[0].length) && grid[n.x][n.y] == null;
     }
 
-    public void defineRoom(Room[][] grid, int i, int j, Room room) {
-            if (!(grid[i][j] != null && (grid[i][j].ID == 4 || grid[i][j].ID == 5))){
-                Bukkit.broadcastMessage("Cant define room");
-                return;
-            }
+    public void defineRoom(Room[][] grid, int i, int j, Room room, Stack<Point> history, boolean debug) {
+//            if (!(grid[i][j] != null && (grid[i][j].ID == 4 || grid[i][j].ID == 5))){
+//                Bukkit.broadcastMessage("Cant define room");
+//                return;
+//            }
         int[][][] lshapes = {
                 // L
                 {{0, 0}, {1, 0}, {1, 1}},//0
@@ -348,38 +378,50 @@ public class DungeonUtil {
                 {{0, 0}, {0, -1}},
                 {{0, 0}, {-1, 0}},
         };
+        int[][][] one = {
+                // 1x1
+                {{0, 0}}
+        };
         int[][][] shape = null;
         boolean fit;
         int translate = 1;
         Point pastepoint = new Point(i*32,j*32);
 
         Map<int[][][],Room> shapes = new HashMap();
-        shapes.put(two, new Room("2x1 room","room",8,"1x2"));
-        shapes.put(three, new Room("3x1 room","room",8,"1x3"));
-        shapes.put(four, new Room("4x1 room","room",8,"1x4"));
-        shapes.put(box, new Room("2x2 room","room",8,"2x2"));
-        shapes.put(lshapes, new Room("L room","room",8,"Lshape"));
+        shapes.put(two, new Room("2x1 room","room",8,"1x2", '2'));
+        shapes.put(three, new Room("3x1 room","room",8,"1x3", '3'));
+        shapes.put(four, new Room("4x1 room","room",8,"1x4", '4'));
+        shapes.put(box, new Room("2x2 room","room",8,"2x2", '#'));
+        shapes.put(lshapes, new Room("L room","room",8,"Lshape", 'L'));
+        shapes.put(one, new Room("name"+1,"room",0,"null", '1'));
+
         Stack<int[][][]> pick = new Stack<>();
 
         pick.add(two);
+        pick.add(one);
         pick.add(three);
         pick.add(four);
         pick.add(box);
         pick.add(lshapes);
         Collections.shuffle(pick);
 
-        boolean isL;
+        int notmatch = 0;
+
+        boolean isL = false;
         while (!pick.isEmpty()){
             shape = pick.pop();
             isL = Arrays.deepEquals(shape, lshapes);
-            if(isFit(grid, i, j, shape, shapes, pastepoint, room, isL)){
+            if(isFit(grid, i, j, shape, shapes, pastepoint, room, isL, history, debug)){
 //                Bukkit.broadcastMessage("Found shape! at "+ grid[i][j].loc.x +", "+grid[i][j].loc.y);
                 break;
             }
+            notmatch++;
+        }
+        if(notmatch==5){
         }
     }
 
-    private boolean isFit(Room[][] grid, int i, int j, int[][][] shape, Map<int[][][], Room> shapes, Point pastepoint, Room room, boolean isL) {
+    private boolean isFit(Room[][] grid, int i, int j, int[][][] shape, Map<int[][][], Room> shapes, Point pastepoint, Room room, boolean isL, Stack<Point> history, boolean debug) {
         int x, y, x2, y2, dx, dy;
         int lx, ly;
         boolean valid = true;
@@ -419,6 +461,9 @@ public class DungeonUtil {
                 if(isL){
                     x2 = i;
                     y2 = j;
+                    if(debug){
+
+                    }
                     Bukkit.broadcastMessage("LShape Found at "+x2+", "+y2);
                     for (int l = 0; l < shape[k].length; l++) {
                             x = i + lshapes2[k][l][0];
@@ -435,6 +480,7 @@ public class DungeonUtil {
 
                             pastepoint.translate(dx,dy);
                             grid[lx][ly] = shapes.get(shape);
+                            history.add(new Point(lx,ly));
                             Bukkit.broadcastMessage(" -at "+x2+", "+y2);
                     }
                     shapes.get(shape).setLoc(pastepoint);
@@ -456,6 +502,7 @@ public class DungeonUtil {
 
                         pastepoint.translate(dx,dy);
                         grid[x][y] = shapes.get(shape);
+                        history.add(new Point(x,y));
                         Bukkit.broadcastMessage(" -at "+x2+", "+y2);
                 }
                 shapes.get(shape).setLoc(pastepoint);
@@ -467,67 +514,12 @@ public class DungeonUtil {
 
         return valid;
     }
-
     static boolean isValid(Room[][] grid, int x, int y, Room room){
+            if(room == null){
+                return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
+            }
         return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
-                grid[x][y] != null && (grid[x][y].ID == room.ID);
+                (grid[x][y] != null  && grid[x][y].ID == room.ID);
     }
 
 }
-
-//        for (int[][] dir2 : shape) {
-//            valid = true;
-//            for (int[] dir : dir2) {
-//                x = i + dir[0];
-//                y = j + dir[1];
-//                if (!isValid(grid, x, y, room)) {
-//                    valid = false;
-//                    break;
-//                }
-//            }
-//            if(valid) {
-//                if(isL){
-//                    x2 = i;
-//                    y2 = j;
-//                    Bukkit.broadcastMessage("Found at "+x2+", "+y2);
-//                    for (int[] dir : dir2) {
-//                        x = i + dir[0];
-//                        y = j + dir[1];
-//
-//                        dx = -(x2-x)*16;
-//                        dy = -(y2-y)*16;
-//
-//                        x2 = x;
-//                        y2 = y;
-//
-//                        pastepoint.translate(dx,dy);
-//                        grid[x][y] = shapes.get(shape);
-//                        Bukkit.broadcastMessage("Found at "+x2+", "+y2);
-//                    }
-//                    shapes.get(shape).setLoc(pastepoint);
-//                    shapes.get(shape).setRotation(4*90);
-//                    return valid;
-//                }
-//                x2 = i;
-//                y2 = j;
-//                Bukkit.broadcastMessage("Found at "+x2+", "+y2);
-//                for (int[] dir : dir2) {
-//                    x = i + dir[0];
-//                    y = j + dir[1];
-//
-//                    dx = -(x2-x)*16;
-//                    dy = -(y2-y)*16;
-//
-//                    x2 = x;
-//                    y2 = y;
-//
-//                    pastepoint.translate(dx,dy);
-//                    grid[x][y] = shapes.get(shape);
-//                    Bukkit.broadcastMessage("Found at "+x2+", "+y2);
-//                }
-//                shapes.get(shape).setLoc(pastepoint);
-//                shapes.get(shape).setRotation(4*90);
-//                return valid;
-//            }
-//            rotation++;
-//        }
