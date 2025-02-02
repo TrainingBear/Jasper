@@ -18,14 +18,27 @@ public class ExecuteCommand implements CommandExecutor {
             return false;
         }
         DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic("clear",new BlockVector3(48,70,48),0);
+        util.loadAndPasteSchematic("clear",new BlockVector3(48,70,48),0, false);
         Execute room = new Execute();
         if(strings.length == 0){
-            room.generate(4,4);
+            room.generate();
             return true;
         }if(strings.length == 1){
             room.setSeed(Long.parseLong(strings[0]));
-            room.generate(4,4);
+            room.generate();
+            return true;
+        }
+        if(strings.length == 2){
+            room.setL(Integer.parseInt(strings[0]));
+            room.setP(Integer.parseInt(strings[1]));
+            room.generate();
+            return true;
+        }
+        if(strings.length == 3){
+            room.setSeed(Long.parseLong(strings[2]));
+            room.setL(Integer.parseInt(strings[0]));
+            room.setP(Integer.parseInt(strings[1]));
+            room.generate();
             return true;
         }
         return false;
