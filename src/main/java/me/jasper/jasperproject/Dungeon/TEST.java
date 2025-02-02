@@ -76,7 +76,7 @@ public class TEST {
         while (!step.equals(start)) {
             step = parentMap.get(step);
             if (!step.equals(start)) {
-                RS.loadAndPasteSchematic("path",RS.path.getPastepoint(step.x, step.y),0 );
+//                RS.loadAndPasteSchematic("path",RS.path.getPastepoint(step.x, step.y),0 );
                 roomused[step.x][step.y] = 4;
             }
         }

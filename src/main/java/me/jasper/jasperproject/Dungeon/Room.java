@@ -1,19 +1,25 @@
 package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import org.bukkit.Bukkit;
+import lombok.Setter;
 
-import javax.xml.stream.Location;
 import java.awt.*;
 
 public class Room {
     String name;
+    @Setter
     String type;
+    @Setter
     int ID;
+    @Setter
     String schem_name;
+    @Setter
     Point loc = new Point(0,0);
+    @Setter
     int rotation = 0;
     boolean isLoaded = false;
+    @Setter
+    char logo = 'N';
 
     public Room(String name, String type, int ID, String schem_name, Point loc){
         this.name = name;
@@ -21,12 +27,20 @@ public class Room {
         this.ID = ID;
         this.schem_name = schem_name;
         this.loc = loc;
-    }public Room(String name, String type, int ID, String schem_name){
+    }
+    public Room(String name, String type, int ID, String schem_name){
         this.name = name;
         this.type = type;
         this.ID = ID;
         this.schem_name = schem_name;
-    }public Room(String name, String type, int ID, String schem_name, int Rotation){
+    }public Room(String name, String type, int ID, String schem_name, char logo){
+        this.name = name;
+        this.type = type;
+        this.ID = ID;
+        this.schem_name = schem_name;
+        this.logo = logo;
+    }
+    public Room(String name, String type, int ID, String schem_name, int Rotation){
         this.name = name;
         this.type = type;
         this.ID = ID;
@@ -37,57 +51,37 @@ public class Room {
         this.name = name;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setSchem_name(String schem_name) {
-        this.schem_name = schem_name;
-    }
-
-    public void setLoc(Point loc) {
-        this.loc = loc;
-    }
-
-    public void setRotation(int rotation) {
-        this.rotation = rotation;
-    }
-
     public Room clone(){
-        return new Room(this.name,this.type,this.ID,this.schem_name);
+        return new Room(this.name,this.type,this.ID,this.schem_name,this.logo);
     }
     public Room clone(Point loc){
         return new Room(this.name,this.type,this.ID,this.schem_name,loc);
     }
 
-    public void loadSchem(int rot){
+    public void loadScheme(int rot){
         if(isLoaded){
             return;
         }
         DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y),rot);
+        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y),rot, true);
         isLoaded = true;
     }
 
-    public void loadSchem(){
+    public void loadScheme(){
         if(isLoaded){
             return;
         }
         DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y), this.rotation);
+        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y), this.rotation, true);
 //        Bukkit.broadcastMessage("Schematic "+this.schem_name+" pasted with a " + this.rotation + "° rotation! at: "+new BlockVector3(loc.x*32, 70, loc.y*32).toString());
         isLoaded = true;
     }
-    public void loadSchem(int i, int j){
+    public void loadScheme(int i, int j){
         if(isLoaded){
             return;
         }
         DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(i*32, 70, i*32), this.rotation);
+        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(i*32, 70, i*32), this.rotation, true);
         isLoaded = true;
     }
 }
