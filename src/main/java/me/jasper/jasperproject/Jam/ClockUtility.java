@@ -138,10 +138,13 @@ public class ClockUtility {
     }
     void jarumMenit(){
         Location ClockLocation = Clock.get().getLocation("Clock.Location");
-        float pitch = ClockLocation.getPitch() - 90;
-        float yaw = ClockLocation.getYaw() - 90;
+        float pitch = 0, yaw = 0, Menit = 0;
+        try {
+            pitch = ClockLocation.getPitch() - 90;
+            yaw = ClockLocation.getYaw() - 90;
+            Menit =  (float) Clock.get().getDouble("Clock.menit");
+        }catch (NullPointerException e){}
 
-        float Menit =  (float) Clock.get().getDouble("Clock.menit");
         float putaran_menit =  6*Menit;
 
         UUID as = UUID.fromString(Objects.requireNonNull(Clock.get().getString("Clock.jarum.menit.UUID_armorstand")));

@@ -23,10 +23,6 @@ public final class JasperProject extends JavaPlugin {
         ConfigDungeon.get().options().copyDefaults();
         ConfigDungeon.save();
 
-//        getConfig().addDefault("Clock.Location",Location.class);
-//        getConfig().addDefault("Clock.jarum.UUID_model",java.util.UUID.class);
-//        getConfig().addDefault("Clock.jarum.UUID_armorstand",java.util.UUID.class);
-
         saveDefaultConfig();
 
         Clock.setup();
@@ -41,7 +37,6 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("die").setExecutor(new Diee());
         getServer().getPluginManager().registerEvents(new Joinmsg(this), this);
         getServer().getPluginManager().registerEvents(new whenRainCancel(), this);
-//        getServer().getPluginManager().registerEvents(new AlwaysDayy(), this);
         getServer().getPluginManager().registerEvents(new InvenAhhListener(), this);
         getServer().getPluginManager().registerEvents(new PlotMenuListener(), this);
         getServer().getPluginManager().registerEvents(new LaunchPad(this), this);
@@ -50,8 +45,6 @@ public final class JasperProject extends JavaPlugin {
         BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
 
 
-
-//        this.getCommand("say").setExecutor(new Comand());
         this.getCommand("terbang").setExecutor(new Command2.Flyy());
         this.getCommand("setspeed").setExecutor(new PlayerMovementSpeedTest());
         this.getCommand("launchpad").setExecutor(new LaunchPad(this));
@@ -80,7 +73,6 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
 
         this.getCommand("test").setExecutor(new ExecuteCommand());
-//        this.getCommand("loadschem").setExecutor(new Loadschem());
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
 
         System.out.println("Jasper is online now!");
@@ -88,6 +80,7 @@ public final class JasperProject extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Clock.save();
         System.out.println("zzz");
     }
 }

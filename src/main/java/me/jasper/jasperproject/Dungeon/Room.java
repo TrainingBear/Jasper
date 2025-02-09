@@ -2,10 +2,12 @@ package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.awt.*;
 
-public class Room {
+public class Room extends DungeonUtil{
     String name;
     @Setter
     String type;
@@ -20,6 +22,8 @@ public class Room {
     boolean isLoaded = false;
     @Setter
     char logo = 'N';
+    @Setter
+    boolean hasLockedDoor = true;
 
     public Room(String name, String type, int ID, String schem_name, Point loc){
         this.name = name;
@@ -54,34 +58,35 @@ public class Room {
     public Room clone(){
         return new Room(this.name,this.type,this.ID,this.schem_name,this.logo);
     }
+
     public Room clone(Point loc){
         return new Room(this.name,this.type,this.ID,this.schem_name,loc);
     }
 
+    //this gona load schem with custom ritation
     public void loadScheme(int rot){
         if(isLoaded){
             return;
         }
-        DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y),rot, true);
+        this.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y),rot, true);
         isLoaded = true;
     }
 
     public void loadScheme(){
         if(isLoaded){
+//            Bukkit.broadcastMessage(this.schem_name+" is already loaded");
             return;
         }
-        DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y), this.rotation, true);
+        this.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y), this.rotation, true);
 //        Bukkit.broadcastMessage("Schematic "+this.schem_name+" pasted with a " + this.rotation + "° rotation! at: "+new BlockVector3(loc.x*32, 70, loc.y*32).toString());
         isLoaded = true;
     }
+    //load schem for specific location
     public void loadScheme(int i, int j){
         if(isLoaded){
             return;
         }
-        DungeonUtil util = new DungeonUtil();
-        util.loadAndPasteSchematic(this.schem_name, new BlockVector3(i*32, 70, i*32), this.rotation, true);
+        this.loadAndPasteSchematic(this.schem_name, new BlockVector3(i*32, 70, i*32), this.rotation, true);
         isLoaded = true;
     }
 }

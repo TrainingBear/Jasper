@@ -1,12 +1,12 @@
 me\jasper\jasperproject\Command\SetDay$SetHour.class
 me\jasper\jasperproject\Dungeon\ConfigDungeon.class
 me\jasper\jasperproject\Command\JasperItem.class
-me\jasper\jasperproject\Dungeon\Execute.class
 me\jasper\jasperproject\Command\SetDay$SetYear.class
 me\jasper\jasperproject\Jam\ClockUtility.class
 me\jasper\jasperproject\Listener\Joinmsg.class
 me\jasper\jasperproject\Command\Command2$Reload.class
 me\jasper\jasperproject\Util\EntityFinder.class
+me\jasper\jasperproject\Dungeon\Generator.class
 me\jasper\jasperproject\Command\Diee.class
 me\jasper\jasperproject\Command\PlayerJumpBoost.class
 me\jasper\jasperproject\Command\SpawnAhhPoint$ResetSpawnPoint.class
@@ -38,6 +38,7 @@ me\jasper\jasperproject\Jam\ClockConfigurationForCommands.class
 me\jasper\jasperproject\Dungeon\DungeonUtil.class
 me\jasper\jasperproject\Command\TestParticle$TestSound.class
 me\jasper\jasperproject\FileConfiguration\Test.class
+me\jasper\jasperproject\Dungeon\Rooms.class
 me\jasper\jasperproject\Dungeon\TEST.class
 me\jasper\jasperproject\FileConfiguration\LaunchPadConfiguration.class
 me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
@@ -45,7 +46,6 @@ me\jasper\jasperproject\Command\PlayerFinder$PlayerListListener.class
 me\jasper\jasperproject\Dungeon\SetTheBlock.class
 me\jasper\jasperproject\Command\PlayerFinder.class
 me\jasper\jasperproject\TabCompleter\SummonItemDisplay.class
-me\jasper\jasperproject\Dungeon\ListRoom.class
 me\jasper\jasperproject\Jam\ClockUtility$1$1.class
 me\jasper\jasperproject\Dungeon\Room.class
 me\jasper\jasperproject\Command\SpawnAhhPoint.class
