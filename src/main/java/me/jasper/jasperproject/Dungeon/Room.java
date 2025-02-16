@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Room extends DungeonUtil{
     @Setter String name;
@@ -14,10 +15,12 @@ public class Room extends DungeonUtil{
     @Setter Point loc = new Point(0,0);
     @Setter int rotation = 0;boolean isLoaded = false;
     @Setter char logo = 'N';
+    @Setter int[][] body;
     @Setter int[][] shape;
+    @Setter Point foundIndexation = new Point(0,0);
 
     /**The Point, Point is refer to the grid[][] location. not the actual*/
-    HashMap<Point, Point> conected_room = new HashMap<>();
+    HashMap<Point, HashSet<Point>> conected_room = new HashMap<>();
 
     Room room = this;
 
@@ -81,10 +84,11 @@ public class Room extends DungeonUtil{
         isLoaded = true;
     }
     void addConection(Point current, Point neighbor){
-        this.conected_room.put(current, neighbor);
+        this.conected_room.putIfAbsent(current, new HashSet<>());
+        this.conected_room.get(current).add(neighbor);
     }
 
     void decreaseConection(Point current, Point neighbor){
-        this.conected_room.remove(current, neighbor);
+        this.conected_room.get(current).remove(neighbor);
     }
 }
