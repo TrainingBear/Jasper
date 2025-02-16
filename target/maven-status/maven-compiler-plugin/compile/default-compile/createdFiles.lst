@@ -44,6 +44,7 @@ me\jasper\jasperproject\FileConfiguration\LaunchPadConfiguration.class
 me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\Command\PlayerFinder$PlayerListListener.class
 me\jasper\jasperproject\Dungeon\SetTheBlock.class
+me\jasper\jasperproject\Dungeon\RoomShape.class
 me\jasper\jasperproject\Command\PlayerFinder.class
 me\jasper\jasperproject\TabCompleter\SummonItemDisplay.class
 me\jasper\jasperproject\Jam\ClockUtility$1$1.class

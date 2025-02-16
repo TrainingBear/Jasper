@@ -25,73 +25,85 @@ public class Generator extends DungeonUtil{
     Random random = new Random(seed);
     int x,y,x2,y2,x3,y3;
 
-    Room entrance = new Room("Entrance","special",1,"entrance", 'E');
-    Room fairy = new Room("Fairy","special",2,"fairy", 'F');
-    Room blood = new Room("Blood Room","special",3,"blood", 'B');
-    Room path1 = new Room("PATH","path",4,"path1",'1');
-    Room path2 = new Room("PATH2","path",5,"path2", '1');
+    Room entrance = new Room("Entrance",RoomType.START,1,"entrance", 'E');
+    Room fairy = new Room("Fairy",RoomType.MID,2,"fairy", 'F');
+    Room blood = new Room("Blood Room",RoomType.END,3,"blood", 'B');
+    Room path1 = new Room("PATH",RoomType.TEST,4,"path1",'1');
+    Room path2 = new Room("PATH2",RoomType.TEST,5,"path2", '1');
 
     //room limit
-    Map<Character,Integer> CURRENT_LIMIT = new HashMap<>(Map.of(
-            '2', 0,
-            '3', 0,
-            '4', 0,
-            '#', 0,
-            'L', 0,
-            '1', 0,
-            'S', 0
+    Map<RoomType,Integer> CURRENT_LIMIT = new HashMap<>(Map.of(
+            RoomType.TWO_X_ONE, 0,
+            RoomType.THREE_X_ONE, 0,
+            RoomType.FOUR_X_ONE, 0,
+            RoomType.BOX, 0,
+            RoomType.L_SHAPE, 0,
+            RoomType.SINGLE, 0,
+            RoomType.PUZZLE, 0,
+            RoomType.TRAP, 0,
+            RoomType.MINI_BOSS, 0
+
     ));
+
     Rooms avaibleRooms = new Rooms();
-    HashMap<Character,Integer> MAX_LIMIT = new HashMap<>(Map.of(
-            '2', 2,
-            '3', 1,
-            '4', 1,
-            '#', 1,
-            'L', 1,
-            '1', 10,
-            'S', 3
+    HashMap<RoomType,Integer> MAX_LIMIT = new HashMap<>(Map.of(
+            RoomType.TWO_X_ONE, 2,
+            RoomType.THREE_X_ONE, 1,
+            RoomType.FOUR_X_ONE, 1,
+            RoomType.BOX,  1,
+            RoomType.L_SHAPE, 1,
+            RoomType.SINGLE, 10,
+            RoomType.PUZZLE, 1,
+            RoomType.TRAP, 1,
+            RoomType.MINI_BOSS, 1
     ));
+    Room[][] grid = new Room[p][l];
+    Stack<Point> history = new Stack<>();
 
     // main method
     public void generate(){
         random.setSeed(seed);
-        Room[][] grid = new Room[p][l];
         Queue<Point> endpoint = new LinkedList<>();
-        Stack<Point> history = new Stack<>();
         Map<Point, Point> parrentMap = new HashMap<>();
 
         TextComponent message = new TextComponent("Dungeon Seed [" +ChatColor.GREEN+ seed +ChatColor.WHITE+"]");
         message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(seed)));
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to copy the seeds!")));
         Bukkit.spigot().broadcast(message);
-        long current_time = System.currentTimeMillis();
+
+        long startTime = System.nanoTime();
 
         placeMainDungeon(grid, parrentMap, history);
 
         //Parsing current path into the actual shaped rooms
         for (int i = 0; i < p; i++) {
             for (int j = 0; j < l; j++) {
-                this.defineRoom(avaibleRooms, CURRENT_LIMIT, MAX_LIMIT, random, grid, i, j, path1, history, false);
-                this.defineRoom(avaibleRooms, CURRENT_LIMIT, MAX_LIMIT, random, grid, i, j, path2, history, false);
+                this.defineRoom(avaibleRooms, this, i, j, path1, false);
+                this.defineRoom(avaibleRooms, this, i, j, path2, false);
             }
         }
-        this.buildDoor(parrentMap, new Point(x,y), new Point(x3,y3), grid);
 
-        placePTMR(random, grid, endpoint);
 
         //Fill Dungeon room
         Map<Point, Point> parrentMap2 = new HashMap<>();
-        this.random_dir(avaibleRooms, CURRENT_LIMIT,MAX_LIMIT,random, grid, history, endpoint, parrentMap2);
+        this.random_dir(avaibleRooms, this, endpoint, parrentMap2);
+
+        long endTime = System.nanoTime();
+        String time = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
+
+        Bukkit.broadcastMessage(ChatColor.GREEN+"Initializing dungeon took "+time +" ms");
 
 
+        this.buildDoor(parrentMap, new Point(x,y), new Point(x3,y3), grid);
         for (Point end : endpoint){
             this.buildEmtyDoor(parrentMap2, end, grid);
         }
-
-        Bukkit.broadcastMessage(ChatColor.GREEN+"Initializing dungeon took "+(System.currentTimeMillis()-current_time)+" ms");
-        current_time = System.currentTimeMillis();
+        placePTMR(random, grid, endpoint);
         renderDungeon(grid);
-        Bukkit.broadcastMessage(ChatColor.GREEN+"Rendering dungeon took "+(System.currentTimeMillis()-current_time)+" ms");
+        endTime = System.nanoTime();
+        time = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
+
+        Bukkit.broadcastMessage(ChatColor.GREEN+"Rendering dungeon took "+time+" ms");
     }
 
     private void placeMainDungeon(Room[][] grid, Map<Point, Point> parrentMap, Stack<Point> history){
@@ -115,10 +127,22 @@ public class Generator extends DungeonUtil{
 
 
         boolean found;
+        int prevx,prevy;
+        do{
+            prevx = random.nextInt(p);
+            prevy = random.nextInt(l);
+            distance1 = Point.distance(x,y,x2,y2);
+            distance2 = Point.distance(x2,y2,x3,y3);
+            if(OCCUR++ > MAX_RECUR_TRIES){
+                Bukkit.broadcastMessage(ChatColor.RED+"Failed to load Dungeon. OCCUR outbeat MAX_RECUR_TRIES");
+                return;
+            }
+        }while (grid[prevx][prevy] != null);
 
         do{
             parrentMap.clear();
             do{
+                grid[prevx][prevy] = null;
                 x2 = random.nextInt(p);
                 y2 = random.nextInt(l);
                 distance1 = Point.distance(x,y,x2,y2);
@@ -127,7 +151,9 @@ public class Generator extends DungeonUtil{
                     Bukkit.broadcastMessage(ChatColor.RED+"Failed to load Dungeon. OCCUR outbeat MAX_RECUR_TRIES");
                     break;
                 }
-            }while (distance1 < ((double) p /2)-((double) p /4)+1 || distance2 < ((double) p /2)-((double) p /4)+1);
+            }while (grid[x2][y2]!=null && distance1 < ((double) p /2)-((double) p /4)+1 || distance2 < ((double) p /2)-((double) p /4)+1);
+            prevx = x2;
+            prevy = y2;
             grid[x2][y2] = fairy;
             found = this.findPath(new Point(x,y),new Point(x2,y2), new Point(x3,y3), grid, path1, path2, parrentMap, history, true);
 
@@ -143,20 +169,14 @@ public class Generator extends DungeonUtil{
     }
 
     //Create a random location for puzzle, trap, mini boss, and other special room. (P T M Room)
-    void placePTMR(Random random, Room[][] room, Queue<Point> endpoint){
-        for (int i = 0; i < p; i++) {
-            for (int j = 0; j < l; j++) {
-                if(avaibleRooms.SPECIAL.isEmpty()){
-                    return;
-                }
-                if(this.suit(room, i, j)){
-                    room[i][j] = avaibleRooms.SPECIAL.removeFirst();
-                    room[i][j].setLoc(new Point(i*32, j*32));
-                    Bukkit.broadcastMessage("placed "+room[i][j].type+" at "+i+", "+j);
-//                endpoint.add(new Point(x, y));
+    void placePTMR(Random random, Room[][] grid, Queue<Point> endpoint){
+        for (Room[] rooms : grid){
+            for(Room room : rooms){
+                if(room.conected_room == 1 && room.type == RoomType.SINGLE) {
+                    room.setSchem_name("trap");
+                    Bukkit.broadcastMessage("FOUND EDGE!!");
                 }
             }
-
         }
     }
     private void renderDungeon(Room[][] grid){
@@ -164,15 +184,7 @@ public class Generator extends DungeonUtil{
             StringBuilder stringBuilder = new StringBuilder();
             for (int j = 0; j < l; j++) {
                 try{
-                    if(grid[i][j] == entrance){
-                        grid[i][j].loadScheme();
-                    }
-                    if(grid[i][j] == blood){
-                        grid[i][j].loadScheme();
-                    }
-                    if(grid[i][j] != null && (grid[i][j].ID != blood.ID || grid[i][j].ID != entrance.ID)){
-                        grid[i][j].loadScheme();
-                    }
+                    grid[i][j].loadScheme();
                     stringBuilder.append(grid[i][j].logo).append(", ");
                 }catch (NullPointerException e){
                     stringBuilder.append(0).append(", ");
