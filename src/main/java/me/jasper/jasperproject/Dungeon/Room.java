@@ -4,6 +4,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Setter;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class Room extends DungeonUtil{
     @Setter String name;
@@ -13,7 +14,11 @@ public class Room extends DungeonUtil{
     @Setter Point loc = new Point(0,0);
     @Setter int rotation = 0;boolean isLoaded = false;
     @Setter char logo = 'N';
-    int conected_room;
+    @Setter int[][] shape;
+
+    /**The Point, Point is refer to the grid[][] location. not the actual*/
+    HashMap<Point, Point> conected_room = new HashMap<>();
+
     Room room = this;
 
     Room(String name, RoomType type, int ID, String schem_name, Point loc){
@@ -23,25 +28,21 @@ public class Room extends DungeonUtil{
         this.schem_name = schem_name;
         this.loc = loc;
     }
-     Room(String name, RoomType type, int ID, String schem_name){
-        this.name = name;
-        this.type = type;
-        this.ID = ID;
-        this.schem_name = schem_name;
-    }
-     Room(String name, RoomType type, int ID, String schem_name, char logo){
+    Room(String name, RoomType type, int ID, String schem_name, char logo){
         this.name = name;
         this.type = type;
         this.ID = ID;
         this.schem_name = schem_name;
         this.logo = logo;
     }
-     Room(String name, RoomType type, int ID, String schem_name, int Rotation){
-        this.name = name;
-        this.type = type;
-        this.ID = ID;
-        this.schem_name = schem_name;
-        this.rotation = Rotation;
+
+    //This replace the room identification but location
+    void replace(Room room){
+        this.name = room.name;
+        this.type = room.type;
+        this.ID = room.ID;
+        this.schem_name = room.schem_name;
+        this.logo = room.logo;
     }
 
      protected Room clone(){
@@ -79,9 +80,11 @@ public class Room extends DungeonUtil{
         this.loadAndPasteSchematic(this.schem_name, new BlockVector3(i*32, 70, i*32), this.rotation, true);
         isLoaded = true;
     }
-    void addConection(){
-        this.conected_room++;
-    }void decreaseConection(){
-        this.conected_room--;
+    void addConection(Point current, Point neighbor){
+        this.conected_room.put(current, neighbor);
+    }
+
+    void decreaseConection(Point current, Point neighbor){
+        this.conected_room.remove(current, neighbor);
     }
 }

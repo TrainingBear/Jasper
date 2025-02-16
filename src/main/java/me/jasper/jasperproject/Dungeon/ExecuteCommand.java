@@ -1,8 +1,6 @@
-package me.jasper.jasperproject;
+package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import me.jasper.jasperproject.Dungeon.DungeonUtil;
-import me.jasper.jasperproject.Dungeon.Generator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
