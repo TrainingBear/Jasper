@@ -4,6 +4,10 @@ import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Setter;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class Room extends DungeonUtil{
     @Setter String name;
@@ -11,37 +15,42 @@ public class Room extends DungeonUtil{
     @Setter int ID;
     @Setter String schem_name;
     @Setter Point loc = new Point(0,0);
-    @Setter int rotation = 0;boolean isLoaded = false;
+    @Setter int rotation = 0;
+    boolean isLoaded = false;
     @Setter char logo = 'N';
-    int conected_room;
+    List<Point> body = new ArrayList<>();
+    List<Point> reflected_body = new ArrayList<>();
+    int[][] shape;
+    @Setter Point foundIndexation = new Point(0,0);
+
+    /**The Point, Point is refer to the grid[][] location. not the actual*/
+    HashMap<Point, HashSet<Point>> conected_room = new HashMap<>();
+
     Room room = this;
 
     Room(String name, RoomType type, int ID, String schem_name, Point loc){
+
         this.name = name;
         this.type = type;
         this.ID = ID;
         this.schem_name = schem_name;
         this.loc = loc;
     }
-     Room(String name, RoomType type, int ID, String schem_name){
-        this.name = name;
-        this.type = type;
-        this.ID = ID;
-        this.schem_name = schem_name;
-    }
-     Room(String name, RoomType type, int ID, String schem_name, char logo){
+    Room(String name, RoomType type, int ID, String schem_name, char logo){
         this.name = name;
         this.type = type;
         this.ID = ID;
         this.schem_name = schem_name;
         this.logo = logo;
     }
-     Room(String name, RoomType type, int ID, String schem_name, int Rotation){
-        this.name = name;
-        this.type = type;
-        this.ID = ID;
-        this.schem_name = schem_name;
-        this.rotation = Rotation;
+
+    //This replace the room identification but location
+    void replace(Room room){
+        this.name = room.name;
+        this.type = room.type;
+        this.ID = room.ID;
+        this.schem_name = room.schem_name;
+        this.logo = room.logo;
     }
 
      protected Room clone(){
@@ -79,9 +88,12 @@ public class Room extends DungeonUtil{
         this.loadAndPasteSchematic(this.schem_name, new BlockVector3(i*32, 70, i*32), this.rotation, true);
         isLoaded = true;
     }
-    void addConection(){
-        this.conected_room++;
-    }void decreaseConection(){
-        this.conected_room--;
+    void addConection(Point current, Point neighbor){
+        this.conected_room.putIfAbsent(current, new HashSet<>());
+        this.conected_room.get(current).add(neighbor);
+    }
+
+    void decreaseConection(Point current, Point neighbor){
+        this.conected_room.get(current).remove(neighbor);
     }
 }

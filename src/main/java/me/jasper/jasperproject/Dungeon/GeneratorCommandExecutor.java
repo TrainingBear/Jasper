@@ -1,9 +1,9 @@
 package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import me.jasper.jasperproject.FileConfiguration.ConfigDungeon;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Loadschem;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

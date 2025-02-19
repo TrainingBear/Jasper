@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Dungeon;
+package me.jasper.jasperproject.FileConfiguration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

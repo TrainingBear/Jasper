@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+//Useless function
 public class SetTheBlock {
     public static void setBlockAT(Location pos1, Location pos2){
         int minx = (int) Math.min(pos1.getX(),pos2.getX());

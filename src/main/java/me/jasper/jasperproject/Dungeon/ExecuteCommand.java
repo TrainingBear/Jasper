@@ -1,8 +1,6 @@
-package me.jasper.jasperproject;
+package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import me.jasper.jasperproject.Dungeon.DungeonUtil;
-import me.jasper.jasperproject.Dungeon.Generator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -32,9 +30,9 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor {
             return true;
         }
         if(strings.length == 3){
-            room.setSeed(Long.parseLong(strings[2]));
             room.setL(Integer.parseInt(strings[0]));
             room.setP(Integer.parseInt(strings[1]));
+            room.setSeed(Long.parseLong(strings[2]));
             room.generate();
             return true;
         }
