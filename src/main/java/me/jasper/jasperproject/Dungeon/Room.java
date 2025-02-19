@@ -4,8 +4,10 @@ import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Setter;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class Room extends DungeonUtil{
     @Setter String name;
@@ -13,10 +15,12 @@ public class Room extends DungeonUtil{
     @Setter int ID;
     @Setter String schem_name;
     @Setter Point loc = new Point(0,0);
-    @Setter int rotation = 0;boolean isLoaded = false;
+    @Setter int rotation = 0;
+    boolean isLoaded = false;
     @Setter char logo = 'N';
-    @Setter int[][] body;
-    @Setter int[][] shape;
+    List<Point> body = new ArrayList<>();
+    List<Point> reflected_body = new ArrayList<>();
+    int[][] shape;
     @Setter Point foundIndexation = new Point(0,0);
 
     /**The Point, Point is refer to the grid[][] location. not the actual*/
@@ -25,6 +29,7 @@ public class Room extends DungeonUtil{
     Room room = this;
 
     Room(String name, RoomType type, int ID, String schem_name, Point loc){
+
         this.name = name;
         this.type = type;
         this.ID = ID;

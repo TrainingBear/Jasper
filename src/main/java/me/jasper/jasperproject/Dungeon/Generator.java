@@ -7,9 +7,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Generator extends DungeonUtil{
     Random rand = new Random();
@@ -47,24 +49,26 @@ public class Generator extends DungeonUtil{
 
     Rooms avaibleRooms = new Rooms();
     HashMap<RoomType,Integer> MAX_LIMIT = new HashMap<>(Map.of(
-            RoomType.TWO_X_ONE, 2,
-            RoomType.THREE_X_ONE, 1,
-            RoomType.FOUR_X_ONE, 1,
-            RoomType.BOX,  1,
-            RoomType.L_SHAPE, 1,
+            RoomType.TWO_X_ONE, 10,
+            RoomType.THREE_X_ONE, 10,
+            RoomType.FOUR_X_ONE, 10,
+            RoomType.BOX,  10,
+            RoomType.L_SHAPE, 10,
             RoomType.SINGLE, 10,
-            RoomType.PUZZLE, 1,
-            RoomType.TRAP, 1,
-            RoomType.MINI_BOSS, 1
+            RoomType.SPECIAL, 3
     ));
-    Room[][] grid = new Room[p][l];
+    Room[][] grid;
     Stack<Point> history = new Stack<>();
+    Map<Point, Point> parentMap2 = new HashMap<>();
 
-    // main method
+    /*
+    * THIS IS THE MAIN METHOD
+    * */
     public void generate(){
+        grid = new Room[p][l];
         random.setSeed(seed);
-        Queue<Point> endpoint = new LinkedList<>();
         Map<Point, Point> parrentMap = new HashMap<>();
+        Queue<Point> endpoint = new LinkedList<>();
 
         TextComponent message = new TextComponent("Dungeon Seed [" +ChatColor.GREEN+ seed +ChatColor.WHITE+"]");
         message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(seed)));
@@ -83,10 +87,18 @@ public class Generator extends DungeonUtil{
             }
         }
 
+//        MAX_LIMIT = new HashMap<>(Map.of(
+//                RoomType.TWO_X_ONE, 0,
+//                RoomType.THREE_X_ONE, 0,
+//                RoomType.FOUR_X_ONE, 10,
+//                RoomType.BOX,  0,
+//                RoomType.L_SHAPE, 0,
+//                RoomType.SINGLE, 0,
+//                RoomType.SPECIAL, 3
+//        ));
 
         //Fill Dungeon room
-        Map<Point, Point> parrentMap2 = new HashMap<>();
-        this.random_dir(avaibleRooms, this, endpoint, parrentMap2);
+        this.random_dir(avaibleRooms, this, endpoint, parentMap2);
 
         long endTime = System.nanoTime();
         String time = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
@@ -95,17 +107,19 @@ public class Generator extends DungeonUtil{
 
 
         this.buildDoor(parrentMap, new Point(x,y), new Point(x3,y3), grid);
+        Bukkit.broadcastMessage(ChatColor.RED+"Building Empty Door..");
         for (Point end : endpoint){
-            this.buildEmtyDoor(parrentMap2, end, grid);
+            this.buildEmtyDoor(parentMap2, end, grid);
         }
-        placePTMR(random, grid, endpoint);
-        renderDungeon(grid);
+        placePTMR();
+        render();
         endTime = System.nanoTime();
         time = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
 
         Bukkit.broadcastMessage(ChatColor.GREEN+"Rendering dungeon took "+time+" ms");
     }
 
+    //Place START, MID, END & Generate its path
     private void placeMainDungeon(Room[][] grid, Map<Point, Point> parrentMap, Stack<Point> history){
         double distance1,distance2,distance3;
         do{
@@ -116,7 +130,7 @@ public class Generator extends DungeonUtil{
             distance3 = Point.distance(x,y,x3,y3);
             if(OCCUR++ > MAX_RECUR_TRIES){
                 Bukkit.broadcastMessage(ChatColor.RED+"Failed to load Dungeon. OCCUR outbeat MAX_RECUR_TRIES");
-                break;
+                return;
             }
         }while (distance3 < p-1);
 
@@ -131,8 +145,6 @@ public class Generator extends DungeonUtil{
         do{
             prevx = random.nextInt(p);
             prevy = random.nextInt(l);
-            distance1 = Point.distance(x,y,x2,y2);
-            distance2 = Point.distance(x2,y2,x3,y3);
             if(OCCUR++ > MAX_RECUR_TRIES){
                 Bukkit.broadcastMessage(ChatColor.RED+"Failed to load Dungeon. OCCUR outbeat MAX_RECUR_TRIES");
                 return;
@@ -149,7 +161,7 @@ public class Generator extends DungeonUtil{
                 distance2 = Point.distance(x2,y2,x3,y3);
                 if(OCCUR++ > MAX_RECUR_TRIES){
                     Bukkit.broadcastMessage(ChatColor.RED+"Failed to load Dungeon. OCCUR outbeat MAX_RECUR_TRIES");
-                    break;
+                    return;
                 }
             }while (grid[x2][y2]!=null && distance1 < ((double) p /2)-((double) p /4)+1 || distance2 < ((double) p /2)-((double) p /4)+1);
             prevx = x2;
@@ -159,7 +171,7 @@ public class Generator extends DungeonUtil{
 
             if(OCCUR++ > MAX_RECUR_TRIES){
                 Bukkit.broadcastMessage(ChatColor.RED+"Failed to load Dungeon. OCCUR outbeat MAX_RECUR_TRIES");
-                break;
+                return;
             }
         }while(!found);
         grid[x2][y2].setLoc(new Point(x2*32,y2*32));
@@ -168,24 +180,157 @@ public class Generator extends DungeonUtil{
 
     }
 
-    //Create a random location for puzzle, trap, mini boss, and other special room. (P T M Room)
-    void placePTMR(Random random, Room[][] grid, Queue<Point> endpoint){
+    //Place Puzle Trap MiniBoss Room
+
+    //this store the edge and the index of the edge (Point, Index)
+    List<Point> possiblePoint = new ArrayList<>();
+    HashMap<Point, Point> puzzle_map = new HashMap<>();
+     void placePTMR(){
+        int special = 0;
         for (Room[] rooms : grid){
             for(Room room : rooms){
-                if(room.conected_room == 1 && room.type == RoomType.SINGLE) {
-                    room.setSchem_name("trap");
+                if(room==null) continue;
+                if(room.type == RoomType.SINGLE && room.conected_room.values().stream().mapToInt(HashSet::size).sum() == 1) {
+                    if(special >= MAX_LIMIT.get(RoomType.SPECIAL)) return;
+                    room.replace(avaibleRooms.SPECIAL.pop());
                     Bukkit.broadcastMessage("FOUND EDGE!!");
+                    special++;
                 }
             }
         }
+        /**
+         * Broke the room into pieces.
+         * L -> 2x1
+         * BOX -> L
+         * 4x1... -> 3x1...
+         * */
+        if(special < MAX_LIMIT.get(RoomType.SPECIAL)){
+            getPointIntegerHashMap();
+            for (Point body : possiblePoint){
+                if(special >= MAX_LIMIT.get(RoomType.SPECIAL)) return;
+                if(grid[body.x][body.y].type == RoomType.FOUR_X_ONE){
+                    Bukkit.broadcastMessage("replaced from"+grid[body.x][body.y].type+" to");
+                    grid[body.x][body.y].replace(avaibleRooms.THREE.peek().clone());
+                    Bukkit.broadcastMessage(String.valueOf(grid[body.x][body.y].type));
+                    grid[body.x][body.y].body.remove(body);
+                    Point index = grid[body.x][body.y].foundIndexation;
+                    Bukkit.broadcastMessage("the indexation of this shape is "+index.toString());
+                    Point pastepoint = new Point(index.x*32,index.y*32);
+
+                    for (Point shape : grid[body.x][body.y].body){
+                        if (shape == null) break;
+                        int dx = -(index.x-shape.x)*16;
+                        int dy = -(index.y-shape.y)*16;
+                        Bukkit.broadcastMessage("   translating to.. "+dx+" "+dy);
+                        pastepoint.translate(dx,dy);
+                    }
+                    grid[body.x][body.y].setLoc(pastepoint);
+                    Bukkit.broadcastMessage(puzzle_map.get(body).toString());
+
+                    grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
+                    grid[body.x][body.y].setLoc(new Point(body.x*32,body.y*32));
+                    buildEmtyDoor(puzzle_map,body,grid);
+                    Bukkit.broadcastMessage("Same Room? "+grid[body.x][body.y].name);
+                }
+                if(grid[body.x][body.y].type == RoomType.THREE_X_ONE){
+                    Bukkit.broadcastMessage("replaced from"+grid[body.x][body.y].type+" to");
+                    grid[body.x][body.y].replace(avaibleRooms.TWO.peek().clone());
+                    Bukkit.broadcastMessage(String.valueOf(grid[body.x][body.y].type));
+                    grid[body.x][body.y].body.remove(body);
+                    Point index = grid[body.x][body.y].foundIndexation;
+                    Bukkit.broadcastMessage("the indexation of this shape is "+index.toString());
+                    Point pastepoint = new Point(index.x*32,index.y*32);
+
+                    for (Point shape : grid[body.x][body.y].body){
+                        if (shape == null) break;
+                        int dx = -(index.x-shape.x)*16;
+                        int dy = -(index.y-shape.y)*16;
+                        Bukkit.broadcastMessage("   translating to.. "+dx+" "+dy);
+                        pastepoint.translate(dx,dy);
+                    }
+                    grid[body.x][body.y].setLoc(pastepoint);
+                    Bukkit.broadcastMessage(puzzle_map.get(body).toString());
+
+                    grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
+                    grid[body.x][body.y].setLoc(new Point(body.x*32,body.y*32));
+                    buildEmtyDoor(puzzle_map,body,grid);
+                    Bukkit.broadcastMessage("Same Room? "+grid[body.x][body.y].name);
+                }
+                if(grid[body.x][body.y].type == RoomType.TWO_X_ONE){
+                    Bukkit.broadcastMessage("replaced from"+grid[body.x][body.y].type+" to");
+                    grid[body.x][body.y].replace(avaibleRooms.SINGLE.peek().clone());
+                    Bukkit.broadcastMessage(String.valueOf(grid[body.x][body.y].type));
+                    grid[body.x][body.y].body.remove(body);
+                    Point index = grid[body.x][body.y].foundIndexation;
+                    Bukkit.broadcastMessage("the indexation of this shape is "+index.toString());
+
+                    grid[body.x][body.y].setLoc(new Point(index.x*32,index.y*32));
+                    Bukkit.broadcastMessage(puzzle_map.get(body).toString());
+
+                    grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
+                    grid[body.x][body.y].setLoc(new Point(body.x*32,body.y*32));
+                    buildEmtyDoor(puzzle_map,body,grid);
+                    Bukkit.broadcastMessage("Same Room? "+grid[body.x][body.y].name);
+                }
+                special++;
+            }
+        }
     }
-    private void renderDungeon(Room[][] grid){
-        for (int i = 0; i < p; i++) {
+    int[][] dir = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+    Point getNeighbor(int x, int y, Room room){
+        List<Point> sementara = new ArrayList<>();
+         for (int[] dirs : dir){
+             int dx = x + dirs[0];
+             int dy = y + dirs[1];
+
+             boolean right = dx >= 0 && dx < grid.length;
+             boolean left = dy >= 0 && dy < grid[0].length;
+             if(right && left && Objects.equals(grid[dx][dy], room)){
+                 sementara.add(new Point(dx, dy));
+             }
+         }
+        if(sementara.size() == 1) return sementara.getLast();
+        return null;
+    }
+
+    private void getPointIntegerHashMap() {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++){
+                if(grid[i][j]==null) continue;
+                if(grid[i][j].type == RoomType.START || grid[i][j].type == RoomType.MID || grid[i][j].type == RoomType.END || grid[i][j].name == "PATH" || grid[i][j].type == RoomType.SINGLE) continue;
+
+                Point current = new Point(i, j);
+                if(grid[i][j].conected_room.containsKey(current)) {
+                    Bukkit.broadcastMessage("Room at "+grid[i][j].loc+" has conected grid[i![j");
+                    continue;
+                }
+
+                Bukkit.broadcastMessage("Getting "+grid[i][j].name);
+
+                Point neighbor = getNeighbor(i, j, grid[i][j]);
+                if(neighbor!=null){
+                    possiblePoint.add(current);
+                    puzzle_map.put(current,neighbor);
+                }
+                Bukkit.broadcastMessage(current+" to "+getNeighbor(i, j, grid[i][j]));
+
+
+            }
+        }
+    }
+
+    //This gona render the dungeon to the actual shape
+    private void render(){
+        for (Room[] rooms : grid) {
             StringBuilder stringBuilder = new StringBuilder();
-            for (int j = 0; j < l; j++) {
+            for (Room room : rooms) {
                 try{
-                    grid[i][j].loadScheme();
-                    stringBuilder.append(grid[i][j].logo).append(", ");
+                    if(room.type == RoomType.SPECIAL || room.type == RoomType.TRAP || room.type == RoomType.PUZZLE || room.type == RoomType.MINI_BOSS){
+                        Bukkit.broadcastMessage("special with paste point of "+room.loc.toString());
+                    }
+                    room.loadScheme();
+                    //conected_room.values().stream().mapToInt(HashSet::size).sum()
+                    stringBuilder.append(room.logo).append(", ");
                 }catch (NullPointerException e){
                     stringBuilder.append(0).append(", ");
                 }
