@@ -32,7 +32,6 @@ public class GeneratorCommandExecutor implements CommandExecutor, TabCompleter {
             ConfigDungeon.save();
         }if(strings[0].equalsIgnoreCase("tested_jangan_di_coba")){
             p.sendMessage("generating with pos1&2");
-            SetTheBlock.setBlockAT(ConfigDungeon.get().getLocation("pos.pos1"),ConfigDungeon.get().getLocation("pos.pos2"));
         }if(strings[0].equalsIgnoreCase("generatesize")){
             if(!(Integer.parseInt(strings[1])>11) || !(Integer.parseInt(strings[2])>11)){
                 byte panjang = Byte.parseByte(strings[1]);
