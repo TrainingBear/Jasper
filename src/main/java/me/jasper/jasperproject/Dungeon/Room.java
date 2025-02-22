@@ -20,13 +20,11 @@ public class Room extends DungeonUtil{
     @Setter char logo = 'N';
     List<Point> body = new ArrayList<>();
     List<Point> reflected_body = new ArrayList<>();
-    int[][] shape;
     @Setter Point foundIndexation = new Point(0,0);
 
     /**The Point, Point is refer to the grid[][] location. not the actual*/
     HashMap<Point, HashSet<Point>> conected_room = new HashMap<>();
 
-    Room room = this;
 
     Room(String name, RoomType type, int ID, String schem_name, Point loc){
 

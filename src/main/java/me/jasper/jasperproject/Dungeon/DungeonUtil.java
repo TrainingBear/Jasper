@@ -100,7 +100,7 @@ public abstract class DungeonUtil {
             }
 
             if(!step.equals(start) && !step.equals(fairy)){
-                grid[step.x][step.y] = room.clone();
+                grid[step.x][step.y] = room;
                 grid[step.x][step.y].setLoc(new Point(step.x * 32, step.y * 32));
                 history.add(new Point(step.x, step.y));
             }
@@ -129,12 +129,12 @@ public abstract class DungeonUtil {
 
             if(!Objects.equals(d1, d2)){
                 grid[pre_step.x][pre_step.y].addConection(pre_step,step);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[pre_step.x][pre_step.y].name+" --> "+grid[step.x][step.y].name+" = "+grid[pre_step.x][pre_step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
+//                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[pre_step.x][pre_step.y].name+" --> "+grid[step.x][step.y].name+" = "+grid[pre_step.x][pre_step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 grid[step.x][step.y].addConection(step,pre_step);
                 Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[step.x][step.y].name+" --> "+grid[pre_step.x][pre_step.y].name+" = "+grid[step.x][step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
-                this.loadAndPasteSchematic("lockeddoor",
-                        new BlockVector3((pre_step.x*32)+transition.x,
-                                70,(pre_step.y*32)+ transition.y),rotation, false);
+//                this.loadAndPasteSchematic("lockeddoor",
+//                        new BlockVector3((pre_step.x*32)+transition.x,
+//                                70,(pre_step.y*32)+ transition.y),rotation, false);
             }
         }
     }
@@ -152,9 +152,8 @@ public abstract class DungeonUtil {
             pre_step = step;
             d1 = grid[pre_step.x][pre_step.y];
 
-            step = parentMap.get(step);
+            step = parentMap.remove(step);
             if(step == null){
-                Bukkit.broadcastMessage("Stopped at "+pre_step.x+", "+pre_step.y);
                 return;
             }
             d2 = grid[step.x][step.y];
@@ -166,9 +165,6 @@ public abstract class DungeonUtil {
                 this.loadAndPasteSchematic("door",
                     new BlockVector3((pre_step.x*32)+ transition.x,
                             70,(pre_step.y*32)+ transition.y),rotation, false);
-                Bukkit.broadcastMessage("Built door at "+ pre_step.x*32+ transition.x+" "+ " 70 "+(pre_step.y*32)+ transition.y);
-            }else {
-                Bukkit.broadcastMessage("Its the same room! "+pre_step+" == "+step);
             }
         }
     }
@@ -190,7 +186,7 @@ public abstract class DungeonUtil {
      * Finding Random direction and define the shape,
      *  also fill the grid after path found.
      */
-    void random_dir(Rooms avaibleRooms, Generator G, Queue<Point> endpoint, Map<Point,Point> parrentMap) {
+    void random_dir(Rooms avaibleRooms, Generator G, Queue<Point> endpoint, Map<Point,Point> parrentMap, boolean ignoreLimit) {
         int[][] directions;
         int dir;
         while(!G.history.isEmpty()){
@@ -210,8 +206,7 @@ public abstract class DungeonUtil {
             int dy = current.y + directions[dir][1];
             Point neighbor = new Point(dx,dy);
             if(isValid(G.grid,neighbor)){
-                Bukkit.broadcastMessage(ChatColor.DARK_PURPLE+"Found new shape at "+dx+", "+dy);
-                boolean defined = defineRoom(avaibleRooms, G, dx, dy,null, false);
+                boolean defined = defineRoom(avaibleRooms, G, dx, dy,null, false, ignoreLimit);
                 if(!defined){
                     Bukkit.broadcastMessage(ChatColor.RED+"ran out of shape!");
                     break;
@@ -222,7 +217,6 @@ public abstract class DungeonUtil {
                 G.grid[neighbor.x][neighbor.y].addConection(neighbor, current);
                 parrentMap.put(neighbor, current);
             }if(!hasDir(neighbor.x, neighbor.y, G.grid)){
-   //             grid[dx][dy] = new Room("pojokan","p",7,"puzzle", new Point(dx*32, dy*32));
                 neighbor = getValidStartPos(G.grid, G.history);
                 if(neighbor!=null){
                     G.history.add(neighbor);
@@ -232,14 +226,15 @@ public abstract class DungeonUtil {
 
         }
     }
-    private Point getValidStartPos(Room[][] grid, Stack<Point> history) {
+    private Point getValidStartPos(Room[][] grid, Stack<Point> historyori) {
         Point point;
         int x,y;
+        Stack<Point> history = new Stack<>();
+        history = historyori;
         while (!history.isEmpty()){
             point = history.pop();
             x = point.x;
             y = point.y;
-//            Bukkit.broadcastMessage(ChatColor.RED+"Defining "+x+", "+y+"...");
             if(hasDir(x,y,grid)){
                 return point;
             }
@@ -262,7 +257,7 @@ public abstract class DungeonUtil {
         kanan = (j+1 < grid[i].length) &&  grid[i][j+1]==null;
         kiri = (j-1 >= 0) &&  grid[i][j-1]==null;
         int[][] l = new int[4][];
-        if(bawah) { l[0] =directions[0];}
+        if(bawah) { l[0] =directions[0]; }
         if(atas) { l[1] = directions[1];}
         if(kanan) { l[2] = directions[2];}
         if(kiri) { l[3] = directions[3];}
@@ -323,9 +318,8 @@ public abstract class DungeonUtil {
      * @param j is the y.
      * @param g is the Generator.java.
      * */
-    boolean defineRoom(Rooms avaibleRooms, Generator g , int i, int j, Room room, boolean debug) {
+    boolean defineRoom(Rooms avaibleRooms, Generator g , int i, int j, Room room, boolean debug, boolean ignoreLimit) {
 
-        Point pastepoint = new Point(i*32,j*32);
         LinkedList<RoomShape> pick = new LinkedList<>(List.of(RoomShape.values()));
         pick.removeLast();
         Collections.shuffle(pick, g.random);
@@ -334,14 +328,14 @@ public abstract class DungeonUtil {
 
         while (!pick.isEmpty()){
             RoomShape shapes = pick.pop();
-            if(isFit(avaibleRooms, g , i, j, shapes, pastepoint, room, debug)){
+            if(isFit(avaibleRooms, g , i, j, shapes, room, debug)){
 //                Bukkit.broadcastMessage("Found shape! at "+ grid[i][j].loc.x +", "+grid[i][j].loc.y);
                 return true;
             }
         }
         return false;
     }
-    private boolean isFit(Rooms avaibleRooms,Generator G, int i, int j, RoomShape shapes, Point pastepoint, Room room, boolean debug) {
+    private boolean isFit(Rooms avaibleRooms,Generator G, int i, int j, RoomShape shapes,  Room room, boolean debug) {
         HashMap<RoomType, LinkedList<Room>> avb = new HashMap(Map.of(
                 RoomType.TWO_X_ONE, avaibleRooms.TWO,
                 RoomType.THREE_X_ONE, avaibleRooms.THREE,
@@ -349,14 +343,17 @@ public abstract class DungeonUtil {
                 RoomType.BOX, avaibleRooms.BOX,
                 RoomType.L_SHAPE, avaibleRooms.L,
                 RoomType.SINGLE, avaibleRooms.SINGLE
-        )
-        );
+        ));
+        Point pastepoint = new Point(i*32, j*32);
         int x = 0, y = 0, dx, dy;
         int lx, ly;
         boolean valid = true;
         int rotation = 1;
 
         if(G.CURRENT_LIMIT.get(shapes.type) >= G.MAX_LIMIT.get(shapes.type)){
+            if(debug){
+                Bukkit.broadcastMessage("REACHED MAX_LIMIT");
+            }
             return false;
         }
         for (int k = 0; k < shapes.shape.length; k++) {
@@ -371,21 +368,17 @@ public abstract class DungeonUtil {
             }
             if(valid) {
                 G.CURRENT_LIMIT.put(shapes.type,G.CURRENT_LIMIT.get(shapes.type)+1);
-//                Bukkit.broadcastMessage(shapes.get(shape).peek().name+" has limit of "+ CURRENT_LIMIT.get((shapes.get(shape).peek().logo)));
-
                 Room validRoom = avb.get(shapes.type).peek().clone();
                 validRoom.setName(validRoom.name+"_"+k);
                 validRoom.setFoundIndexation(new Point(i, j));
-
-                if(debug){
                     Bukkit.broadcastMessage(validRoom.name+" Shape Found at "+i+", "+j+" with rot of "+k);
-                }
+
                 int[][][] copyOfShape = shapes.copyOfShape;
                 if(room != null){
                     validRoom.setLogo(room.logo);
                 }
                 for (int l = 0; l < shapes.shape[k].length; l++) {
-                    if(validRoom.logo == '#'){
+                    if(validRoom.type == RoomType.BOX){
                         int m = l == 0? l: l-1;
                         x = i + copyOfShape[k][m][0];
                         y = j + copyOfShape[k][m][1];
@@ -413,6 +406,79 @@ public abstract class DungeonUtil {
                 }
                 validRoom.setLoc(pastepoint);
                 validRoom.setRotation((rotation+2)*90);
+                Bukkit.broadcastMessage("Successful load the shape!");
+                return valid;
+            }
+            rotation++;
+        }
+
+        return valid;
+    }
+
+    protected boolean isFit(Rooms avaibleRooms,Generator G, int i, int j, RoomShape shapes,  Room room, boolean debug, boolean ignoreLimit, int rot) {
+        Random random = new Random(354657233254L);
+        HashMap<RoomType, LinkedList<Room>> avb = new HashMap(Map.of(
+                RoomType.TWO_X_ONE, avaibleRooms.TWO,
+                RoomType.THREE_X_ONE, avaibleRooms.THREE,
+                RoomType.FOUR_X_ONE, avaibleRooms.FOUR,
+                RoomType.BOX, avaibleRooms.BOX,
+                RoomType.L_SHAPE, avaibleRooms.L,
+                RoomType.SINGLE, avaibleRooms.SINGLE
+        ));
+        Point pastepoint = new Point(i*32, j*32);
+        int x = 0, y = 0, dx, dy;
+        int lx, ly;
+        boolean valid = true;
+        int rotation = rot;
+
+        if(G.CURRENT_LIMIT.get(shapes.type) >= G.MAX_LIMIT.get(shapes.type) && !ignoreLimit){
+            if(debug){
+                Bukkit.broadcastMessage("REACHED MAX_LIMIT");
+            }
+            return false;
+        }
+        for (int k = 0; k < shapes.shape.length; k++) {
+            valid = true;
+            for (int l = 0; l < shapes.shape[k].length; l++) {
+                    x = i + shapes.shape[k][l][0];
+                    y = j + shapes.shape[k][l][1];
+                    if (!isValid(G.grid, x, y, room)) {
+                        valid = false;
+                        break;
+                    }
+            }
+            if(valid) {
+                G.CURRENT_LIMIT.put(shapes.type,G.CURRENT_LIMIT.get(shapes.type)+1);
+                Room validRoom = avb.get(shapes.type).peek().clone();
+                validRoom.setName(validRoom.name+"_"+k+"_"+random.nextInt(100));
+                validRoom.setFoundIndexation(new Point(i, j));
+
+                if(debug){
+                    Bukkit.broadcastMessage(validRoom.name+" Shape Found at "+i+", "+j+" with rot of "+k);
+                }
+                int[][][] copyOfShape = shapes.copyOfShape;
+                if(room != null){
+                    validRoom.setLogo(room.logo);
+                }
+                for (int l = 0; l < shapes.shape[k].length; l++) {
+                    x = i + copyOfShape[k][l][0];
+                    y = j + copyOfShape[k][l][1];
+
+                    lx = i + shapes.shape[k][l][0];
+                    ly = j + shapes.shape[k][l][1];
+
+                    dx = -(i-x)*16;
+                    dy = -(j-y)*16;
+
+                    pastepoint.translate(dx,dy);
+                    if(debug){
+                        Bukkit.broadcastMessage(" -translated to "+dx+", "+dy);
+                    }
+
+                    G.grid[lx][ly] = validRoom;
+                }
+                validRoom.setLoc(pastepoint);
+                validRoom.setRotation((rotation+2)*90);
                 return valid;
             }
             rotation++;
@@ -421,25 +487,13 @@ public abstract class DungeonUtil {
         return valid;
     }
     static boolean isValid(Room[][] grid, int x, int y, Room room){
-            if(room == null){
-                return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
-            }
-        return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
-                (grid[x][y] != null  && grid[x][y].ID == room.ID);
-    }
-
-//    HashSet<Point> getPossibleSingleRoom(Room room){
-//        HashSet<Point> rooms = new HashSet<>();
-//        int[][] p = room.shape;
-//        for (int i = 0; i < room.shape.length; i++) {
-//            boolean right = i + 1 < p.length;
-//            boolean left = i - 1 > 0;
-//
-//            if(!left || !right){
-//                rooms.add(new Point(p[i][0], p[i][1]));
-//            }
+//        if(x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && debug){
+//            Bukkit.broadcastMessage(grid[x][y].ID +" != "+ room.ID);
 //        }
-//        return rooms;
-//    }
-
+//            if(room == null){
+//                return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
+//            }
+        return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
+                (grid[x][y] == null  || grid[x][y] == room);
+    }
 }
