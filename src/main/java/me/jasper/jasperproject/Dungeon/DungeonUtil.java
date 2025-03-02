@@ -129,9 +129,7 @@ public abstract class DungeonUtil {
 
             if(!Objects.equals(d1, d2)){
                 grid[pre_step.x][pre_step.y].addConection(pre_step,step);
-//                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[pre_step.x][pre_step.y].name+" --> "+grid[step.x][step.y].name+" = "+grid[pre_step.x][pre_step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 grid[step.x][step.y].addConection(step,pre_step);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[step.x][step.y].name+" --> "+grid[pre_step.x][pre_step.y].name+" = "+grid[step.x][step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 this.loadAndPasteSchematic("lockeddoor",
                         new BlockVector3((pre_step.x*32)+transition.x,
                                 70,(pre_step.y*32)+ transition.y),rotation, false);
@@ -329,8 +327,7 @@ public abstract class DungeonUtil {
         while (!pick.isEmpty()){
             RoomShape shapes = pick.pop();
             if(isFit(avaibleRooms, g , i, j, shapes, room, debug)){
-//                Bukkit.broadcastMessage("Found shape! at "+ grid[i][j].loc.x +", "+grid[i][j].loc.y);
-                return true;
+              return true;
             }
         }
         return false;
@@ -371,7 +368,6 @@ public abstract class DungeonUtil {
                 Room validRoom = avb.get(shapes.type).peek().clone();
                 validRoom.setName(validRoom.name+"_"+k);
                 validRoom.setFoundIndexation(new Point(i, j));
-                    Bukkit.broadcastMessage(validRoom.name+" Shape Found at "+i+", "+j+" with rot of "+k);
 
                 int[][][] copyOfShape = shapes.copyOfShape;
 //                if(room != null){

@@ -48,6 +48,8 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor {
         mapView.setScale(MapView.Scale.NORMAL);
         mapView.setTrackingPosition(false);
         mapView.setUnlimitedTracking(false);
+
+        mapView.setLocked(true);
         mapView.setCenterX(0);
         mapView.setCenterZ(0);
 

@@ -61,6 +61,7 @@ public class Generator extends DungeonUtil{
     Stack<Point> history = new Stack<>();
     Map<Point, Point> parrentMap = new HashMap<>();
     Map<Point, Point> parentMap2 = new HashMap<>();
+    Queue<Point> endpoint = new LinkedList<>();
 
     /*
     * THIS IS THE MAIN METHOD
@@ -68,7 +69,6 @@ public class Generator extends DungeonUtil{
     public void generate(){
         grid = new Room[p][l];
         random.setSeed(seed);
-        Queue<Point> endpoint = new LinkedList<>();
 
         TextComponent message = new TextComponent("Dungeon Seed [" +ChatColor.GREEN+ seed +ChatColor.WHITE+"]");
         message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(seed)));
@@ -110,10 +110,11 @@ public class Generator extends DungeonUtil{
 
 
         this.buildDoor(parrentMap, new Point(x,y), new Point(x3,y3), grid);
-        Bukkit.broadcastMessage(ChatColor.RED+"Building Empty Door..");
+        Bukkit.broadcastMessage(ChatColor.RED+"Building Empty Door.. "+endpoint.size());
         for (Point end : endpoint){
             this.buildEmtyDoor(parentMap2, end, grid);
         }
+        Bukkit.broadcastMessage(ChatColor.RED+"Success "+endpoint.size());
 
         startTime = System.nanoTime();
         placePTMR();
@@ -193,7 +194,10 @@ public class Generator extends DungeonUtil{
      void placePTMR(){
          for (int i = 0; i < grid.length; i++) {
              for (int j = 0; j < grid[0].length; j++){
-                    Point neighbor = getNeighbor(i, j, grid[i][j],false);
+                         if(avaibleRooms.SPECIAL.isEmpty()) {
+                            return;
+                         }
+                 Point neighbor = getNeighbor(i, j, grid[i][j],false);
                     if(grid[i][j] == null){
                         if (neighbor != null) {
                             grid[i][j] = avaibleRooms.SPECIAL.pop();
@@ -201,6 +205,7 @@ public class Generator extends DungeonUtil{
                             grid[i][j].addBody(new Point(i, j));
 
                             parentMap2.put(new Point(i, j), neighbor);
+                            endpoint.add(new Point(i, j));
                             buildEmtyDoor(parentMap2, new Point(i, j), grid);
                         }
                         continue;
@@ -239,9 +244,8 @@ public class Generator extends DungeonUtil{
                     case SINGLE -> null;
                     case TEST -> null;
                 };
+                endpoint.add(body);
                 Point point = parentMap2.get(body);
-                Bukkit.broadcastMessage(grid[body.x][body.y].name+" Connected to "+grid[point.x][point.y].name);
-
                 grid[body.x][body.y].replace(new Room("TES",RoomType.L_SHAPE,6669,"null",null, null), true);
                 grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
                 grid[body.x][body.y].addBody(new Point(body.x, body.y));
@@ -251,47 +255,17 @@ public class Generator extends DungeonUtil{
                         shape, grid[point.x][point.y], true,true, 1);
 
                 grid[body.x][body.y].addConection(body,point);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[body.x][body.y].name+" --> "+grid[point.x][point.y].name+" = "+grid[body.x][body.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 grid[point.x][point.y].addConection(point,body);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[point.x][point.y].name+" --> "+grid[body.x][body.y].name+" = "+grid[point.x][point.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
-
 
                 buildEmtyDoor(parentMap2,body,grid);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Door built" +
-                        "+" );
-//                if(box){
-//                    list_room_to_refresh.add(grid[point.x][point.y]);
-//                }
             }
-//            if(avaibleRooms.SPECIAL.isEmpty()) return;
-//            possiblePoint.clear();
-//            for(Room room : list_room_to_refresh){
-//                getEdgeAfterReplacedByBOX(room);
-//            }
-//            Bukkit.broadcastMessage("Size: "+possiblePoint.size());
-//            for (Point body : possiblePoint){
-//                if(avaibleRooms.SPECIAL.isEmpty()) return;
-//                Bukkit.broadcastMessage("getting "+body);
-//                grid[body.x][body.y].replace(new Room("TES",RoomType.L_SHAPE,6669,"null",null, null), true);
-//                grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
-//                grid[body.x][body.y].addBody(new Point(body.x, body.y));
-//                grid[body.x][body.y].setLoc(new Point(body.x*32,body.y*32));
-//
-//                Point point = parentMap2.get(body);
-//                this.isFit(avaibleRooms, this, point.x, point.y,
-//                        RoomShape.TWO_X_ONE, grid[point.x][point.y], false,true, 1);
-//
-//                grid[body.x][body.y].addConection(body,point);
-//                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[body.x][body.y].name+" --> "+grid[point.x][point.y].name+" = "+grid[body.x][body.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
-//                grid[point.x][point.y].addConection(point,body);
-//                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[point.x][point.y].name+" --> "+grid[body.x][body.y].name+" = "+grid[point.x][point.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
-//                buildEmtyDoor(parentMap2,body,grid);
-//            }
         }
     }
+
     int[][] dir = {{0,1}, {0,-1}, {1,0}, {-1,0}};
     int[][] diagonal_dir = {{1,1}, {-1,-1}, {1,-1}, {-1,1}};
-     HashSet<Point> neighborlist = new HashSet<>();
+
+    HashSet<Point> neighborlist = new HashSet<>();
     Point getNeighbor(int x, int y, Room room, boolean isBox){
         List<Point> conected_point_counter = new ArrayList<>();
         int dx = 0;
@@ -334,7 +308,6 @@ public class Generator extends DungeonUtil{
                 boolean left = dy >= 0 && dy < grid[0].length;
                 if(right && left && Objects.equals(grid[dx][dy], room) && !possiblePoint.contains(new Point(dx, dy))){
                     room.addConection(new Point(dx, dy), new Point(x, y));
-                    room.addShard();
                     return  new Point(dx, dy);
                 }
             }
@@ -380,22 +353,6 @@ public class Generator extends DungeonUtil{
                 }
 
 
-            }
-        }
-    }
-    void getEdgeAfterReplacedByBOX(Room target){
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++){
-                if(grid[i][j] == target && !grid[i][j].conected_room.containsKey(new Point(i, j)))
-                {
-                    Point current = new Point(i, j);
-                    Point neighbor = getNeighbor(i, j, grid[i][j], false);
-                    if (neighbor != null) {
-                        possiblePoint.add(current);
-                        parentMap2.put(current, neighbor);
-                        return;
-                    }
-                }
             }
         }
     }
