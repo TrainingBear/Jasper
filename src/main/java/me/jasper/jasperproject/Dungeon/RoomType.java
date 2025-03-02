@@ -1,26 +1,30 @@
 package me.jasper.jasperproject.Dungeon;
 
+import java.awt.*;
+
 public enum RoomType {
-    L_SHAPE,
-    BOX,
-    FOUR_X_ONE,
-    THREE_X_ONE,
-    TWO_X_ONE,
+    L_SHAPE(new Color(165, 42, 42)),
+    BOX(new Color(165, 42, 42)),
+    FOUR_X_ONE(new Color(165, 42, 42)),
+    THREE_X_ONE(new Color(165, 42, 42)),
+    TWO_X_ONE(new Color(165, 42, 42)),
 
 
-    PUZZLE,
-    START,
-    MID,
-    END,
-    TRAP,
-    MINI_BOSS,
-    END2,
+    PUZZLE(Color.blue),
+    START(Color.GREEN),
+    MID(new Color(255, 105, 180)),
+    END(Color.RED),
+    TRAP(Color.ORANGE),
+    MINI_BOSS(Color.YELLOW),
+    END2(Color.BLACK),
 
-    SPECIAL(PUZZLE, TRAP, MINI_BOSS,END2),
-    SINGLE(SPECIAL, START, MID, END),
+    SPECIAL,
+    SINGLE(new Color(165, 42, 42)),
     TEST;
 
+    Color color;
     RoomType(){}
-    RoomType(RoomType... types){
+    RoomType(Color color){
+        this.color = color;
     }
 }

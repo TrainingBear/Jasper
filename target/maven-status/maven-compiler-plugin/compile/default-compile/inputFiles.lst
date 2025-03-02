@@ -22,11 +22,9 @@ D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Dungeon\ExecuteComman
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Dungeon\Rooms.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\Diee.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\LaunchPad.java
-D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Dungeon\SetTheBlock.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\Test.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Listener\AlwaysDayy.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\PlayerJumpBoost.java
-D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Dungeon\RoomHandler.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\SpawnAhhPoint.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\FileConfiguration\LaunchPadConfiguration.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Listener\PlayerListListener.java
@@ -34,6 +32,7 @@ D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Loadschem.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Dungeon\Room.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Listener\InvenAhhListener.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\PlayerFinder.java
+D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Dungeon\DungeonMapRenderer.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Listener\PlotMenuListener.java
 D:\Fun\JasperProject\src\main\java\event\PlayerToggleSprintEvent.java
 D:\Fun\JasperProject\src\main\java\me\jasper\jasperproject\Command\Command2.java
