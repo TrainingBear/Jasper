@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 
 
 public class JasperEntity implements Listener {
@@ -16,19 +15,12 @@ public class JasperEntity implements Listener {
     private EntityType type;
     @Getter private String name;
     @Getter private String health_display;
-    @Getter private ArmorStand mob_nameAttribute;
     @Getter private LivingEntity mob;
 
     public JasperEntity(LivingEntity initializedEntity){
-        mob = initializedEntity;
-        mob_nameAttribute = (ArmorStand) initializedEntity.getPassengers().stream().filter(entity -> entity.getScoreboardTags().contains("MobName")).findFirst().orElse(null);
-        health_display = initializedEntity.getHealth() + " ❤ ";
-        name = mob_nameAttribute.getCustomName().substring(health_display.length()+b4_health_display.length());
     }
-    public JasperEntity(EntityType entity, Location location){
         type = entity;
         this.location = location;
-        mob_nameAttribute = (ArmorStand) JasperEntity.this.location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         init();
     }
 
@@ -44,11 +36,6 @@ public class JasperEntity implements Listener {
         health_display = mob.getHealth() + " ❤ ";
         mob.addScoreboardTag("JasperMob");
         mob_nameAttribute.getScoreboardTags().add("MobName");
-        mob_nameAttribute.setVisible(false);
-        mob_nameAttribute.setCustomNameVisible(true);
-        mob_nameAttribute.setSmall(true);
-        mob_nameAttribute.setGravity(false);
-        mob_nameAttribute.setMarker(true);
         mob.addPassenger(mob_nameAttribute);
         Bukkit.broadcastMessage("MOB INITIALIZED");
     }
@@ -72,26 +59,14 @@ public class JasperEntity implements Listener {
         mob_nameAttribute.remove();
     }
 
-    public JasperEntity setName(String name){
-        this.name = name;
-        mob_nameAttribute.setCustomName(b4_health_display+health_display+ name);
-        return this;
-    }
-
-    public JasperEntity damageThisMob(double damage){
         mob.setHealth(Math.max(0, mob.getHealth() - damage));
         return this;
     }
 
-    public JasperEntity updateHealthDisplay(double damage) {
-        this.health_display = Math.floor(mob.getHealth() - damage)+" ❤ ";
-        mob_nameAttribute.setCustomName(b4_health_display+health_display+ name);
         return this;
     }
 
-    public JasperEntity setHealth(double v){
         mob.setHealth(v);
-        mob_nameAttribute.setCustomName(b4_health_display+health_display+ name);
         return this;
     }
 

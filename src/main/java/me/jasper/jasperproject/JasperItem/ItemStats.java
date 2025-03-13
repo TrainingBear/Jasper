@@ -24,6 +24,9 @@ public class ItemStats {
     int swing_range;
     int true_defense;
 
+    public ItemStats(){
+    }
+
     public ItemStats(int damage, int crit_damage, int crit_chance, int mana, int speed, int attack_speed, int double_attack, int swing_range, int true_defense) {
         this.damage = damage;
         this.crit_damage = crit_damage;
@@ -36,13 +39,19 @@ public class ItemStats {
         this.true_defense = true_defense;
     }
 
-    public ItemStats setCrit_damage(int crit_damage) {
+    public ItemStats setDamage(int Damage) {
+        this.crit_damage = Damage;
+        return this;
+
+    }
+
+    public ItemStats setCrit(int crit_damage) {
         this.crit_damage = crit_damage;
         return this;
 
     }
 
-    public ItemStats setCrit_chance(int crit_chance) {
+    public ItemStats setCritChance(int crit_chance) {
         this.crit_chance = crit_chance;
         return this;
 
@@ -60,25 +69,25 @@ public class ItemStats {
     }
 
 
-    public ItemStats setAttack_speed(int attack_speed) {
+    public ItemStats setAttackSpeed(int attack_speed) {
         this.attack_speed = attack_speed;
         return this;
 
     }
 
-    public ItemStats setDouble_attack(int double_attack) {
+    public ItemStats setDoubleAttack(int double_attack) {
         this.double_attack = double_attack;
         return this;
 
     }
 
-    public ItemStats setSwing_range(int swing_range) {
+    public ItemStats setSwingRange(int swing_range) {
         this.swing_range = swing_range;
         return this;
 
     }
 
-    public ItemStats setTrue_defense(int true_defense) {
+    public ItemStats setTrueDefense(int true_defense) {
         this.true_defense = true_defense;
         return this;
 
@@ -108,7 +117,6 @@ public class ItemStats {
     public List<String> getLore() throws IllegalAccessException {
         List<String> lore = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
-        lore.add("");
         for(Field field : fields){
             if(field.getInt(this) <= 0) continue;
 
