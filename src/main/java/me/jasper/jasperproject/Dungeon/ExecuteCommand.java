@@ -1,6 +1,14 @@
 package me.jasper.jasperproject.Dungeon;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.sk89q.worldedit.math.BlockVector3;
+import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,6 +22,12 @@ import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 
 public class ExecuteCommand extends DungeonUtil implements CommandExecutor {
+    JasperProject plugin;
+    public ExecuteCommand(JasperProject plugin){
+        this.plugin = plugin;
+    }
+
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!(commandSender instanceof Player player)){
@@ -42,19 +56,27 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor {
         }
         long startTime = System.nanoTime();
 
+
+
+        DungeonMapRenderer renderer = new DungeonMapRenderer(room);
         MapView mapView = Bukkit.createMap(player.getWorld());
         mapView.getRenderers().clear();
-        mapView.addRenderer(new DungeonMapRenderer(room));
         mapView.setScale(MapView.Scale.NORMAL);
+        mapView.setCenterX(((room.p * 32)/2)-16);
+        mapView.setCenterZ(((room.l * 32)/2)-16);
+
+        mapView.addRenderer(renderer);
+        mapView.addRenderer(new CursorRenderer(renderer));
         mapView.setTrackingPosition(false);
         mapView.setUnlimitedTracking(false);
-
         mapView.setLocked(true);
-        mapView.setCenterX(0);
-        mapView.setCenterZ(0);
+
+        player.sendMap(mapView);
+
 
         ItemStack dungeonmap = new ItemStack(Material.FILLED_MAP);
         MapMeta mapmeta = (MapMeta) dungeonmap.getItemMeta();
+        mapmeta.setMapId(0);
         mapmeta.setMapView(mapView);
         dungeonmap.setItemMeta(mapmeta);
 
@@ -67,4 +89,15 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor {
 
         return false;
     }
+
+//    public void sendDungeonMap(Player player){
+//        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+//        PacketContainer packet = manager.createPacket(PacketType.Play.Server.MAP);
+//
+//        Wrapper
+//
+//        packet.getIntegers().write(0,0);
+//
+//        byte[] canvas = packet.getByteArrays().read(0);
+//    }
 }

@@ -105,4 +105,5 @@ commands:
     description: Konfigurasi Jam analog di spawn (Hanya admin)
   test:
     description: test
-
+  jpmob:
+    description: justMob

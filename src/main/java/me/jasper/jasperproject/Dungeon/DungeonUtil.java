@@ -116,7 +116,6 @@ public abstract class DungeonUtil {
         Room d1, d2;
         Point pre_step, transition;
         int rotation;
-        Bukkit.broadcastMessage(ChatColor.RED+"Building Locked Door..");
         while (!step.equals(start)) {
             pre_step = step;
             d1 = grid[pre_step.x][pre_step.y];
@@ -401,7 +400,6 @@ public abstract class DungeonUtil {
                 }
                 validRoom.setLoc(pastepoint);
                 validRoom.setRotation((rotation+2)*90);
-                Bukkit.broadcastMessage("Successful load the shape!");
                 return valid;
             }
             rotation++;
@@ -487,6 +485,6 @@ public abstract class DungeonUtil {
                 return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
             }
         return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
-                (grid[x][y] == null  || grid[x][y] == room);
+                (grid[x][y] == room);
     }
 }

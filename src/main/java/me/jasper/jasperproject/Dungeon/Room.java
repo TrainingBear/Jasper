@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class Room extends DungeonUtil{
+public class Room extends DungeonUtil implements Cloneable{
     @Setter String name;
     @Setter RoomType type;
     @Setter int ID;

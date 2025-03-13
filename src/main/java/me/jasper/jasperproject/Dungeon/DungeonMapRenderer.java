@@ -1,10 +1,12 @@
 package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
@@ -16,33 +18,43 @@ import java.util.List;
 
 public class DungeonMapRenderer extends MapRenderer {
     Generator g;
-    final int GAP = 5;
-    final int MARGIN = 5;
-    final int MAX_RECUR_TRIES = 1000;
-    int GRID_PANJANG ;
-    int GRID_LEBAR;
-    int CELL_SIZE;
-    int PRE_SIZE;
-    ArrayList<Room> rooms;
-    int[] DOOR_SIZE;
-
+    private final int GAP = 5;
+    private final int MARGIN = 5;
+    private int MARGINX = MARGIN;
+    private int MARGINY = MARGIN;
+    @Getter private final double CELL_SIZE;
+    private final double PRE_SIZE;
+    private final ArrayList<Room> rooms;
+    private final int[] DOOR_SIZE;
+    @Getter private final double FINAL_CELL_SIZE;
 
     DungeonMapRenderer(Generator generator){
         this.g = generator;
-        GRID_PANJANG = generator.p;
-        GRID_LEBAR = generator.l;
-        PRE_SIZE = (int) (128/Math.sqrt(GRID_PANJANG*GRID_LEBAR));
-        CELL_SIZE = (int) (PRE_SIZE-(double) MARGIN*PRE_SIZE / (48-MARGIN));
+        int GRID_PANJANG = generator.p;
+        int GRID_LEBAR = generator.l;
+        PRE_SIZE = ((double) 128 /Math.max(GRID_PANJANG , GRID_LEBAR));
+        CELL_SIZE = (PRE_SIZE-(double) MARGIN*PRE_SIZE / (48-MARGIN));
         rooms = getRooms(generator);
-        DOOR_SIZE = new int[]{-PRE_SIZE/4, -6};
+        DOOR_SIZE = new int[]{(int) (-PRE_SIZE/4.5), -6};
+        FINAL_CELL_SIZE = CELL_SIZE-GAP;
+        MARGINX = GRID_LEBAR > GRID_PANJANG? (int) (MARGIN + CELL_SIZE / 2) : MARGIN;
+        MARGINY = GRID_PANJANG > GRID_LEBAR? (int) (MARGIN + CELL_SIZE / 2) : MARGIN;
+
     }
+
 
     boolean rendered = false;
 
     @Override
     public void render(@NotNull MapView mapView, @NotNull MapCanvas mapCanvas, @NotNull Player player) {
+
         if(rendered) return;
-        Bukkit.broadcastMessage("Image has been drawn");
+
+//        for (int i = 0; i < 128; i++) {
+//            for (int j = 0; j < 128; j++) {
+//                mapCanvas.setPixelColor(i, j, new Color(255, 255, 255));
+//            }
+//        }
 
         buildDoor(mapCanvas, g.parrentMap,
                 new Point(g.x3, g.y3), true);
@@ -61,12 +73,12 @@ public class DungeonMapRenderer extends MapRenderer {
 
                 drawRoom(mapCanvas,
                         Math.min(L.get(0).x, L.get(2).x), Math.min(L.get(0).y, L.get(2).y),
-                        CELL_SIZE, color,
+                         color,
                         Math.max(L.get(0).x, L.get(2).x), Math.max(L.get(0).y, L.get(2).y),false);
 
                 drawRoom(mapCanvas,
                         Math.min(L.get(1).x, L.get(2).x), Math.min(L.get(1).y, L.get(2).y),
-                        CELL_SIZE, color,
+                         color,
                         Math.max(L.get(1).x, L.get(2).x), Math.max(L.get(1).y, L.get(2).y),false);
                 continue;
             }
@@ -82,20 +94,20 @@ public class DungeonMapRenderer extends MapRenderer {
 
 
             Color color = room.type.color;
-            drawRoom(mapCanvas, minX, minY, CELL_SIZE, color,
+            drawRoom(mapCanvas, minX, minY, color,
                         maxX, maxY, false);
         }
 
 
         rendered = true;
     }
-    
-    void drawRoom(MapCanvas canvas, int startx, int starty, int cellSize, Color color, int endx, int endy, boolean debug){
-        int startX = startx*CELL_SIZE+MARGIN+GAP;
-        int startY = starty*CELL_SIZE+MARGIN+GAP;
 
-        int endX = (endx*(cellSize)) + CELL_SIZE+MARGIN;
-        int endY = (endy*(cellSize)) + CELL_SIZE+MARGIN;
+    private void drawRoom(MapCanvas canvas, int startx, int starty, Color color, int endx, int endy, boolean debug){
+        int startX = (int) (startx*CELL_SIZE+MARGINX+GAP);
+        int startY = (int) (starty*CELL_SIZE+MARGINY+GAP);
+
+        int endX = (int) ((endx*(CELL_SIZE)) + CELL_SIZE+MARGINX);
+        int endY = (int) ((endy*(CELL_SIZE)) + CELL_SIZE+MARGINY);
 
         if (debug) Bukkit.broadcastMessage(ChatColor.GRAY+"    Drew from "+startX+", "+startY+" to "+endX+", "+endY);
         for (int x = startX; x <= endX; x++) {
@@ -105,7 +117,7 @@ public class DungeonMapRenderer extends MapRenderer {
         }
     }
 
-    void buildDoor(MapCanvas canvas, Map<Point, Point> parentMapOri, Point end, boolean locked) {
+    private void buildDoor(MapCanvas canvas, Map<Point, Point> parentMapOri, Point end, boolean locked) {
         Point step = end;
         Room d1, d2;
         Point pre_step, transition;
@@ -122,49 +134,23 @@ public class DungeonMapRenderer extends MapRenderer {
             }
             d2 = g.grid[step.x][step.y];
 
-            transition = new Point(-(pre_step.x - step.x)*CELL_SIZE/2, -(pre_step.y - step.y)*CELL_SIZE/2);
+            transition = new Point((int) (-(pre_step.x - step.x)*CELL_SIZE/2), (int) (-(pre_step.y - step.y)*CELL_SIZE/2));
             rotation = transition.x != 0;
 
             if(!Objects.equals(d1, d2)){
                 drawDoor(canvas,
-                        pre_step.x*(CELL_SIZE)+(CELL_SIZE/2)+transition.x,
-                        pre_step.y*(CELL_SIZE)+(CELL_SIZE/2)+transition.y,
-                        locked? Color.GRAY : g.grid[pre_step.x][pre_step.y].type.color, rotation);
+                        (int) (pre_step.x*(CELL_SIZE)+(CELL_SIZE/2)+transition.x),
+                        (int) (pre_step.y*(CELL_SIZE)+(CELL_SIZE/2)+transition.y),
+                        locked? new Color(54, 11, 11) : g.grid[pre_step.x][pre_step.y].type.color, rotation);
             }
         }
     }
-//    void buildDoor(Map<Point, Point> parentMap, Point start, Point end, MapCanvas canvas, boolean locked) {
-//        Point step = end;
-//        Room d1, d2;
-//        Point pre_step, transition;
-//        boolean rotation;
-//        Bukkit.broadcastMessage(ChatColor.RED+"Building Locked Door..");
-//
-//        while (!step.equals(start)) {
-//            pre_step = step;
-//            d1 = g.grid[pre_step.x][pre_step.y];
-//
-//            step = parentMap.get(step);
-//            d2 = g.grid[step.x][step.y];
-//
-//            transition = new Point(-(pre_step.x - step.x)*CELL_SIZE/2, -(pre_step.y - step.y)*CELL_SIZE/2);
-//            rotation = transition.x != 0;
-//
-//            if(!Objects.equals(d1, d2)){
-//                drawDoor(canvas,
-//                        pre_step.x*(CELL_SIZE)+(CELL_SIZE/2)+transition.x,
-//                        pre_step.y*(CELL_SIZE)+(CELL_SIZE/2)+transition.y,
-//                        locked? Color.GRAY : g.grid[pre_step.x][pre_step.y].type.color, rotation);
-//
-//            }
-//        }
-//    }
 
-    void drawDoor(MapCanvas canvas, int startX, int startY, Color color, boolean rot){
+    private void drawDoor(MapCanvas canvas, int startX, int startY, Color color, boolean rot){
         if(rot) rotate();
 
-        int start = rot? startX+MARGIN+GAP : (int) (startX + MARGIN + GAP + Math.floor((double) (MARGIN * PRE_SIZE) / (128 - MARGIN)));
-        int start2 = rot? (int) (startY + MARGIN + GAP + Math.floor((double) (MARGIN * PRE_SIZE) / (128 - MARGIN))) : startY+MARGIN+GAP;
+        int start = rot? startX+MARGINX+GAP : (int) (startX + MARGINX + GAP + Math.floor((double) (MARGIN * PRE_SIZE) / (128 - MARGIN)));
+        int start2 = rot? (int) (startY + MARGINY + GAP + Math.floor((double) (MARGIN * PRE_SIZE) / (128 - MARGIN))) : startY+MARGINY+GAP;
 
         int end = start+DOOR_SIZE[0];
         int end2 = start2+DOOR_SIZE[1];
@@ -182,7 +168,7 @@ public class DungeonMapRenderer extends MapRenderer {
 //                Color.WHITE);
     }
 
-    ArrayList<Room> getRooms(Generator generator){
+    private ArrayList<Room> getRooms(Generator generator){
         ArrayList<Room> rooms = new ArrayList<>();
         for (int i = 0; i < generator.grid.length; i++) {
             for (int j = 0; j < generator.grid[0].length; j++) {
@@ -193,7 +179,7 @@ public class DungeonMapRenderer extends MapRenderer {
         }
         return rooms;
     }
-    List<Point> sort(List<Point> body){
+    private List<Point> sort(List<Point> body){
         int[][] dirs = {{1,0},{0,1},{-1,0},{0,-1},};
         List<Point> sorted = new ArrayList<>();
         for(Point point : body){
@@ -204,7 +190,6 @@ public class DungeonMapRenderer extends MapRenderer {
                 }
             }
             if(counter>=2){
-                Bukkit.broadcastMessage("MID FOUND");
                 sorted.addLast(point);
                 continue;
             }
@@ -212,7 +197,7 @@ public class DungeonMapRenderer extends MapRenderer {
         }
         return sorted;
     }
-    void rotate(){
+    private void rotate(){
         DOOR_SIZE[0] = DOOR_SIZE[0]+DOOR_SIZE[1];
         DOOR_SIZE[1] = DOOR_SIZE[0]-DOOR_SIZE[1];
         DOOR_SIZE[0] = DOOR_SIZE[0]-DOOR_SIZE[1];

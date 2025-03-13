@@ -9,9 +9,8 @@ public enum RoomType {
     THREE_X_ONE(new Color(165, 42, 42)),
     TWO_X_ONE(new Color(165, 42, 42)),
 
-
-    PUZZLE(Color.blue),
-    START(Color.GREEN),
+    PUZZLE(new Color(140, 11, 191)),
+    START(new Color(7, 173, 21)),
     MID(new Color(255, 105, 180)),
     END(Color.RED),
     TRAP(Color.ORANGE),
