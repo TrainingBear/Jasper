@@ -116,7 +116,6 @@ public abstract class DungeonUtil {
         Room d1, d2;
         Point pre_step, transition;
         int rotation;
-        Bukkit.broadcastMessage(ChatColor.RED+"Building Locked Door..");
         while (!step.equals(start)) {
             pre_step = step;
             d1 = grid[pre_step.x][pre_step.y];
@@ -129,12 +128,10 @@ public abstract class DungeonUtil {
 
             if(!Objects.equals(d1, d2)){
                 grid[pre_step.x][pre_step.y].addConection(pre_step,step);
-//                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[pre_step.x][pre_step.y].name+" --> "+grid[step.x][step.y].name+" = "+grid[pre_step.x][pre_step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 grid[step.x][step.y].addConection(step,pre_step);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[step.x][step.y].name+" --> "+grid[pre_step.x][pre_step.y].name+" = "+grid[step.x][step.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
-//                this.loadAndPasteSchematic("lockeddoor",
-//                        new BlockVector3((pre_step.x*32)+transition.x,
-//                                70,(pre_step.y*32)+ transition.y),rotation, false);
+                this.loadAndPasteSchematic("lockeddoor",
+                        new BlockVector3((pre_step.x*32)+transition.x,
+                                70,(pre_step.y*32)+ transition.y),rotation, false);
             }
         }
     }
@@ -329,8 +326,7 @@ public abstract class DungeonUtil {
         while (!pick.isEmpty()){
             RoomShape shapes = pick.pop();
             if(isFit(avaibleRooms, g , i, j, shapes, room, debug)){
-//                Bukkit.broadcastMessage("Found shape! at "+ grid[i][j].loc.x +", "+grid[i][j].loc.y);
-                return true;
+              return true;
             }
         }
         return false;
@@ -371,12 +367,11 @@ public abstract class DungeonUtil {
                 Room validRoom = avb.get(shapes.type).peek().clone();
                 validRoom.setName(validRoom.name+"_"+k);
                 validRoom.setFoundIndexation(new Point(i, j));
-                    Bukkit.broadcastMessage(validRoom.name+" Shape Found at "+i+", "+j+" with rot of "+k);
 
                 int[][][] copyOfShape = shapes.copyOfShape;
-                if(room != null){
-                    validRoom.setLogo(room.logo);
-                }
+//                if(room != null){
+//                    validRoom.setLogo(room.logo);
+//                }
                 for (int l = 0; l < shapes.shape[k].length; l++) {
                     if(validRoom.type == RoomType.BOX){
                         int m = l == 0? l: l-1;
@@ -402,11 +397,9 @@ public abstract class DungeonUtil {
                     G.history.add(new Point(lx,ly));
 
                     validRoom.body.add(new Point(lx,ly));
-                    validRoom.reflected_body.add(new Point(x,y));
                 }
                 validRoom.setLoc(pastepoint);
                 validRoom.setRotation((rotation+2)*90);
-                Bukkit.broadcastMessage("Successful load the shape!");
                 return valid;
             }
             rotation++;
@@ -476,6 +469,7 @@ public abstract class DungeonUtil {
                     }
 
                     G.grid[lx][ly] = validRoom;
+                    validRoom.body.add(new Point(lx,ly));
                 }
                 validRoom.setLoc(pastepoint);
                 validRoom.setRotation((rotation+2)*90);
@@ -486,14 +480,11 @@ public abstract class DungeonUtil {
 
         return valid;
     }
-    static boolean isValid(Room[][] grid, int x, int y, Room room){
-//        if(x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && debug){
-//            Bukkit.broadcastMessage(grid[x][y].ID +" != "+ room.ID);
-//        }
-//            if(room == null){
-//                return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
-//            }
+    boolean isValid(Room[][] grid, int x, int y, Room room){
+            if(room == null){
+                return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
+            }
         return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
-                (grid[x][y] == null  || grid[x][y] == room);
+                (grid[x][y] == room);
     }
 }

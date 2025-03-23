@@ -111,29 +111,16 @@ public class LaunchPad implements CommandExecutor, Listener {
                 double Z = endZ - startZ;
                 double horizontal = Math.sqrt((X * X) + (Z * Z));
                 final double R = Math.sqrt((horizontal * horizontal) + (Y * Y));
-//                p.sendMessage(ChatColor.RED + "Executing a vector from start-end below:\n" +
-//                        ChatColor.GREEN + "start: " + startX + ", " + startY + ", " + startZ + " & end: " + endX + ", " + endY + ", " + endZ +
-//                        " with distance: " + (int) R + "m!");
+
 
                 Vector direction = end.toVector().subtract(start.toVector()).normalize();
 
-
-
-
-
-//                p.sendMessage(ChatColor.LIGHT_PURPLE + "Launching: " +
-//                        "distance: " + (int) R + "m, velocityX: " + (int) velocityX +
-//                        "m/s, velocityY: " + (int) velocityY + "m/s");
-
-//            Camel launcher = (Camel) p.getWorld().spawnEntity(start, EntityType.CAMEL);
                 launcher = (Pig) getServer().getWorld("spawn").spawnEntity(start, EntityType.PIG);
-//            launcher.setBaby();
                 launcher.addScoreboardTag("launcher");
                 launcher.setInvulnerable(true);
                 launcher.setSaddle(true);
                 launcher.addPassenger(p);
                 launcher.setSilent(true);
-//                p.sendMessage(launcher.getScoreboardTags()+" ini data launcher");
 
 
                 p.playSound(start, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, 1);
@@ -153,8 +140,8 @@ public class LaunchPad implements CommandExecutor, Listener {
 
                     final double velocityX = vx * Math.cos(angleInRadians);
                     final double velocityY = vy * Math.sin(angleInRadians);
-                final double[] tc = {0};
-                double dt = 0.1; // Time increment
+                    final double[] tc = {0};
+                    double dt = 0.1; // Time increment
                     @Override
                     public void run() {
                         double x = velocityX * tc[0];

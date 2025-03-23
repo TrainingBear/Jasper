@@ -59,7 +59,9 @@ public class Generator extends DungeonUtil{
     ));
     Room[][] grid;
     Stack<Point> history = new Stack<>();
+    Map<Point, Point> parrentMap = new HashMap<>();
     Map<Point, Point> parentMap2 = new HashMap<>();
+    Queue<Point> endpoint = new LinkedList<>();
 
     /*
     * THIS IS THE MAIN METHOD
@@ -67,8 +69,6 @@ public class Generator extends DungeonUtil{
     public void generate(){
         grid = new Room[p][l];
         random.setSeed(seed);
-        Map<Point, Point> parrentMap = new HashMap<>();
-        Queue<Point> endpoint = new LinkedList<>();
 
         TextComponent message = new TextComponent("Dungeon Seed [" +ChatColor.GREEN+ seed +ChatColor.WHITE+"]");
         message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(seed)));
@@ -78,24 +78,20 @@ public class Generator extends DungeonUtil{
         long startTime = System.nanoTime();
 
         placeMainDungeon(grid, parrentMap, history);
+        entrance.addBody(new Point(x,y));
+        fairy.addBody(new Point(x2,y2));
+        blood.addBody(new Point(x3,y3));
+
+
 
         //Parsing current path into the actual shaped rooms
         for (int i = 0; i < p; i++) {
             for (int j = 0; j < l; j++) {
                 if(grid[i][j]==null || grid[i][j].type != RoomType.TEST) continue;
-                this.defineRoom(avaibleRooms, this, i, j, path1, false, true);
-                this.defineRoom(avaibleRooms, this, i, j, path2, false, true);
+                this.defineRoom(avaibleRooms, this, i, j, path1, false, false);
+                this.defineRoom(avaibleRooms, this, i, j, path2, false, false);
             }
         }
-//        MAX_LIMIT = new HashMap<>(Map.of(
-//                RoomType.TWO_X_ONE, 0,
-//                RoomType.THREE_X_ONE, 0,
-//                RoomType.FOUR_X_ONE, 10,
-//                RoomType.BOX,  0,
-//                RoomType.L_SHAPE, 0,
-//                RoomType.SINGLE, 0,
-//                RoomType.SPECIAL, 3
-//        ));
 
         //Fill Dungeon room
         this.random_dir(avaibleRooms, this, endpoint, parentMap2, false);
@@ -105,7 +101,6 @@ public class Generator extends DungeonUtil{
 
 
         this.buildDoor(parrentMap, new Point(x,y), new Point(x3,y3), grid);
-        Bukkit.broadcastMessage(ChatColor.RED+"Building Empty Door..");
         for (Point end : endpoint){
             this.buildEmtyDoor(parentMap2, end, grid);
         }
@@ -117,8 +112,6 @@ public class Generator extends DungeonUtil{
         String time2 = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
 
         Bukkit.broadcastMessage(ChatColor.GREEN+"Rendering dungeon took "+time2+" ms");
-        Bukkit.broadcastMessage(ChatColor.GREEN+"parrentmap size: "+parrentMap.size()+" parrentmap2 size: "+parentMap2.size()
-        );
     }
 
     //Place START, MID, END & Generate its path
@@ -186,23 +179,41 @@ public class Generator extends DungeonUtil{
     //this store the edge and the index of the edge (Point, Index)
     List<Point> possiblePoint = new ArrayList<>();
      void placePTMR(){
-        for (Room[] rooms : grid){
-            for(Room room : rooms){
-                if(room==null) continue;
-                if(room.type == RoomType.SINGLE && room.conected_room.values().stream().mapToInt(HashSet::size).sum() == 1) {
-                    if(avaibleRooms.SPECIAL.isEmpty()) return;
-                    room.replace(avaibleRooms.SPECIAL.pop());
-                }
-            }
-        }
+         for (int i = 0; i < grid.length; i++) {
+             for (int j = 0; j < grid[0].length; j++){
+                         if(avaibleRooms.SPECIAL.isEmpty()) {
+                            return;
+                         }
+                 Point neighbor = getNeighbor(i, j, grid[i][j],false);
+                    if(grid[i][j] == null){
+                        if (neighbor != null) {
+                            grid[i][j] = avaibleRooms.SPECIAL.pop();
+                            grid[i][j].setLoc(new Point(i*32, j*32));
+                            grid[i][j].addBody(new Point(i, j));
+
+                            parentMap2.put(new Point(i, j), neighbor);
+                            endpoint.add(new Point(i, j));
+                            buildEmtyDoor(parentMap2, new Point(i, j), grid);
+                        }
+                        continue;
+                    }
+
+                    if(grid[i][j].type == RoomType.SINGLE && grid[i][j].conected_room.values().stream().mapToInt(HashSet::size).sum() == 1) {
+                        if(avaibleRooms.SPECIAL.isEmpty()) return;
+                        grid[i][j].replace(avaibleRooms.SPECIAL.pop(), false);
+                    }
+             }
+         }
+
         /**
          * Broke the room into pieces. | L -> 2x1 | BOX -> L | 4x1... -> 3x1...
          * */
         if(!avaibleRooms.SPECIAL.isEmpty()){
-            List<Room> list_room_to_refresh = new ArrayList<>();
+//            List<Room> list_room_to_refresh = new ArrayList<>();
             getPointIntegerHashMap();
             for (Point body : possiblePoint){
                 if(avaibleRooms.SPECIAL.isEmpty()) return;
+
                 RoomShape shape = switch (grid[body.x][body.y].type){
                     case L_SHAPE -> RoomShape.TWO_X_ONE;
                     case BOX -> RoomShape.L_SHAPE;
@@ -220,73 +231,74 @@ public class Generator extends DungeonUtil{
                     case SINGLE -> null;
                     case TEST -> null;
                 };
-                boolean box = grid[body.x][body.y].type == RoomType.BOX;
+                endpoint.add(body);
                 Point point = parentMap2.get(body);
-                Bukkit.broadcastMessage(grid[body.x][body.y].name+" Connected to "+grid[point.x][point.y].name);
-
-                grid[body.x][body.y].replace(new Room("TES",RoomType.L_SHAPE,6669,"null",null));
+                grid[body.x][body.y].replace(new Room("TES",RoomType.L_SHAPE,6669,"null",null, null), true);
                 grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
+                grid[body.x][body.y].addBody(new Point(body.x, body.y));
                 grid[body.x][body.y].setLoc(new Point(body.x*32,body.y*32));
 
                 this.isFit(avaibleRooms, this, point.x, point.y,
                         shape, grid[point.x][point.y], false,true, 1);
 
                 grid[body.x][body.y].addConection(body,point);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[body.x][body.y].name+" --> "+grid[point.x][point.y].name+" = "+grid[body.x][body.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 grid[point.x][point.y].addConection(point,body);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[point.x][point.y].name+" --> "+grid[body.x][body.y].name+" = "+grid[point.x][point.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
 
-
-                buildEmtyDoor(parentMap2,body,grid);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+"Door built" +
-                        "+" );
-                if(box){
-                    list_room_to_refresh.add(grid[point.x][point.y]);
-                }
-            }
-            if(avaibleRooms.SPECIAL.isEmpty()) return;
-            possiblePoint.clear();
-            for(Room room : list_room_to_refresh){
-                getEdgeAfterReplacedByBOX(room);
-            }
-            Bukkit.broadcastMessage("Size: "+possiblePoint.size());
-            for (Point body : possiblePoint){
-                if(avaibleRooms.SPECIAL.isEmpty()) return;
-                Bukkit.broadcastMessage("getting "+body);
-                grid[body.x][body.y].replace(new Room("TES",RoomType.L_SHAPE,6669,"null",null));
-                grid[body.x][body.y] = avaibleRooms.SPECIAL.pop();
-                grid[body.x][body.y].setLoc(new Point(body.x*32,body.y*32));
-
-                Point point = parentMap2.get(body);
-                this.isFit(avaibleRooms, this, point.x, point.y,
-                        RoomShape.TWO_X_ONE, grid[point.x][point.y], false,true, 1);
-
-                grid[body.x][body.y].addConection(body,point);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[body.x][body.y].name+" --> "+grid[point.x][point.y].name+" = "+grid[body.x][body.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
-                grid[point.x][point.y].addConection(point,body);
-                Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE+ "    "+grid[point.x][point.y].name+" --> "+grid[body.x][body.y].name+" = "+grid[point.x][point.y].conected_room.values().stream().mapToInt(HashSet::size).sum());
                 buildEmtyDoor(parentMap2,body,grid);
             }
         }
     }
+
     int[][] dir = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+    int[][] diagonal_dir = {{1,1}, {-1,-1}, {1,-1}, {-1,1}};
+
+    HashSet<Point> neighborlist = new HashSet<>();
     Point getNeighbor(int x, int y, Room room, boolean isBox){
         List<Point> conected_point_counter = new ArrayList<>();
         int dx = 0;
         int dy = 0;
-        if(isBox){
+        if(neighborlist.contains(new Point(x, y))) return null;
+        if(room==null){
             for (int[] dirs : dir){
-                 dx = x + dirs[0];
-                 dy = y + dirs[1];
+                dx = x + dirs[0];
+                dy = y + dirs[1];
 
                 boolean right = dx >= 0 && dx < grid.length;
                 boolean left = dy >= 0 && dy < grid[0].length;
-                if(right && left && Objects.equals(grid[dx][dy], room) &&
-                        !grid[dx][dy].conected_room.containsKey(new Point(dx, dy))){
-                    conected_point_counter.add(new Point(dx,dy));
+                if(right && left &&
+                        grid[dx][dy] != null && (grid[dx][dy].type == RoomType.L_SHAPE ||
+                        grid[dx][dy].type == RoomType.TWO_X_ONE ||
+                        grid[dx][dy].type == RoomType.SINGLE ||
+                        grid[dx][dy].type == RoomType.THREE_X_ONE ||
+                        grid[dx][dy].type == RoomType.FOUR_X_ONE || grid[dx][dy].type == RoomType.BOX)){
+                    return new Point(dx,dy);
                 }
             }
-            return conected_point_counter.size() == 2 ? conected_point_counter.getLast() : null;
+            return null;
+        }
+        if(isBox){
+            for(int[] dirs : diagonal_dir){
+                dx = x + dirs[0];
+                dy = y + dirs[1];
+
+                if( dx >= 0 && dx < grid.length &&
+                dy >= 0 && dy < grid[0].length && Objects.equals(grid[dx][dy], room) &&
+                possiblePoint.contains(new Point(dx, dy))){
+                    return null;
+                }
+            }
+            for (int[] dirs : dir){
+                dx = x + dirs[0];
+                dy = y + dirs[1];
+
+                boolean right = dx >= 0 && dx < grid.length;
+                boolean left = dy >= 0 && dy < grid[0].length;
+                if(right && left && Objects.equals(grid[dx][dy], room) && !possiblePoint.contains(new Point(dx, dy))){
+                    room.addConection(new Point(dx, dy), new Point(x, y));
+                    return  new Point(dx, dy);
+                }
+            }
+            return null;
         }
          for (int[] dirs : dir){
              dx = x + dirs[0];
@@ -305,15 +317,16 @@ public class Generator extends DungeonUtil{
     private void getPointIntegerHashMap() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++){
-                if(grid[i][j]==null) continue;
+                if(grid[i][j] == null) continue;
                 if(grid[i][j].type == RoomType.START || grid[i][j].type == RoomType.MID || grid[i][j].type == RoomType.END || grid[i][j].name == "PATH" || grid[i][j].type == RoomType.SINGLE) continue;
-
                 Point current = new Point(i, j);
+                Point neighbor;
+
+
                 if(grid[i][j].conected_room.containsKey(current)) {
                     continue;
                 }
-                Point neighbor = getNeighbor(i, j, grid[i][j], true);
-
+                neighbor = getNeighbor(i, j, grid[i][j], true);
                 if(grid[i][j].type ==RoomType.BOX && neighbor!=null){
                     parentMap2.put(current, neighbor);
                     possiblePoint.add(current);
@@ -330,37 +343,21 @@ public class Generator extends DungeonUtil{
             }
         }
     }
-    void getEdgeAfterReplacedByBOX(Room target){
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++){
-                if(grid[i][j] == target && !grid[i][j].conected_room.containsKey(new Point(i, j)))
-                {
-                    Point current = new Point(i, j);
-                    Point neighbor = getNeighbor(i, j, grid[i][j], false);
-                    if (neighbor != null) {
-                        possiblePoint.add(current);
-                        parentMap2.put(current, neighbor);
-                        return;
-                    }
-                }
-            }
-        }
-    }
 
     //This gona render the dungeon to the actual shape
     private void render(){
         for (Room[] rooms : grid) {
-            StringBuilder stringBuilder = new StringBuilder();
+//            StringBuilder stringBuilder = new StringBuilder();
             for (Room room : rooms) {
                 try{
                     room.loadScheme();
                     //conected_room.values().stream().mapToInt(HashSet::size).sum()
-                    stringBuilder.append(room.type).append(", ");
+//                    stringBuilder.append(room.logo).append(", ");
                 }catch (NullPointerException e){
-                    stringBuilder.append(0).append(", ");
+//                    stringBuilder.append(0).append(", ");
                 }
             }
-            Bukkit.broadcastMessage(stringBuilder.toString());
+//            Bukkit.broadcastMessage(stringBuilder.toString());
         }
     }
 }

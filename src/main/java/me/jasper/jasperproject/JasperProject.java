@@ -1,27 +1,30 @@
 package me.jasper.jasperproject;
-import com.sk89q.worldedit.math.BlockVector3;
+import lombok.Getter;
 import me.jasper.jasperproject.Command.*;
-import me.jasper.jasperproject.Dungeon.DungeonUtil;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
-import me.jasper.jasperproject.Dungeon.Generator;
 import me.jasper.jasperproject.FileConfiguration.ConfigDungeon;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.FileConfiguration.LaunchPadConfiguration;
 import me.jasper.jasperproject.Jam.*;
+import me.jasper.jasperproject.JasperEntity.EntityCommand;
+import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDamagedEvent;
+import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListener;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 public final class JasperProject extends JavaPlugin {
 
+    @Getter private static JasperProject plugin;
+
+
     @Override
     public void onEnable() {
+        plugin = this;
+
         LaunchPadConfiguration.setup();
         LaunchPadConfiguration.get().options().copyDefaults();
         LaunchPadConfiguration.save();
@@ -42,12 +45,17 @@ public final class JasperProject extends JavaPlugin {
 
 
         this.getCommand("die").setExecutor(new Diee());
-        getServer().getPluginManager().registerEvents(new Joinmsg(this), this);
-        getServer().getPluginManager().registerEvents(new whenRainCancel(), this);
-        getServer().getPluginManager().registerEvents(new InvenAhhListener(), this);
-        getServer().getPluginManager().registerEvents(new PlotMenuListener(), this);
-        getServer().getPluginManager().registerEvents(new LaunchPad(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerFinder.PlayerListListener(), this);
+        PluginManager PM = Bukkit.getServer().getPluginManager();
+        PM.registerEvents(new Joinmsg(this), this);
+        PM.registerEvents(new whenRainCancel(), this);
+        PM.registerEvents(new InvenAhhListener(), this);
+        PM.registerEvents(new PlotMenuListener(), this);
+        PM.registerEvents(new LaunchPad(this), this);
+        PM.registerEvents(new PlayerFinder.PlayerListListener(), this);
+
+
+        PM.registerEvents(new JSMDeathEventListener(), this);
+        PM.registerEvents(new JSMDamagedEvent(this), this);
         BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
         BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
 
@@ -79,8 +87,9 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
         this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
 
-        this.getCommand("test").setExecutor(new ExecuteCommand());
+        this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
+        this.getCommand("jpmob").setExecutor(new EntityCommand());
 
         System.out.println("Jasper is online now!");
     }
