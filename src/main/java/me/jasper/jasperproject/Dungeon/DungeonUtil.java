@@ -1,5 +1,7 @@
 package me.jasper.jasperproject.Dungeon;
 
+import com.fastasyncworldedit.bukkit.FaweBukkit;
+import com.fastasyncworldedit.core.Fawe;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
@@ -130,7 +132,7 @@ public abstract class DungeonUtil {
                 grid[pre_step.x][pre_step.y].addConection(pre_step,step);
                 grid[step.x][step.y].addConection(step,pre_step);
                 this.loadAndPasteSchematic("lockeddoor",
-                        new BlockVector3((pre_step.x*32)+transition.x,
+                        BlockVector3.at((pre_step.x*32)+transition.x,
                                 70,(pre_step.y*32)+ transition.y),rotation, false);
             }
         }
@@ -160,7 +162,7 @@ public abstract class DungeonUtil {
 
             if(!Objects.equals(d1, d2)){
                 this.loadAndPasteSchematic("door",
-                    new BlockVector3((pre_step.x*32)+ transition.x,
+                    BlockVector3.at((pre_step.x*32)+ transition.x,
                             70,(pre_step.y*32)+ transition.y),rotation, false);
             }
         }
@@ -279,8 +281,10 @@ public abstract class DungeonUtil {
             return;
         }
 
-        try (FileInputStream fis = new FileInputStream(file);
-             ClipboardReader reader = format.getReader(fis)) {
+        try (
+                FileInputStream fis = new FileInputStream(file);
+                ClipboardReader reader = format.getReader(fis)) {
+
             Clipboard clipboard = reader.read();
 
             //rotating

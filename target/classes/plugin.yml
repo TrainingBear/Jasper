@@ -2,6 +2,7 @@ name: JasperProject
 version: '1.0-SNAPSHOT'
 main: me.jasper.jasperproject.JasperProject
 api-version: '1.20'
+depend: [NBTAPI]
 commands:
   p:
     description: Lu bisa ngomong apa saja bebas
@@ -105,5 +106,10 @@ commands:
     description: Konfigurasi Jam analog di spawn (Hanya admin)
   test:
     description: test
-  jpmob:
+  jmob:
     description: justMob
+  jitem:
+    description: justItem
+  animate:
+    description: test
+
