@@ -61,8 +61,8 @@ public class GeneratorCommandExecutor implements CommandExecutor, TabCompleter {
                 return true;
             }p.sendMessage("udah gabisa lebih dari 10 tolol bego");
         }if(strings[0].equalsIgnoreCase("generateroom")){
-            BlockVector3 blockVector3 = new BlockVector3(48,70,48);
-            new Loadschem(p,0,blockVector3);
+            BlockVector3 blockVector3 = BlockVector3.at(48,70,48);
+            Loadschem.load(p,0,blockVector3);
             if(!(Integer.parseInt(strings[1])>11) || !(Integer.parseInt(strings[2])>11)){
                 byte panjang = Byte.parseByte(strings[1]);
                 byte l = Byte.parseByte(strings[2]);

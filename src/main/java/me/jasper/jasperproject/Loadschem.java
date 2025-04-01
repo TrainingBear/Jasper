@@ -14,6 +14,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -21,7 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Loadschem {
-    public Loadschem(Player player,int rotation, BlockVector3 location) {
+    public static  void load(Player player,int rotation, BlockVector3 location) {
         File file = new File("C:\\Users\\user\\AppData\\Roaming\\.feather\\player-server\\servers\\7a1e3607-139e-4341-a6b9-6340739908da\\plugins\\WorldEdit\\schematics\\air.schem");
 
         if (!file.exists()) {
@@ -56,6 +58,49 @@ public class Loadschem {
 
                 Operations.complete(operation);
                 Bukkit.broadcastMessage("Schematic pasted with a ° rotation!");
+                player.sendMessage("Schematic pasted with a ° rotation!");
+            }
+        } catch (IOException | WorldEditException e) {
+            Bukkit.broadcastMessage("Failed to load or paste schematic: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public static  void load(Player player,int rotation, String filename) {
+        File file = new File("C:\\Users\\user\\AppData\\Roaming\\.feather\\player-server\\servers\\7a1e3607-139e-4341-a6b9-6340739908da\\plugins\\JasperProject\\Animations\\test\\"+filename+".schem");
+
+        if (!file.exists()) {
+            player.sendMessage(ChatColor.RED+"Schematic file not found");
+            return;
+        }
+
+        Location location = player.getLocation();
+        BlockVector3 blockVector3 = BlockVector3.at(location.getX(), location.getY(), location.getZ());
+
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+        if (format == null) {
+            Bukkit.broadcastMessage("Invalid schematic format.");
+            return;
+        }
+
+        try (FileInputStream fis = new FileInputStream(file);
+             ClipboardReader reader = format.getReader(fis)) {
+            Clipboard clipboard = reader.read();
+
+            //rotating
+            ClipboardHolder holder = new ClipboardHolder(clipboard);
+            AffineTransform transform = new AffineTransform();
+            transform = transform.rotateY(rotation);
+            holder.setTransform(holder.getTransform().combine(transform));
+
+            try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(BukkitAdapter.adapt(Bukkit.getWorld("test")))
+                    .build()) {
+                Operation operation = holder.createPaste(editSession)
+                        .to(blockVector3)
+                        .ignoreAirBlocks(false)
+                        .build();
+
+                Operations.complete(operation);
                 player.sendMessage("Schematic pasted with a ° rotation!");
             }
         } catch (IOException | WorldEditException e) {

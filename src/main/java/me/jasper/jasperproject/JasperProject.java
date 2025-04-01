@@ -1,29 +1,52 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
-import me.jasper.jasperproject.Command.*;
+import me.jasper.jasperproject.Animation.Animation;
+import me.jasper.jasperproject.Animation.AnimationCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.FileConfiguration.ConfigDungeon;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
+import me.jasper.jasperproject.FileConfiguration.Configurator;
 import me.jasper.jasperproject.FileConfiguration.LaunchPadConfiguration;
 import me.jasper.jasperproject.Jam.*;
 import me.jasper.jasperproject.JasperEntity.EntityCommand;
 import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDamagedEvent;
 import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListener;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
+import me.jasper.jasperproject.JasperItem.Items;
+import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public final class JasperProject extends JavaPlugin {
 
     @Getter private static JasperProject plugin;
-
+    @Getter private static PluginManager PM;
 
     @Override
     public void onEnable() {
         plugin = this;
+        Items.register();
+        try {
+            createDirectories();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        AnimationCommand.loadTabCompleter();
+        loadAnimationsConfig();
 
         LaunchPadConfiguration.setup();
         LaunchPadConfiguration.get().options().copyDefaults();
@@ -44,43 +67,23 @@ public final class JasperProject extends JavaPlugin {
         me.jasper.jasperproject.FileConfiguration.Test.save();
 
 
-        this.getCommand("die").setExecutor(new Diee());
         PluginManager PM = Bukkit.getServer().getPluginManager();
         PM.registerEvents(new Joinmsg(this), this);
-        PM.registerEvents(new whenRainCancel(), this);
+//        PM.registerEvents(new whenRainCancel(), this);
         PM.registerEvents(new InvenAhhListener(), this);
         PM.registerEvents(new PlotMenuListener(), this);
-        PM.registerEvents(new LaunchPad(this), this);
-        PM.registerEvents(new PlayerFinder.PlayerListListener(), this);
-
 
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
-        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
-        BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
+
+        PM.registerEvents(new Animator(), this);
+        PM.registerEvents(new Teleport(), this);
+        PM.registerEvents(new Grappling_Hook(), this);
+
+//        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
+//        BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
 
 
-        this.getCommand("terbang").setExecutor(new Command2.Flyy());
-        this.getCommand("setspeed").setExecutor(new PlayerMovementSpeedTest());
-        this.getCommand("launchpad").setExecutor(new LaunchPad(this));
-        this.getCommand("ngilang").setExecutor(new Command2.Vanishh(this));
-        this.getCommand("p").setExecutor(new Command2());
-        this.getCommand("sapa").setExecutor(new Command2.Sapa());
-        this.getCommand("sp1").setExecutor(new SpawnAhhPoint(this));
-        this.getCommand("s1").setExecutor(new SpawnAhhPoint.Spawnn(this));
-        this.getCommand("r1").setExecutor(new SpawnAhhPoint.ResetSpawnPoint(this));
-        this.getCommand("test").setExecutor(new Test(this));
-        this.getCommand("jasper").setExecutor(new JasperItem());
-        this.getCommand("plot").setExecutor(new PlotMenu());
-        this.getCommand("testpart").setExecutor(new TestParticle(this));
-        this.getCommand("testsound").setExecutor(new TestParticle.TestSound(this));
-        this.getCommand("reload").setExecutor(new Command2.Reload());
-        this.getCommand("playerfinder").setExecutor(new PlayerFinder());
-        this.getCommand("setday").setExecutor(new SetDay(this));
-        this.getCommand("setyear").setExecutor(new SetDay.SetYear(this));
-        this.getCommand("checkday").setExecutor(new SetDay.CheckDay(this));
-        this.getCommand("setmonth").setExecutor(new SetDay.SetMonth(this));
-        this.getCommand("sethour").setExecutor(new SetDay.SetHour(this));
         this.getCommand("summondisplayi").setTabCompleter(new SummonItemDisplay(this));
         this.getCommand("summondisplayi").setExecutor(new SummonItemDisplay(this));
 
@@ -89,7 +92,13 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
-        this.getCommand("jpmob").setExecutor(new EntityCommand());
+        this.getCommand("jmob").setExecutor(new EntityCommand());
+        
+
+        this.getCommand("jitem").setExecutor(new JasperItemCommand());
+        this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
+
+        this.getCommand("animate").setExecutor(new AnimationCommand());
 
         System.out.println("Jasper is online now!");
     }
@@ -98,6 +107,37 @@ public final class JasperProject extends JavaPlugin {
     public void onDisable() {
         Clock.save();
         System.out.println("zzz");
+    }
+
+    public static void registerEvent(Listener e){
+        Bukkit.getServer().getPluginManager().registerEvents(e, JasperProject.getPlugin());
+    }
+
+    private void createDirectories() throws IOException {
+        Files.createDirectories(Path.of(plugin.getDataFolder().getPath() + "\\Animations"));
+    }
+
+    private void loadAnimationsConfig(){
+        File file = new File(plugin.getDataFolder()+"\\Animations");
+        File[] configs = file.listFiles();
+        if(configs==null) return;
+        int total_config = 0;
+        for (File config_ : configs) {
+            File[] configs__ = config_.listFiles((dir, name) -> name.endsWith(".yml"));
+            if(configs__==null) return;
+            for (File config : configs__) {
+                Configurator.getFiles().add(config);
+                FileConfiguration aconfig = YamlConfiguration.loadConfiguration(config);
+                if(aconfig.getBoolean("isRunning")){
+                    String animation_name = Configurator.getFileName(config);
+                    Bukkit.getLogger().info("[JasperProject] "+animation_name+" is running!");
+                    Animation.play(animation_name, true);
+                }
+                Bukkit.getLogger().info("[JasperProject] Loaded "+config.getName());
+                total_config++;
+            }
+        }
+        Bukkit.getLogger().info("[JasperProject] Loaded "+total_config+" configs");
     }
 
 }

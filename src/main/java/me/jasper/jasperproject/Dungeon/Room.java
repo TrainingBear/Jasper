@@ -60,7 +60,7 @@ public class Room extends DungeonUtil implements Cloneable{
         if(isLoaded){
             return;
         }
-        this.loadAndPasteSchematic(this.schem_name, new BlockVector3(loc.x, 70, loc.y), this.rotation, true);
+        this.loadAndPasteSchematic(this.schem_name, BlockVector3.at(loc.x, 70, loc.y), this.rotation, true);
         isLoaded = true;
     }
 

@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -27,13 +28,25 @@ public class JSMDamagedEvent implements Listener {
 
 
     @EventHandler
-    public void onDamaged(EntityDamageByEntityEvent e){
-        if ((e.getDamager() instanceof Player player) && e.getEntity().getScoreboardTags().contains("JasperMob")){
+    public void onDamagedByPlayer(EntityDamageByEntityEvent e){
+        if (
+                (e.getEntity() instanceof LivingEntity mob) &&
+                (e.getDamager() instanceof Player player) &&
+                mob.getScoreboardTags().contains("JasperMob")){
             e.setCancelled(true);
-            JasperEntity.getMob((LivingEntity) e.getEntity())
-                    .updateHealthDisplay(e.getDamage())
-                    .playHurtAnimation(player)
-                    .damageThisMob(e.getDamage());
+            JasperEntity.getMob(mob)
+                    .damageThisMob( (int) e.getDamage())
+                    .updateHealthDisplay()
+                    .playHurtAnimation(player);
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FIRE ||
+                event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK ||
+                event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+            event.setCancelled(true);
         }
     }
 }

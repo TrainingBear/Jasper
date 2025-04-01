@@ -35,7 +35,7 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor {
         }
 
 
-        this.loadAndPasteSchematic("clear",new BlockVector3(48,70,48),0, false);
+        this.loadAndPasteSchematic("clear",BlockVector3.at(48,70,48),0, false);
         Generator room = new Generator();
         if(strings.length == 0){
             room.generate();

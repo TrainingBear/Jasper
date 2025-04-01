@@ -1,19 +1,22 @@
 package me.jasper.jasperproject.JasperItem;
 
-import me.jasper.jasperproject.JasperItem.Abilities.Grappling_Hook;
-import me.jasper.jasperproject.JasperItem.Abilities.Teleport;
-import org.bukkit.Material;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
+import me.jasper.jasperproject.JasperItem.Util.ItemPatcher;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
+import me.jasper.jasperproject.JasperItem.Util.JKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 public class JasperItemCommand implements CommandExecutor, TabCompleter {
 
@@ -22,6 +25,16 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
         if(!(commandSender instanceof Player player)) return false;
 
         switch(strings[0]){
+            case "debug" -> {
+                Items.register();
+            }
+            case "update" -> {
+                try {
+                    ItemPatcher.runJitemUpdater();
+                } catch (IOException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             case "EndGateway" -> {
                 Jitem test;
                 test = Items.EndGateway.clone();
@@ -32,8 +45,14 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 test = Items.grapling.clone();
                 test.send(player);
 
+            }case "test"->{
+                Jitem test;
+                test = Items.test.clone();
+                test.send(player);
+
             }
         }
+
         return true;
     }
 
@@ -41,6 +60,10 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         return List.of(
                 "grapple",
-                "EndGateway");
+                "EndGateway",
+                "WarpGateway",
+                "test",
+                "update"
+                );
     }
 }
