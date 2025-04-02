@@ -16,14 +16,14 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
-public class EndGateway extends ItemAbility {
+public class Warper extends ItemAbility {
     @Getter private Action ActionPlayer;
     int[] target = new int[3];
 
-    public EndGateway(){
+    public Warper(){
         register();
     }
-    public EndGateway(float cooldown){
+    public Warper(float cooldown){
         setCooldown(cooldown);
         addLore(List.of(
                 ChatColor.translateAlternateColorCodes('&',"&6Ability: ")
@@ -31,14 +31,14 @@ public class EndGateway extends ItemAbility {
         ));
 
     }
-    public EndGateway(float cooldown,PlayerInteractEvent e){
+    public Warper(float cooldown, PlayerInteractEvent e){
         setCooldown(cooldown);
         setPlayer(e.getPlayer());
         this.ActionPlayer = e.getAction();
     }
 
     @EventHandler
-    public void EndGatewayListener(EndGateway e){
+    public void WarperListener(Warper e){
         if(e.getActionPlayer().equals(Action.LEFT_CLICK_AIR)||e.getActionPlayer().equals(Action.LEFT_CLICK_BLOCK)){
             Sign signGUI = (Sign) new Location(Bukkit.getWorld(e.getPlayer().getWorld().getUID()),-3710, 75, 1667).getBlock();
             if(signGUI == null){
@@ -62,7 +62,7 @@ public class EndGateway extends ItemAbility {
 
             PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getPlayer().getInventory().getItemInMainHand(), this.getKey());
 
-            Bukkit.getPluginManager().callEvent(new EndGateway(
+            Bukkit.getPluginManager().callEvent(new Warper(
                     itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),
                     e
             ));

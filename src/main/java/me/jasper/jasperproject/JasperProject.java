@@ -14,7 +14,7 @@ import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListen
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
 import me.jasper.jasperproject.JasperItem.Items;
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
@@ -26,12 +26,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public final class JasperProject extends JavaPlugin {
 
@@ -80,17 +80,18 @@ public final class JasperProject extends JavaPlugin {
 
         PM.registerEvents(new Animator(), this);
         PM.registerEvents(new Teleport(), this);
+        PM.registerEvents(new Warper(), this);
         PM.registerEvents(new Grappling_Hook(), this);
 
 //        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
 //        BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
 
 
-        this.getCommand("summondisplayi").setTabCompleter(new SummonItemDisplay(this));
-        this.getCommand("summondisplayi").setExecutor(new SummonItemDisplay(this));
+        Objects.requireNonNull(this.getCommand("summondisplayi")).setTabCompleter(new SummonItemDisplay(this));
+        Objects.requireNonNull(this.getCommand("summondisplayi")).setExecutor(new SummonItemDisplay(this));
 
-        this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
-        this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
+        Objects.requireNonNull(Objects.requireNonNull(this.getCommand("dungeon"))).setTabCompleter(new GeneratorCommandExecutor(this));
+        Objects.requireNonNull(this.getCommand("dungeon")).setExecutor(new GeneratorCommandExecutor(this));
 
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));

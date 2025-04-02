@@ -47,7 +47,9 @@
             <artifactId>maven-jar-plugin</artifactId>
             <version>2.3.1</version>
             <configuration>
-                <outputDirectory>C:\Users\user\AppData\Roaming\.feather\player-server\servers\7a1e3607-139e-4341-a6b9-6340739908da\plugins</outputDirectory>
+                <outputDirectory>
+                    D:\.feather\player-server\servers\87de4fd9-af34-4ce5-9034-be8bede85581\plugins
+                </outputDirectory>
             </configuration>
         </plugin>
     </plugins>

@@ -3,7 +3,7 @@ me\jasper\jasperproject\JasperItem\ItemAttributes\ItemType.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Teleport.class
 me\jasper\jasperproject\JasperItem\JasperItemCommand.class
 me\jasper\jasperproject\Jam\ClockUtility.class
-me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\EndGateway.class
+me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Warper.class
 me\jasper\jasperproject\Listener\Joinmsg.class
 me\jasper\jasperproject\JasperItem\Util\ItemHandler.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDamagedEvent.class
@@ -38,6 +38,7 @@ me\jasper\jasperproject\Listener\PlayerListListener.class
 me\jasper\jasperproject\JasperEntity\JasperEntity.class
 me\jasper\jasperproject\Listener\AlwaysDayy.class
 me\jasper\jasperproject\Jam\ClockUtility$1.class
+me\jasper\jasperproject\Animation\Animation$1ref.class
 me\jasper\jasperproject\Loadschem.class
 me\jasper\jasperproject\Jam\ClockConfigurationForCommands.class
 me\jasper\jasperproject\Dungeon\DungeonUtil.class
@@ -50,7 +51,6 @@ me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\JasperItem\Util\ItemPatcher.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand.class
-Main.class
 me\jasper\jasperproject\Dungeon\RoomShape.class
 me\jasper\jasperproject\Animation\Animation$1temp.class
 me\jasper\jasperproject\TabCompleter\SummonItemDisplay.class
@@ -59,7 +59,6 @@ me\jasper\jasperproject\Dungeon\Room.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.class
 me\jasper\jasperproject\FileConfiguration\Configurator.class
 me\jasper\jasperproject\Animation\Animation$1.class
-ItemStats_test.class
 me\jasper\jasperproject\JasperItem\Util\ItemUtils.class
 me\jasper\jasperproject\Listener\InvenAhhListener$VanishJoinListener.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute$gemType.class
@@ -74,6 +73,5 @@ me\jasper\jasperproject\Jam\Clock.class
 me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
 me\jasper\jasperproject\Animation\Animation$2.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.class
-me\jasper\jasperproject\Animation\Animation$2temp.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.class
 me\jasper\jasperproject\FileConfiguration\JasperConfiguratorException.class

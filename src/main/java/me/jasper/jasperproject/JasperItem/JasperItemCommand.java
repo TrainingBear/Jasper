@@ -39,17 +39,24 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 Jitem test;
                 test = Items.EndGateway.clone();
                 test.send(player);
+                player.sendMessage("Sending "+strings[0]+" item");
+            }
+            case "WarpGateway" ->{
+                Jitem test;
+                test = Items.WarpGateway.clone();
+                test.send(player);
+                player.sendMessage("Sending "+strings[0]+" item");
             }
             case "grapple"->{
                 Jitem test;
                 test = Items.grapling.clone();
                 test.send(player);
-
+                player.sendMessage("Sending "+strings[0]+" item");
             }case "test"->{
                 Jitem test;
                 test = Items.test.clone();
                 test.send(player);
-
+                player.sendMessage("Sending "+strings[0]+" item");
             }
         }
 

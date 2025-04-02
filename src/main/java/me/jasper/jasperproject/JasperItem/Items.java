@@ -1,9 +1,9 @@
 package me.jasper.jasperproject.JasperItem;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.EndGateway;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
@@ -31,6 +31,18 @@ public final class Items {
                 ENCHANT.SharpnesV2.addLevel(),ENCHANT.SharpnesV2.addLevel()));
         EndGateway.getAbilities().add(new Teleport(10, 0.2f));
         EndGateway.update();
+    }
+    public static final Jitem WarpGateway;
+    static {
+        WarpGateway = new Jitem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        WarpGateway.getStats()
+                .setBaseDamage(50)
+                .setBaseMana(65)
+                .setBaseSpeed(18)
+                .setBaseAttackSpeed(10);
+        WarpGateway.getAbilities().add(new Teleport(15, 0.2f));
+        WarpGateway.getAbilities().add(new Warper(30));
+        WarpGateway.update();
     }
     public static final Jitem grapling;
     static {
