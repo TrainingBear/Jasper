@@ -1,39 +1,17 @@
 package me.jasper.jasperproject.Animation;
 
-import com.fastasyncworldedit.core.extent.clipboard.SimpleClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.*;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.CuboidRegion;
+
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.regions.selector.CuboidRegionSelector;
-import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.session.SessionManager;
-import com.sk89q.worldedit.world.World;
-import me.jasper.jasperproject.Dungeon.DungeonUtil;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
 import me.jasper.jasperproject.FileConfiguration.JasperConfiguratorException;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.Items;
-import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperProject;
-import me.jasper.jasperproject.Loadschem;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,9 +19,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,41 +157,31 @@ public class AnimationCommand implements CommandExecutor, TabCompleter {
             case "list":
                 player.sendMessage(ChatColor.DARK_GRAY+"List of currently running animations:");
                 for (String string : Animation.getRunningTask().keySet()) {
-//                    Component confirm = net.kyori.adventure.text.Component.text();
+                    Component component = getComponent(string);
 
-//                    TextComponent confirm = new TextComponent(ChatColor.RED+""+ChatColor.BOLD+"CLICK THIS IF U REALLY WANT TO DELETE "+string);
-//                    confirm.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-//                            "animate stop "+string));
-
-                    TextComponent delete = new TextComponent(ChatColor.RED+" <delete> ");
-                    delete.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new Text(ChatColor.GREEN+"Click to stop this animation!")));
-                    delete.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "animate stop "+string));
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "say This is a console command!");
-
-                    TextComponent edit = new TextComponent(ChatColor.GREEN+" <edit> ");
-                    edit.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new Text(ChatColor.GREEN+"Click to edit this animation!")));
-                    edit.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
-                            "/animate edit "+string+" "));
-
-                    TextComponent stop = new TextComponent(ChatColor.GRAY+" [stop] ");
-                    edit.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new Text(ChatColor.GREEN+"Click to edit this animation!")));
-                    edit.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "/animate stop "+string));
-
-                    edit.addExtra(delete);
-                    edit.addExtra(ChatColor.DARK_AQUA+""+ChatColor.BOLD+string);
-                    edit.addExtra(stop);
-                    player.spigot().sendMessage(edit);
                 }
                 break;
         }
         return false;
     }
 
+    private @NotNull Component getComponent(String string) {
+        MiniMessage parser = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.color())
+                        .resolver(StandardTags.decorations())
+                        .resolver(StandardTags.clickEvent())
+                        .resolver(StandardTags.hoverEvent())
+                        .resolver(StandardTags.reset())
+
+                        .build()
+                )
+                .build();
+        Component parsed = parser.deserialize(
+                "<click:suggest_command:'/animate edit +name '><hover:show_text:'<green>Click to edit!</green>'><dark_green> [EDIT]</dark_green></hover></click><click:run_command:'/animate stop +name'><hover:show_text:'<red>Click to stop this animation!</red>'><red> [STOP] </red></hover></click><click:run_command:'/animate delete +name'><hover:show_text:'<dark_red>Click to delete your animation</dark_red>'><b><i><dark_red>[DELETE]</dark_red></i> </b></hover></click><dark_gray><gold><b>  +name</b></gold></dark_gray> "
+        );
+        return parsed;
+    }
 
     private static final Map<String, List<String>> TabCompleter = new HashMap<>();
 

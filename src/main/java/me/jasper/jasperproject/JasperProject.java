@@ -19,12 +19,14 @@ import me.jasper.jasperproject.JasperItem.Items;
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,8 +107,9 @@ public final class JasperProject extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.getLogger().info("[JasperProject] Disabling...");
         Clock.save();
-        System.out.println("zzz");
+        this.getLogger().info("[JasperProject] this plugin has been disabled!");
     }
 
     public static void registerEvent(Listener e){
