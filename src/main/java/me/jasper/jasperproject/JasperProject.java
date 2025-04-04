@@ -1,7 +1,13 @@
 package me.jasper.jasperproject;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
 import me.jasper.jasperproject.Animation.AnimationCommand;
+import me.jasper.jasperproject.Animation.PaperAnimationCommand;
+import me.jasper.jasperproject.Commands.CommandManager;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.FileConfiguration.ConfigDungeon;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
@@ -20,6 +26,8 @@ import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
+import me.jasper.jasperproject.Util.SignGUI;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
