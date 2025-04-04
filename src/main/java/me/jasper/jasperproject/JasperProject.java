@@ -1,16 +1,7 @@
 package me.jasper.jasperproject;
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
-import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
 import me.jasper.jasperproject.Animation.AnimationCommand;
-import me.jasper.jasperproject.Animation.PaperAnimationCommand;
-import me.jasper.jasperproject.Commands.CommandManager;
-import me.jasper.jasperproject.Commands.JasperCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.FileConfiguration.ConfigDungeon;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
@@ -29,7 +20,6 @@ import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -47,10 +37,13 @@ public final class JasperProject extends JavaPlugin {
 
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
+    @Getter private static SignGUI signGui;
 
     @Override
     public void onEnable() {
         plugin = this;
+        signGui = new SignGUI(this);
+
         Items.register();
         try {
             createDirectories();
@@ -115,7 +108,6 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
         this.getCommand("jmob").setExecutor(new EntityCommand());
-        
 
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
@@ -129,6 +121,7 @@ public final class JasperProject extends JavaPlugin {
     public void onDisable() {
         this.getLogger().info("[JasperProject] Disabling...");
         Clock.save();
+        SignGUI.destroy();
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
     }
 

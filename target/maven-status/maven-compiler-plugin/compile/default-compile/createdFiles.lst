@@ -30,6 +30,7 @@ me\jasper\jasperproject\JasperBootstrap.class
 me\jasper\jasperproject\Animation\AnimationCommand.class
 me\jasper\jasperproject\Commands\CommandManager.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapView$Scale.class
+me\jasper\jasperproject\Util\SignGUI$SignGUIListener.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapView.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Grappling_Hook.class
 me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDeathEvent.class
@@ -53,6 +54,7 @@ me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\JasperItem\Util\ItemPatcher.class
 me\jasper\jasperproject\FileConfiguration\Editor.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute.class
+me\jasper\jasperproject\Util\SignGUI$PacketListener.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand.class
 me\jasper\jasperproject\Dungeon\RoomShape.class
 me\jasper\jasperproject\Animation\Animation$1temp.class
@@ -79,4 +81,5 @@ me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
 me\jasper\jasperproject\Animation\Animation$2.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.class
+me\jasper\jasperproject\Util\SignGUI.class
 me\jasper\jasperproject\FileConfiguration\JasperConfiguratorException.class
