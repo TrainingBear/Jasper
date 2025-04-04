@@ -20,7 +20,6 @@ import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
-import me.jasper.jasperproject.Util.SignGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,22 +50,31 @@ public final class JasperProject extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        AnimationCommand.loadTabCompleter();
+        Animation.loadListFileTabCompleter();
         loadAnimationsConfig();
 
-        LaunchPadConfiguration.setup();
-        LaunchPadConfiguration.get().options().copyDefaults();
-        LaunchPadConfiguration.save();
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("Test").then(Commands.literal("2"));
 
-        ConfigDungeon.setup();
-        ConfigDungeon.get().options().copyDefaults();
-        ConfigDungeon.save();
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            event.registrar().register(
+                    Commands.literal("testpapercommand")
+                            .executes(ctx -> {
+                                ctx.getSource().getSender().sendMessage(Component.text("Command executed!"));
+                                return 1;
+                            })
+                            .build()
+            );
+        });
 
-        saveDefaultConfig();
-
-        Clock.setup();
-        System.out.println("Loaded Clock Config: " + Clock.get().getKeys(true));
-        Clock.save();
+        CommandManager.getInstance().register(() ->
+                Commands.literal("testpaperCommand")
+//                        .executes(c->
+//                {
+//                    c.getSource().getSender().sendMessage("you execute this command");
+//                    return Command.SINGLE_SUCCESS;
+//                })
+    );
+        CommandManager.getInstance().register(new PaperAnimationCommand());
 
         me.jasper.jasperproject.FileConfiguration.Test.setup();
         me.jasper.jasperproject.FileConfiguration.Test.get().options().copyDefaults(true);
@@ -104,7 +112,7 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
 
-        this.getCommand("animate").setExecutor(new AnimationCommand());
+//        this.getCommand("animate").setExecutor(new AnimationCommand());
 
         System.out.println("Jasper is online now!");
     }

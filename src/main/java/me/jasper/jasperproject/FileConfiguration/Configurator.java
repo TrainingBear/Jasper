@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * YAML CONFIGURATOR
  * */
-public class Configurator {
+public abstract class Configurator {
     private static final List<File > file = new ArrayList<>();
     private static final List<FileConfiguration> config = new ArrayList<>();
 
@@ -133,3 +133,4 @@ public class Configurator {
     }
 
 }
+

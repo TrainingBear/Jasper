@@ -1,7 +1,6 @@
 package me.jasper.jasperproject.JasperEntity.MobEvent;
 
 import lombok.Getter;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
