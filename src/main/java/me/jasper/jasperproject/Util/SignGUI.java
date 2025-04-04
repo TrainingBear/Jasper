@@ -41,11 +41,11 @@ public final class SignGUI implements Listener {
     }
 
     public static void open(Player player, @NotNull String[] inputText,Material material, SignGUIListener response) {
-        if((player.getLocation().add(0,-2,0).getBlockY() < 320 && player.getLocation().add(0,-2,0).getBlockY() > -64)
-            && player.getLocation().add(0,-1,0).getBlock().getType().isSolid())
-        {
-            if((player.getLocation().add(0,-3,0).getBlockY() < 320
-                    && player.getLocation().add(0,-3,0).getBlockY() > -64)) signLoc = player.getLocation().add(0,-3,0);
+        if((player.getLocation().add(0,-2,0).getBlockY() <= 320 && player.getLocation().add(0,-2,0).getBlockY() >= -64)
+            && player.getLocation().add(0,-1,0).getBlock().getType().isSolid()) {
+
+            if((player.getLocation().add(0,-3,0).getBlockY() <= 320
+                    && player.getLocation().add(0,-3,0).getBlockY() >= -64)) signLoc = player.getLocation().add(0,-3,0);
 
             else signLoc = player.getLocation().add(0,-2,0);
         }
@@ -53,10 +53,8 @@ public final class SignGUI implements Listener {
             Location behindPlayer = player.getLocation().subtract(player.getLocation().getDirection().normalize().multiply(4))
                     .getBlock().getLocation();
 
-            if(behindPlayer.getBlockY() > 320 && behindPlayer.getBlockY() < -64) behindPlayer = player.getLocation()
-                        .subtract(player.getLocation().getDirection().normalize().multiply(4).setY(0)).getBlock().getLocation();
-
-            if(behindPlayer.getBlockY() > 320 && behindPlayer.getBlockY() < -64) signLoc = null;
+            if(behindPlayer.getBlockY() >= 320 || behindPlayer.getBlockY() <= -64) behindPlayer.setY(player.getLocation().getY());
+            if(behindPlayer.getBlockY() >= 320 || behindPlayer.getBlockY() <= -64) signLoc = null;
             else signLoc = behindPlayer;
         }
 
