@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class ItemAbility extends Event implements Cancellable, Listener {
+    //ini key nya gw buat berdasarkan nama class ability yang dibuat, jadi jangan di ubah2.
+    // yaudah tinggal sebut nama classnya trs get keynya
     @Getter protected final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());
+
     protected final HashMap<UUID, Long> cooldowns = new HashMap<>();
     @Getter protected final static HandlerList handlerList = new HandlerList();
     protected boolean cancelled = false;
@@ -96,7 +99,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         this.showCooldown = showCooldown;
 
         if (cooldowns.containsKey(player.getUniqueId())) {
-            float current = round(((System.currentTimeMillis() - cooldowns.get(player.getUniqueId())) / 1000.0),1);
+            float current = (System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) ) / 1000.0f;
             if(current >= cooldown){
                 cooldowns.remove(player.getUniqueId());
                 cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
@@ -107,7 +110,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
             if(!showCooldown) return;
             player.sendMessage(
                     ChatColor.RED + "" + ChatColor.BOLD + "COOLDOWN!" + ChatColor.RESET + ChatColor.RED + " Please wait "
-                    + current + " seconds!"
+                    + round((cooldown - current),1)+ " seconds!"
             );
 
             return;

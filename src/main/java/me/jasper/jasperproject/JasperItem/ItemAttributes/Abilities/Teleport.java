@@ -42,6 +42,9 @@ public class Teleport extends ItemAbility implements Listener {
     //This Event Listener
     @EventHandler
     public void onTeleport(Teleport e){
+        if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
+                e.getPlayer().getInventory().getItemInMainHand(), new Warper().getKey())
+        ) return;
         applyCooldown(e, false);
         if(e.isCancelled()) return;
         Player player = e.getPlayer();

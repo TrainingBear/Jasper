@@ -20,6 +20,7 @@ import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
+import me.jasper.jasperproject.Util.SignGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,10 +38,13 @@ public final class JasperProject extends JavaPlugin {
 
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
+    @Getter private static SignGUI signGui;
 
     @Override
     public void onEnable() {
         plugin = this;
+        signGui = new SignGUI(this);
+
         Items.register();
         try {
             createDirectories();
@@ -96,7 +100,6 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
         this.getCommand("jmob").setExecutor(new EntityCommand());
-        
 
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
@@ -110,6 +113,7 @@ public final class JasperProject extends JavaPlugin {
     public void onDisable() {
         this.getLogger().info("[JasperProject] Disabling...");
         Clock.save();
+        SignGUI.destroy();
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
     }
 

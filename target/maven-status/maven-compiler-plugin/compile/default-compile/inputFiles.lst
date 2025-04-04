@@ -27,10 +27,12 @@ C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Jasp
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\FileConfiguration\Configurator.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Listener\AlwaysDayy.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\RoomType.java
+C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Warper.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperProject.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Teleport.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\FileConfiguration\JasperConfiguratorException.java
+C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Util\SignGUI.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Animation\EditListener.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperEntity\EntityCommand.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.java
@@ -49,7 +51,6 @@ C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Jasp
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Rooms.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemHandler.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.java
-C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\EndGateway.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperEntity\JasperEntity.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.java
 C:\Users\ASUS\OneDrive\Desktop\Jasper\src\main\java\me\jasper\jasperproject\Util\SummonCustomEntity.java

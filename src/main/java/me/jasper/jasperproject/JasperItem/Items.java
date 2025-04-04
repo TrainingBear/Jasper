@@ -34,14 +34,14 @@ public final class Items {
     }
     public static final Jitem WarpGateway;
     static {
-        WarpGateway = new Jitem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        WarpGateway = new Jitem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
         WarpGateway.getStats()
                 .setBaseDamage(50)
                 .setBaseMana(65)
                 .setBaseSpeed(18)
                 .setBaseAttackSpeed(10);
-        WarpGateway.getAbilities().add(new Teleport(15, 0.2f));
-        WarpGateway.getAbilities().add(new Warper(30));
+        WarpGateway.getAbilities().add(new Teleport(10, 0.2f));
+        WarpGateway.getAbilities().add(new Warper(2));
         WarpGateway.update();
     }
     public static final Jitem grapling;
