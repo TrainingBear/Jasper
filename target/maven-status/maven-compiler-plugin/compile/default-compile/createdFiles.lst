@@ -26,7 +26,9 @@ me\jasper\jasperproject\JasperItem\Jitem.class
 me\jasper\jasperproject\JasperItem\Util\JKey.class
 me\jasper\jasperproject\FileConfiguration\ConfigDungeon.class
 me\jasper\jasperproject\Listener\whenRainCancel.class
+me\jasper\jasperproject\JasperBootstrap.class
 me\jasper\jasperproject\Animation\AnimationCommand.class
+me\jasper\jasperproject\Commands\CommandManager.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapView$Scale.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapView.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Grappling_Hook.class
@@ -49,6 +51,7 @@ me\jasper\jasperproject\Dungeon\Rooms.class
 me\jasper\jasperproject\FileConfiguration\LaunchPadConfiguration.class
 me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\JasperItem\Util\ItemPatcher.class
+me\jasper\jasperproject\FileConfiguration\Editor.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand.class
 me\jasper\jasperproject\Dungeon\RoomShape.class
@@ -58,9 +61,11 @@ me\jasper\jasperproject\Jam\ClockUtility$1$1.class
 me\jasper\jasperproject\Dungeon\Room.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.class
 me\jasper\jasperproject\FileConfiguration\Configurator.class
+me\jasper\jasperproject\Animation\PaperAnimationCommand.class
 me\jasper\jasperproject\Animation\Animation$1.class
 me\jasper\jasperproject\JasperItem\Util\ItemUtils.class
 me\jasper\jasperproject\Listener\InvenAhhListener$VanishJoinListener.class
+me\jasper\jasperproject\Commands\JasperCommand.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute$gemType.class
 me\jasper\jasperproject\Animation\Frame.class
 me\jasper\jasperproject\JasperEntity\EntityCommand.class

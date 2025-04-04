@@ -110,6 +110,4 @@ commands:
     description: justMob
   jitem:
     description: justItem
-  animate:
-    description: test
 
