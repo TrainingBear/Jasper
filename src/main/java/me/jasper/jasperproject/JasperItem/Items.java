@@ -41,7 +41,7 @@ public final class Items {
                 .setBaseSpeed(18)
                 .setBaseAttackSpeed(10);
         WarpGateway.getAbilities().add(new Teleport(10, 0.2f));
-        WarpGateway.getAbilities().add(new Warper(2));
+        WarpGateway.getAbilities().add(new Warper(20,20));
         WarpGateway.update();
     }
     public static final Jitem grapling;

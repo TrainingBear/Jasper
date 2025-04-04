@@ -50,15 +50,16 @@ public final class SignGUI implements Listener {
             else signLoc = player.getLocation().add(0,-2,0);
         }
         else{
-            Location behindPlayer = player.getLocation()
-                    .subtract(player.getLocation().getDirection().normalize().multiply(3)).getBlock().getLocation();
+            Location behindPlayer = player.getLocation().subtract(player.getLocation().getDirection().normalize().multiply(4))
+                    .getBlock().getLocation();
 
             if(behindPlayer.getBlockY() > 320 && behindPlayer.getBlockY() < -64) behindPlayer = player.getLocation()
-                        .subtract(player.getLocation().getDirection().normalize().multiply(3).setY(0)).getBlock().getLocation();
+                        .subtract(player.getLocation().getDirection().normalize().multiply(4).setY(0)).getBlock().getLocation();
 
             if(behindPlayer.getBlockY() > 320 && behindPlayer.getBlockY() < -64) signLoc = null;
             else signLoc = behindPlayer;
         }
+
         if(signLoc !=null) {
             previousBlockData = signLoc.getBlock().getBlockData();
             int x = signLoc.getBlockX(), y = signLoc.getBlockY(), z = signLoc.getBlockZ();

@@ -23,7 +23,7 @@ public class Teleport extends ItemAbility implements Listener {
        this.setRange(range);
        this.setCooldown(cooldown);
        this.addLore(List.of(
-                ChatColor.translateAlternateColorCodes('&',"&6Ability: &l&x&d&3&0&0&e&bTeleport &e(RIGHT CLICK)&r"),
+                ChatColor.translateAlternateColorCodes('&',"&6Ability: &l&x&7&E&1&0&E&0Teleport &e(RIGHT CLICK)&r"),
                 ChatColor.translateAlternateColorCodes('&',"&7Blablabla, this gona teleport"),
                 ChatColor.translateAlternateColorCodes('&',"&7you to the direction that u"),
                 ChatColor.translateAlternateColorCodes('&',"&7looking for up to &a" + range),
