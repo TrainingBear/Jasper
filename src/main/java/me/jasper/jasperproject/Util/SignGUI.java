@@ -7,10 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -74,8 +79,14 @@ public final class SignGUI implements Listener {
 
             player.sendBlockChange(signLoc, material.createBlockData());
             signLocations.put(player.getName(), new Vector(x, y, z));
+            Block placeholderBlock = signLoc.getBlock();
+            placeholderBlock.setType(material);
+            Sign signBlock = (Sign) placeholderBlock.getState();
+            SignSide frontSide = signBlock.getSide(Side.FRONT);
+            for(byte i = 0 ; i < inputText.length ; i++) frontSide
+                    .line(i, MiniMessage.miniMessage().deserialize(inputText[i]));
 
-            player.sendSignChange(signLoc, inputText);
+            player.sendBlockUpdate(signLoc,signBlock);
 
             final PacketContainer packetOPENSIGNEDITOR = protocolManager.createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
             packetOPENSIGNEDITOR.getBlockPositionModifier().write(0,
