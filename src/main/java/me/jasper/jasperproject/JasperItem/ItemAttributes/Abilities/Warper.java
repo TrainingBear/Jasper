@@ -15,6 +15,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Warper extends ItemAbility{
     @Getter private Action ActionPlayer;
@@ -57,19 +58,22 @@ public class Warper extends ItemAbility{
                         p.sendBlockChange(signLoc, signLoc.getBlock().getBlockData());//turn back to normal
 
                         String[] coordinate = lines[0].trim().split("\\s*,\\s*|\\s+");
-                        int[] playerLOC = {p.getLocation().getBlockX(),p.getLocation().getBlockY(),p.getLocation().getBlockZ()};
-                        int[] savedCordinate= new int[3];
 
                         if(coordinate.length==1&&coordinate[0].isEmpty()) return;
                         if(coordinate.length!=3){
                             p.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Please input 3 argument of coordinate</red>"));
+                            ItemUtils.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
                             return;
                         }
+                        int[] playerLOC = {p.getLocation().getBlockX(),p.getLocation().getBlockY(),p.getLocation().getBlockZ()};
+                        int[] savedCordinate= new int[3];
+
                         for (byte i =0; i < coordinate.length ; i++) {
                             coordinate[i] = coordinate[i].trim();
                             if (coordinate[i].contains("~")) {
                                 if(coordinate[i].charAt(0) != '~') {
                                     p.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Coordinate is not valid</red>"));
+                                    ItemUtils.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
                                     return;
                                 }
                                 else if(coordinate[i].equals("~")) coordinate[i] = String.valueOf(playerLOC[i]);
@@ -79,11 +83,13 @@ public class Warper extends ItemAbility{
                                 savedCordinate[i] = Integer.parseInt(coordinate[i]);
                             } catch (NumberFormatException exception) {
                                 p.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Coordinate is not valid</red>"));
+                                ItemUtils.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
                                 return;
                             }
                         }
                         p.sendMessage(MiniMessage.miniMessage().deserialize("<color:#b100db><b>ABILITY</b> Set coordinate to: </color><color:#dd00ed><click:copy_to_clipboard:"
                                         +String.join(", ",coordinate)+">"+String.join(", ",coordinate)+"</click></color>"));
+                        ItemUtils.playPSound(p,Sound.BLOCK_BEACON_POWER_SELECT, 1, 1.65f);
 
                         target.put(e.getPlayer().getUniqueId(), savedCordinate.clone());
 //                                Placeholder.unparsed("x", coordinate[0]),
@@ -106,8 +112,9 @@ public class Warper extends ItemAbility{
             double distanceTP = targetToTP.distance(player.getLocation());
 
             if(distanceTP > e.getRange()+.5f){
-                player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Too far! get closer to checkpoint </red><color:#fa3b2d>Range: "
-                        +(distanceTP > 1000 ? round(distanceTP/1000f,1): round(distanceTP,1))+"</color>"));
+                player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Too far! get closer to checkpoint: </red><color:#fa3b2d>"
+                        +Arrays.stream(target.get(ID)).mapToObj(String::valueOf).collect(Collectors.joining(", "))+"</color><red> Range: </red><color:#fa3b2d>"
+                        +(distanceTP > 1000 ? round(distanceTP/1000f,1)+"k": round(distanceTP,1))+"</color>"));
                 ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE,1,0.5f);
                 return;
             }
