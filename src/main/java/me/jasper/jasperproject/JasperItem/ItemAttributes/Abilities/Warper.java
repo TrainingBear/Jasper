@@ -53,8 +53,8 @@ public class Warper extends ItemAbility{
                     ,"x y z / x, y, z"
             };
             SignGUI.getInstance().open(
-                    e.getPlayer(), builtInText, Material.WARPED_SIGN, (p, lines, signLoc, previousBlockData) -> {
-                        p.sendBlockChange(signLoc, previousBlockData);//turn back to normal
+                    e.getPlayer(), builtInText, Material.WARPED_SIGN, (p, lines, signLoc) -> {
+                        p.sendBlockChange(signLoc, signLoc.getBlock().getBlockData());//turn back to normal
 
                         String[] coordinate = lines[0].trim().split("\\s*,\\s*|\\s+");
                         int[] playerLOC = {p.getLocation().getBlockX(),p.getLocation().getBlockY(),p.getLocation().getBlockZ()};

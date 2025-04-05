@@ -11,17 +11,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.block.TileState;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -45,9 +40,7 @@ public final class SignGUI implements Listener {
     private static ProtocolManager protocolManager;
     private static PacketAdapter packetListener;
     private static Map<String, SignGUIListener> listeners;
-    private static Map<String, Vector> signLocations;
-    private static Location signLoc;
-    private static BlockData previousBlockData;
+    private static Map<String, Location> signLocations;
 
     SignGUI() {
         protocolManager = ProtocolLibrary.getProtocolManager();
@@ -58,6 +51,7 @@ public final class SignGUI implements Listener {
     }
 
     public void open(Player player, @NotNull String[] inputText,Material material, SignGUIListener response) {
+        Location signLoc;
         if((player.getLocation().add(0,-2,0).getBlockY() <= 320 && player.getLocation().add(0,-2,0).getBlockY() >= -64)
             && player.getLocation().add(0,-1,0).getBlock().getType().isSolid()) {
 
@@ -76,15 +70,11 @@ public final class SignGUI implements Listener {
         }
 
         if(signLoc !=null) {
-            previousBlockData = signLoc.getBlock().getBlockData();
-            int x = signLoc.getBlockX(), y = signLoc.getBlockY(), z = signLoc.getBlockZ();
+            signLocations.put(player.getName(), signLoc);
 
-            signLocations.put(player.getName(), new Vector(x, y, z));
             player.sendBlockChange(signLoc, material.createBlockData());
-            Block block = signLoc.getBlock();
-            Sign signBlock = (Sign) block.getState();
-            block.setType(Material.AIR);
-            player.sendBlockChange(signLoc, material.createBlockData());
+
+            Sign signBlock = (Sign) material.createBlockData().createBlockState();
             SignSide frontSide = signBlock.getSide(Side.FRONT);
             for(byte i = 0 ; i < inputText.length ; i++)
                 frontSide.line(i, MiniMessage.miniMessage().deserialize(inputText[i]));
@@ -93,9 +83,8 @@ public final class SignGUI implements Listener {
 
             final PacketContainer packetOPENSIGNEDITOR = protocolManager.createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
             packetOPENSIGNEDITOR.getBlockPositionModifier().write(0,
-                    new com.comphenix.protocol.wrappers.BlockPosition(x, y, z));
+                    new com.comphenix.protocol.wrappers.BlockPosition(signLoc.getBlockX(),signLoc.getBlockY(),signLoc.getBlockZ()));
             packetOPENSIGNEDITOR.getBooleans().write(0, true);
-
 
             //            protocolManager.sendServerPacket(player, packetSIGNTEXT);
             try {
@@ -114,7 +103,7 @@ public final class SignGUI implements Listener {
     }
 
     public interface SignGUIListener {
-        void onSignDone(Player player, String[] lines, Location signLoc, BlockData previousBlockLoc);
+        void onSignDone(Player player, String[] lines, Location signLoc);
     }
 
     static class PacketListener extends PacketAdapter {
@@ -127,7 +116,7 @@ public final class SignGUI implements Listener {
 
         @Override
         public void onPacketReceiving(PacketEvent event) {
-            Vector v = signLocations.remove(event.getPlayer().getName());
+            Location v = signLocations.remove(event.getPlayer().getName());
             if (v == null) return;
             List<BlockPosition> event_sign_location = event.getPacket().getBlockPositionModifier().getValues();
             if (event_sign_location.get(0).getX() != v.getBlockX()) return;
@@ -139,7 +128,7 @@ public final class SignGUI implements Listener {
             if (response != null) {
                 event.setCancelled(true);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                        response.onSignDone(event.getPlayer(), lines, signLoc,previousBlockData));
+                        response.onSignDone(event.getPlayer(), lines, v));
             }
         }
 
