@@ -1,10 +1,13 @@
 package me.jasper.jasperproject.FileConfiguration;
 
 import lombok.Getter;
+import lombok.Setter;
+import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -17,104 +20,135 @@ import java.util.List;
 /**
  * YAML CONFIGURATOR
  * */
-public abstract class Configurator {
-    private static final List<File > file = new ArrayList<>();
-    private static final List<FileConfiguration> config = new ArrayList<>();
+public final class Configurator {
+    private static Configurator instance;
 
-    public static List<File> getFiles(){
+    private final List<File > file = new ArrayList<>();
+    @Getter private final List<Configurator > compounds = new ArrayList<>();
+    @Getter public final File parent;
+    private final Plugin plugin = JasperProject.getPlugin();
+    @Getter@Setter private Configurator parentCompound;
+
+    public static Configurator getInstance(){
+        if(instance==null){
+            instance = new Configurator();
+        }
+        return instance;
+    }
+
+    @Deprecated
+    private Configurator(){
+        parent = this.plugin.getDataFolder();
+    }
+    public Configurator(File parent){
+        this.parent = parent;
+    }
+
+
+    public List<File> getFiles(){
         return file;
     }
-    public static List<FileConfiguration> getConfigs(){
-        return config;
+
+    public void load(){
+        File[] files = parent.listFiles();
+        for (File file : files) {
+            if(file.getName().endsWith(".yml")) {
+                this.file.add(file);
+            }
+            if(file.isDirectory()){
+                Configurator compound = new Configurator(file);
+                compound.load();
+                this.compounds.add(compound);
+            }
+        }
     }
 
-    public static File create(File parent, String name) throws JasperConfiguratorException{
+    /**
+     *
+     * @param name name
+     * @return return the created file Configurator
+     * @throws JasperConfiguratorException Exception
+     */
+    public Configurator create(String name) throws JasperConfiguratorException{
         File file = new File(parent,name+".yml");
 
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                System.out.println("[Jasper] Failed creating ("+file.getName()+")");
+                plugin.getLogger().info("[Jasper] Failed creating ("+file.getName()+")");
             }finally {
-                Bukkit.getLogger().info("[Jasper] Successful creating ("+file.getName()+")");
-                Configurator.file.add(file);
-                FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-                Configurator.config.add(config);
+                plugin.getLogger().info("[Jasper] Successful creating ("+file.getName()+") "+file.getAbsolutePath());
+                this.file.add(file);
             }
-            return file;
+            return this;
         }
 
         throw new JasperConfiguratorException("This file already exist!");
     }
 
-    public static void delete(String name){
+    public void edit(String name, Editor editor) {
         File file = getFile(name);
-        FileConfiguration config = getConfig(name);
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        try{
+            editor.edit(config).save(getFile(name));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     *
+     * @param name name cant contain \\
+     * @return return the created Compound
+     */
+    public @Nullable Configurator newCompound(String name){
+        if(name.contains("\\")) return null;
+        File file = new File(parent, "\\"+name);
+        if(!file.exists()){
+            Configurator compound = new Configurator(file);
+            compound.setParentCompound(this);
+            compounds.add(compound);
+            file.mkdir();
+            return compound;
+        }
+        return getCompound(name);
+    }
+
+    public boolean removeCompound(String name){
+        Configurator compound = getCompound(name);
+        return this.compounds.remove(compound);
+    }
+
+    public @Nullable Configurator getCompound(String name){
+        for (Configurator compound : this.compounds) {
+            if(compound.getParent().getName().equals(name)) return compound;
+        }
+        return null;
+    }
+
+    public @Nullable File getFile(String name){
+        name += ".yml";
+        for (File file : file) {
+            if (file.getName().equals(name)) return file;
+        }
+        return null;
+    }
+    public @Nullable FileConfiguration getConfig(String name){
+        name += ".yml";
+        for (File file : file) {
+            if (file.getName().equals(name)) return YamlConfiguration.loadConfiguration(file);
+        }
+        return null;
+    }
+
+    public void delete(String name){
+        File file = getFile(name);
         if(file==null) return;
-        Configurator.file.remove(file);
-        Configurator.config.remove(config);
+
+        this.file.remove(file);
         if(file.delete()){
             Bukkit.getLogger().info("[JasperProject] deleted "+name+".yml");
-        }
-    }
-
-    public static @Nullable File getFile(String name){
-        for (File file : file) {
-            String[] words = file.getName().split("\\.");
-            for (String word : words) {
-                if(word.equals(name)){
-                    return file;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static @Nullable FileConfiguration getConfig(String name){
-        for (File file : file) {
-            String[] words = file.getName().split("\\.");
-            for (String word : words) {
-                if(word.equals(name)){
-                    return YamlConfiguration.loadConfiguration(file);
-                }
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
-    private static void save(String name){
-        try {
-            getConfig(name).save(getFile(name));
-        } catch (IOException e) {
-            Bukkit.getLogger().info("[JasperProject] Cant save "+name);
-        }
-    }
-
-    public static void save(FileConfiguration config, String toFileName){
-        try {
-            config.save(getFile(toFileName));
-        } catch (IOException e) {
-            Bukkit.getLogger().info("[JasperProject] Cant save "+toFileName);
-        }
-    }
-
-
-    @Deprecated
-    public static void reload(String name) throws IOException, InvalidConfigurationException {
-        getConfig(name).load(getFile(name));
-    }
-
-    public static void saveAll(String name){
-        for (String s : getConfigsFileName()) {
-            save(s);
-        }
-    }
-
-    public static void reloadAll(String name){
-        for (String s : getConfigsFileName()) {
-            save(s);
         }
     }
 
@@ -124,12 +158,57 @@ public abstract class Configurator {
         return filename.substring(0,index);
     }
 
-    public static List<String> getConfigsFileName(){
-        List<String> names = new ArrayList<>();
-        for (File file1 : file) {
-            names.add(getFileName(file1));
-        }
-        return names;
+    private void contoh() throws IOException {
+
+        ///                     DECLARATION
+
+        /// kosong doang, brti confignya ada di folder plugins/JasperProject
+        /// atau lu bisa pake Configurator.getInstance() jadi gaperlu declaration kyk gini:
+        Configurator test1 = new Configurator();
+
+        /// ini buat define foldernya
+        /// kalo kek gini brti confignya ada di folder plugins/JasperProject/ContohFolderlu
+        Configurator test2 = new Configurator(
+                new File(JasperProject.getPlugin().getDataFolder().getParent()+"//ContohFolderlu")
+        );
+
+        /**                             EDITOR* */
+
+        test2.create("nama-configlu"); /// gini caranya buat config baru; yaya
+
+        test2.edit("nama-configlu", config -> {
+            List<String> list = new ArrayList<>();
+            config.set("test", list);
+
+            List<String> returnedList = config.getStringList("test");
+            returnedList.add("new element");
+            config.set("test", returnedList);
+
+            return config;
+        });
+
+        /**                     PERCABANGAN
+         * Jadi config lu bisa bercabang
+         * Jadi di dalem Configurator mu ada Configurator lagi
+         * atau folder baru, cara buat cabang baru gini :
+         * */
+
+        Configurator cabang1 = new Configurator(new File(plugin.getDataFolder(), "\\Cabang1"));
+        cabang1.newCompound("Cabang2"); /// entar kebuat cabang2 -> plugin/Cabang1/Cabang2
+
+        /// cara edit cabang yang lu buat:
+        final Configurator cabang2 = cabang1.getCompound("Cabang2");
+        cabang2.edit("a", c->c);
+
+
+        ///             KALO STARTUP HARUS DI REGISTER DI MAIN CLASS! onEnable()!
+        //getter
+        Configurator your_config;
+        // onEnable(
+            your_config = new Configurator();
+            your_config.load();
+        // )
+
     }
 
 }

@@ -20,13 +20,8 @@ import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.SignGUI;
-import me.jasper.jasperproject.Util.SignGUI;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -42,26 +36,14 @@ public final class JasperProject extends JavaPlugin {
 
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
-    @Getter private static SignGUI signGui;
+    @Getter private static Configurator animationConfig;
 
     @Override
     public void onEnable() {
         plugin = this;
+        animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
+        animationConfig.load();
 
-//        LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
-//        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-//            final Commands commands = event.registrar();
-//            commands.register(
-//                    Commands.literal("new-command-inJavaPlugin")
-//                            .executes(ctx -> {
-//                                ctx.getSource().getSender().sendPlainMessage("some message");
-//                                return Command.SINGLE_SUCCESS;
-//                            })
-//                            .build(),
-//                    "some bukkit help description string",
-//                    List.of("an-alias")
-//            );
-//        });
 
         Items.register();
         try {
@@ -69,8 +51,8 @@ public final class JasperProject extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Animation.loadListFileTabCompleter();
-        loadAnimationsConfig();
+        Animation.loadCommandTabCompleter();
+
 
         CommandManager.getInstance()
                 .register(new PaperAnimationCommand());
@@ -128,27 +110,27 @@ public final class JasperProject extends JavaPlugin {
         Files.createDirectories(Path.of(plugin.getDataFolder().getPath() + "\\Animations"));
     }
 
-    private void loadAnimationsConfig(){
-        File file = new File(plugin.getDataFolder()+"\\Animations");
-        File[] configs = file.listFiles();
-        if(configs==null) return;
-        int total_config = 0;
-        for (File config_ : configs) {
-            File[] configs__ = config_.listFiles((dir, name) -> name.endsWith(".yml"));
-            if(configs__==null) return;
-            for (File config : configs__) {
-                Configurator.getFiles().add(config);
-                FileConfiguration aconfig = YamlConfiguration.loadConfiguration(config);
-                if(aconfig.getBoolean("isRunning")){
-                    String animation_name = Configurator.getFileName(config);
-                    Bukkit.getLogger().info("[JasperProject] "+animation_name+" is running!");
-                    Animation.play(animation_name, true);
-                }
-                Bukkit.getLogger().info("[JasperProject] Loaded "+config.getName());
-                total_config++;
-            }
-        }
-        Bukkit.getLogger().info("[JasperProject] Loaded "+total_config+" configs");
-    }
+//    private void loadAnimationsConfig(){
+//        File file = new File(plugin.getDataFolder()+"\\Animations");
+//        File[] configs = file.listFiles();
+//        if(configs==null) return;
+//        int total_config = 0;
+//        for (File config_ : configs) {
+//            File[] configs__ = config_.listFiles((dir, name) -> name.endsWith(".yml"));
+//            if(configs__==null) return;
+//            for (File config : configs__) {
+//                Configurator.getFiles().add(config);
+//                FileConfiguration aconfig = YamlConfiguration.loadConfiguration(config);
+//                if(aconfig.getBoolean("isRunning")){
+//                    String animation_name = Configurator.getFileName(config);
+//                    Bukkit.getLogger().info("[JasperProject] "+animation_name+" is running!");
+//                    Animation.play(animation_name, true);
+//                }
+//                Bukkit.getLogger().info("[JasperProject] Loaded "+config.getName());
+//                total_config++;
+//            }
+//        }
+//        Bukkit.getLogger().info("[JasperProject] Loaded "+total_config+" configs");
+//    }
 
 }

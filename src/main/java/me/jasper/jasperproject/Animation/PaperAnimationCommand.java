@@ -29,7 +29,7 @@ public class PaperAnimationCommand implements JasperCommand {
         return Commands.literal("animate")
                 .then(Commands.literal("edit")
                         .then(Commands.argument("Animation name", StringArgumentType.string())
-                                        .suggests((context, builder) -> Animation.getOwnerAnimations(context.getSource().getSender().getName(),builder))
+                                .suggests((context, builder) -> Animation.getOwnerAnimations(context.getSource().getSender().getName(),builder)))
                                 .then(Commands.literal("add_frame")
                                         .then(Commands.argument("Frame name",StringArgumentType.string())
                                                 .executes(contex ->
@@ -97,12 +97,37 @@ public class PaperAnimationCommand implements JasperCommand {
                                         )
                                 )
                         )
-
-                )
-
-
-
-                ;
+                .then(Commands.literal("create")
+                        .then(Commands.argument("Animation name", StringArgumentType.word())
+                                .executes(c -> {
+                                    if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                    return Animation.createNew(
+                                            player,
+                                            StringArgumentType.getString(c, "Animation name"),
+                                            Animator.getRegions().get(player.getUniqueId()));
+                                }))
+                ).then(Commands.literal("play").then(Commands.argument("Animation name", StringArgumentType.word())
+                        .executes(c -> {
+                            if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                            return Animation.play(
+                                    player,
+                                    StringArgumentType.getString(c, "Animation name"));
+                        }))
+                ).then(Commands.literal("stop").then(Commands.argument("Animation name", StringArgumentType.word())
+                        .executes(c -> {
+                            if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                            return Animation.stop(
+                                    player,
+                                    StringArgumentType.getString(c, "Animation name"));
+                        }))
+                ).then(Commands.literal("update").then(Commands.argument("Animation name", StringArgumentType.word())
+                        .executes(c -> {
+                            if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                            return Animation.update(
+                                    player,
+                                    StringArgumentType.getString(c, "Animation name"));
+                        }))
+                );
     }
 
 
