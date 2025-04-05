@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +26,15 @@ import org.jetbrains.annotations.NotNull;
 
 public final class SignGUI implements Listener {
 
+    private static SignGUI instance;
+
+    public static SignGUI getInstance() {
+        if(instance==null){
+            instance = new SignGUI();
+        }
+        return instance;
+    }
+
     private static ProtocolManager protocolManager;
     private static PacketAdapter packetListener;
     private static Map<String, SignGUIListener> listeners;
@@ -32,15 +42,15 @@ public final class SignGUI implements Listener {
     private static Location signLoc;
     private static BlockData previousBlockData;
 
-    public SignGUI(Plugin plugin) {
+    SignGUI() {
         protocolManager = ProtocolLibrary.getProtocolManager();
-        packetListener = new PacketListener(plugin);
+        packetListener = new PacketListener(JasperProject.getPlugin());
         protocolManager.addPacketListener(packetListener);
         listeners = new ConcurrentHashMap<>();
         signLocations = new ConcurrentHashMap<>();
     }
 
-    public static void open(Player player, @NotNull String[] inputText,Material material, SignGUIListener response) {
+    public void open(Player player, @NotNull String[] inputText,Material material, SignGUIListener response) {
         if((player.getLocation().add(0,-2,0).getBlockY() <= 320 && player.getLocation().add(0,-2,0).getBlockY() >= -64)
             && player.getLocation().add(0,-1,0).getBlock().getType().isSolid()) {
 
@@ -83,7 +93,7 @@ public final class SignGUI implements Listener {
         }
     }
 
-    public static void destroy() {
+    public void destroy() {
         protocolManager.removePacketListener(packetListener);
         listeners.clear();
         signLocations.clear();

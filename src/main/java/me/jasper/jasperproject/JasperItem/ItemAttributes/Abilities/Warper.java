@@ -51,7 +51,7 @@ public class Warper extends ItemAbility{
                     ,"Input coordinates"
                     ,"x y z / x, y, z"
             };
-            SignGUI.open(
+            SignGUI.getInstance().open(
                     e.getPlayer(), builtInText, Material.WARPED_SIGN, (p, lines, signLoc, previousBlockData) -> {
                         p.sendBlockChange(signLoc, previousBlockData);//turn back to normal
 

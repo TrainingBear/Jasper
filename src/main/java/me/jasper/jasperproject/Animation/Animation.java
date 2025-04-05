@@ -20,7 +20,6 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.World;
 import lombok.Getter;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
-import me.jasper.jasperproject.FileConfiguration.Editor;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperProject;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -284,6 +283,8 @@ public abstract class Animation {
         File[] files = file.listFiles();
         if(files==null) return;
         animationNameTabCompleter.clear();
+
+
 //        Bukkit.getLogger().info(sender+" invoking GetAnimationConfig(TabCompleter in AnimationCommand.java)");
         for (File file1 : files) {
             File[] configs = file1.listFiles((dir, name) -> name.endsWith(".yml"));

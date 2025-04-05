@@ -2,10 +2,10 @@ package me.jasper.jasperproject.Commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.jasper.jasperproject.JasperProject;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,18 +20,49 @@ public class CommandManager {
     }
 
     @NotNull private LifecycleEventManager<Plugin> manager;
+    private Plugin plugin;
+
 
     CommandManager(){
-        manager = JasperProject.getPlugin().getLifecycleManager();
+        plugin = JasperProject.getPlugin();
+        manager = plugin.getLifecycleManager();
     }
 
-
-
-    public void register(JasperCommand command){
+    public CommandManager register(JasperCommand command){
         LiteralArgumentBuilder<CommandSourceStack> created = command.createCommand();
-        JasperProject.getPlugin().getLogger().info("[JasperProject] registering "+created.getLiteral());
+        plugin.getLogger().info("[JasperProject] Registering Command{}"+ created.getLiteral());
+
         manager.registerEventHandler(LifecycleEvents.COMMANDS, (c) ->
-           c.registrar().register(created.build(), "jasper")
+                c.registrar().register(created.build())
         );
+        return this;
     }
+
+//    public static CommandManager getInstance(BootstrapContext contex){
+//        if(instance==null){
+//            instance = new CommandManager(contex);
+//        }
+//        return instance;
+//    }
+//
+//    @NotNull private LifecycleEventManager<BootstrapContext> manager;
+//    private BootstrapContext bootstrapContext;
+//
+//
+//    CommandManager(BootstrapContext contex){
+//        manager = contex.getLifecycleManager();
+//        bootstrapContext = contex;
+//    }
+//
+//    public CommandManager register(JasperCommand command){
+//        LiteralArgumentBuilder<CommandSourceStack> created = command.createCommand();
+//        bootstrapContext.getLogger().info("[JasperProject] registering {}", created.getLiteral());
+//
+//        manager.registerEventHandler(LifecycleEvents.COMMANDS, (c) ->
+//           c.registrar().register(created.build(), "jasper")
+//        );
+//        return this;
+//    }
+//
+//
 }
