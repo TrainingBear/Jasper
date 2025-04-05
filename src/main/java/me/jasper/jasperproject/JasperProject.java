@@ -54,8 +54,8 @@ public final class JasperProject extends JavaPlugin {
         Animation.loadCommandTabCompleter();
 
 
-        CommandManager.getInstance()
-                .register(new PaperAnimationCommand());
+//        CommandManager.getInstance()
+//                .register(new PaperAnimationCommand());
 
 
         PluginManager PM = Bukkit.getServer().getPluginManager();

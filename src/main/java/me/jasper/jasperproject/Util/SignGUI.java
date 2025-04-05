@@ -12,7 +12,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.TileState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
@@ -77,16 +79,17 @@ public final class SignGUI implements Listener {
             previousBlockData = signLoc.getBlock().getBlockData();
             int x = signLoc.getBlockX(), y = signLoc.getBlockY(), z = signLoc.getBlockZ();
 
-            player.sendBlockChange(signLoc, material.createBlockData());
             signLocations.put(player.getName(), new Vector(x, y, z));
-            Block placeholderBlock = signLoc.getBlock();
-            placeholderBlock.setType(material);
-            Sign signBlock = (Sign) placeholderBlock.getState();
+            player.sendBlockChange(signLoc, material.createBlockData());
+            Block block = signLoc.getBlock();
+            Sign signBlock = (Sign) block.getState();
+            block.setType(Material.AIR);
+            player.sendBlockChange(signLoc, material.createBlockData());
             SignSide frontSide = signBlock.getSide(Side.FRONT);
-            for(byte i = 0 ; i < inputText.length ; i++) frontSide
-                    .line(i, MiniMessage.miniMessage().deserialize(inputText[i]));
+            for(byte i = 0 ; i < inputText.length ; i++)
+                frontSide.line(i, MiniMessage.miniMessage().deserialize(inputText[i]));
 
-            player.sendBlockUpdate(signLoc,signBlock);
+            player.sendBlockUpdate(signLoc, signBlock);
 
             final PacketContainer packetOPENSIGNEDITOR = protocolManager.createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
             packetOPENSIGNEDITOR.getBlockPositionModifier().write(0,
