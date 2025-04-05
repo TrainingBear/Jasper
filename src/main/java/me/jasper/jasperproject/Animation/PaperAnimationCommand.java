@@ -13,6 +13,7 @@ import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolv
 import me.jasper.jasperproject.Commands.JasperCommand;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
+import me.jasper.jasperproject.JasperItem.Items;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,8 +29,8 @@ public class PaperAnimationCommand implements JasperCommand {
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("animate")
                 .then(Commands.literal("edit")
-                        .then(Commands.argument("Animation name", StringArgumentType.string())
-                                .suggests((context, builder) -> Animation.getOwnerAnimations(context.getSource().getSender().getName(),builder)))
+                        .then(Commands.argument("Animation name", StringArgumentType.string()).suggests(
+                                (context, builder) -> Animation.getOwnerAnimations(context.getSource().getSender().getName(),builder))
                                 .then(Commands.literal("add_frame")
                                         .then(Commands.argument("Frame name",StringArgumentType.string())
                                                 .executes(contex ->
@@ -97,7 +98,7 @@ public class PaperAnimationCommand implements JasperCommand {
                                         )
                                 )
                         )
-                .then(Commands.literal("create")
+                ).then(Commands.literal("create")
                         .then(Commands.argument("Animation name", StringArgumentType.word())
                                 .executes(c -> {
                                     if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
@@ -127,6 +128,12 @@ public class PaperAnimationCommand implements JasperCommand {
                                     player,
                                     StringArgumentType.getString(c, "Animation name"));
                         }))
+                ).then(Commands.literal("wand")
+                        .executes(c -> {
+                            if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                            Items.animate_wannd.send(player);
+                            return Command.SINGLE_SUCCESS;
+                        })
                 );
     }
 

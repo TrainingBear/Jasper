@@ -41,7 +41,6 @@ me\jasper\jasperproject\Listener\PlayerListListener.class
 me\jasper\jasperproject\JasperEntity\JasperEntity.class
 me\jasper\jasperproject\Listener\AlwaysDayy.class
 me\jasper\jasperproject\Jam\ClockUtility$1.class
-me\jasper\jasperproject\Animation\Animation$1ref.class
 me\jasper\jasperproject\Loadschem.class
 me\jasper\jasperproject\Jam\ClockConfigurationForCommands.class
 me\jasper\jasperproject\Dungeon\DungeonUtil.class
@@ -78,7 +77,6 @@ me\jasper\jasperproject\JasperItem\Items.class
 me\jasper\jasperproject\Listener\InvenAhhListener.class
 me\jasper\jasperproject\Jam\Clock.class
 me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
-me\jasper\jasperproject\Animation\Animation$2.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.class
 me\jasper\jasperproject\Util\SignGUI.class

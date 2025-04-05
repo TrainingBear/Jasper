@@ -30,6 +30,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -40,6 +41,7 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class Animation {
     @Getter private static final HashMap<String, BukkitTask> runningTask = new HashMap<>();
+    @Getter private static final Plugin plugin = JasperProject.getPlugin();
     private static final Map<String, List<String>> animationNameTabCompleter = new HashMap<>();
 
 
@@ -226,7 +228,6 @@ public abstract class Animation {
             e.printStackTrace();
         }
     }
-
     static void pasteSchematic(@Nullable Player player, Location location, File file) throws IOException {
 
         if (!file.exists()) {
@@ -304,9 +305,8 @@ public abstract class Animation {
 //            fis.close();
 //        }
 //    }
-
     public static void loadCommandTabCompleter(){
-        File file = new File(JasperProject.getPlugin().getDataFolder()+"\\Animations");
+        File file = new File(JasperProject.getPlugin().getDataFolder(), "\\Animations");
         File[] files = file.listFiles();
         if(files==null) return;
         animationNameTabCompleter.clear();
@@ -319,13 +319,21 @@ public abstract class Animation {
             for (File config : configs) {
                 final FileConfiguration configuration = YamlConfiguration.loadConfiguration(config);
                 final String owner = configuration.getString("owner");
+                animationNameTabCompleter.computeIfAbsent(owner, k -> new ArrayList<>()).
+                            add(owner);
+                if(configuration.getBoolean("isRunning")){
+                    String animation_name = Configurator.getFileName(config);
+                    plugin.getLogger().info("[JasperProject] "+animation_name+" is running!");
+                    Animation.play(null, animation_name);
+                }
+                plugin.getLogger().info("[JasperProject] Loaded "+config.getName());
+                if(!configuration.contains("members")) continue;
                 List<String> member = configuration.getStringList("members");
                 for (String s : member) {
                     animationNameTabCompleter.computeIfAbsent(owner, k -> new ArrayList<>()).
                             add(s);
                 }
-                animationNameTabCompleter.computeIfAbsent(owner, k -> new ArrayList<>()).
-                        add(owner);
+
             }
         }
     }
