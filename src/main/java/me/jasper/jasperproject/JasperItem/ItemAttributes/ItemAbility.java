@@ -6,6 +6,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemHandler;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
 import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -91,7 +92,20 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         }
         return stats;
     }
+    protected <T extends ItemAbility> boolean hasCooldown(T e, boolean showcooldown){
+        Player player = e.getPlayer();
+        float cooldown = e.getCooldown();
 
+        float current = cooldowns.get(player.getUniqueId()) != null ?
+                (System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) ) / 1000.0f : cooldown+1;
+
+        if(current > cooldown) return false;
+        if(!showcooldown) return true;
+        player.sendMessage(
+                MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
+        );
+        return true;
+    }
     protected <T extends ItemAbility> void applyCooldown(T e, boolean showCooldown) {//SEMENTARA parameter boolean
         float cooldown = e.getCooldown();
         if (cooldown <= 0) return;
@@ -109,8 +123,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
             e.setCancelled(true);
             if(!showCooldown) return;
             player.sendMessage(
-                    ChatColor.RED + "" + ChatColor.BOLD + "COOLDOWN!" + ChatColor.RESET + ChatColor.RED + " Please wait "
-                    + round((cooldown - current),1)+ " seconds!"
+                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
             );
 
             return;

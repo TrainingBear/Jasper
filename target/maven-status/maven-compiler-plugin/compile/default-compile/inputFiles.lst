@@ -11,6 +11,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Config
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\JasperEntity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDamagedEvent.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockUtility.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Debug.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemStats.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\Frame.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Jitem.java
@@ -59,6 +60,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\RoomType.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\SummonCustomEntity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\PaperAnimationCommand.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Structure.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Commands\CommandManager.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Listener\PlayerListListener.java

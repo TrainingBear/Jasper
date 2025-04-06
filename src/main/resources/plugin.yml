@@ -4,6 +4,8 @@ main: me.jasper.jasperproject.JasperProject
 api-version: '1.20'
 depend: [NBTAPI]
 commands:
+  debug:
+    description: test;
   p:
     description: Lu bisa ngomong apa saja bebas
     usage: /p blablabla blabla blabl

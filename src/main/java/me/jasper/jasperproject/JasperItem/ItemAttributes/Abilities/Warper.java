@@ -87,8 +87,8 @@ public class Warper extends ItemAbility{
                                 return;
                             }
                         }
-                        p.sendMessage(MiniMessage.miniMessage().deserialize("<color:#b100db><b>ABILITY</b> Set coordinate to: </color><color:#dd00ed><click:copy_to_clipboard:"
-                                        +String.join(", ",coordinate)+">"+String.join(", ",coordinate)+"</click></color>"));
+                        p.sendMessage(MiniMessage.miniMessage().deserialize("<color:#b100db><b>ABILITY</b> Set coordinate to: </color><color:#dd00ed><click:\"copy_to_clipboard\":"
+                                        +String.join(", ",coordinate) +">"+ String.join(", ",coordinate)+"</click></color>"));
                         ItemUtils.playPSound(p,Sound.BLOCK_BEACON_POWER_SELECT, 1, 1.65f);
 
                         target.put(e.getPlayer().getUniqueId(), savedCordinate.clone());
@@ -98,36 +98,37 @@ public class Warper extends ItemAbility{
 //                                Placeholder.unparsed("value", coordinate.toString()))
                     });
         }
-        else if((e.getActionPlayer().equals(Action.RIGHT_CLICK_BLOCK)||e.getActionPlayer().equals(Action.RIGHT_CLICK_AIR))&&e.getPlayer().isSneaking()){
+        else if((e.getActionPlayer().equals(Action.RIGHT_CLICK_BLOCK)||e.getActionPlayer().equals(Action.RIGHT_CLICK_AIR))&& e.getPlayer().isSneaking()){
             if(!target.containsKey(e.getPlayer().getUniqueId())){
                 e.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Please input coordinate (Left click + Sneak)</red>"));
                 ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE,1,0.5f);
                 return;
             }
-
+            
             Player player = e.getPlayer();
             UUID ID = player.getUniqueId();
             Location targetToTP = new Location(player.getWorld(), target.get(ID)[0]+.5f,target.get(ID)[1]+.01f,target.get(ID)[2]+.5f)
                     .setDirection(player.getLocation().getDirection());
-            double distanceTP = targetToTP.distance(player.getLocation());
+            float distanceTP = (float) targetToTP.distance(player.getLocation());
 
-            if(distanceTP > e.getRange()+.5f){
-                player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Too far! get closer to checkpoint: </red><color:#fa3b2d>"
-                        +Arrays.stream(target.get(ID)).mapToObj(String::valueOf).collect(Collectors.joining(", "))+"</color><red> Range: </red><color:#fa3b2d>"
-                        +(distanceTP > 1000 ? round(distanceTP/1000f,1)+"k": round(distanceTP,1))+"</color>"));
-                ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE,1,0.5f);
+            int range = e.getRange();
+            if (distanceTP < e.getRange()+.1f) applyCooldown(e, true);
+            else{
+                if(hasCooldown(e, true)) return;
+                player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>TOO FAR! </b>You're <color:#fa3b2d>" + (distanceTP > 1000
+                        ? round((distanceTP-range) / 1000f, 1)+"k" : round((distanceTP-range), 1)) + "</color> blocks away from limit!</red>"));
+                ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.5f);
                 return;
             }
 
-            applyCooldown(e, true);
             if(e.isCancelled()) return;
 
             float trail = (float) Math.min(distanceTP, 6.0); // parameter ke 2 bisa di ubah jarak maxnya
             int steps = (int) Math.max(trail, 1);
-            double factor = 1.0 /distanceTP;
+            float factor = (float) (1.0 /distanceTP);
 
             for (byte i = 0; i <= steps; i++) {
-                double prog = (i / (double) steps) * trail;
+                float prog = ((float) i / steps) * trail;
                 player.getWorld().spawnParticle(
                         Particle.SOUL_FIRE_FLAME, player.getLocation().add(
                                 (targetToTP.getX() - player.getLocation().getX()) * factor * prog,
@@ -142,8 +143,9 @@ public class Warper extends ItemAbility{
                     ,.3f,.4f,.3f,0
                     ,new Particle.DustOptions(Color.fromRGB(214,0,230),1.425f), false);
             player.getWorld().spawnParticle(
-                    Particle.LARGE_SMOKE,player.getLocation().add(0,.8f,0), 30
-                    , .3f, .4f, .3f, 0 , null, false);
+                    Particle.DUST, player.getLocation().add(0,1,0), 60
+                    ,.3f,.4f,.3f,0
+                    ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
             player.teleport(targetToTP);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
             e.setCancelled(true);
@@ -164,7 +166,7 @@ public class Warper extends ItemAbility{
     public void trigger(PlayerInteractEvent e){
         if (!ItemUtils.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), this.getKey()))  return;
 
-        if(((e.getAction().equals(Action.LEFT_CLICK_AIR)||e.getAction().equals(Action.LEFT_CLICK_BLOCK))&&e.getPlayer().isSneaking())
+        if(((e.getAction().equals(Action.LEFT_CLICK_AIR)||e.getAction().equals(Action.LEFT_CLICK_BLOCK))&& e.getPlayer().isSneaking())
             ||
             ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ||e.getAction().equals(Action.RIGHT_CLICK_AIR)) && e.getPlayer().isSneaking())){
 
@@ -175,6 +177,7 @@ public class Warper extends ItemAbility{
                     itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),
                     e
             ));
+            e.setCancelled(true);
         }
 
     }

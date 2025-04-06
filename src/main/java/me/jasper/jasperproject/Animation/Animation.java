@@ -1,6 +1,5 @@
 package me.jasper.jasperproject.Animation;
 
-import com.ibm.icu.util.CodePointMap;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -22,8 +21,10 @@ import lombok.Getter;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -44,14 +45,18 @@ public abstract class Animation {
     @Getter private static final Plugin plugin = JasperProject.getPlugin();
     private static final Map<String, List<String>> animationNameTabCompleter = new HashMap<>();
 
-
+    private static Component deserialize(String message, TagResolver... resolvers){
+        return MiniMessage.miniMessage().deserialize(message, resolvers);
+    }
+//    private static Component deserialize(String message, TagResolver... resolvers){
+//        return MiniMessage.miniMessage().deserialize(message, resolvers);
+//    }
     private static Configurator getCompound(String name){
         return JasperProject.getAnimationConfig().getCompound(name);
     }
     public static List<String> getOwnerAnimations(String name){
         return animationNameTabCompleter.get(name);
     }
-
     public static CompletableFuture<Suggestions> getOwnerAnimations(String name, SuggestionsBuilder builder){
         for (String s : animationNameTabCompleter.get(name)) {
             builder.suggest(s);
@@ -60,19 +65,21 @@ public abstract class Animation {
     }
 
     public static int stop(Player player, String name){
-        if(!isAnimationExist(player,name)){
+        if(isAnimationExist(player, name)){
             return Command.SINGLE_SUCCESS;
         }
-        JasperProject.getAnimationConfig().getCompound(name).edit(name, e -> {
+        getCompound(name).edit(name, e -> {
             e.set("isRunning", false);
             return e;
         });
-        runningTask.get(name).cancel();
         player.sendMessage(ChatColor.GREEN+"You stopped "+name+" animation!");
+        if(runningTask.containsKey(name)){
+            runningTask.remove(name).cancel();
+        }
         return Command.SINGLE_SUCCESS;
     }
     public static int update(Player player, String animationName){
-        if(!isAnimationExist(player,animationName)){
+        if(isAnimationExist(player, animationName)){
             return Command.SINGLE_SUCCESS;
         }
         stop(player, animationName);
@@ -80,43 +87,53 @@ public abstract class Animation {
         return Command.SINGLE_SUCCESS;
     }
     public static int play(@Nullable Player player, String animationName){
-        if(!isAnimationExist(player,animationName)){
+        if(isAnimationExist(player, animationName)){
             return Command.SINGLE_SUCCESS;
         }
-        getCompound(animationName).edit(animationName, e -> {
-            e.set("isRunning", true);
 
-            return e;
-        });
         FileConfiguration config = getCompound(animationName).getConfig(animationName);
+        if(player!=null){
+            player.sendMessage("your are " + config.get("owner") + " isn't?");
+            player.sendMessage("is it running? " + config.getBoolean("isRunning"));
+        }
         boolean isRunning = config.getBoolean("isRunning");
         if(isRunning) {
 
             if(player!=null){
-                player.sendMessage(ChatColor.RED + "This animation is already running!");
-                player.sendMessage(ChatColor.RED + " please use /animate stop <Animation> to stop your animation!");
+                player.sendMessage(deserialize("<red>This animation is already running!</red>"));
+                player.sendMessage(deserialize(" <red>please use <click:suggest_command:'/animate stop <animation>'><hover:show_text:'<red>Click to stop this animation</red>'>/animate stop <animation></hover></click> to stop your animation!</red>",
+                        Placeholder.unparsed("animation", animationName)
+                ));
             }
             return Command.SINGLE_SUCCESS;
         }
+        getCompound(animationName).edit(animationName, e -> {
+            e.set("isRunning", true);
+            return e;
+        });
 
-
+        boolean loop = config.getBoolean("loop");
         long tick = config.getLong("fps");
         Location origin = config.getLocation("origin");
         List<String> schems = config.getStringList("schem");
-        File[] files = getCompound(animationName).getFile(animationName).getParentFile().listFiles((dir, name) -> !name.endsWith(".yml"));
+        File[] files = getCompound(animationName).getParent().listFiles((dir, name) -> !name.endsWith(".yml"));
+
         if(files==null){
             if(player!=null){
                 player.sendMessage(ChatColor.RED + "This animation schema is empty!");
-            }return Command.SINGLE_SUCCESS;
+            }
+            return Command.SINGLE_SUCCESS;
         }
 
         List<Runnable> schemPasterTasks = new ArrayList<>();
         for (String schem : schems) {
             File schema = Arrays.stream(files).filter(f -> f.getName().contains(schem)).findFirst().orElse(null);
+            if (schema==null) continue;
             Runnable task = () -> {
+                player.sendMessage("running "+schem);
                 try {
                     pasteSchematic(player, origin, schema);
-                } catch (IOException e) {
+                }catch (IOException e) {
                     e.printStackTrace();
                 }
             };
@@ -133,76 +150,15 @@ public abstract class Animation {
         BukkitTask btask = new BukkitRunnable() {
             @Override
             public void run() {
-                if(!config.getBoolean("isRunning")) {
-                    if(player!=null){
-                        player.sendMessage(ChatColor.GREEN + animationName + " has been stopped!");
-                    }Paster.iterator.remove();
-                    this.cancel();
-                }
-                if(!Paster.iterator.hasNext()){
+                if(!Paster.iterator.hasNext() && loop){
                     Paster.iterator = schemPasterTasks.iterator();
                 }
                 Paster.iterator.next().run();
             }
-        }.runTaskTimer(JasperProject.getPlugin(), 0, tick);
+        }.runTaskTimerAsynchronously(JasperProject.getPlugin(), 0, tick);
         runningTask.put(animationName, btask);
         return Command.SINGLE_SUCCESS;
     }
-
-//    public static boolean play(String animationName, boolean flag){
-//        FileConfiguration config = Configurator.getConfig(animationName);
-//        boolean isRunning = config.getBoolean("isRunning");
-//
-//        if(isRunning && !flag) {
-//            return false;
-//        }
-//        config.set("isRunning", true);
-//        Configurator.save(config, animationName);
-//
-//
-//        long tick = config.getLong("fps");
-//        Location origin = config.getLocation("origin");
-//        List<String> schems = Configurator.getConfig(animationName).getStringList("schem");
-//        File[] files = Configurator.getFile(animationName).getParentFile().listFiles((dir, name) -> !name.endsWith(".yml"));
-//        if(files==null){
-//            return false;
-//        }
-//
-//        List<Runnable> schemPasterTasks = new ArrayList<>();
-//        for (String schem : schems) {
-//            File schema = Arrays.stream(files).filter(f -> f.getName().contains(schem)).findFirst().orElse(null);
-//            Runnable task = () -> {
-//                try {
-//                    pasteSchematic(origin, schema);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            };
-//            schemPasterTasks.add(task);
-//        }
-//        class ref{
-//            Iterator<Runnable> iterator;
-//        }
-//        ref Paster = new ref();
-//        Paster.iterator = schemPasterTasks.iterator();
-//        Bukkit.getLogger().info(" [JasperProject] "+animationName+" have been played in "+origin.getX()+", "+origin.getY()+", "+origin.getZ());
-//
-//        BukkitTask btask = new BukkitRunnable() {
-//            @Override
-//            public void run() {
-//                if(!config.getBoolean("isRunning")) {
-//                    Paster.iterator.remove();
-//                    this.cancel();
-//                }
-//                if(!Paster.iterator.hasNext()){
-//                    Paster.iterator = schemPasterTasks.iterator();
-//                }
-//                Paster.iterator.next().run();
-//            }
-//        }.runTaskTimer(JasperProject.getPlugin(), 0, tick);
-//        runningTask.put(animationName, btask);
-//        return true;
-//    }
 
     public static void saveSchematic(Location location, Region region1, File file) {
         World world = region1.getWorld();
@@ -268,43 +224,7 @@ public abstract class Animation {
             fis.close();
         }
     }
-//    static void pasteSchematic(Location location, File file) throws IOException {
-//
-//        if (!file.exists()) {
-//            Bukkit.getLogger().info("[JasperProject] Schematic file not found");
-//            return;
-//        }
-//
-//        BlockVector3 blockVector3 = BlockVector3.at(location.getX(), location.getY(), location.getZ());
-//
-//        ClipboardFormat format = ClipboardFormats.findByFile(file);
-//        if (format == null) {
-//            Bukkit.getLogger().info("[JasperProject] Invalid schematic format.");
-//            return;
-//        }
-//
-//        FileInputStream fis = new FileInputStream(file);
-//        ClipboardReader reader = format.getReader(fis);
-//        Clipboard clipboard = reader.read();
-//
-//
-//        if (clipboard == null) {
-//            return;
-//        }
-//
-//        World world = BukkitAdapter.adapt(location.getWorld());
-//
-//        try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
-//            Operation operation = new ClipboardHolder(clipboard)
-//                    .createPaste(editSession)
-//                    .to(blockVector3)
-//                    .ignoreAirBlocks(false)
-//                    .build();
-//
-//            Operations.complete(operation);
-//            fis.close();
-//        }
-//    }
+
     public static void loadCommandTabCompleter(){
         File file = new File(JasperProject.getPlugin().getDataFolder(), "\\Animations");
         File[] files = file.listFiles();
@@ -319,19 +239,23 @@ public abstract class Animation {
             for (File config : configs) {
                 final FileConfiguration configuration = YamlConfiguration.loadConfiguration(config);
                 final String owner = configuration.getString("owner");
+                final String filename = Configurator.getFileName(config);
+
                 animationNameTabCompleter.computeIfAbsent(owner, k -> new ArrayList<>()).
-                            add(owner);
+                            add(filename);
+                plugin.getLogger().info(owner +" has "+animationNameTabCompleter.get(owner).getFirst());
+
                 if(configuration.getBoolean("isRunning")){
                     String animation_name = Configurator.getFileName(config);
                     plugin.getLogger().info("[JasperProject] "+animation_name+" is running!");
                     Animation.play(null, animation_name);
                 }
-                plugin.getLogger().info("[JasperProject] Loaded "+config.getName());
+                plugin.getLogger().info("[JasperProject] Loaded "+filename);
                 if(!configuration.contains("members")) continue;
-                List<String> member = configuration.getStringList("members");
-                for (String s : member) {
-                    animationNameTabCompleter.computeIfAbsent(owner, k -> new ArrayList<>()).
-                            add(s);
+                List<String> members = configuration.getStringList("members");
+                for (String member : members) {
+                    animationNameTabCompleter.computeIfAbsent(member, k -> new ArrayList<>()).
+                            add(filename);
                 }
 
             }
@@ -339,7 +263,7 @@ public abstract class Animation {
     }
 
     public static int createNew(Player player, String animation_name, Region region){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         Configurator animation = JasperProject.getAnimationConfig()
@@ -354,15 +278,15 @@ public abstract class Animation {
     }
 
     private static boolean isAnimationExist(@Nullable Player player, String name){
-        boolean exist = getCompound(name).getConfig(name)!=null;
+        boolean exist = (getCompound(name)!=null) && (getCompound(name).getConfig(name)!=null);
         if(!exist && player!=null){
             player.sendMessage(MiniMessage.miniMessage().deserialize("<red><name> is not exist!</red>",Placeholder.unparsed("name", name)));
         }
-        return exist;
+        return !exist;
     }
 
     public static int addFrame(Player player, String animation_name, String frame_name){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         final Region region = Animator.getRegions().get(player.getUniqueId());
@@ -387,7 +311,7 @@ public abstract class Animation {
     }
 
     public static int addMember(Player player, String animation_name, String member){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         Configurator config = getCompound(animation_name);
@@ -407,7 +331,7 @@ public abstract class Animation {
     }
 
     public static int loadFrame(Player player, String animation_name){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         final Configurator config = getCompound(animation_name);
@@ -433,7 +357,7 @@ public abstract class Animation {
     }
 
     public static int deleteFrame(Player player, String animation_name, String frame_name){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         Configurator config = getCompound(animation_name);
@@ -461,7 +385,7 @@ public abstract class Animation {
     }
 
     public static int clearFrame(Player player, String animation_name){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         Configurator config = getCompound(animation_name);
@@ -487,7 +411,7 @@ public abstract class Animation {
     }
 
     public static int setFPS(Player player, String animation_name, float v){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
         Configurator config = getCompound(animation_name);
@@ -499,7 +423,7 @@ public abstract class Animation {
     }
 
     public static int setLocation(Player player, String animation_name, Location v){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
 
@@ -511,7 +435,7 @@ public abstract class Animation {
         return Command.SINGLE_SUCCESS;
     }
     public static int setRegion(Player player, String animation_name, Region v){
-        if(!isAnimationExist(player, animation_name)){
+        if(isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
 
@@ -522,4 +446,5 @@ public abstract class Animation {
         });
         return Command.SINGLE_SUCCESS;
     }
+
 }

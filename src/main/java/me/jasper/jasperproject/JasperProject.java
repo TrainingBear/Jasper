@@ -19,11 +19,17 @@ import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
+import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.SignGUI;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +48,7 @@ public final class JasperProject extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load();
+        animationConfig.load(Animation::loadCommandTabCompleter);
 
 
         Items.register();
@@ -51,8 +57,8 @@ public final class JasperProject extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Animation.loadCommandTabCompleter();
 
+        this.getCommand("debug").setExecutor(new Debug());
 
 //        CommandManager.getInstance()
 //                .register(new PaperAnimationCommand());

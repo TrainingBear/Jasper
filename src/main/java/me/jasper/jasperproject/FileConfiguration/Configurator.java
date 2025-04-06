@@ -49,7 +49,7 @@ public final class Configurator {
         return file;
     }
 
-    public void load(){
+    public void load(@Nullable Runnable run){
         File[] files = parent.listFiles();
         for (File file : files) {
             if(file.getName().endsWith(".yml")) {
@@ -57,9 +57,12 @@ public final class Configurator {
             }
             if(file.isDirectory()){
                 Configurator compound = new Configurator(file);
-                compound.load();
+                compound.load(null);
                 this.compounds.add(compound);
             }
+        }
+        if(run!=null){
+            run.run();
         }
     }
 
@@ -206,7 +209,7 @@ public final class Configurator {
         Configurator your_config;
         // onEnable(
             your_config = new Configurator();
-            your_config.load();
+            your_config.load(null);
         // )
 
     }

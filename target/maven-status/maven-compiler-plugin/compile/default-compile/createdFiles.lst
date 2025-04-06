@@ -37,6 +37,7 @@ me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDeathEvent.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCanvas.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\ENCHANT.class
 me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDamagedEvent.class
+me\jasper\jasperproject\Util\Debug.class
 me\jasper\jasperproject\Listener\PlayerListListener.class
 me\jasper\jasperproject\JasperEntity\JasperEntity.class
 me\jasper\jasperproject\Listener\AlwaysDayy.class
@@ -64,6 +65,7 @@ me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.class
 me\jasper\jasperproject\FileConfiguration\Configurator.class
 me\jasper\jasperproject\Animation\PaperAnimationCommand.class
 me\jasper\jasperproject\Animation\Animation$1.class
+me\jasper\jasperproject\Util\Structure.class
 me\jasper\jasperproject\JasperItem\Util\ItemUtils.class
 me\jasper\jasperproject\Listener\InvenAhhListener$VanishJoinListener.class
 me\jasper\jasperproject\Commands\JasperCommand.class
