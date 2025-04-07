@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.Util.ItemHandler;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
@@ -21,17 +22,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public abstract class ItemAbility extends Event implements Cancellable, Listener {
-    //ini key nya gw buat berdasarkan nama class ability yang dibuat, jadi jangan di ubah2.
-    // yaudah tinggal sebut nama classnya trs get keynya
+public class ItemAbility extends Event implements Cancellable, Listener {
+    private static ItemAbility instance;
+    @Getter public final Map<UUID, Long> cooldownMap;
+
+    public static ItemAbility getInstance(){
+        if(instance == null) instance = new ItemAbility();
+        return instance;
+    }
+
+    protected ItemAbility(){
+        cooldownMap = new HashMap<>();
+    }
+
     @Getter protected final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());
 
-    protected final HashMap<UUID, Long> cooldowns = new HashMap<>();
     @Getter protected final static HandlerList handlerList = new HandlerList();
     protected boolean cancelled = false;
     @Getter protected boolean showCooldown = true;
@@ -92,25 +99,28 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         }
         return stats;
     }
-    protected <T extends ItemAbility> boolean hasCooldown(T e, boolean showcooldown){
-        Player player = e.getPlayer();
-        float cooldown = e.getCooldown();
+    protected boolean hasCooldown(){
+        Player player = this.getPlayer();
+        float cooldown = this.getCooldown();
+        Map<UUID, Long> cooldowns = getInstance().getCooldownMap();
+        boolean isShowCooldown = getInstance().isShowCooldown();
 
         float current = cooldowns.get(player.getUniqueId()) != null ?
                 (System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) ) / 1000.0f : cooldown+1;
 
         if(current > cooldown) return false;
-        if(!showcooldown) return true;
+        if(!isShowCooldown) return true;
         player.sendMessage(
                 MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
         );
         return true;
     }
-    protected <T extends ItemAbility> void applyCooldown(T e, boolean showCooldown) {//SEMENTARA parameter boolean
-        float cooldown = e.getCooldown();
+    protected void applyCooldown() {
+        float cooldown = this.getCooldown();
         if (cooldown <= 0) return;
-        Player player = e.getPlayer();
-        this.showCooldown = showCooldown;
+        Player player = this.getPlayer();
+        Map<UUID, Long> cooldowns = getInstance().getCooldownMap();
+        boolean isShowCooldown = getInstance().isShowCooldown();
 
         if (cooldowns.containsKey(player.getUniqueId())) {
             float current = (System.currentTimeMillis() - cooldowns.get(player.getUniqueId()) ) / 1000.0f;
@@ -120,15 +130,14 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
                 return;
             }
 
-            e.setCancelled(true);
-            if(!showCooldown) return;
+            this.setCancelled(true);
+            if(!isShowCooldown) return;
             player.sendMessage(
                     MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
             );
 
             return;
         }
-
         cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
 
     }

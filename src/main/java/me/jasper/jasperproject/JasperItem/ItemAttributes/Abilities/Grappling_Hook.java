@@ -51,7 +51,7 @@ public class Grappling_Hook extends ItemAbility implements Listener {
             Player player = e.getFish().getPlayer();
             Location bobber = e.getFish().getHook().getLocation();
 
-            applyCooldown(e,true);
+            e.applyCooldown();
             if(e.isCancelled()) {
                 ItemUtils.playPSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1.7f);
                 return;

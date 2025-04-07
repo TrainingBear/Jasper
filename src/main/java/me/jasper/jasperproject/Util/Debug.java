@@ -11,12 +11,13 @@ public class Debug implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!(commandSender instanceof Player player)) return false;
-//        if(strings.length==1) {
+        if(strings.length==1) {
 //            Animation.stop(player, "myanimation");
-//            return true;
-//        }
+
+            return true;
+        }
 //        Animation.play(player, "myanimation");
-        Structure.createStructure(player);
+        Structure.createBox(player);
         return true;
     }
 }

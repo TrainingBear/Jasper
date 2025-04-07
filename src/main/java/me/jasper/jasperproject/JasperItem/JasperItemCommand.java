@@ -57,6 +57,9 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 test = Items.test.clone();
                 test.send(player);
                 player.sendMessage("Sending "+strings[0]+" item");
+            }case "animate"->{
+                Items.animate_wannd.clone().send(player);
+                player.sendMessage("Sending "+strings[0]+" item");
             }
         }
 
@@ -70,7 +73,8 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 "EndGateway",
                 "WarpGateway",
                 "test",
-                "update"
+                "update",
+                "animate"
                 );
     }
 }

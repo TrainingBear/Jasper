@@ -21,6 +21,7 @@ import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.SignGUI;
+import me.jasper.jasperproject.Util.Structure;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -105,6 +106,7 @@ public final class JasperProject extends JavaPlugin {
     public void onDisable() {
         this.getLogger().info("[JasperProject] Disabling...");
         SignGUI.getInstance().destroy();
+        Structure.destroyBox();
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
     }
 

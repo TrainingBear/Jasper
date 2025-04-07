@@ -7,6 +7,7 @@ import com.sk89q.worldedit.regions.Region;
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
+import me.jasper.jasperproject.Util.Structure;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -50,7 +51,15 @@ public class Animator extends ItemAbility implements Listener {
             player.sendMessage(ChatColor.YELLOW+"You selected second pos!");
             e.setCancelled(true);
         }
+        if(!firstPos.containsKey(player.getUniqueId())) {
+            player.sendMessage(ChatColor.YELLOW+"Right click to select post2!");
+            return;
+        }if(!secondPost.containsKey(player.getUniqueId())) {
+            player.sendMessage(ChatColor.YELLOW+"Left click to select post1!");
+            return;
+        }
         Region region = new CuboidRegion(BukkitAdapter.adapt(player.getWorld()), firstPos.get(player.getUniqueId()), secondPost.get(player.getUniqueId()));
         regions.put(player.getUniqueId(), region);
+        Structure.createBox(player);
     }
 }
