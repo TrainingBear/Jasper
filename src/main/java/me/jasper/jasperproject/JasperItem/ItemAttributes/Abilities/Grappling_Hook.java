@@ -21,7 +21,11 @@ import java.util.Objects;
 
 public class Grappling_Hook extends ItemAbility implements Listener {
     @Getter private PlayerFishEvent fish;
-
+    private static Grappling_Hook instance;
+    public static Grappling_Hook getInstance(){
+        if(instance == null) instance = new Grappling_Hook();
+        return instance;
+    }
 
     public Grappling_Hook(float cooldown) {
         this.setCooldown(cooldown);
