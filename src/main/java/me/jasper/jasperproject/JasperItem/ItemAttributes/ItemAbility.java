@@ -25,19 +25,15 @@ import java.math.RoundingMode;
 import java.util.*;
 
 public class ItemAbility extends Event implements Cancellable, Listener {
-    private static ItemAbility instance;
-    @Getter public final Map<UUID, Long> cooldownMap;
+    @Getter public final Map<UUID, Long> cooldownMap = new HashMap<>();;
+    @Getter public final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());;
 
-    public static ItemAbility getInstance(){
+    private static ItemAbility instance;
+    private static ItemAbility getInstance(){
         if(instance == null) instance = new ItemAbility();
         return instance;
     }
 
-    protected ItemAbility(){
-        cooldownMap = new HashMap<>();
-    }
-
-    @Getter protected final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());
 
     @Getter protected final static HandlerList handlerList = new HandlerList();
     protected boolean cancelled = false;
@@ -119,6 +115,7 @@ public class ItemAbility extends Event implements Cancellable, Listener {
         float cooldown = this.getCooldown();
         if (cooldown <= 0) return;
         Player player = this.getPlayer();
+        player.sendMessage("Getting instance of "+ getInstance());
         Map<UUID, Long> cooldowns = getInstance().getCooldownMap();
         boolean isShowCooldown = getInstance().isShowCooldown();
 

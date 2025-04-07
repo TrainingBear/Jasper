@@ -20,6 +20,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class Animator extends ItemAbility implements Listener {
+    private static Animator instance;
+    public static Animator getInstance(){
+        if(instance == null) instance = new Animator();
+        return instance;
+    }
+
     private static HashMap<UUID, BlockVector3> firstPos = new HashMap<>();
     private static HashMap<UUID, BlockVector3> secondPost = new HashMap<>();
     @Getter private static HashMap<UUID, Region> regions = new HashMap<>();

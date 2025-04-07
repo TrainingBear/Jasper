@@ -18,6 +18,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Warper extends ItemAbility{
+    private static Warper instance;
+    public static Warper getInstance(){
+        if(instance == null) instance = new Warper();
+        return instance;
+    }
+
     @Getter private Action ActionPlayer;
     HashMap<UUID, int[]> target = new HashMap<>();
 

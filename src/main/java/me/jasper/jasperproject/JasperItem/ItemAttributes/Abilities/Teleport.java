@@ -17,6 +17,11 @@ import org.bukkit.util.BlockIterator;
 import java.util.List;
 
 public class Teleport extends ItemAbility implements Listener {
+    private static Teleport instance;
+    public static Teleport getInstance(){
+        if(instance == null) instance = new Teleport();
+        return instance;
+    }
 
     public Teleport(){register();}
     public Teleport(int range, float cooldown){
@@ -42,9 +47,14 @@ public class Teleport extends ItemAbility implements Listener {
     //This Event Listener
     @EventHandler
     public void onTeleport(Teleport e){
+        e.getPlayer().sendMessage("You cant use this, it has "+Warper.getInstance().getKey()+" ability? "+ItemUtils.hasAbility(
+                e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey()));
         if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
                 e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())
-        ) return;
+        ) {
+            e.getPlayer().sendMessage("You cant use this, it has Warper ability");
+            return;
+        }
         e.applyCooldown();
         if(e.isCancelled()) return;
         Player player = e.getPlayer();

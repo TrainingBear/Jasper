@@ -73,10 +73,10 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
 
-        PM.registerEvents(new Animator(), this);
-        PM.registerEvents(new Teleport(), this);
-        PM.registerEvents(new Warper(), this);
-        PM.registerEvents(new Grappling_Hook(), this);
+        PM.registerEvents(Animator.getInstance(), this);
+        PM.registerEvents(Teleport.getInstance(), this);
+        PM.registerEvents(Warper.getInstance(), this);
+        PM.registerEvents(Grappling_Hook.getInstance(), this);
 
 //        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
 //        BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
