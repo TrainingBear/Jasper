@@ -1,6 +1,7 @@
 package me.jasper.jasperproject.Util;
 
 import me.jasper.jasperproject.Animation.Animation;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +18,11 @@ public class Debug implements CommandExecutor {
             return true;
         }
 //        Animation.play(player, "myanimation");
-        Structure.createBox(player);
+
+        player.sendMessage("Checking "+player.getItemInHand().getItemMeta().getDisplayName());
+        for (ItemAbility itemAbility : ItemAbility.convertFrom(player.getItemInHand())) {
+            player.sendMessage(" This item has "+itemAbility.getKey());
+        }
         return true;
     }
 }

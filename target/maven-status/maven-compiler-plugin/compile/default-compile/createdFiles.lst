@@ -5,7 +5,6 @@ me\jasper\jasperproject\JasperItem\JasperItemCommand.class
 me\jasper\jasperproject\Jam\ClockUtility.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Warper.class
 me\jasper\jasperproject\Listener\Joinmsg.class
-me\jasper\jasperproject\JasperItem\Util\ItemHandler.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDamagedEvent.class
 me\jasper\jasperproject\Util\EntityFinder.class
 me\jasper\jasperproject\Dungeon\Generator.class
@@ -54,6 +53,7 @@ me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\JasperItem\Util\ItemPatcher.class
 me\jasper\jasperproject\FileConfiguration\Editor.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute.class
+me\jasper\jasperproject\JasperItem\Util\ItemManager.class
 me\jasper\jasperproject\Util\SignGUI$PacketListener.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand.class
 me\jasper\jasperproject\Dungeon\RoomShape.class
@@ -76,10 +76,12 @@ me\jasper\jasperproject\Listener\PlotMenuListener$1.class
 me\jasper\jasperproject\JasperItem\ItemCreator.class
 me\jasper\jasperproject\Listener\PlotMenuListener.class
 me\jasper\jasperproject\JasperItem\Items.class
+me\jasper\jasperproject\JasperItem\Util\Factory$JitemFactory.class
 me\jasper\jasperproject\Listener\InvenAhhListener.class
 me\jasper\jasperproject\Jam\Clock.class
 me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.class
 me\jasper\jasperproject\Util\SignGUI.class
+me\jasper\jasperproject\JasperItem\Util\Factory.class
 me\jasper\jasperproject\FileConfiguration\JasperConfiguratorException.class

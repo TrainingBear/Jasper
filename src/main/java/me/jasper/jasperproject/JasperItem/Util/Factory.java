@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.JasperItem;
+package me.jasper.jasperproject.JasperItem.Util;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
@@ -8,56 +8,56 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
+import me.jasper.jasperproject.JasperItem.Jitem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemFactory;
 
 import java.util.List;
 
-@Deprecated
-public final class Items {
-    public static final Jitem EndGateway;
-    static {
-        EndGateway = new Jitem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
-        EndGateway.getStats()
+public interface Factory {
+    Jitem create();
+
+
+    public static Jitem createEndGateway() {
+        Jitem product = new Jitem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        product.getStats()
                 .setBaseDamage(39)
                 .setBaseMana(50)
                 .setBaseSpeed(10)
                 .setBaseAttackSpeed(5);
-        EndGateway.getEnchants().addAll(List.of(
+        product.getEnchants().addAll(List.of(
                 ENCHANT.SharpnesV2.addLevel(),ENCHANT.SharpnesV2.addLevel(),
                 ENCHANT.SharpnesV2.addLevel(),ENCHANT.SharpnesV2.addLevel(),
                 ENCHANT.SharpnesV2.addLevel(),ENCHANT.SharpnesV2.addLevel(),
                 ENCHANT.SharpnesV2.addLevel(),ENCHANT.SharpnesV2.addLevel()));
-        EndGateway.getAbilities().add(new Teleport(10, 0.2f));
-        EndGateway.update();
+        product.getAbilities().add(new Teleport(10, 0.2f));
+        product.update();
+        return product;
     }
-    public static final Jitem WarpGateway;
-    static {
-        WarpGateway = new Jitem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
-        WarpGateway.getStats()
+    public static Jitem createWarpGateway(){
+        Jitem product = new Jitem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        product.getStats()
                 .setBaseDamage(50)
                 .setBaseMana(65)
                 .setBaseSpeed(18)
                 .setBaseAttackSpeed(10);
-        WarpGateway.getAbilities().add(new Teleport(10, 0.2f));
-        WarpGateway.getAbilities().add(new Warper(20,20));
-        WarpGateway.update();
+        product.getAbilities().add(new Teleport(10, 0.2f));
+        product.getAbilities().add(new Warper(20,20));
+        product.update();
+        return product;
     }
-    public static final Jitem grapling;
-    static {
-        grapling = new Jitem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 3565L, "GRAPPLING_HOOK");
-        grapling.setUpgradeable(false);
-        grapling.getAbilities().add(new Grappling_Hook(1.5f));
-        grapling.getEnchants().add(ENCHANT.SharpnesV2);
-        grapling.getLore().add("line1");
-        grapling.update();
+    public static Jitem createGraplingHook(){
+        Jitem product = new Jitem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 15L, "GRAPPLING_HOOK");
+        product.setUpgradeable(false);
+        product.getAbilities().add(new Grappling_Hook(1.5f));
+        product.getEnchants().add(ENCHANT.SharpnesV2);
+        product.getLore().add("line1");
+        product.update();
+        return product;
     }
-
-    public static final Jitem test;
-    static {
-        test = new Jitem("Test Item",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
+    public static Jitem createTest(){
+        Jitem test = new Jitem("Test Item",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
         test.getStats()
                 .setBaseCrit(100)
                 .setBaseCritChance(100)
@@ -82,11 +82,10 @@ public final class Items {
 
         ));
         test.update();
+        return test;
     }
-
-    public static final Jitem animate_wannd;
-    static {
-        animate_wannd = new Jitem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
+    public static Jitem createAnimationWand(){
+        Jitem animate_wannd = new Jitem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
         animate_wannd.getAbilities().add(new Animator());
         animate_wannd.getCustom_lore().addAll(
                 List.of(
@@ -96,21 +95,20 @@ public final class Items {
                 )
         );
         animate_wannd.update();
+        return animate_wannd;
     }
 
-    public static void sendItems(Player player, Jitem item){
-        ItemStack itemStack = item.getItem();
-        player.getInventory().addItem(itemStack);
+    public static Jitem creatNewProduct(JitemFactory product){
+        return product.create();
+    }
+    interface JitemFactory{
+        Jitem create();
     }
 
-    public static void register(){
-        grapling.setUpdateable(true);
-        test.setUpdateable(true);
-        EndGateway.setUpdateable(true);
-        animate_wannd.setUpdateable(true);
-        new Teleport().setShowCooldown(false);
-        new Grappling_Hook().setShowCooldown(true);
-        new Animator().register();
+    private void demo(){
+        creatNewProduct(() -> {
+            Jitem item = null;
+            return null;
+        });
     }
-
 }

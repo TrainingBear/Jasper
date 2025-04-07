@@ -3,18 +3,14 @@ package me.jasper.jasperproject.JasperItem;
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
-import me.jasper.jasperproject.JasperItem.Util.ItemHandler;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
+import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
-import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -94,11 +90,12 @@ public class Jitem {
     /**
      * This is used by ItemPatcher
      * */
+    @Deprecated
     public void setUpdateable(boolean b){
         if(!b){
-            ItemHandler.getItems().remove(ID);
+            ItemManager.getItems().remove(ID);
         }
-        ItemHandler.getItems().put(ID,this);
+        ItemManager.getItems().put(ID,this);
     }
 
     public void update() {

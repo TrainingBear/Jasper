@@ -1,12 +1,11 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes;
 
 import lombok.Getter;
-import me.jasper.jasperproject.JasperItem.Util.ItemHandler;
+import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public enum ENCHANT {
     }
 
     private void registerThis(){
-        ItemHandler.getEnchants().add(this);
+        ItemManager.getEnchants().add(this);
     }
     public static void register(){
         for (ENCHANT value : ENCHANT.values()) {

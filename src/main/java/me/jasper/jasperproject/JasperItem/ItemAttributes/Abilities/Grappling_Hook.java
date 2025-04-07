@@ -44,7 +44,6 @@ public class Grappling_Hook extends ItemAbility implements Listener {
     }
 
     public Grappling_Hook(){
-        register();
     }
 
     @EventHandler

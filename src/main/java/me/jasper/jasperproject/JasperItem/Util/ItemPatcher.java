@@ -9,13 +9,11 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.UUID;
 
 public class ItemPatcher {
@@ -45,8 +43,8 @@ public class ItemPatcher {
             NBTCompoundList inventory = playernbt.getCompoundList("Inventory");
             for (ReadWriteNBT item : inventory) {
                 if(!hasCustomID(item)) continue;
-                if(!ItemHandler.getItems().containsKey(getID(item))) continue;
-                Jitem newVer = ItemHandler.getItems().get(getID(item));
+                if(!ItemManager.getItems().containsKey(getID(item))) continue;
+                Jitem newVer = ItemManager.getItems().get(getID(item));
                 if(getVersion(item) == newVer.getVersion()) continue;
 
                 plugin.getLogger().info("Detected new Version of "+ getID(item)+" -> "+newVer.getVersion()+". Starting updating item... ");

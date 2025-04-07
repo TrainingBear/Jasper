@@ -28,7 +28,6 @@ public class Warper extends ItemAbility{
     HashMap<UUID, int[]> target = new HashMap<>();
 
     public Warper(){
-        register();
     }
     public Warper(float cooldown, int WarpRange){
         this.setRange(WarpRange);

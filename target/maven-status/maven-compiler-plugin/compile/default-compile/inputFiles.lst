@@ -1,4 +1,5 @@
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\JasperItemCommand.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemManager.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemPatcher.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDeathEvent.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\DungeonUtil.java
@@ -10,6 +11,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\MobEventLis
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\ConfigDungeon.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\JasperEntity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDamagedEvent.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\Factory.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockUtility.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Debug.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemStats.java
@@ -37,7 +39,6 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Listener\whenRainCancel.
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\DungeonMapRenderer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Listener\PlotMenuListener.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\EntityCommand.java
-D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemHandler.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\SignGUI.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockExecutor.java

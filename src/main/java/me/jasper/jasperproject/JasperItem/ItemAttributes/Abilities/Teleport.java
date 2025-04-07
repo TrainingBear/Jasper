@@ -18,12 +18,15 @@ import java.util.List;
 
 public class Teleport extends ItemAbility implements Listener {
     private static Teleport instance;
+
+    Teleport() {
+    }
+
     public static Teleport getInstance(){
         if(instance == null) instance = new Teleport();
         return instance;
     }
 
-    public Teleport(){register();}
     public Teleport(int range, float cooldown){
        this.setRange(range);
        this.setCooldown(cooldown);
@@ -44,9 +47,10 @@ public class Teleport extends ItemAbility implements Listener {
         this.setPlayer(player);
     }
 
-    //This Event Listener
+
+
     @EventHandler
-    public void onTeleport(Teleport e){
+    public void action(Teleport e) {
         e.getPlayer().sendMessage("You cant use this, it has "+Warper.getInstance().getKey()+" ability? "+ItemUtils.hasAbility(
                 e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey()));
         if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
@@ -55,7 +59,7 @@ public class Teleport extends ItemAbility implements Listener {
             e.getPlayer().sendMessage("You cant use this, it has Warper ability");
             return;
         }
-        e.applyCooldown();
+        applyCooldown();
         if(e.isCancelled()) return;
         Player player = e.getPlayer();
 
@@ -69,7 +73,6 @@ public class Teleport extends ItemAbility implements Listener {
         player.setFallDistance(0);
         ItemUtils.playPSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f
                 , (float) Math.min(1.7, 0.5f + (beforeTP.distance(afterTP) * 0.05f)));
-        e.setCancelled(true);
     }
 
 
@@ -103,5 +106,6 @@ public class Teleport extends ItemAbility implements Listener {
         }
         return lastBlock;
     }
+
 
 }

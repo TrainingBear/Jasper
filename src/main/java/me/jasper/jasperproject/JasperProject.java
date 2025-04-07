@@ -16,6 +16,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
 import me.jasper.jasperproject.JasperItem.Items;
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
+import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Listener.*;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
@@ -48,16 +49,12 @@ public final class JasperProject extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
         animationConfig.load(Animation::loadCommandTabCompleter);
 
 
-        Items.register();
-        try {
-            createDirectories();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        ItemManager.getInstance().registerAll();
 
         this.getCommand("debug").setExecutor(new Debug());
 
@@ -65,7 +62,7 @@ public final class JasperProject extends JavaPlugin {
 //                .register(new PaperAnimationCommand());
 
 
-        PluginManager PM = Bukkit.getServer().getPluginManager();
+
         PM.registerEvents(new Joinmsg(this), this);
         PM.registerEvents(new InvenAhhListener(), this);
         PM.registerEvents(new PlotMenuListener(), this);
@@ -73,10 +70,6 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
 
-        PM.registerEvents(Animator.getInstance(), this);
-        PM.registerEvents(Teleport.getInstance(), this);
-        PM.registerEvents(Warper.getInstance(), this);
-        PM.registerEvents(Grappling_Hook.getInstance(), this);
 
 //        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
 //        BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
