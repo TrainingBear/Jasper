@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperProject;
@@ -43,8 +44,9 @@ public class ItemPatcher {
             NBTCompoundList inventory = playernbt.getCompoundList("Inventory");
             for (ReadWriteNBT item : inventory) {
                 if(!hasCustomID(item)) continue;
-                if(!ItemManager.getItems().containsKey(getID(item))) continue;
-                Jitem newVer = ItemManager.getItems().get(getID(item));
+                val items = ItemManager.getInstance().getItems();
+                if(!items.containsKey(getID(item))) continue;
+                Jitem newVer = ItemManager.getInstance().getItems().get(getID(item));
                 if(getVersion(item) == newVer.getVersion()) continue;
 
                 plugin.getLogger().info("Detected new Version of "+ getID(item)+" -> "+newVer.getVersion()+". Starting updating item... ");

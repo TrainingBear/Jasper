@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.JasperItem.Product;
 
+import me.jasper.jasperproject.FileConfiguration.Test;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
@@ -12,7 +13,13 @@ import org.bukkit.Material;
 import java.util.List;
 
 public class TestItem extends Jitem implements Factory {
-
+    private static TestItem instance;
+    public static TestItem getInstance(){
+        if(instance==null){
+            instance=new TestItem();
+        }
+        return instance;
+    }
     public TestItem(){
         super("Test Item", Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
         this.getStats()

@@ -103,14 +103,4 @@ public final class Items {
         player.getInventory().addItem(itemStack);
     }
 
-    public static void register(){
-        grapling.setUpdateable(true);
-        test.setUpdateable(true);
-        EndGateway.setUpdateable(true);
-        animate_wannd.setUpdateable(true);
-        new Teleport().setShowCooldown(false);
-        new Grappling_Hook().setShowCooldown(true);
-        new Animator().register();
-    }
-
 }

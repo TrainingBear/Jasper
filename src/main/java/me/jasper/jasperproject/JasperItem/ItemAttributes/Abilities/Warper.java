@@ -1,9 +1,11 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import lombok.Getter;
+import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
+import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
@@ -117,9 +119,9 @@ public class Warper extends ItemAbility{
             float distanceTP = (float) targetToTP.distance(player.getLocation());
 
             int range = e.getRange();
-            if (distanceTP < e.getRange()+.1f) e.applyCooldown();
+            if (distanceTP < e.getRange()+.1f) applyCooldown(e);
             else{
-                if(e.hasCooldown()) return;
+                if(hasCooldown(e)) return;
                 player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>TOO FAR! </b>You're <color:#fa3b2d>" + (distanceTP > 1000
                         ? round((distanceTP-range) / 1000f, 1)+"k" : round((distanceTP-range), 1)) + "</color> blocks away from limit!</red>"));
                 ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.5f);
@@ -169,14 +171,12 @@ public class Warper extends ItemAbility{
 
     @EventHandler
     public void trigger(PlayerInteractEvent e){
-        if (!ItemUtils.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), this.getKey()))  return;
+        val item = e.getPlayer().getInventory().getItemInMainHand();
+        if (!ItemUtils.hasAbility(item, this.getKey()))  return;
 
-        if(((e.getAction().equals(Action.LEFT_CLICK_AIR)||e.getAction().equals(Action.LEFT_CLICK_BLOCK))&& e.getPlayer().isSneaking())
-            ||
-            ((e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ||e.getAction().equals(Action.RIGHT_CLICK_AIR)) && e.getPlayer().isSneaking())){
+        if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e) || TRIGGER.Interact.SHIFT_LEFT_CLICK(e)){
 
-            PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getPlayer().getInventory().getItemInMainHand(), this.getKey());
-
+            PersistentDataContainer itemData = ItemUtils.getAbilityComp(item, this.getKey());
             Bukkit.getPluginManager().callEvent(new Warper(
                     itemData.get(JKey.key_range, PersistentDataType.INTEGER),
                     itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),

@@ -7,19 +7,18 @@ import com.sk89q.worldedit.regions.Region;
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
-import me.jasper.jasperproject.Util.Structure;
+import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
+import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class Animator extends ItemAbility implements Listener {
+public class Animator extends ItemAbility {
     private static Animator instance;
     public static Animator getInstance(){
         if(instance == null) instance = new Animator();
@@ -44,13 +43,13 @@ public class Animator extends ItemAbility implements Listener {
         if(!ItemUtils.hasAbility(e.getItem(),this.getKey())) return;
         org.bukkit.entity.Player player = e.getPlayer();
 
-        if(e.getAction().equals(Action.LEFT_CLICK_BLOCK)){
+        if(TRIGGER.Interact.LEFT_CLICK_BLOCK(e)){
             Block block = e.getClickedBlock();
             BlockVector3 pos = BlockVector3.at(block.getX(), block.getY(), block.getZ());
             firstPos.put(player.getUniqueId(), pos);
             player.sendMessage(ChatColor.YELLOW+"You selected first pos!");
             e.setCancelled(true);
-        }if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+        }if(TRIGGER.Interact.RIGHT_CLICK_BLOCK(e)){
             Block block = e.getClickedBlock();
             BlockVector3 pos = BlockVector3.at(block.getX(), block.getY(), block.getZ());
             secondPost.put(player.getUniqueId(), pos);

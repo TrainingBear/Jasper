@@ -24,7 +24,7 @@ public class SummonCustomEntity {
         player.sendMessage(String.valueOf(jarumJam.getDisplayWidth()));
         player.sendMessage(String.valueOf(jarumJam.getItemDisplayTransform()));
         player.teleport(jarumJam);
-        player.sendMessage(ChatColor.LIGHT_PURPLE+"A entity just spawned with tag: "+getTag(jarumJam));
+        player.sendMessage(ChatColor.LIGHT_PURPLE+"TRIGGER entity just spawned with tag: "+getTag(jarumJam));
         return jarumJam;
     }
     public static String getTag(ItemDisplay entity){

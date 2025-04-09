@@ -1,7 +1,13 @@
 package me.jasper.jasperproject.JasperItem;
 
+import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
+import me.jasper.jasperproject.JasperItem.Product.Blender;
+import me.jasper.jasperproject.JasperItem.Product.EndGateway;
+import me.jasper.jasperproject.JasperItem.Product.TestItem;
+import me.jasper.jasperproject.JasperItem.Product.WarpGateway;
+import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemPatcher;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
@@ -23,10 +29,10 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!(commandSender instanceof Player player)) return false;
-
+        val manager = ItemManager.getInstance().getItems();
         switch(strings[0]){
             case "debug" -> {
-                Items.register();
+//                Items.register();
             }
             case "update" -> {
                 try {
@@ -36,29 +42,21 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 }
             }
             case "EndGateway" -> {
-                Jitem test;
-                test = Items.EndGateway.clone();
-                test.send(player);
+                manager.get("END_GATEWAY").send(player);
                 player.sendMessage("Sending "+strings[0]+" item");
             }
             case "WarpGateway" ->{
-                Jitem test;
-                test = Items.WarpGateway.clone();
-                test.send(player);
+                manager.get("END_GATEWAY").send(player);
                 player.sendMessage("Sending "+strings[0]+" item");
             }
             case "grapple"->{
-                Jitem test;
-                test = Items.grapling.clone();
-                test.send(player);
+                manager.get("GRAPPLING_HOOK").send(player);
                 player.sendMessage("Sending "+strings[0]+" item");
             }case "test"->{
-                Jitem test;
-                test = Items.test.clone();
-                test.send(player);
+                manager.get("TEST").send(player);
                 player.sendMessage("Sending "+strings[0]+" item");
             }case "animate"->{
-                Items.animate_wannd.clone().send(player);
+                manager.get("ANIMATE").send(player);
                 player.sendMessage("Sending "+strings[0]+" item");
             }
         }

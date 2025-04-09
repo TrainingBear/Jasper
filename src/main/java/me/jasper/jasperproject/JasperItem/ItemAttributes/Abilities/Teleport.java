@@ -1,6 +1,7 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
 import org.bukkit.*;
@@ -8,7 +9,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -16,7 +16,7 @@ import org.bukkit.util.BlockIterator;
 
 import java.util.List;
 
-public class Teleport extends ItemAbility implements Listener {
+public class Teleport extends ItemAbility{
     private static Teleport instance;
 
     Teleport() {
@@ -51,15 +51,8 @@ public class Teleport extends ItemAbility implements Listener {
 
     @EventHandler
     public void action(Teleport e) {
-        e.getPlayer().sendMessage("You cant use this, it has "+Warper.getInstance().getKey()+" ability? "+ItemUtils.hasAbility(
-                e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey()));
-        if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
-                e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())
-        ) {
-            e.getPlayer().sendMessage("You cant use this, it has Warper ability");
-            return;
-        }
-        applyCooldown();
+        if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())) {return;}
+        applyCooldown(e);
         if(e.isCancelled()) return;
         Player player = e.getPlayer();
 
@@ -79,8 +72,8 @@ public class Teleport extends ItemAbility implements Listener {
     //This gonna be my Event trigger
     @EventHandler
     public void Trigger(PlayerInteractEvent e){
-        if((e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) &&
-                ItemUtils.hasAbility(e.getItem(), this.getKey())){
+        if(!ItemUtils.hasAbility(e.getItem(), this.getKey())) return;
+        if(TRIGGER.Interact.RIGHT_CLICK(e)){
 
             PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getItem(), this.getKey());
 

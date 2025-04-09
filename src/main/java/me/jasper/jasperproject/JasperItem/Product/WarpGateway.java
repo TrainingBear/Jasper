@@ -14,6 +14,8 @@ public class WarpGateway extends EndGateway implements Factory {
     private final static WarpGateway instance = new WarpGateway();
     public WarpGateway(){
         super();
+        this.setDefaultItem_name("Warp gateway");
+        this.setRarity(Rarity.LEGENDARY);
         this.getAbilities().add(new Warper(20,20));
     }
 

@@ -1,4 +1,5 @@
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\JasperItemCommand.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\TRIGGER.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemManager.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemPatcher.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDeathEvent.java
@@ -18,7 +19,9 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttribute
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\Frame.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Jitem.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\Rooms.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\Blender.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\EntityFinder.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\WarpGateway.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\LaunchPadConfiguration.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ENCHANT.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\Generator.java
@@ -28,6 +31,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Editor
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemAbility.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemCreator.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Items.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\TestItem.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\Animation.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\EditListener.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Teleport.java
@@ -61,6 +65,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\RoomType.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\SummonCustomEntity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\PaperAnimationCommand.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\EndGateway.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Structure.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Commands\CommandManager.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.java
@@ -69,3 +74,4 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapRende
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\RoomShape.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Loadschem.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Grappling_Hook.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\GraplingHook.java

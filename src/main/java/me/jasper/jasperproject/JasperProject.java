@@ -1,8 +1,6 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
-import me.jasper.jasperproject.Animation.PaperAnimationCommand;
-import me.jasper.jasperproject.Commands.CommandManager;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
@@ -10,11 +8,6 @@ import me.jasper.jasperproject.Jam.*;
 import me.jasper.jasperproject.JasperEntity.EntityCommand;
 import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDamagedEvent;
 import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListener;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
-import me.jasper.jasperproject.JasperItem.Items;
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Listener.*;
@@ -22,16 +15,11 @@ import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.SignGUI;
-import me.jasper.jasperproject.Util.Structure;
+import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;

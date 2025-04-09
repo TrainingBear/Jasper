@@ -13,13 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Jitem {
     @Getter private long Version; // <---------- 1
-    @Getter private String ID; // <---------- 2
+    @Setter@Getter private String ID; // <---------- 2
     @Setter private String item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
     @Setter private boolean upgradeable = true; // <---------- 5
@@ -28,7 +29,7 @@ public class Jitem {
     @Getter private byte upgradesOccur; // <---------- 8
     @Getter private ItemStack item;
     @Getter @Setter private Rarity baseRarity; // <---------- 9
-    private Rarity rarity; // <---------- 10
+    @Getter @Setter private Rarity rarity; // <---------- 10
     private ItemMeta meta;
     final private ItemType type; // <---------- 11
 
@@ -55,7 +56,7 @@ public class Jitem {
     }
 
     public Jitem(boolean upgraded, boolean upgrade, boolean UPGRADE, byte occur, String name,
-                 String defaultName, Material material, Rarity rarity, Rarity baseRarity, ItemType type,
+                 String defaultName, Material material, @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
                  long itemVersion, String ID, List<ItemAbility> abilities, ItemStats stats, List<ENCHANT> enchant){
         this.item = new ItemStack(material);
         this.meta = this.item.getItemMeta();
@@ -85,17 +86,6 @@ public class Jitem {
         meta.getPersistentDataContainer().set(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN, unlimitedUpgradeable);
         meta.getPersistentDataContainer().set(JKey.Upgraded, PersistentDataType.BOOLEAN, upgraded);
         this.meta.setItemName(item_name);
-    }
-
-    /**
-     * This is used by ItemPatcher
-     * */
-    @Deprecated
-    public void setUpdateable(boolean b){
-        if(!b){
-            ItemManager.getItems().remove(ID);
-        }
-        ItemManager.getItems().put(ID,this);
     }
 
     public void update() {

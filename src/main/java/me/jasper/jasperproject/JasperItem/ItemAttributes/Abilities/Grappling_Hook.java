@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public class Grappling_Hook extends ItemAbility implements Listener {
+public class Grappling_Hook extends ItemAbility {
     @Getter private PlayerFishEvent fish;
     private static Grappling_Hook instance;
     public static Grappling_Hook getInstance(){
@@ -54,7 +54,7 @@ public class Grappling_Hook extends ItemAbility implements Listener {
             Player player = e.getFish().getPlayer();
             Location bobber = e.getFish().getHook().getLocation();
 
-            e.applyCooldown();
+            applyCooldown(e);
             if(e.isCancelled()) {
                 ItemUtils.playPSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1.7f);
                 return;

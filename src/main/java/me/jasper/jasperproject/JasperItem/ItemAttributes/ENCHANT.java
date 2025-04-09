@@ -35,14 +35,6 @@ public enum ENCHANT {
         updateLore();
     }
 
-    private void registerThis(){
-        ItemManager.getEnchants().add(this);
-    }
-    public static void register(){
-        for (ENCHANT value : ENCHANT.values()) {
-            value.registerThis();
-        }
-    }
 
     private void updateLore(){
 //        for (String s : base_lore) {

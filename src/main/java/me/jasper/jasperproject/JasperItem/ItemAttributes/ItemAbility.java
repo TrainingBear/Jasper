@@ -74,24 +74,23 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         return stats;
     }
 
-    protected boolean hasCooldown(){
-        Player player = this.getPlayer();
-        float cooldown = this.getCooldown();
-
+    protected <T extends ItemAbility> boolean hasCooldown(T e){
+        float cooldown = e.getCooldown();
         float current = ItemAbility.this.cooldownMap.get(player.getUniqueId()) != null ?
                 (System.currentTimeMillis() - ItemAbility.this.cooldownMap.get(player.getUniqueId()) ) / 1000.0f : cooldown+1;
 
         if(current > cooldown) return false;
         if(!isShowCooldown()) return true;
+        Player player = e.getPlayer();
         player.sendMessage(
                 MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
         );
         return true;
     }
-    protected void applyCooldown() {
-        float cooldown = this.getCooldown();
+    protected <T extends ItemAbility> void applyCooldown(T e) {
+        float cooldown = e.getCooldown();
         if (cooldown <= 0) return;
-        Player player = this.getPlayer();
+        Player player = e.getPlayer();
 
 
         if (cooldownMap.containsKey(player.getUniqueId())) {
