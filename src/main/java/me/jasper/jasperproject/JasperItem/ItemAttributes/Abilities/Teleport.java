@@ -51,9 +51,12 @@ public class Teleport extends ItemAbility{
 
     @EventHandler
     public void action(Teleport e) {
-        if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())) {return;}
+        if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
+                e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())
+        ) return;
         applyCooldown(e);
         if(e.isCancelled()) return;
+
         Player player = e.getPlayer();
 
         Location beforeTP = e.getPlayer().getLocation();
