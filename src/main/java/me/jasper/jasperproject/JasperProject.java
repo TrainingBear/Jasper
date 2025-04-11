@@ -1,6 +1,8 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
+import me.jasper.jasperproject.Animation.PaperAnimationCommand;
+import me.jasper.jasperproject.Commands.CommandManager;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
@@ -17,15 +19,18 @@ import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.SignGUI;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.util.*;
 
 
 public final class JasperProject extends JavaPlugin {
@@ -39,7 +44,7 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load(Animation::loadCommandTabCompleter);
+        animationConfig.load(Animation::loadConfig);
 
 
         ItemManager.getInstance().registerAll();

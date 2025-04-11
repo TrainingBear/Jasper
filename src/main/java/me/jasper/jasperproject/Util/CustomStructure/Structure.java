@@ -13,6 +13,9 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
+import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +25,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_21_R1.block.CraftStructureBlock;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockVector;
 
 import java.io.*;
@@ -30,53 +34,105 @@ import java.util.*;
 public final class Structure {
     private static final Map<UUID, Location> PLACED_BOX = new HashMap<>();
 
-    public static void save(File config_file, String name) throws StructureException{
-        FileConfiguration config = YamlConfiguration.loadConfiguration(config_file);
-        if(config.contains("region") || config.contains("origin")) throw new StructureException("region can't be found!");
+    public synchronized static boolean save(Player player, File save_to){
+        Map<UUID, Region> map = Animator.getRegions();
+        if(!map.containsKey(player.getUniqueId())) return false;
 
-        Region region = config.getObject("region", Region.class);
-        BlockVector3 to = config.getObject("origin", BlockVector3.class);
-        File file = new File(config_file.getParentFile(), "\\"+name+".schem");
-        World we_world = region.getWorld();
+        Location l = player.getLocation();
+        Region region = map.get(player.getUniqueId());
 
-        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
+        player.sendMessage("saved region with length of "+region.getLength());
 
-        try(EditSession session = WorldEdit.getInstance().newEditSession(we_world);
-            ClipboardWriter writer = BuiltInClipboardFormat.SPONGE_V3_SCHEMATIC.getWriter(new FileOutputStream(file))
-
-        ){
-            ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(session , region, clipboard, to);
-            Operations.complete(forwardExtentCopy);
-            writer.write(clipboard);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        BlockVector3 to = BlockVector3.at(l.x(), l.y(), l.z());
+        for (BlockVector3 block : region) {
+            player.sendMessage("Saving -> " +block.toString());
         }
+        return write(player, region, to, save_to);
+    }
+
+    public synchronized static boolean saveFrame(Player player, File save_to, String name) throws StructureException{
+        File regionSchem = new File(save_to, "\\region.schem");
+        if(!regionSchem.exists()) return false;
+        player.sendMessage(regionSchem.getAbsolutePath());
+
+        Region region;
+        BlockVector3 to;
+        try(Clipboard clipboard = getClip(regionSchem)){
+            region = clipboard.getRegion();
+            to = clipboard.getOrigin();
+        }catch (IOException e){
+            player.sendMessage(e.getMessage()+e.getCause());
+            return false;
+        }
+
+        File file = new File(save_to, "\\"+name+".schem");
+        for (BlockVector3 block : region) {
+            player.sendMessage("Saving -> " +block.toString());
+        }
+        return write(player, region, to, file);
+    }
+
+    private static boolean write(Player player, Region region, BlockVector3 to, File file) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try(
+                        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
+                        ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_V3_SCHEMATIC.getWriter(new FileOutputStream(file));
+                        EditSession session = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(player.getWorld()))){
+                          clipboard.setOrigin(to);
+                    ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(session , region, clipboard, region.getMinimumPoint());
+                    Operations.complete(forwardExtentCopy);
+                    clipboardWriter.write(clipboard);
+
+                    for (BlockVector3 block : region) {
+                        player.sendMessage("Saved ->" + block.toString());
+                    }
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }.runTaskAsynchronously(JasperProject.getPlugin());
+        return true;
     }
 
 
-    public static void render(File file, Location location, double radius)throws StructureException{
-        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-        if(!config.contains("origin")) throw new StructureException("Failed to render this animation, because region of this file is null");
-
+    public static void render(File file, Location location, double radius)throws StructureException {
         org.bukkit.World bukkitWorld = location.getWorld();
-        BlockVector3 pasteLocation = BlockVector3.at(location.getX(), location.getY(), location.getZ());
+        BlockVector3 pasteLocation = BlockVector3.at(-location.getX(), -location.getY(), -location.getZ());
 
-        try(Clipboard clipboard = ClipboardFormats.findByFile(file).getReader(new FileInputStream(file)).read()) {
-            for(BlockVector3 pos : clipboard.getRegion()){
+        Bukkit.broadcastMessage("Loading "+file.getAbsolutePath());
+        Collection<Player> players = null;
+        try (Clipboard clipboard = getClip(file)) {
+            Location world_pos = null;
+            players = bukkitWorld.getNearbyPlayers(location, radius);
+            for (BlockVector3 pos : clipboard.getRegion()) {
                 val baseBlock = clipboard.getFullBlock(pos);
-                val world_pos = BukkitAdapter.adapt(bukkitWorld, pos.subtract(clipboard.getOrigin().add(pasteLocation)));
+                world_pos = BukkitAdapter.adapt(bukkitWorld, pos.subtract(clipboard.getOrigin().add(pasteLocation)));
 
-                Collection<Player> players = bukkitWorld.getNearbyPlayers(location, radius);
                 for (Player player : players) {
+//                    player.sendMessage(MiniMessage.miniMessage().deserialize("Played an animation at <x>, <y>, <z>",
+//                            Placeholder.unparsed("x", String.valueOf(world_pos.getX())),
+//                            Placeholder.unparsed("y", String.valueOf(world_pos.getY())),
+//                            Placeholder.unparsed("z", String.valueOf(world_pos.getZ()))
+//                    ));
                     player.sendBlockChange(world_pos, BukkitAdapter.adapt(baseBlock));
                 }
             }
-
+            for (Player player : players) {
+                player.sendMessage("u have been recived "+file.getName());
+            }
+//            Bukkit.broadcast(MiniMessage.miniMessage().deserialize("Played an animation at <x>, <y>, <z>",
+//                    Placeholder.unparsed("x", String.valueOf(world_pos.getX())),
+//                    Placeholder.unparsed("y", String.valueOf(world_pos.getY())),
+//                    Placeholder.unparsed("z", String.valueOf(world_pos.getZ()))
+//                    ));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public static void createBox(Player player){
@@ -120,5 +176,9 @@ public final class Structure {
             Location box = PLACED_BOX.remove(player.getUniqueId());
             player.sendBlockChange(box, box.getBlock().getBlockData());
         }
+    }
+
+    private static Clipboard getClip(File file) throws IOException {
+        return ClipboardFormats.findByFile(file).getReader(new FileInputStream(file)).read();
     }
 }

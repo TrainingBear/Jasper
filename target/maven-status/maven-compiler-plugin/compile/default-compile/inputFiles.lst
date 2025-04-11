@@ -1,3 +1,4 @@
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\BlockPacket.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\JasperItemCommand.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\TRIGGER.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemManager.java
@@ -13,6 +14,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Config
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\JasperEntity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDamagedEvent.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\Factory.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\ConfigConsumer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockUtility.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Debug.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemStats.java
@@ -26,6 +28,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Launch
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ENCHANT.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\Generator.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\TabCompleter\SummonItemDisplay.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\CustomStructure\Structure.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockConfigurationForCommands.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Editor.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemAbility.java
@@ -55,7 +58,9 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapCanva
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Test.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Configurator.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\JKey.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\CustomStructure\StructureException.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\JasperConfiguratorException.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\CompoundConsumer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemType.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Util\ItemUtils.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\Room.java
@@ -66,12 +71,12 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\SummonCustomEntity.
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\PaperAnimationCommand.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\EndGateway.java
-D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Structure.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Commands\CommandManager.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Listener\PlayerListListener.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapRenderer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\RoomShape.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Loadschem.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Consumer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Grappling_Hook.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\GraplingHook.java

@@ -12,10 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  * YAML CONFIGURATOR
@@ -23,7 +21,8 @@ import java.util.List;
 public final class Configurator {
     private static Configurator instance;
 
-    private final List<File > file = new ArrayList<>();
+    @Getter private final Set<String> file = new HashSet<>();
+//    private final Map<String, File> file = new HashMap<>();
     @Getter private final List<Configurator > compounds = new ArrayList<>();
     @Getter public final File parent;
     private final Plugin plugin = JasperProject.getPlugin();
@@ -45,24 +44,32 @@ public final class Configurator {
     }
 
 
-    public List<File> getFiles(){
+    public Set<String> getFiles(){
         return file;
     }
 
-    public void load(@Nullable Runnable run){
+    public void load(){
+        this.load(null);
+    }
+    /**
+     * Load Configuration on plugin enabled
+     * @param consumer For every .yml file loaded, u can run your logic of your config.yml
+     *                 after .yml file loaded or before if the file is directory/folder.
+     */
+    public void load(Consumer consumer){
         File[] files = parent.listFiles();
         for (File file : files) {
             if(file.getName().endsWith(".yml")) {
-                this.file.add(file);
+                String name = file.getName();
+                this.file.add(name);
+                Bukkit.getLogger().info("[JasperProject] [Configurator] loaded "+name);
+                if(consumer!=null) consumer.run(file);
             }
             if(file.isDirectory()){
                 Configurator compound = new Configurator(file);
-                compound.load(null);
+                compound.load(consumer);
                 this.compounds.add(compound);
             }
-        }
-        if(run!=null){
-            run.run();
         }
     }
 
@@ -82,7 +89,7 @@ public final class Configurator {
                 plugin.getLogger().info("[Jasper] Failed creating ("+file.getName()+")");
             }finally {
                 plugin.getLogger().info("[Jasper] Successful creating ("+file.getName()+") "+file.getAbsolutePath());
-                this.file.add(file);
+                this.file.add(name+".yml");
             }
             return this;
         }
@@ -97,6 +104,7 @@ public final class Configurator {
             editor.edit(config).save(getFile(name));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }finally {
         }
     }
 
@@ -130,28 +138,43 @@ public final class Configurator {
         return null;
     }
 
-    public @Nullable File getFile(String name){
+    public @Nullable File getFile(String name) {
         name += ".yml";
-        for (File file : file) {
-            if (file.getName().equals(name)) return file;
+        for (String file : this.file) {
+            if (file.equals(name)) {
+                File value = new File(parent, name);
+                try{
+                    if(value.createNewFile()){
+                        Bukkit.getLogger().warning("[JasperProject] [Configurator] created new files! "+name);
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                    Bukkit.getLogger().warning("[JasperProject] [Configurator] something went wrong when creating "+name);
+                }
+
+                return value;
+            }
         }
         return null;
     }
     public @Nullable FileConfiguration getConfig(String name){
-        name += ".yml";
-        for (File file : file) {
-            if (file.getName().equals(name)) return YamlConfiguration.loadConfiguration(file);
+        File config = getFile(name);
+        if(config==null) {
+//            System.out.println("return 1");
+            Bukkit.getLogger().warning("[JasperProject] [Configurator] Something wrong when getting "+name+" FileConfiguration class");
+            return null;
+        }
+        for (String file : file) {
+//            System.out.println("Checking "+file+". is "+file+" equal "+name+".yml: "+file.equals(name));
+            if (file.equals(name+".yml")) return YamlConfiguration.loadConfiguration(config);
         }
         return null;
     }
 
     public void delete(String name){
-        File file = getFile(name);
-        if(file==null) return;
-
-        this.file.remove(file);
-        if(file.delete()){
-            Bukkit.getLogger().info("[JasperProject] deleted "+name+".yml");
+        this.file.remove(name);
+        if(getFile(name).delete()){
+            Bukkit.getLogger().warning("[JasperProject] [Configurator] deleted "+name+".yml");
         }
     }
 

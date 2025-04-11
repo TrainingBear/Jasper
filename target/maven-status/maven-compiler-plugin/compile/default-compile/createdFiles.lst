@@ -17,6 +17,7 @@ me\jasper\jasperproject\JasperItem\Util\TRIGGER$Interact.class
 me\jasper\jasperproject\Jam\ClockUtility$1.class
 me\jasper\jasperproject\Loadschem.class
 me\jasper\jasperproject\Jam\ClockConfigurationForCommands.class
+me\jasper\jasperproject\FileConfiguration\CompoundConsumer.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\ItemStats$MODIFIER.class
 me\jasper\jasperproject\Animation\Animation.class
 me\jasper\jasperproject\Dungeon\Rooms.class
@@ -30,6 +31,7 @@ me\jasper\jasperproject\Dungeon\Room.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.class
 me\jasper\jasperproject\FileConfiguration\Configurator.class
 me\jasper\jasperproject\Animation\PaperAnimationCommand.class
+me\jasper\jasperproject\Util\CustomStructure\StructureException.class
 me\jasper\jasperproject\Commands\JasperCommand.class
 me\jasper\jasperproject\Animation\Frame.class
 me\jasper\jasperproject\JasperItem\ItemCreator.class
@@ -38,18 +40,22 @@ me\jasper\jasperproject\JasperItem\Items.class
 me\jasper\jasperproject\JasperItem\Util\Factory$JitemFactory.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.class
+me\jasper\jasperproject\Util\CustomStructure\Structure$1.class
 me\jasper\jasperproject\Util\SignGUI.class
 me\jasper\jasperproject\FileConfiguration\JasperConfiguratorException.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Teleport.class
 me\jasper\jasperproject\Jam\ClockUtility.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Warper.class
 me\jasper\jasperproject\Listener\Joinmsg.class
+me\jasper\jasperproject\FileConfiguration\ConfigConsumer.class
+me\jasper\jasperproject\FileConfiguration\Consumer.class
 me\jasper\jasperproject\JasperItem\Util\TRIGGER.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDamagedEvent.class
 me\jasper\jasperproject\Util\EntityFinder.class
 me\jasper\jasperproject\Dungeon\CursorRenderer.class
 me\jasper\jasperproject\Jam\ClockUtility$2.class
 me\jasper\jasperproject\JasperProject.class
+me\jasper\jasperproject\Util\BlockPacket.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.class
 me\jasper\jasperproject\Util\SummonCustomEntity.class
 me\jasper\jasperproject\JasperItem\Product\GraplingHook.class
@@ -79,7 +85,6 @@ me\jasper\jasperproject\Dungeon\RoomShape.class
 me\jasper\jasperproject\Animation\Animation$1temp.class
 me\jasper\jasperproject\Jam\ClockUtility$1$1.class
 me\jasper\jasperproject\Animation\Animation$1.class
-me\jasper\jasperproject\Util\Structure.class
 me\jasper\jasperproject\JasperItem\Util\ItemUtils.class
 me\jasper\jasperproject\Listener\InvenAhhListener$VanishJoinListener.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute$gemType.class
@@ -88,6 +93,7 @@ me\jasper\jasperproject\Listener\PlotMenuListener$1.class
 me\jasper\jasperproject\Listener\InvenAhhListener.class
 me\jasper\jasperproject\Jam\Clock.class
 me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
+me\jasper\jasperproject\Util\CustomStructure\Structure.class
 me\jasper\jasperproject\JasperItem\Product\Blender.class
 me\jasper\jasperproject\JasperItem\Product\EndGateway.class
 me\jasper\jasperproject\JasperItem\Product\TestItem.class
