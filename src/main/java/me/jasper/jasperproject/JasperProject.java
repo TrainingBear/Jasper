@@ -1,6 +1,7 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
+import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
@@ -11,6 +12,8 @@ import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListen
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Listener.*;
+import me.jasper.jasperproject.Bazaar.BazaarCommand;
+import me.jasper.jasperproject.Bazaar.BazaarListener;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.Debug;
@@ -25,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 
 public final class JasperProject extends JavaPlugin {
@@ -41,7 +43,7 @@ public final class JasperProject extends JavaPlugin {
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
         animationConfig.load(Animation::loadCommandTabCompleter);
 
-
+        Bazaar.setCategory();
         ItemManager.getInstance().registerAll();
 
         this.getCommand("debug").setExecutor(new Debug());
@@ -52,11 +54,13 @@ public final class JasperProject extends JavaPlugin {
 
 
         PM.registerEvents(new Joinmsg(this), this);
-        PM.registerEvents(new InvenAhhListener(), this);
+//        PM.registerEvents(new InvenAhhListener(), this);
         PM.registerEvents(new PlotMenuListener(), this);
 
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
+
+        PM.registerEvents(new BazaarListener(), this);
 
 
 //        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
@@ -65,11 +69,11 @@ public final class JasperProject extends JavaPlugin {
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
         /// jadi jangan register command disini
-        Objects.requireNonNull(this.getCommand("summondisplayi")).setTabCompleter(new SummonItemDisplay(this));
-        Objects.requireNonNull(this.getCommand("summondisplayi")).setExecutor(new SummonItemDisplay(this));
+        this.getCommand("summondisplayi").setTabCompleter(new SummonItemDisplay(this));
+        this.getCommand("summondisplayi").setExecutor(new SummonItemDisplay(this));
 
-        Objects.requireNonNull(Objects.requireNonNull(this.getCommand("dungeon"))).setTabCompleter(new GeneratorCommandExecutor(this));
-        Objects.requireNonNull(this.getCommand("dungeon")).setExecutor(new GeneratorCommandExecutor(this));
+        this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
+        this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
 
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
@@ -77,6 +81,8 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
+
+        this.getCommand("bazaar").setExecutor(new BazaarCommand());
 
 //        this.getCommand("animate").setExecutor(new AnimationCommand());
 

@@ -27,4 +27,7 @@ public final class JKey {
     public static final NamespacedKey key_cooldown = new NamespacedKey(JasperProject.getPlugin(), "cooldown");
     public static final NamespacedKey key_abilityCost = new NamespacedKey(JasperProject.getPlugin(), "ability_cost");
     public static final NamespacedKey key_damage = new NamespacedKey(JasperProject.getPlugin(), "damage");
+
+    public static final NamespacedKey bazaar_Item_GUI = new NamespacedKey(JasperProject.getPlugin(), "Bazaar");
+    public static final NamespacedKey bazaar_Action = new NamespacedKey(JasperProject.getPlugin(), "Bazaar-Action");
 }
