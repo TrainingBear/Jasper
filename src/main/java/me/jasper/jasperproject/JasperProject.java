@@ -1,6 +1,8 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
+import me.jasper.jasperproject.Animation.PaperAnimationCommand;
+import me.jasper.jasperproject.Commands.CommandManager;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
@@ -28,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.*;
 
 
 public final class JasperProject extends JavaPlugin {
@@ -43,7 +46,7 @@ public final class JasperProject extends JavaPlugin {
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
         animationConfig.load(Animation::loadCommandTabCompleter);
 
-        Bazaar.setCategory();
+
         ItemManager.getInstance().registerAll();
 
         this.getCommand("debug").setExecutor(new Debug());
