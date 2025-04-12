@@ -2,6 +2,9 @@ package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
 import me.jasper.jasperproject.Bazaar.Bazaar;
+import me.jasper.jasperproject.Animation.PaperAnimationCommand;
+import me.jasper.jasperproject.Commands.CommandManager;
+
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
@@ -28,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.*;
+
 
 
 public final class JasperProject extends JavaPlugin {
@@ -41,17 +46,15 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load(Animation::loadCommandTabCompleter);
 
+        animationConfig.load(Animation::loadConfig);
         Bazaar.setCategory();
+
         ItemManager.getInstance().registerAll();
 
         this.getCommand("debug").setExecutor(new Debug());
 
-//        CommandManager.getInstance()
-//                .register(new PaperAnimationCommand());
-
-
+        CommandManager.getInstance() .register(new PaperAnimationCommand());
 
         PM.registerEvents(new Joinmsg(this), this);
 //        PM.registerEvents(new InvenAhhListener(), this);
