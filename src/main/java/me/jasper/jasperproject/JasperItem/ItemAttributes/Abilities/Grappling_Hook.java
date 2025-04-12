@@ -4,17 +4,15 @@ import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.JKey;
+import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,9 +46,9 @@ public class Grappling_Hook extends ItemAbility {
 
     @EventHandler
     public void HookEvent(Grappling_Hook e){
-        if(e.getFish().getState() == PlayerFishEvent.State.FISHING) e.getFish().getHook()
+        if(TRIGGER.Fishing.FISHING_THROW(e.getFish())) e.getFish().getHook()
                 .setVelocity(e.getFish().getPlayer().getLocation().getDirection().multiply(2.75));
-        else if (isNearSolidBlock(e.getFish().getHook().getLocation()) ||e.getFish().getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
+        else if (isNearSolidBlock(e.getFish().getHook().getLocation()) || TRIGGER.Fishing.CAUGHT_ENTITY(e.getFish())) {
             Player player = e.getFish().getPlayer();
             Location bobber = e.getFish().getHook().getLocation();
 
@@ -90,8 +88,8 @@ public class Grappling_Hook extends ItemAbility {
     public void onHook(PlayerFishEvent e) {
         if (!ItemUtils.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), this.getKey()))  return;
 
-        if (e.getState() == PlayerFishEvent.State.FISHING || e.getState() == PlayerFishEvent.State.CAUGHT_ENTITY
-            ||e.getState() == PlayerFishEvent.State.REEL_IN || e.getState() == PlayerFishEvent.State.IN_GROUND){
+        if (TRIGGER.Fishing.FISHING_THROW(e) || TRIGGER.Fishing.CAUGHT_ENTITY(e)
+            ||TRIGGER.Fishing.REEL_WITHOUT_CATCHING(e) || TRIGGER.Fishing.BOBBER_ON_GROUND(e)){
             PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getPlayer().getInventory().getItemInMainHand(), this.getKey());
 
             Bukkit.getPluginManager().callEvent(new Grappling_Hook(
@@ -99,7 +97,7 @@ public class Grappling_Hook extends ItemAbility {
                     e
             ));
         }
-        else if(e.getState() == PlayerFishEvent.State.CAUGHT_FISH){
+        else if(TRIGGER.Fishing.CAUGHT_FISH(e)){
             Objects.requireNonNull(e.getCaught()).remove();
             e.setCancelled(true);
         }
