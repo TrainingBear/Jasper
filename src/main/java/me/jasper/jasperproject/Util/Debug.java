@@ -25,14 +25,9 @@ public class Debug implements CommandExecutor {
 
             return true;
         }
-        File schem = new File("C:\\Users\\user\\AppData\\Roaming\\.feather\\player-server\\servers\\7a1e3607-139e-4341-a6b9-6340739908da\\plugins\\JasperProject\\Animations\\a\\f15.schem");
-        Structure.render(schem, player.getLocation(), 10);
-//        Animation.play(player, "a");
-//
-//        player.sendMessage("Checking "+player.getItemInHand().getItemMeta().getDisplayName());
-//        for (ItemAbility itemAbility : ItemAbility.convertFrom(player.getItemInHand())) {
-//            player.sendMessage(" This item has "+itemAbility.getKey());
-//        }
+//        File schem = new File("C:\\Users\\user\\AppData\\Roaming\\.feather\\player-server\\servers\\7a1e3607-139e-4341-a6b9-6340739908da\\plugins\\JasperProject\\Animations\\a\\f15.schem");
+//        Structure.render(schem, player.getLocation(), 10);
+        Animation.play(player, "a");
         return true;
     }
 }

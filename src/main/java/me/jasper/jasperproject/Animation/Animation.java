@@ -18,10 +18,12 @@ import lombok.Getter;
 import me.jasper.jasperproject.FileConfiguration.Configurator;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import me.jasper.jasperproject.Util.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -43,9 +45,6 @@ public abstract class Animation {
 
 
     ///                 UTIL
-    private static Component deserialize(String message, TagResolver... resolvers){
-        return MiniMessage.miniMessage().deserialize(message, resolvers);
-    }
     private static Configurator getCompound(String name){
         return JasperProject.getAnimationConfig().getCompound(name);
     }
@@ -70,7 +69,7 @@ public abstract class Animation {
 
         if(configuration.getBoolean("isRunning")){
             plugin.getLogger().info("[JasperProject] "+filename+" is running!");
-            Animation.play(null, filename);
+            Animation.play(filename);
         }
 
         if(!configuration.contains("members")) return;
@@ -83,17 +82,16 @@ public abstract class Animation {
     private static boolean isAnimationExist(@Nullable Player player, String name){
         Configurator comp = getCompound(name);
         boolean exist = (comp!=null) && (comp.getConfig(name)!=null);
-        if(!exist && player!=null){
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red><name> is not exist!</red>",Placeholder.unparsed("name", name)));
-        }
+        Logger log = new Logger(player);
+        if(!exist) log.info("<red><name> is not exist!</red>",Placeholder.unparsed("name", name));
         return exist;
     }
     public static int repair(Player player, String animation_name){
         if(!isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
-        Configurator comp = getCompound(animation_name);
 
+        Configurator comp = getCompound(animation_name);
         comp.edit(animation_name, e->{
             e.set("owner", player.getName());
             e.set("isRunning", false);
@@ -101,6 +99,7 @@ public abstract class Animation {
             e.set("location", player.getLocation());
             return e;
         });
+        loadConfig(comp.getFile(animation_name));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -113,7 +112,10 @@ public abstract class Animation {
             e.set("isRunning", false);
             return e;
         });
-        player.sendMessage(ChatColor.GREEN+"You stopped "+name+" animation!");
+        Logger log = new Logger(player);
+        log.info("<green>You stopped</green> <dark_green><name></dark_green>",
+                Placeholder.unparsed("name", name)
+        );
         if(runningTask.containsKey(name)){
             runningTask.remove(name).cancel();
         }
@@ -127,51 +129,48 @@ public abstract class Animation {
         play(player, animationName);
         return Command.SINGLE_SUCCESS;
     }
+    public static int play(String animationName){
+        return play(null, animationName);
+    }
     public static int play(@Nullable Player player, String animationName){
         if(!isAnimationExist(player, animationName)){
             return Command.SINGLE_SUCCESS;
         }
+        Configurator compound = getCompound(animationName);
+        FileConfiguration config = compound.getConfig(animationName);
+        Logger log = new Logger(player);
 
-        FileConfiguration config = getCompound(animationName).getConfig(animationName);
-        if(player!=null){
-            player.sendMessage("your are " + config.get("owner") + " isn't?");
-            player.sendMessage("is it running? " + config.getBoolean("isRunning"));
-        }
         boolean isRunning = config.getBoolean("isRunning");
         if(isRunning) {
-
-            if(player!=null){
-                player.sendMessage(deserialize("<red>This animation is already running!</red>"));
-                player.sendMessage(deserialize(" <red>please use <click:suggest_command:'/animate stop <animation>'><hover:show_text:'<red>Click to stop this animation</red>'>/animate stop <animation></hover></click> to stop your animation!</red>",
-                        Placeholder.unparsed("animation", animationName)
-                ));
-            }
+            log.info(("<red>This animation is already running!</red>"));
+            log.info(" <red>please use <click:suggest_command:'/animate stop <animation>'><hover:show_text:'<red>Click to stop this animation</red>'>/animate stop <animation></hover></click> to stop your animation!</red>",
+                Placeholder.unparsed("animation", animationName));
             return Command.SINGLE_SUCCESS;
         }
-        getCompound(animationName).edit(animationName, e -> {
+        compound.edit(animationName, e -> {
             e.set("isRunning", true);
             return e;
         });
 
-        boolean loop = config.getBoolean("loop");
-        long tick = config.getInt("fps", 1);
-        List<String> schems = config.getStringList("schem");
-        File[] files = getCompound(animationName).getParent().listFiles((dir, name) -> !name.endsWith(".yml"));
-
+        File[] files = compound.getParent().listFiles((dir, name) -> !name.endsWith(".yml"));
         if(files==null){
-            if(player!=null){
-                player.sendMessage(ChatColor.RED + "This animation schema is empty!");
-            }
+            log.info("This animation schema is empty!");
             return Command.SINGLE_SUCCESS;
         }
-
-        List<Runnable> schemPasterTasks = new ArrayList<>();
         Location pasteloc = config.getLocation("location", player.getLocation());
+        if(pasteloc==null) plugin.getLogger().warning("[JasperProject] [Animation] Something wrong when loading "+animationName);
+
+        boolean loop = config.getBoolean("loop");
+        long tick = 20 / config.getInt("fps", 1);
+        double radius = config.getDouble("radius", 20);
+        List<String> schems = config.getStringList("schem");
+        List<Runnable> schemPasterTasks = new ArrayList<>();
+        Collection<Player> audiences = pasteloc.getWorld().getNearbyPlayers(pasteloc, radius);
         for (String schem : schems) {
             File schema = Arrays.stream(files).filter(f -> !f.getName().equals("region") && f.getName().contains(schem)).findFirst().orElse(null);
             if (schema==null) continue;
             Runnable task = () -> {
-                    Structure.render(schema, pasteloc, 10);
+                    Structure.render(schema, pasteloc, audiences);
             };
             schemPasterTasks.add(task);
         }
@@ -180,9 +179,12 @@ public abstract class Animation {
         }
         temp Paster = new temp();
         Paster.iterator = schemPasterTasks.iterator();
-        if(player!=null){
-            player.sendMessage(ChatColor.GREEN + animationName + " have been played in " + pasteloc.getX() + ", " + pasteloc.getY() + ", " + pasteloc.getZ());
-        }
+        log.info("<green>Now Playing</green> <dark_green><animation></dark_green> <green>at</green> <yellow><x>, <y>, <z>!</yellow>",
+                Placeholder.unparsed("x", String.valueOf(pasteloc.getBlockX())),
+                Placeholder.unparsed("y", String.valueOf(pasteloc.getBlockY())),
+                Placeholder.unparsed("z", String.valueOf(pasteloc.getBlockZ())),
+                Placeholder.unparsed("animation", animationName)
+                );
         BukkitTask btask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -205,109 +207,55 @@ public abstract class Animation {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static void saveSchematic(Location location, Region region1, File file) {
-        World world = region1.getWorld();
 
-        BlockVector3 min = region1.getMinimumPoint();
-        BlockVector3 max = region1.getMaximumPoint();
-
-        BlockVector3 origin = BlockVector3.at(location.getX(),
-                location.getY(),
-                location.getZ());
-        CuboidRegion region = new CuboidRegion(min, max);
-        Clipboard clipboard = new BlockArrayClipboard(region);
-        clipboard.setOrigin(origin);
-
-        try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
-            ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
-            Operations.complete(copy);
-
-            try (ClipboardWriter writer = BuiltInClipboardFormat.FAST.getWriter(new FileOutputStream(file))) {
-                writer.write(clipboard);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-//    static void pasteSchematic(@Nullable Player player, Location location, File file) throws IOException {
-//
-//        if (!file.exists()) {
-//            if(player!=null){
-//                player.sendMessage(ChatColor.RED + "Schematic file not found");
-//            }return;
-//        }
-//
-//        BlockVector3 blockVector3 = BlockVector3.at(location.getX(), location.getY(), location.getZ());
-//
-//        ClipboardFormat format = ClipboardFormats.findByFile(file);
-//        if (format == null) {
-//            Bukkit.broadcastMessage("Invalid schematic format.");
-//            return;
-//        }
-//
-//        FileInputStream fis = new FileInputStream(file);
-//        ClipboardReader reader = format.getReader(fis);
-//        Clipboard clipboard = reader.read();
-//
-//
-//        if (clipboard == null) {
-//            if(player!=null){
-//                player.sendMessage("Clipboard is null! Make sure the schematic exists.");
-//            }return;
-//        }
-//
-//        World world = BukkitAdapter.adapt(location.getWorld());
-//
-//        try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
-//            Operation operation = new ClipboardHolder(clipboard)
-//                    .createPaste(editSession)
-//                    .to(blockVector3)
-//                    .ignoreAirBlocks(false)
-//                    .build();
-//
-//            Operations.complete(operation);
-//            fis.close();
-//        }
-//    }
     ///                     EDIT TOOLS
-    public static int createNew(Player player, String animation_name, Region region){
+    public static int createNew(Player player, String animation_name){
         boolean exist = (getCompound(animation_name)!=null) && (getCompound(animation_name).getConfig(animation_name)!=null);
+        Logger log = new Logger(player);
         if(exist){
-            player.sendMessage("This animation is already exist! please input another name");
+            log.info("This animation is already exist! please input another name");
             return Command.SINGLE_SUCCESS;
         }
         Configurator animation = JasperProject.getAnimationConfig()
                 .newCompound(animation_name).create(animation_name);
         animation.edit(animation_name, e -> {
             e.set("owner", player.getName());
-            e.set("loop", false);
             e.set("isRunning", false);
+            e.set("schem", new ArrayList<>());
+            e.set("location", player.getLocation());
             return e;
         });
         animationNameTabCompleter.put(player.getName(), List.of(animation_name));
         return Command.SINGLE_SUCCESS;
     }
-
     public static int addFrame(Player player, String animation_name, String frame_name){
+        return addFrame(player, animation_name, frame_name, false);
+    }
+    public static int addFrame(Player player, String animation_name, String frame_name, boolean flag){
         if(!isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
 
-        File schem = new File(getCompound(animation_name).getParent(),"\\"+frame_name+".schem");
+        Logger log = new Logger(player);
+        File schem = new File(getCompound(animation_name).getParent(),frame_name+".schem");
         if(schem.exists()){
-            player.sendMessage(ChatColor.RED+"this frame is already exist!");
-            return Command.SINGLE_SUCCESS;
+            if(!flag){
+                log.info(ChatColor.LIGHT_PURPLE+"You just replaced "+animation_name+" to new version");
+            }else {
+                log.info(ChatColor.RED+"this frame is already exist! -flag to override it");
+                return Command.SINGLE_SUCCESS;
+            }
         }
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e -> {
             if(!e.contains("schem")) e.set("schem", new ArrayList<>());
             List<String> list = e.getStringList("schem");
-            list.add(frame_name);
+            if(!list.contains(frame_name)) list.add(frame_name);
             e.set("schem", list);
             return e;
         });
         Structure.saveFrame(player, getCompound(animation_name).getParent(), frame_name);
-        player.sendMessage(frame_name +" saved as schem");
+        log.info(frame_name +" saved as schem");
 
         return Command.SINGLE_SUCCESS;
     }
@@ -316,6 +264,7 @@ public abstract class Animation {
         if(!isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
+        Logger log = new Logger(player);
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e->{
             if(!e.contains("members")) e.set("members", new ArrayList<>());
@@ -325,9 +274,9 @@ public abstract class Animation {
             return e;
         });
 
-        player.sendMessage(MiniMessage.miniMessage().deserialize("<color:#fdff8c>you added <color:#c2ff33><reset><name></reset><color:#fdff8c> to your <color:#06aa00><animation></color> as member!</color>",
+        log.info("<color:#fdff8c>you added <color:#c2ff33><reset><name></reset><color:#fdff8c> to your <color:#06aa00><animation></color> as member!</color>",
                 Placeholder.unparsed("name", member),
-                Placeholder.unparsed("animation", animation_name)));
+                Placeholder.unparsed("animation", animation_name));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -342,17 +291,19 @@ public abstract class Animation {
             return e;
         });
 
+        Logger log = new Logger(player);
         if(!config.getConfig(animation_name).contains("schem")) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>this animation has no frames!</red>"));
+            log.info(("<red>this animation has no frames!</red>"));
             return Command.SINGLE_SUCCESS;
         }
         final List<String> frames = config.getConfig(animation_name).getStringList("schem");
-        player.sendMessage(MiniMessage.miniMessage().deserialize("<aqua>list frames of</aqua> <b><green>name :</green></b>",Placeholder.unparsed("name", animation_name)));
+        log.info("<aqua>list frames of</aqua> <b><green>name :</green></b>",
+                Placeholder.unparsed("name", animation_name));
         for (int i = 0; i < frames.size(); i++) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize(i+".) <b><frame> </b><red>[<click:run_command:'/animate edit <name> delete <frame>'><hover:show_text:'<dark_red>Click to delete this <frame></dark_red>'>delete</hover></click>]</red> <green><click:run_command:'/animate edit <name> load <frame>'>[<hover:show_text:'<dark_green>click to load this <frame></dark_green>'>load</hover>]</click></green>",
+            log.info(i+".) <b><frame> </b><red>[<click:run_command:'/animate edit <name> delete <frame>'><hover:show_text:'<dark_red>Click to delete this <frame></dark_red>'>delete</hover></click>]</red> <green><click:run_command:'/animate edit <name> load <frame>'>[<hover:show_text:'<dark_green>click to load this <frame></dark_green>'>load</hover>]</click></green>",
                     Placeholder.unparsed("frame", frames.get(i)),
                     Placeholder.unparsed("name", animation_name)
-                    ));
+                    );
         }
 
         return Command.SINGLE_SUCCESS;
@@ -367,15 +318,17 @@ public abstract class Animation {
             if(!e.contains("schem")) e.set("schem", new ArrayList<>());
             return e;
         });
+        Logger log = new Logger(player);
         if(!config.getConfig(animation_name).contains("schem")) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>this animation has no frames!</red>"));
+            log.info(("<red>this animation has no frames!</red>"));
             return Command.SINGLE_SUCCESS;
         }
         File[] files = config.getParent().listFiles((dir, name) -> name.equals(frame_name+".schem"));
         for (File file : files) {
             file.delete();
         }
-        player.sendMessage(MiniMessage.miniMessage().deserialize("<red>- deleted frame</red>",Placeholder.unparsed("frame", frame_name)));
+        log.info("<red>- deleted frame</red>",
+                Placeholder.unparsed("frame", frame_name));
         config.edit(animation_name, e->{
             List<String> schem = e.getStringList("schem");
             schem.remove(frame_name);
@@ -395,14 +348,16 @@ public abstract class Animation {
             if(!e.contains("schem")) e.set("schem", new ArrayList<>());
             return e;
         });
+        Logger log = new Logger(player);
         if(!config.getConfig(animation_name).contains("schem")) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>this animation has no frames!</red>"));
+            log.info(("<red>this animation has no frames!</red>"));
             return Command.SINGLE_SUCCESS;
         }
         File[] files = config.getParent().listFiles((dir, name) -> !name.endsWith(".yml"));
         for (File file1 : files) {
             if(file1.delete()){
-                player.sendMessage(MiniMessage.miniMessage().deserialize("<red>- deleted frame</red>",Placeholder.unparsed("frame", file1.getName())));
+                log.info("<red>- deleted frame</red>",
+                        Placeholder.unparsed("frame", file1.getName()));
             }
         }
         config.edit(animation_name, e ->{
@@ -418,10 +373,11 @@ public abstract class Animation {
         }
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e ->{
-            e.set("FPS", 20/v);
+            e.set("fps", v);
             return e;
         });
-        player.sendMessage(animation_name +" fps has been set to " +v);
+        Logger log = new Logger(player);
+        log.info(animation_name +" fps has been set to " +v);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -430,27 +386,48 @@ public abstract class Animation {
             return Command.SINGLE_SUCCESS;
         }
 
+        Logger log = new Logger(player);
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e->{
             e.set("location", v);
             return e;
         });
+        log.info("<dark_green><name></dark_green> <green>location has been set to</green> <yellow><x>, <y>, <z>!</yellow>",
+                Placeholder.unparsed("name", animation_name),
+                Placeholder.unparsed("x", String.valueOf(v.getBlockX())),
+                Placeholder.unparsed("y", String.valueOf(v.getBlockY())),
+                Placeholder.unparsed("z", String.valueOf(v.getBlockZ()))
+                );
         return Command.SINGLE_SUCCESS;
     }
     public static int setRegion(Player player, String animation_name){
         if(!isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
+        Logger log = new Logger(player);
         File region = new File(getCompound(animation_name).getParent(), "\\region.schem");
         Structure.save(player, region);
-        player.sendMessage("Saved "+animation_name+" region to "+ player.getLocation());
+        log.info("Saved "+animation_name+" region to "+ player.getLocation());
 
         return Command.SINGLE_SUCCESS;
     }
     public static int setLocation(Player player, String animation_name){
+        return setLocation(player, animation_name, player.getLocation());
+    }
+    public static int setRadius(Player player, String animation_name, double radius){
         if(!isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;
         }
-        return setLocation(player, animation_name, player.getLocation());
+
+        Logger log = new Logger(player);
+        getCompound(animation_name).edit(animation_name, e ->{
+            e.set("radius", radius);
+            return e;
+        });
+        log.info("<dark_green><name></dark_green> <green>radius has been set to</green> <yellow><value></yellow>",
+                Placeholder.unparsed("name", animation_name),
+                Placeholder.unparsed("value", String.valueOf(radius))
+                );
+        return Command.SINGLE_SUCCESS;
     }
 }

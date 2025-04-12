@@ -1,10 +1,7 @@
 package me.jasper.jasperproject.Animation;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.FloatArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.sk89q.worldedit.regions.Region;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -46,6 +43,13 @@ public class PaperAnimationCommand implements JasperCommand {
 
                                                     return Animation.addFrame(player, animation_name, frame_name);
                                                 })
+                                                .then(Commands.literal("flag")).executes(contex -> {
+                                                    if(!(contex.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                                    final String animation_name = StringArgumentType.getString(contex, "Animation name");
+                                                    final String frame_name = StringArgumentType.getString(contex, "Frame name");
+
+                                                    return Animation.addFrame(player, animation_name, frame_name, true);
+                                                })
                                         )
                                 ).then(Commands.literal("add_member")
                                         .then(Commands.argument("member", StringArgumentType.greedyString())
@@ -73,7 +77,7 @@ public class PaperAnimationCommand implements JasperCommand {
                                                 })
                                         )
 
-                                ).then(Commands.literal("setFPS")
+                                ).then(Commands.literal("FPS")
                                         .then(Commands.argument("FPS", FloatArgumentType.floatArg(0.1f, 20f))
                                                 .executes(c -> {
                                                     if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
@@ -81,13 +85,13 @@ public class PaperAnimationCommand implements JasperCommand {
                                                 })
                                         )
 
-                                ).then(Commands.literal("setRegion")
+                                ).then(Commands.literal("Region")
                                         .executes(c -> {
                                             if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
                                             return Animation.setRegion(player, StringArgumentType.getString(c, "Animation name"));
                                         })
 
-                                ).then(Commands.literal("setLocation")
+                                ).then(Commands.literal("Location")
                                                 .executes(e->{
                                                     if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
 
@@ -109,6 +113,16 @@ public class PaperAnimationCommand implements JasperCommand {
                                                         )
                                                 )
                                         )
+                                ).then(Commands.literal("radius")
+                                        .then(Commands.argument("radius", DoubleArgumentType.doubleArg(1, 80))
+                                                .executes(e -> {
+                                                    if(!(e.getSource()instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                                    return Animation.setRadius(player,
+                                                            StringArgumentType.getString(e, "Animation name"),
+                                                            DoubleArgumentType.getDouble(e, "radius")
+                                                    );
+                                                })
+                                        )
                                 )
                         )
                 ).then(Commands.literal("create")
@@ -117,8 +131,7 @@ public class PaperAnimationCommand implements JasperCommand {
                                     if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
                                     return Animation.createNew(
                                             player,
-                                            StringArgumentType.getString(c, "Animation name"),
-                                            Animator.getRegions().get(player.getUniqueId()));
+                                            StringArgumentType.getString(c, "Animation name"));
                                 }))
                 ).then(Commands.literal("play").then(Commands.argument("Animation name", StringArgumentType.word())
                         .suggests((c,b) -> {
@@ -198,7 +211,6 @@ public class PaperAnimationCommand implements JasperCommand {
                             return Animation.SUGGEST(player.getName(), b);
                         }).executes(e -> {
                             if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-
                             return Animation.repair(player, StringArgumentType.getString(e, "Animation name"));
                         })
 

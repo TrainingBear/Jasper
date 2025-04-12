@@ -18,7 +18,6 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\FileConfiguration\Config
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockUtility.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Debug.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\ItemStats.java
-D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\Frame.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Jitem.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\Rooms.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\Blender.java
@@ -36,7 +35,6 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemCreator.j
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Items.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\TestItem.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\Animation.java
-D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\EditListener.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Teleport.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Commands\JasperCommand.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperBootstrap.java
@@ -51,7 +49,6 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapCurso
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Jam\ClockExecutor.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperProject.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Listener\AlwaysDayy.java
-D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Animation\AnimationCommand.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\ExecuteCommand.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\CursorRenderer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapCanvas.java
@@ -74,6 +71,7 @@ D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\Product\EndGa
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Commands\CommandManager.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Listener\PlayerListListener.java
+D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Util\Logger.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\MapUtil\MapRenderer.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Dungeon\RoomShape.java
 D:\Fun\JasperMain\src\main\java\me\jasper\jasperproject\Loadschem.java

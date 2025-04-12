@@ -19,12 +19,9 @@ import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.SignGUI;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,15 +43,11 @@ public final class JasperProject extends JavaPlugin {
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
         animationConfig.load(Animation::loadConfig);
 
-
         ItemManager.getInstance().registerAll();
 
         this.getCommand("debug").setExecutor(new Debug());
 
-//        CommandManager.getInstance()
-//                .register(new PaperAnimationCommand());
-
-
+        CommandManager.getInstance() .register(new PaperAnimationCommand());
 
         PM.registerEvents(new Joinmsg(this), this);
         PM.registerEvents(new InvenAhhListener(), this);

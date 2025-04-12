@@ -3,7 +3,7 @@ me\jasper\jasperproject\JasperItem\ItemAttributes\ItemType.class
 me\jasper\jasperproject\JasperItem\JasperItemCommand.class
 me\jasper\jasperproject\Dungeon\Generator.class
 me\jasper\jasperproject\Jam\ClockExecutor.class
-me\jasper\jasperproject\Animation\EditListener.class
+me\jasper\jasperproject\Util\Logger.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapRenderer.class
 me\jasper\jasperproject\Dungeon\RoomType.class
 me\jasper\jasperproject\FileConfiguration\ConfigDungeon.class
@@ -33,7 +33,6 @@ me\jasper\jasperproject\FileConfiguration\Configurator.class
 me\jasper\jasperproject\Animation\PaperAnimationCommand.class
 me\jasper\jasperproject\Util\CustomStructure\StructureException.class
 me\jasper\jasperproject\Commands\JasperCommand.class
-me\jasper\jasperproject\Animation\Frame.class
 me\jasper\jasperproject\JasperItem\ItemCreator.class
 me\jasper\jasperproject\Listener\PlotMenuListener.class
 me\jasper\jasperproject\JasperItem\Items.class
@@ -67,7 +66,6 @@ me\jasper\jasperproject\JasperItem\Jitem.class
 me\jasper\jasperproject\JasperItem\Util\JKey.class
 me\jasper\jasperproject\Listener\whenRainCancel.class
 me\jasper\jasperproject\JasperBootstrap.class
-me\jasper\jasperproject\Animation\AnimationCommand.class
 me\jasper\jasperproject\Commands\CommandManager.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapView.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Grappling_Hook.class

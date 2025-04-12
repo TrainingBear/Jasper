@@ -14,6 +14,7 @@ import com.sk89q.worldedit.world.World;
 import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.Logger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -22,11 +23,13 @@ import org.bukkit.Material;
 import org.bukkit.block.structure.UsageMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R1.block.CraftStructureBlock;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockVector;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
@@ -97,42 +100,37 @@ public final class Structure {
         return true;
     }
 
-
-    public static void render(File file, Location location, double radius)throws StructureException {
+    public static void render(File file, Location location){
+        render(file, location, null);
+    }
+    public static void render(File file, Location location, @Nullable Collection<Player> players)throws StructureException {
         org.bukkit.World bukkitWorld = location.getWorld();
         BlockVector3 pasteLocation = BlockVector3.at(-location.getX(), -location.getY(), -location.getZ());
 
-        Bukkit.broadcastMessage("Loading "+file.getAbsolutePath());
-        Collection<Player> players = null;
+        Logger log = new Logger(players);
+        long clip_last = System.currentTimeMillis();
         try (Clipboard clipboard = getClip(file)) {
-            Location world_pos = null;
-            players = bukkitWorld.getNearbyPlayers(location, radius);
+            long clip_took = System.currentTimeMillis()-clip_last;
+            long last = System.currentTimeMillis();
             for (BlockVector3 pos : clipboard.getRegion()) {
                 val baseBlock = clipboard.getFullBlock(pos);
-                world_pos = BukkitAdapter.adapt(bukkitWorld, pos.subtract(clipboard.getOrigin().add(pasteLocation)));
+                Location world_pos = BukkitAdapter.adapt(bukkitWorld, pos.subtract(clipboard.getOrigin().add(pasteLocation)));
 
-                for (Player player : players) {
-//                    player.sendMessage(MiniMessage.miniMessage().deserialize("Played an animation at <x>, <y>, <z>",
-//                            Placeholder.unparsed("x", String.valueOf(world_pos.getX())),
-//                            Placeholder.unparsed("y", String.valueOf(world_pos.getY())),
-//                            Placeholder.unparsed("z", String.valueOf(world_pos.getZ()))
-//                    ));
+                for (Player player : players!=null? players : Bukkit.getOnlinePlayers()) {
+                    if(player==null) continue;
                     player.sendBlockChange(world_pos, BukkitAdapter.adapt(baseBlock));
                 }
             }
-            for (Player player : players) {
-                player.sendMessage("u have been recived "+file.getName());
-            }
-//            Bukkit.broadcast(MiniMessage.miniMessage().deserialize("Played an animation at <x>, <y>, <z>",
-//                    Placeholder.unparsed("x", String.valueOf(world_pos.getX())),
-//                    Placeholder.unparsed("y", String.valueOf(world_pos.getY())),
-//                    Placeholder.unparsed("z", String.valueOf(world_pos.getZ()))
-//                    ));
+            long timetook = System.currentTimeMillis()-last;
+            log.infoactionbar("<red><b><frame></b></red> <dark_red>-></dark_red> <light_purple>Clipboard:</light_purple> <dark_green><green><v1>ms </green></dark_green>| <gold>render:</gold> <dark_green><green><v2>ms</green></dark_green>",
+                    Placeholder.unparsed("v1", String.valueOf(clip_took)),
+                    Placeholder.unparsed("v2", String.valueOf(timetook)),
+                    Placeholder.unparsed("frame", file.getName())
+                    );
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static void createBox(Player player){
