@@ -3,7 +3,7 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
-import me.jasper.jasperproject.JasperItem.Util.JKey;
+import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;

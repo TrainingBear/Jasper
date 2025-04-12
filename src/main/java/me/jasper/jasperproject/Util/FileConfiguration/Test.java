@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.FileConfiguration;
+package me.jasper.jasperproject.Util.FileConfiguration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -7,12 +7,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class LaunchPadConfiguration {
+public class Test {
     private static File file;
     private static FileConfiguration customfile;
 
     public static void setup() {
-        file = new File(Bukkit.getPluginManager().getPlugin("JasperProject").getDataFolder(), "customconfig.yml");
+        file = new File(Bukkit.getPluginManager().getPlugin("JasperProject").getDataFolder(), "test.yml");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -25,19 +25,19 @@ public class LaunchPadConfiguration {
 
 
     public static FileConfiguration get () {
-            return customfile;
+        return customfile;
     }
 
-        public static void save() {
-            try {
-                customfile.save(file);
+    public static void save() {
+        try {
+            customfile.save(file);
 
-            } catch (IOException e) {
-                System.out.println("cant save a file");
-            }
+        } catch (IOException e) {
+            System.out.println("cant save a file");
         }
+    }
 
-        public static void reload(){
+    public static void reload(){
         customfile = YamlConfiguration.loadConfiguration(file);
-        }
     }
+}

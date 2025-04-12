@@ -1,6 +1,6 @@
 package me.jasper.jasperproject.Bazaar;
 
-import me.jasper.jasperproject.JasperItem.Util.JKey;
+import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -40,8 +40,8 @@ public final class Bazaar {
                 p,54
                 , MiniMessage.miniMessage().deserialize(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"));
 
-        setToSlimefunCateg(bazaarMenuInventory);
         createFrame(bazaarMenuInventory, Material.BROWN_STAINED_GLASS_PANE);
+        setToSlimefunCateg(bazaarMenuInventory);
 
         return bazaarMenuInventory;
     }
@@ -81,7 +81,7 @@ public final class Bazaar {
 
     //NOTE: Index slot 3 is selected
 
-    public static Inventory setToSlimefunCateg(Inventory inv){
+    public static void setToSlimefunCateg(Inventory inv){
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.SLIMEFUN_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -92,9 +92,8 @@ public final class Bazaar {
         inv.setItem(5, ItemBZGUI.getFarmingCategItem(false));
 
 
-        return inv;
     }
-    public static Inventory setToMobLootCateg(Inventory inv){
+    public static void setToMobLootCateg(Inventory inv){
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.MOB_LOOT_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -106,9 +105,8 @@ public final class Bazaar {
         inv.setItem(5, ItemBZGUI.getMiningCategItem(false));
 
 
-        return inv;
     }
-    public static Inventory setToFarmingCateg(Inventory inv){
+    public static void setToFarmingCateg(Inventory inv){
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.FARMING_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -120,9 +118,8 @@ public final class Bazaar {
         inv.setItem(4, ItemBZGUI.getMiningCategItem(false));
 
 
-        return inv;
     }
-    public static Inventory setToMiningCateg(Inventory inv){
+    public static void setToMiningCateg(Inventory inv){
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.MINING_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -133,14 +130,12 @@ public final class Bazaar {
         inv.setItem(3, ItemBZGUI.getMiningCategItem(true)); //selected
 
 
-        return inv;
     }
 
 
 
-    private static Inventory clearCategItem(Inventory inv){
+    private static void clearCategItem(Inventory inv){
         for(byte i = 1 ; i<=5; i++) inv.setItem(i, new ItemStack(Material.AIR));
-        return inv;
     }
 
 
@@ -264,17 +259,22 @@ public final class Bazaar {
             if(showGlint) {
                 meta.addEnchant(Enchantment.UNBREAKING, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
+                ));
             }else{
                 PersistentDataContainer mainTag = meta.getPersistentDataContainer();
                 PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
                 branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:SF");
                 mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
+                ));
             }
             meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.SLIMEFUN_CATEG.get()));
-            meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-            ));
+
 
             item.setItemMeta(meta);
             return item;
@@ -285,17 +285,21 @@ public final class Bazaar {
             if(showGlint) {
                 meta.addEnchant(Enchantment.UNBREAKING, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
+                ));
             }else{
                 PersistentDataContainer mainTag = meta.getPersistentDataContainer();
                 PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
                 branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:MobLoot");
                 mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
+                ));
             }
             meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.MOB_LOOT_CATEG.get()));
-            meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-            ));
 
             item.setItemMeta(meta);
             return item;
@@ -306,17 +310,21 @@ public final class Bazaar {
             if(showGlint) {
                 meta.addEnchant(Enchantment.UNBREAKING, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
+                ));
             }else{
                 PersistentDataContainer mainTag = meta.getPersistentDataContainer();
                 PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
                 branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:Farming");
                 mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
+                ));
             }
             meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.FARMING_CATEG.get()));
-            meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-            ));
 
             item.setItemMeta(meta);
             return item;
@@ -327,17 +335,21 @@ public final class Bazaar {
             if(showGlint) {
                 meta.addEnchant(Enchantment.UNBREAKING, 1, false);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
+                ));
             }else{
                 PersistentDataContainer mainTag = meta.getPersistentDataContainer();
                 PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
                 branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:Mining");
                 mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
+                meta.lore(List.of(
+                        MiniMessage.miniMessage().deserialize("")
+                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
+                ));
             }
             meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.MINING_CATEG.get()));
-            meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-            ));
 
             item.setItemMeta(meta);
             return item;

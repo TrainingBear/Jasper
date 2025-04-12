@@ -1,10 +1,9 @@
-package me.jasper.jasperproject.FileConfiguration;
+package me.jasper.jasperproject.Util.FileConfiguration;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
 /**
