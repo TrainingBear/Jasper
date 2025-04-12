@@ -1,7 +1,6 @@
 package me.jasper.jasperproject.JasperItem.Util;
 
 import lombok.Getter;
-import me.jasper.jasperproject.FileConfiguration.Test;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
@@ -11,8 +10,6 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Product.*;
 import me.jasper.jasperproject.JasperProject;
-import net.minecraft.world.item.component.WrittenBookContent;
-import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 

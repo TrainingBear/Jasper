@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
-import me.jasper.jasperproject.JasperItem.Util.JKey;
+import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -17,7 +17,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Warper extends ItemAbility{
     private static Warper instance;

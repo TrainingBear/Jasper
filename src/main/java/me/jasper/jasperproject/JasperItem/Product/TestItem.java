@@ -1,6 +1,5 @@
 package me.jasper.jasperproject.JasperItem.Product;
 
-import me.jasper.jasperproject.FileConfiguration.Test;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;

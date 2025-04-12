@@ -2,13 +2,11 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
-import me.jasper.jasperproject.JasperItem.Util.JKey;
+import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperProject;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;

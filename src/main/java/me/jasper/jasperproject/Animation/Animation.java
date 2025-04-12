@@ -3,27 +3,12 @@ package me.jasper.jasperproject.Animation;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.*;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.World;
 import lombok.Getter;
-import me.jasper.jasperproject.FileConfiguration.Configurator;
+import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import me.jasper.jasperproject.Util.Logger;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -169,9 +154,7 @@ public abstract class Animation {
         for (String schem : schems) {
             File schema = Arrays.stream(files).filter(f -> !f.getName().equals("region") && f.getName().contains(schem)).findFirst().orElse(null);
             if (schema==null) continue;
-            Runnable task = () -> {
-                    Structure.render(schema, pasteloc, audiences);
-            };
+            Runnable task = () -> Structure.render(schema, pasteloc, audiences);
             schemPasterTasks.add(task);
         }
         class temp{

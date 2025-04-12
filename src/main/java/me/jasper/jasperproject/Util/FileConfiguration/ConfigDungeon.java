@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.FileConfiguration;
+package me.jasper.jasperproject.Util.FileConfiguration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

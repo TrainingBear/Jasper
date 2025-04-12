@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.JasperItem.Util;
+package me.jasper.jasperproject.Util;
 
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.NamespacedKey;
@@ -30,4 +30,10 @@ public final class JKey {
 
     public static final NamespacedKey bazaar_Item_GUI = new NamespacedKey(JasperProject.getPlugin(), "Bazaar");
     public static final NamespacedKey bazaar_Action = new NamespacedKey(JasperProject.getPlugin(), "Bazaar-Action");
+    public static final NamespacedKey BAZAAR_CATEGORY = new NamespacedKey(JasperProject.getPlugin(), "Bazaar_Category");
+    public static final NamespacedKey BAZAAR_SUBCATEGORY = new NamespacedKey(JasperProject.getPlugin(), "Bazaar_SubCategory");
+
+
+    public static final NamespacedKey GUI_BORDER = new NamespacedKey(JasperProject.getPlugin(), "89a7sba");
+
 }
