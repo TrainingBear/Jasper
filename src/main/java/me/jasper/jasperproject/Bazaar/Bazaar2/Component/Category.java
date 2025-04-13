@@ -17,10 +17,10 @@ public class Category implements Content {
     private ItemStack item;
 
     public Category(int ID, Material material, Component component, byte taskID, List<Component> lore){
-        this(ID, material, component, taskID, false, lore, key);
+        this(ID, material, component, taskID, false, lore);
     }
     public Category(int ID, Material material, Component component, byte taskID){
-        this(ID, material, component, taskID, false, null, key);
+        this(ID, material, component, taskID, false, null);
     }
 
     /**
