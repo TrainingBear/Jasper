@@ -28,10 +28,11 @@ public class Category implements Content {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(component);
         meta.getPersistentDataContainer().set(JKey.BAZAAR_CATEGORY ,PersistentDataType.BYTE, taskID);
+        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT, PersistentDataType.INTEGER, ID);
         meta.getPersistentDataContainer().set(JKey.GUI_BORDER ,PersistentDataType.BOOLEAN, true);
         if(glint)meta.setEnchantmentGlintOverride(true);
         if(lore!=null) meta.lore(lore);
-        meta.setHideTooltip(true);
+        item.setItemMeta(meta);
     }
 
     @Override

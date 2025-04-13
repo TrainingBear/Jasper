@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,20 +24,32 @@ public final class Bazaar {
         if(container==null){
             container = new Container(player, MiniMessage.miniMessage().deserialize("Bazaar"), layout);
             container.addContent(Categories);
-
+            container.addContent(BORDER);
+            container.addContent(POINTER);
             container.load();
+            TaskID.UpdateDecoration(Mining3, container.getContainer());
+            TaskID.UpdateSubcategory(Mining3.getID(), container.getContainer());
         }
         return container.getContainer();
     }
     ///                     GUI UTIL
-    private final static Border BORDER = new Border(0, Material.BLACK_STAINED_GLASS, false);
+    private final static Border BORDER = new Border(0, Material.BLACK_STAINED_GLASS_PANE, false);
+    public final static Border POINTER = new Border(7, Material.LIME_STAINED_GLASS_PANE, false, deserialize(""), false);
+    private final static Border DEFAULT_DECORATION = new Border(8, Material.LIME_STAINED_GLASS_PANE, false);
+    private final static Border Mining1_DECORATION = new Border(8, Material.GRAY_STAINED_GLASS, false);
+    @Getter private final static Map<Integer, Border> DecorationMap;
+    static {
+        DecorationMap = new HashMap<>();
+        DecorationMap.put(0, DEFAULT_DECORATION);
+        DecorationMap.put(1, Mining1_DECORATION);
+    }
 
 
     ///                     SUB CATEGORIES
     private final static Category Stone = new Category(100, Material.COBBLESTONE, deserialize("Stone"), (byte) 100, JKey.BAZAAR_SUBCATEGORY);
     private final static Category Ore = new Category(101, Material.COAL, deserialize("Ore"), (byte) 101, JKey.BAZAAR_CATEGORY);
     private final static List<Content> Mining1_sub = List.of(Stone, Ore);
-    private final static Map<Integer, List<Content>> SubCategories = Map.of(
+    @Getter private final static Map<Integer, List<Content>> SubCategories = Map.of(
             1, Mining1_sub
     );
 
@@ -51,9 +64,8 @@ public final class Bazaar {
 
 
     private static int[][] layout = {
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 2, 3, 4, 5, 0, 0},
+            {0, 0, 0, 0, 7, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -61,7 +73,7 @@ public final class Bazaar {
     };
     ///         MAIN METHOD
     public static void open(Player player){
-        player.openInventory(container.getContainer());
+        player.openInventory(INSTANCE(player));
     }
 
     private static Component deserialize(String s, TagResolver... t){

@@ -64,6 +64,7 @@ public final class JasperProject extends JavaPlugin {
 
         PM.registerEvents(new BazaarListener(), this);
         PM.registerEvents(new ContentListener(), this);
+        PM.registerEvents(new me.jasper.jasperproject.Bazaar.Bazaar2.Listener(), this);
 
 
 //        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);

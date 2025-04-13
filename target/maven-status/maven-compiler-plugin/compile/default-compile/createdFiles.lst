@@ -10,6 +10,7 @@ me\jasper\jasperproject\Dungeon\RoomType.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapView$Scale.class
 me\jasper\jasperproject\Util\SignGUI$SignGUIListener.class
 me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDeathEvent.class
+me\jasper\jasperproject\Bazaar\Bazaar2\Component\SubCategory.class
 me\jasper\jasperproject\JasperEntity\MobEvent\JasperMobDamagedEvent.class
 me\jasper\jasperproject\Util\Debug.class
 me\jasper\jasperproject\Listener\AlwaysDayy.class
@@ -27,8 +28,14 @@ me\jasper\jasperproject\JasperItem\Product\WarpGateway.class
 me\jasper\jasperproject\JasperItem\Util\TRIGGER$Fishing.class
 me\jasper\jasperproject\Util\Commands\CommandManager.class
 me\jasper\jasperproject\JasperItem\Util\ItemManager.class
+me\jasper\jasperproject\Bazaar\Bazaar2\InventoryUpdater.class
+me\jasper\jasperproject\Util\ContainerMenu\Content.class
+me\jasper\jasperproject\Bazaar\Bazaar2\Bazaar.class
+me\jasper\jasperproject\Bazaar\Bazaar2\Component\Category.class
 me\jasper\jasperproject\TabCompleter\SummonItemDisplay.class
 me\jasper\jasperproject\Dungeon\Room.class
+me\jasper\jasperproject\Bazaar\Bazaar2\Listener.class
+me\jasper\jasperproject\Bazaar\Bazaar2\TaskID.class
 me\jasper\jasperproject\Bazaar\BZItemGroup.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Rarity.class
 me\jasper\jasperproject\Util\FileConfiguration\Test.class
@@ -89,6 +96,7 @@ me\jasper\jasperproject\JasperItem\ItemAttributes\GemstoneAttribute.class
 me\jasper\jasperproject\Util\SignGUI$PacketListener.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand.class
 me\jasper\jasperproject\Dungeon\RoomShape.class
+me\jasper\jasperproject\Util\ContainerMenu\ContentType.class
 me\jasper\jasperproject\Animation\Animation$1temp.class
 me\jasper\jasperproject\Jam\ClockUtility$1$1.class
 me\jasper\jasperproject\Animation\Animation$1.class
@@ -100,6 +108,7 @@ me\jasper\jasperproject\JasperEntity\EntityCommand.class
 me\jasper\jasperproject\Listener\PlotMenuListener$1.class
 me\jasper\jasperproject\Listener\InvenAhhListener.class
 me\jasper\jasperproject\Jam\Clock.class
+me\jasper\jasperproject\Bazaar\Bazaar2\Component\Item.class
 me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
 me\jasper\jasperproject\Util\CustomStructure\Structure.class
 me\jasper\jasperproject\Util\FileConfiguration\ConfigDungeon.class

@@ -14,9 +14,7 @@ public class ContentListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e){
         ItemMeta meta=e.getCurrentItem().getItemMeta();
-        Player player = (Player) e.getWhoClicked();
         boolean contain = contain(meta, JKey.GUI_BORDER);
-        player.sendMessage("You just clicked "+meta.displayName()+" -> "+contain);
         if(contain) e.setCancelled(true);
     }
 

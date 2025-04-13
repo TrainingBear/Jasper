@@ -22,6 +22,7 @@ public final class JKey {
 
 
 
+    public static final NamespacedKey BAZAAR_COMPONENT = new NamespacedKey(JasperProject.getPlugin(), "bazaar_comp");
 
     public static final NamespacedKey key_range = new NamespacedKey(JasperProject.getPlugin(), "range");
     public static final NamespacedKey key_cooldown = new NamespacedKey(JasperProject.getPlugin(), "cooldown");
