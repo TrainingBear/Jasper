@@ -2,6 +2,7 @@ package me.jasper.jasperproject.Bazaar.Bazaar2;
 
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Category;
+import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Items;
 import me.jasper.jasperproject.Bazaar.BazaarEnum;
 import me.jasper.jasperproject.Util.ContainerMenu.Border;
 import me.jasper.jasperproject.Util.ContainerMenu.Container;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 public final class Bazaar {
     private static Container container;
+  
     ///                     GUI UTIL
     private final static Border BLANK = new Border(-1, Material.AIR, false);
     private final static Border BORDER = new Border(0, Material.BLACK_STAINED_GLASS_PANE, false);
@@ -59,13 +61,12 @@ public final class Bazaar {
         );
     }
 
+    ///                     ITEMS
+
 
     ///                     SUB CATEGORIES
-//    private final static Category Stone = new Category(100, Material.COBBLESTONE, deserialize("Stone"), (byte) 100, JKey.BAZAAR_SUBCATEGORY);
-//    private final static Category Ore = new Category(101, Material.COAL, deserialize("Ore"), (byte) 101, JKey.BAZAAR_CATEGORY);
-//    private final static List<Content> Mining1_sub = List.of(Stone, Ore);
     @Getter private final static Map<Integer, List<Content>> SubCategories = Map.of(
-            1, List.of(//SLIMEFUN
+            1, List.of(
 
             )
             ,2,List.of(//MOB LOOT
@@ -103,16 +104,10 @@ public final class Bazaar {
                      ,new Category(100, Material.LILY_PAD, miniMsgDese("<!i>Lily Pad"), (byte) 100)
             )
             ,6,List.of(//MAGICAL
-
             )
     );
 
     ///                     CATEGORIES
-//    private final static Category Slimefun = new Category(1, Material.MAGMA_CREAM, deserialize("<!i><color:#09ff00>Slimefun"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-//    private final static Category MobLoot= new Category(2, Material.ROTTEN_FLESH, deserialize("<!i><color:#b34a00>Mob Loot"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-//    private final static Category Farming= new Category(3, Material.WHEAT, deserialize("<!i><color:#FFD700>Farming"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-//    private final static Category Mining= new Category(4, Material.GOLDEN_PICKAXE, deserialize("<!i><color:#78f5f5>Mining"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-//    private final static Category Mining5= new Category(5, Material.GOLDEN_PICKAXE, deserialize("Mining5"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
     @Getter private final static List<Content> Categories = List.of(
         new Category(1, Material.MAGMA_CREAM, miniMsgDese((String) BazaarEnum.SLIMEFUN_CATEG.get()), TaskID.SWAP_CATEGORY)
         ,new Category(2, Material.ROTTEN_FLESH, miniMsgDese((String) BazaarEnum.MOB_LOOT_CATEG.get()), TaskID.SWAP_CATEGORY)
@@ -135,6 +130,7 @@ public final class Bazaar {
     };
     ///         MAIN METHOD
     public static void open(Player player){
+        Inventory inventory = INSTANCE(player);
         player.openInventory(INSTANCE(player));
     }
 

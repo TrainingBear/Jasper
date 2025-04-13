@@ -57,7 +57,7 @@ public final class Items {
 
     public static final Jitem test;
     static {
-        test = new Jitem("Test Item",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
+        test = new Jitem("Test Items",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
         test.getStats()
                 .setBaseCrit(100)
                 .setBaseCritChance(100)

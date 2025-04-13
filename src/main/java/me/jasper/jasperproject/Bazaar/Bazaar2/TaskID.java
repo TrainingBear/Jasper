@@ -13,16 +13,25 @@ import java.util.*;
 
 public final class TaskID {
     public static final byte SWAP_CATEGORY = 0;
+  
     public static final byte CLOSE = 11;
     public static final byte TITLE = 12;
     public static final byte CATEG_NAV_NEXT = 13;
     public static final byte CATEG_NAV_BACK = 14;
 
+    public static final byte SEARCH = 1;
+    public static final byte BUY = 2;
+    public static final byte SELL = 3;
+    public static final byte WRAP_SUBCATEGORY = 4;
+    public static final byte OPEN_ORDER = 5;
+
+
     public final static Map<Byte, InventoryUpdater> MAP;
     static {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
-                (inv , ID, e) -> {
+
+          (player, inv , ID) -> {
             List<Content> contents = Bazaar.getCategories();
             List<Content> result;
             Content selected_content = null;
