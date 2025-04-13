@@ -22,6 +22,17 @@ public class Category implements Content {
     public Category(int ID, Material material, Component component, byte taskID, NamespacedKey key){
         this(ID, material, component, taskID, false, null, key);
     }
+
+    /**
+     * Dh paham? dari glint
+     * @param ID ini harus unique, jan sama
+     * @param material material
+     * @param component Nama component
+     * @param taskID kalo mau buat ID baru buatnya di TaskID.java
+     * @param glint ench glint
+     * @param lore List<Component>
+     * @param key JKey.BAZAAR_CATEGORY atau Jkey.BAZAAR_SUB_CATEGORY
+     */
     public Category(int ID, Material material, Component component, byte taskID, boolean glint, @Nullable List<Component> lore, NamespacedKey key){
         this.ID = ID;
         this.item = new ItemStack(material);

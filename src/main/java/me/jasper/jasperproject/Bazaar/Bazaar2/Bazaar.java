@@ -28,8 +28,8 @@ public final class Bazaar {
             container.addContent(BORDER);
             container.addContent(POINTER);
             container.load();
-//            TaskID.UpdateDecoration(Mining3, container.getContainer());
-//            TaskID.UpdateSubcategory(Mining3.getID(), container.getContainer()); gw comment tar lu urus :moyai:
+            TaskID.UpdateDecoration(Mining3, container.getContainer());
+            TaskID.UpdateSubcategory(Mining3.getID(), container.getContainer());
         }
         return container.getContainer();
     }
