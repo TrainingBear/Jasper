@@ -40,7 +40,7 @@ public final class Bazaar {
 
     private final static Border CATEG_DEFAULT_DECO = new Border(8, Material.COBWEB, false);
     private final static Border SLIMEFUN_CATEG_DECO = new Border(8, Material.LIME_STAINED_GLASS_PANE, false);
-    private final static Border MOBLOOT_CATEG_DECO = new Border(8, Material.BROWN_STAINED_GLASS_PANE, false);
+    private final static Border MOBLOOT_CATEG_DECO = new Border(8, Material.ORANGE_STAINED_GLASS_PANE, false);
     private final static Border FARMING_CATEG_DECO = new Border(8, Material.YELLOW_STAINED_GLASS_PANE, false);
     private final static Border MINING_CATEG_DECO = new Border(8, Material.LIGHT_BLUE_STAINED_GLASS_PANE, false);
     private final static Border FISHING_CATEG_DECO = new Border(8, Material.BLUE_STAINED_GLASS_PANE, false);

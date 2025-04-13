@@ -1,7 +1,10 @@
 package me.jasper.jasperproject.Bazaar.Bazaar2;
 
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
+import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -46,9 +49,22 @@ public final class TaskID {
             TaskID.UpdateSubcategory(ID, inv);
             TaskID.UpdateDecoration(selected_content, inv);
         });
-        MAP.put(
-            CLOSE,
+        MAP.put(CLOSE,
             (inv , ID, e) -> e.getWhoClicked().closeInventory());
+        MAP.put(TITLE,
+                (inv,ID,e)-> {
+                    String[] builtInText= {
+                            ""
+                            ,"^^^^^^^^^^^^"
+                            ,"Search items"
+                            ,""
+                    };
+                    SignGUI.getInstance().open((Player) e.getWhoClicked(),builtInText, Material.ACACIA_SIGN
+                            ,(p, lines, signLoc) -> {
+                                p.sendBlockChange(signLoc, signLoc.getBlock().getBlockData());//turn back to normal
+                                //blablablabla
+                            });
+                });
 
 
     }
@@ -76,7 +92,7 @@ public final class TaskID {
         item.setItemMeta(meta);
         inventory.setItem(12, item);
         ItemStack selectedItemStack = selectedItem.getItem().clone();
-        ItemMeta selectedItemmeta = item.getItemMeta();
+        ItemMeta selectedItemmeta = selectedItemStack.getItemMeta();
         selectedItemmeta.lore(List.of(
                         MiniMessage.miniMessage().deserialize("")
                         ,MiniMessage.miniMessage().deserialize("<color:#77aa77>Selected")
