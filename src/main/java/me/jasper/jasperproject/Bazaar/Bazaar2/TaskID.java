@@ -3,6 +3,7 @@ package me.jasper.jasperproject.Bazaar.Bazaar2;
 import jline.internal.Preconditions;
 import me.jasper.jasperproject.Util.ContainerMenu.Border;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
+import me.jasper.jasperproject.Util.SignGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -26,7 +27,7 @@ public final class TaskID {
     static {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
-                (inv , ID) -> {
+                (player, inv , ID) -> {
             List<Content> contents = Bazaar.getCategories();
             List<Content> result;
             Content selected_content = null;
@@ -39,9 +40,10 @@ public final class TaskID {
                         inv.setItem(c, null);
                     }
                     int startingIndex = Math.max(-subFirst, 0)+2;
+                    Iterator<Content> iterator = result.iterator();
                     for (int i = 0; i < result.size(); i++) {
                         if((i+startingIndex)==7) break;
-                        inv.setItem(i+startingIndex, result.get(i).getItem());
+                        inv.setItem(i+startingIndex, iterator.next().getItem());
                     }
                     break;
                 }
@@ -52,29 +54,6 @@ public final class TaskID {
 
 
     }
-
-    public static final InventoryUpdater SWAP_1 = (inv , ID) -> {
-        List<Content> contents = Bazaar.getCategories();
-        List<Content> result = new ArrayList<>();
-        Content selected_content = null;
-        for (Content content : contents) {
-            if(content.getID()==ID){
-                selected_content = content;
-                int index = contents.indexOf(content);
-                int arange_index = 2-index;
-                int size = contents.size();
-                result = result.subList(Math.abs(arange_index), size);
-                for (int i = 0; i < result.size(); i++) {
-                    if((i+2)==6) break;
-                    inv.setItem(i+2, content.getItem());
-                }
-                break;
-            }
-        }
-        TaskID.UpdateSubcategory(ID, inv);
-        TaskID.UpdateDecoration(selected_content, inv);
-
-    };
 
     public static void UpdateDecoration(Content ID, Inventory inventory){
         int[] indexes = {

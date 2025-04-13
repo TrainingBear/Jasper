@@ -24,7 +24,6 @@ public class Category implements Content {
     }
 
     /**
-     * Dh paham? dari glint
      * @param ID ini harus unique, jan sama
      * @param material material
      * @param component Nama component
