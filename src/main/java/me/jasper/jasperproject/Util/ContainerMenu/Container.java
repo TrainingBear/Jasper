@@ -39,10 +39,10 @@ public class Container {
         }
 
         int index = 0;
-        for (int i = 0; i < layout.length; i++) {
+        for (int[] ints : layout) {
             for (int j = 0; j < layout[0].length; j++) {
-                int id = layout[i][j];
-                if(ID.contains(id)){
+                int id = ints[j];
+                if (ID.contains(id)) {
                     container.setItem(index, pallet.get(id));
                 }
                 index++;

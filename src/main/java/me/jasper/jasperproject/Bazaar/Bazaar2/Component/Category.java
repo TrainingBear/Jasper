@@ -16,11 +16,11 @@ public class Category implements Content {
     private int ID;
     private ItemStack item;
 
-    public Category(int ID, Material material, Component component, byte taskID, List<Component> lore, NamespacedKey key){
-        this(ID, material, component, taskID, false, lore, key);
+    public Category(int ID, Material material, Component component, byte taskID, List<Component> lore){
+        this(ID, material, component, taskID, false, lore);
     }
-    public Category(int ID, Material material, Component component, byte taskID, NamespacedKey key){
-        this(ID, material, component, taskID, false, null, key);
+    public Category(int ID, Material material, Component component, byte taskID){
+        this(ID, material, component, taskID, false, null);
     }
 
     /**
@@ -31,9 +31,8 @@ public class Category implements Content {
      * @param taskID kalo mau buat ID baru buatnya di TaskID.java
      * @param glint ench glint
      * @param lore List<Component>
-     * @param key JKey.BAZAAR_CATEGORY atau Jkey.BAZAAR_SUB_CATEGORY
      */
-    public Category(int ID, Material material, Component component, byte taskID, boolean glint, @Nullable List<Component> lore, NamespacedKey key){
+    public Category(int ID, Material material, Component component, byte taskID, boolean glint, @Nullable List<Component> lore){
         this.ID = ID;
         this.item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();

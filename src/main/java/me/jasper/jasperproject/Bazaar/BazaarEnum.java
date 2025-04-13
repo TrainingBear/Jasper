@@ -11,10 +11,14 @@ public enum BazaarEnum {
     ,FARMING_CATEG("<!i><color:#FFD700>Farming")
     /// String as well as Categ
     ,MINING_CATEG("<!i><color:#78f5f5>Mining")
+    /// String as well as Categ
+    , FISHING_CATEG("<!i><color:#7663ff>Fishing")
+    /// String as well as Categ
+    ,MAGICAL_CATEG("<!i><color:#ff6edd>Magical")
     /// Component
-    ,TITLE_NAME_COMPO(MiniMessage.miniMessage().deserialize("<!italic><bold><gold>StashStocks")),
+    ,TITLE_NAME(MiniMessage.miniMessage().deserialize("<!italic><bold><gold>StashStocks"))
     /// Component
-    CLOSE_ITEM(MiniMessage.miniMessage().deserialize("<!i><red><b>Close"))
+    ,CLOSE_ITEM(MiniMessage.miniMessage().deserialize("<!i><red><b>Close"))
     /// String
     ,TITLE_STRING("<!italic><bold><gold>StashStocks")
     /// String
