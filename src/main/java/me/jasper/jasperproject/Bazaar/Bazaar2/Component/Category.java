@@ -16,10 +16,10 @@ public class Category implements Content {
     private int ID;
     private ItemStack item;
 
-    public Category(int ID, Material material, Component component, byte taskID, List<Component> lore, NamespacedKey key){
+    public Category(int ID, Material material, Component component, byte taskID, List<Component> lore){
         this(ID, material, component, taskID, false, lore, key);
     }
-    public Category(int ID, Material material, Component component, byte taskID, NamespacedKey key){
+    public Category(int ID, Material material, Component component, byte taskID){
         this(ID, material, component, taskID, false, null, key);
     }
 
@@ -31,15 +31,14 @@ public class Category implements Content {
      * @param taskID kalo mau buat ID baru buatnya di TaskID.java
      * @param glint ench glint
      * @param lore List<Component>
-     * @param key JKey.BAZAAR_CATEGORY atau Jkey.BAZAAR_SUB_CATEGORY
      */
-    public Category(int ID, Material material, Component component, byte taskID, boolean glint, @Nullable List<Component> lore, NamespacedKey key){
+    public Category(int ID, Material material, Component component, byte taskID, boolean glint, @Nullable List<Component> lore){
         this.ID = ID;
         this.item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(component);
-        meta.getPersistentDataContainer().set(JKey.BAZAAR_CATEGORY ,PersistentDataType.BYTE, taskID);
-        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT, PersistentDataType.INTEGER, ID);
+        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT_ID,PersistentDataType.BYTE, taskID);
+        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.INTEGER, ID);
         meta.getPersistentDataContainer().set(JKey.GUI_BORDER ,PersistentDataType.BOOLEAN, true);
         if(glint)meta.setEnchantmentGlintOverride(true);
         if(lore!=null) meta.lore(lore);

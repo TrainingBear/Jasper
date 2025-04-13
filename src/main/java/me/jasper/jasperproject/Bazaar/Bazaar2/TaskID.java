@@ -13,6 +13,14 @@ import java.util.*;
 
 public final class TaskID {
     public static final byte SWAP_CATEGORY = 0;
+    public static final byte SEARCH = 0;
+    public static final byte BUY = 0;
+    public static final byte SELL = 0;
+    public static final byte WRAP_SUBCATEGORY = 0;
+    public static final byte OPEN_ORDER = 0;
+
+
+
 
     public final static Map<Byte, InventoryUpdater> MAP;
     static {

@@ -22,7 +22,6 @@ public final class JKey {
 
 
 
-    public static final NamespacedKey BAZAAR_COMPONENT = new NamespacedKey(JasperProject.getPlugin(), "bazaar_comp");
 
     public static final NamespacedKey key_range = new NamespacedKey(JasperProject.getPlugin(), "range");
     public static final NamespacedKey key_cooldown = new NamespacedKey(JasperProject.getPlugin(), "cooldown");
@@ -31,8 +30,9 @@ public final class JKey {
 
     public static final NamespacedKey bazaar_Item_GUI = new NamespacedKey(JasperProject.getPlugin(), "Bazaar");
     public static final NamespacedKey bazaar_Action = new NamespacedKey(JasperProject.getPlugin(), "Bazaar-Action");
-    public static final NamespacedKey BAZAAR_CATEGORY = new NamespacedKey(JasperProject.getPlugin(), "Bazaar_Category");
-    public static final NamespacedKey BAZAAR_SUBCATEGORY = new NamespacedKey(JasperProject.getPlugin(), "Bazaar_SubCategory");
+
+    public static final NamespacedKey BAZAAR_COMPONENT_TASK_ID = new NamespacedKey(JasperProject.getPlugin(), "TASK");
+    public static final NamespacedKey BAZAAR_COMPONENT_ID = new NamespacedKey(JasperProject.getPlugin(), "COMPONENT");
 
 
     public static final NamespacedKey GUI_BORDER = new NamespacedKey(JasperProject.getPlugin(), "89a7sba");
