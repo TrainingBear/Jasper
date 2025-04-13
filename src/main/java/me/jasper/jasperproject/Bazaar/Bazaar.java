@@ -17,6 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public final class Bazaar {
     static Map<BazaarEnum, BZItemGroup> category = new HashMap<>();
@@ -41,7 +42,12 @@ public final class Bazaar {
                 , MiniMessage.miniMessage().deserialize(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"));
 
         createFrame(bazaarMenuInventory, Material.BROWN_STAINED_GLASS_PANE);
-        setToSlimefunCateg(bazaarMenuInventory);
+        switch (new Random().nextInt(0,4)){
+            case 0 -> setToSlimefunCateg(bazaarMenuInventory);
+            case 1 -> setToMobLootCateg(bazaarMenuInventory);
+            case 2 -> setToFarmingCateg(bazaarMenuInventory);
+            case 3 -> setToMiningCateg(bazaarMenuInventory);
+        }
 
         return bazaarMenuInventory;
     }
@@ -82,6 +88,7 @@ public final class Bazaar {
     //NOTE: Index slot 3 is selected
 
     public static void setToSlimefunCateg(Inventory inv){
+        createFrame(inv,Material.LIME_STAINED_GLASS_PANE);
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.SLIMEFUN_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -94,6 +101,7 @@ public final class Bazaar {
 
     }
     public static void setToMobLootCateg(Inventory inv){
+        createFrame(inv,Material.BROWN_STAINED_GLASS_PANE);
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.MOB_LOOT_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -107,6 +115,7 @@ public final class Bazaar {
 
     }
     public static void setToFarmingCateg(Inventory inv){
+        createFrame(inv,Material.YELLOW_STAINED_GLASS_PANE);
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.FARMING_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
@@ -120,6 +129,7 @@ public final class Bazaar {
 
     }
     public static void setToMiningCateg(Inventory inv){
+        createFrame(inv,Material.LIGHT_BLUE_STAINED_GLASS_PANE);
         clearCategItem(inv);
         inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.MINING_CATEG));
         inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
