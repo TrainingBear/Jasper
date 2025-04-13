@@ -182,7 +182,7 @@ public final class Bazaar {
             ItemStack item = new ItemStack(Material.ACACIA_HANGING_SIGN);
             ItemMeta meta = item.getItemMeta();
 
-            meta.displayName((Component) BazaarEnum.TITLE_NAME_COMPO.get());
+//            meta.displayName((Component) BazaarEnum.TITLE_NAME_COMPO.get());
             meta.lore(List.of(
                     MiniMessage.miniMessage().deserialize("<!i><yellow>Worldwide bazaar")
                     ,MiniMessage.miniMessage().deserialize("")

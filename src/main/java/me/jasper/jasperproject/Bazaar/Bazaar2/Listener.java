@@ -18,10 +18,11 @@ public class Listener implements org.bukkit.event.Listener {
 
         Player player = (Player) e.getWhoClicked();
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
-        if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
-            byte taskID = container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.BYTE);
-            Bukkit.broadcastMessage("[Listener] Getting "+taskID);
-            TaskID.MAP.get(taskID).update(player, e.getInventory(), container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.INTEGER));
+
+        if(contain(container, JKey.BAZAAR_CATEGORY)){
+            byte taskID = container.get(JKey.BAZAAR_CATEGORY, PersistentDataType.BYTE);
+            TaskID.MAP.get(taskID).update(e.getInventory(), container.get(JKey.BAZAAR_COMPONENT, PersistentDataType.INTEGER), e);
+
         }
 
     }
