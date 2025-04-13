@@ -19,22 +19,21 @@ public final class TaskID {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
                 (inv , ID) -> {
-            Bukkit.broadcastMessage("[TaskID] Running...");
             List<Content> contents = Bazaar.getCategories();
-            List<Content> result = new ArrayList<>();
+            List<Content> result;
             Content selected_content = null;
             for (Content content : contents) {
-                Bukkit.broadcastMessage("[TaskID] Getting "+content.getID());
                 if(content.getID()==ID){
-                    Bukkit.broadcast(content.getItem().displayName());
                     selected_content = content;
-                    int index = contents.indexOf(content);
-                    int arange_index = 2-index;
-                    int size = contents.size()-1;
-                    result = result.subList(Math.abs(arange_index), size);
+                    int index = contents.indexOf(content); int subFirst = -(2-index); int size = contents.size();
+                    result = contents.subList(Math.max(subFirst, 0), size); int[] cs = {2, 3, 4, 5, 6};
+                    for (int c : cs) {
+                        inv.setItem(c, null);
+                    }
+                    int startingIndex = Math.max(-subFirst, 0)+2;
                     for (int i = 0; i < result.size(); i++) {
-                        if((i+2)==6) break;
-                        inv.setItem(i+2, content.getItem());
+                        if((i+startingIndex)==7) break;
+                        inv.setItem(i+startingIndex, result.get(i).getItem());
                     }
                     break;
                 }

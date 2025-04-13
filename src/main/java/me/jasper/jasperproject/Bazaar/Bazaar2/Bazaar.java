@@ -54,12 +54,13 @@ public final class Bazaar {
     );
 
     ///                     CATEGORIES
-    private final static Category Mining1 = new Category(1, Material.DIAMOND_PICKAXE, deserialize("Mining1"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
+    /// gini cara buatnya gini
+    private final static Category Slimefun =new Category(1, Material.MAGMA_CREAM, deserialize("Mining1"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
     private final static Category Mining2= new Category(2, Material.STONE_PICKAXE, deserialize("Mining2"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
     private final static Category Mining3= new Category(3, Material.GOLDEN_PICKAXE, deserialize("Mining3"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
     private final static Category Mining4= new Category(4, Material.GOLDEN_PICKAXE, deserialize("Mining4"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
     private final static Category Mining5= new Category(5, Material.GOLDEN_PICKAXE, deserialize("Mining5"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-    @Getter private final static List<Content> Categories = List.of(Mining1, Mining2, Mining3, Mining4, Mining5);
+    @Getter private final static List<Content> Categories = List.of(Slimefun, Mining2, Mining3, Mining4, Mining5);
 
 
 
