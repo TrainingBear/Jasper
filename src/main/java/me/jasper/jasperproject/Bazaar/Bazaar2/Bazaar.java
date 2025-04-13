@@ -3,6 +3,7 @@ package me.jasper.jasperproject.Bazaar.Bazaar2;
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Category;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.SubCategory;
+import me.jasper.jasperproject.Bazaar.BazaarEnum;
 import me.jasper.jasperproject.Util.ContainerMenu.Border;
 import me.jasper.jasperproject.Util.ContainerMenu.Container;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
@@ -46,21 +47,54 @@ public final class Bazaar {
 
 
     ///                     SUB CATEGORIES
-    private final static Category Stone = new Category(100, Material.COBBLESTONE, deserialize("Stone"), (byte) 100, JKey.BAZAAR_SUBCATEGORY);
-    private final static Category Ore = new Category(101, Material.COAL, deserialize("Ore"), (byte) 101, JKey.BAZAAR_CATEGORY);
-    private final static List<Content> Mining1_sub = List.of(Stone, Ore);
+//    private final static Category Stone = new Category(100, Material.COBBLESTONE, deserialize("Stone"), (byte) 100, JKey.BAZAAR_SUBCATEGORY);
+//    private final static Category Ore = new Category(101, Material.COAL, deserialize("Ore"), (byte) 101, JKey.BAZAAR_CATEGORY);
+//    private final static List<Content> Mining1_sub = List.of(Stone, Ore);
     @Getter private final static Map<Integer, List<Content>> SubCategories = Map.of(
-            1, Mining1_sub
+            1, List.of(//SLIMEFUN
+
+            )
+            ,2,List.of(//MOB LOOT
+                new Category(100, Material.ROTTEN_FLESH, deserialize("<!i>Zombie"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.BONE, deserialize("<!i>Skeleton"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.SPIDER_EYE, deserialize("<!i>Spider"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.GUNPOWDER, deserialize("<!i>Creeper"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.ENDER_PEARL, deserialize("<!i>Enderman"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.BLAZE_ROD, deserialize("<!i>Blaze"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+            )
+            ,3, List.of(//FARMING
+                new Category(100, Material.WHEAT, deserialize("<!i>Wheat"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.CARROT, deserialize("<!i>Carrot"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.POTATO, deserialize("<!i>Potato"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.BEETROOT, deserialize("<!i>Beetroot"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.CACTUS, deserialize("<!i>Cacti"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.COCOA, deserialize("<!i>Cocoa Beans"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.SUGAR_CANE, deserialize("<!i>Sugar Cane"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.NETHER_WART, deserialize("<!i>Nether Wart"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+            )
+            ,4,List.of(//MINING
+                new Category(100, Material.COBBLESTONE, deserialize("<!i>Stone"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.COAL, deserialize("<!i>Coal"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.IRON_INGOT, deserialize("<!i>Iron"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.GOLD_INGOT, deserialize("<!i>Gold"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.DIAMOND, deserialize("<!i>Diamond"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+                ,new Category(100, Material.NETHERITE_INGOT, deserialize("<!i>Netherite"), (byte) 100, JKey.BAZAAR_SUBCATEGORY)
+            )
     );
 
     ///                     CATEGORIES
-    /// gini cara buatnya gini
-    private final static Category Slimefun =new Category(1, Material.MAGMA_CREAM, deserialize("Mining1"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-    private final static Category Mining2= new Category(2, Material.STONE_PICKAXE, deserialize("Mining2"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-    private final static Category Mining3= new Category(3, Material.GOLDEN_PICKAXE, deserialize("Mining3"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-    private final static Category Mining4= new Category(4, Material.GOLDEN_PICKAXE, deserialize("Mining4"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-    private final static Category Mining5= new Category(5, Material.GOLDEN_PICKAXE, deserialize("Mining5"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
-    @Getter private final static List<Content> Categories = List.of(Slimefun, Mining2, Mining3, Mining4, Mining5);
+//    private final static Category Slimefun = new Category(1, Material.MAGMA_CREAM, deserialize("<!i><color:#09ff00>Slimefun"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
+//    private final static Category MobLoot= new Category(2, Material.ROTTEN_FLESH, deserialize("<!i><color:#b34a00>Mob Loot"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
+//    private final static Category Farming= new Category(3, Material.WHEAT, deserialize("<!i><color:#FFD700>Farming"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
+//    private final static Category Mining= new Category(4, Material.GOLDEN_PICKAXE, deserialize("<!i><color:#78f5f5>Mining"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
+//    private final static Category Mining5= new Category(5, Material.GOLDEN_PICKAXE, deserialize("Mining5"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY);
+    @Getter private final static List<Content> Categories = List.of(
+        new Category(1, Material.MAGMA_CREAM, deserialize(BazaarEnum.SLIMEFUN_CATEG.name()), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY)
+        ,new Category(2, Material.ROTTEN_FLESH, deserialize(BazaarEnum.MOB_LOOT_CATEG.name()), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY)
+        ,new Category(3, Material.WHEAT, deserialize(BazaarEnum.FARMING_CATEG.name()), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY)
+        ,new Category(4, Material.GOLDEN_PICKAXE, deserialize(BazaarEnum.MINING_CATEG.name()), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY)
+        ,new Category(5, Material.GLOWSTONE_DUST, deserialize("Magical/Oddities //Nanti, blm gw cari colorny"), TaskID.SWAP_CATEGORY, JKey.BAZAAR_CATEGORY)
+);
 
 
 
