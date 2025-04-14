@@ -46,7 +46,7 @@ public final class JasperProject extends JavaPlugin {
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
 
-        animationConfig.load(Animation::loadConfig);
+//        animationConfig.load(Animation::loadConfig);
         Bazaar.setCategory();
 
         ItemManager.getInstance().registerAll();
