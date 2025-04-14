@@ -23,9 +23,13 @@ import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.SignGUI;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -33,9 +37,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.sk89q.wepif.VaultResolver.perms;
+
 
 public final class JasperProject extends JavaPlugin {
 
+    private static Economy econ = null;
+    private static Permission perms = null;
+    @Getter
+    private static Chat chat = null;
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
     @Getter private static Configurator animationConfig;
@@ -45,9 +55,16 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-
         animationConfig.load(Animation::loadConfig);
         Bazaar.setCategory();
+
+        if (!setupEconomy() ) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        setupPermissions();
+        setupChat();
 
         ItemManager.getInstance().registerAll();
 
@@ -101,35 +118,36 @@ public final class JasperProject extends JavaPlugin {
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
     }
 
-    public static void registerEvent(Listener e){
-        Bukkit.getServer().getPluginManager().registerEvents(e, JasperProject.getPlugin());
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
     }
 
-    private void createDirectories() throws IOException {
-        Files.createDirectories(Path.of(plugin.getDataFolder().getPath() + "\\Animations"));
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+        chat = rsp.getProvider();
+        return chat != null;
     }
 
-//    private void loadAnimationsConfig(){
-//        File file = new File(plugin.getDataFolder()+"\\Animations");
-//        File[] configs = file.listFiles();
-//        if(configs==null) return;
-//        int total_config = 0;
-//        for (File config_ : configs) {
-//            File[] configs__ = config_.listFiles((dir, name) -> name.endsWith(".yml"));
-//            if(configs__==null) return;
-//            for (File config : configs__) {
-//                Configurator.getFiles().add(config);
-//                FileConfiguration aconfig = YamlConfiguration.loadConfiguration(config);
-//                if(aconfig.getBoolean("isRunning")){
-//                    String animation_name = Configurator.getFileName(config);
-//                    Bukkit.getLogger().info("[JasperProject] "+animation_name+" is running!");
-//                    Animation.play(animation_name, true);
-//                }
-//                Bukkit.getLogger().info("[JasperProject] Loaded "+config.getName());
-//                total_config++;
-//            }
-//        }
-//        Bukkit.getLogger().info("[JasperProject] Loaded "+total_config+" configs");
-//    }
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        perms = rsp.getProvider();
+        return perms != null;
+    }
+
+    public static Economy getEconomy() {
+        return econ;
+    }
+
+    public static Permission getPermissions() {
+        return perms;
+    }
 
 }
