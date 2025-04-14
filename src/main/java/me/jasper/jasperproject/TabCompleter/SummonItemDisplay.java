@@ -51,7 +51,7 @@ public class SummonItemDisplay implements TabCompleter, CommandExecutor {
         if(strings.length!=4){
             return false;
         }
-        p.sendMessage(ChatColor.RED+"Its not a Item!");
+        p.sendMessage(ChatColor.RED+"Its not a Items!");
         return false;
     }
 }

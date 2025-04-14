@@ -20,7 +20,7 @@ public class TestItem extends Jitem implements Factory {
         return instance;
     }
     public TestItem(){
-        super("Test Item", Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
+        super("Test Items", Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
         this.getStats()
                 .setBaseCrit(100)
                 .setBaseCritChance(100)

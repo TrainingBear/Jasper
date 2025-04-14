@@ -41,8 +41,8 @@ public class Jitem {
     @Getter private List<String> custom_lore = new ArrayList<>();
 
     /**
-     * @param name Item Name Display
-     * @param material Item Material
+     * @param name Items Name Display
+     * @param material Items Material
      * @param rarity use Rarity.enum for item rarity
      * @param type use ItemType.enum for item Type category
      * @param itemVersion THIS IS ITEM VERSION, PLEASE CHANGE THE VERSION IF UPDATE ARE NEEDED
