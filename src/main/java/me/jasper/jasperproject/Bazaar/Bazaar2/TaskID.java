@@ -1,13 +1,18 @@
 package me.jasper.jasperproject.Bazaar.Bazaar2;
 
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
+import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -15,22 +20,23 @@ public final class TaskID {
     public static final byte SWAP_CATEGORY = 0;
   
     public static final byte CLOSE = 11;
-    public static final byte TITLE = 12;
+//    public static final byte TITLE = 12; g guna perasaan gw
     public static final byte CATEG_NAV_NEXT = 13;
     public static final byte CATEG_NAV_BACK = 14;
 
     public static final byte SEARCH = 1;
     public static final byte BUY = 2;
     public static final byte SELL = 3;
-    public static final byte WRAP_SUBCATEGORY = 4;
-    public static final byte OPEN_ORDER = 5;
+    public static final byte SELECT_SUBCATEG = 4;
+    public static final byte MANAGE_ORDER = 5;
+    public static final byte SELL_INV = 6;
+//    public static final byte SELL_
 
 
     public final static Map<Byte, InventoryUpdater> MAP;
     static {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
-
           (player, inv , ID) -> {
             List<Content> contents = Bazaar.getCategories();
             List<Content> result;
@@ -55,29 +61,51 @@ public final class TaskID {
                     break;
                 }
             }
+
             TaskID.UpdateSubcategory(ID, inv);
             TaskID.UpdateDecoration(selected_content, inv);
         });
         MAP.put(CLOSE,
-            (inv , ID, e) -> e.getWhoClicked().closeInventory());
-        MAP.put(TITLE,
-                (inv,ID,e)-> {
+            (p , inv, ID) -> p.closeInventory());
+        MAP.put(SEARCH,
+                (p,inv,ID)-> {
                     String[] builtInText= {
                             ""
                             ,"^^^^^^^^^^^^"
                             ,"Search items"
                             ,""
                     };
-                    SignGUI.getInstance().open((Player) e.getWhoClicked(),builtInText, Material.ACACIA_SIGN
-                            ,(p, lines, signLoc) -> {
-                                p.sendBlockChange(signLoc, signLoc.getBlock().getBlockData());//turn back to normal
+                    SignGUI.getInstance().open(p,builtInText, Material.ACACIA_SIGN
+                            ,(player, lines, signLoc) -> {
+                                player.sendBlockChange(signLoc, signLoc.getBlock().getBlockData());//turn back to normal
                                 //blablablabla
                             });
                 });
-
+        MAP.put(CATEG_NAV_NEXT,
+            (p , inv, ID)-> changeCateg(p,inv,true));
+        MAP.put(CATEG_NAV_BACK,
+                (p , inv, ID)-> changeCateg(p,inv,false));
 
     }
-
+    private static void changeCateg(Player p , Inventory inv, boolean isNext){
+        List<Content> contents = Bazaar.getCategories();
+        int ident = inv.getItem(3).getItemMeta().getPersistentDataContainer().get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
+        for (Content content : contents) {
+            if (content.getID() == ident) {
+                int index = contents.indexOf(content);
+                if(isNext){
+                    index++;
+                    if(index >= contents.size()) index = 0;
+                }else{
+                    index--;
+                    if(index < 0) index = contents.size()-1;
+                }
+                PersistentDataContainer categ = contents.get(index).getItem().getItemMeta().getPersistentDataContainer();
+                TaskID.MAP.get(categ.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE))
+                        .update(p, inv, categ.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
+            }
+        }
+    }
 
     public static void UpdateDecoration(Content selectedItem, Inventory inventory){
         int[] indexSlots = {
@@ -100,8 +128,12 @@ public final class TaskID {
         ));
         item.setItemMeta(meta);
         inventory.setItem(12, item);
+
         ItemStack selectedItemStack = selectedItem.getItem().clone();
         ItemMeta selectedItemmeta = selectedItemStack.getItemMeta();
+
+        selectedItemmeta.addEnchant(Enchantment.UNBREAKING,1,false);
+        selectedItemmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         selectedItemmeta.lore(List.of(
                         MiniMessage.miniMessage().deserialize("")
                         ,MiniMessage.miniMessage().deserialize("<color:#77aa77>Selected")

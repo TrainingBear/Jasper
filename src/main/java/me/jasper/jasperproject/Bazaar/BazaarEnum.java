@@ -22,7 +22,7 @@ public enum BazaarEnum {
     /// String
     ,TITLE_STRING("<!italic><bold><gold>StashStocks")
     /// String
-    ,CLICK_TEXT("<b><color:#77aa77>CLICK</b>");
+    ,CLICK_TEXT("<!i><b><color:#77aa77>CLICK</b>");
 
     private Object term;
     BazaarEnum(Object term) {

@@ -36,8 +36,8 @@ public class Category implements Content {
         this.item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(component);
-        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT_ID,PersistentDataType.BYTE, taskID);
-        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.INTEGER, ID);
+        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT_ID,PersistentDataType.INTEGER, ID);
+        meta.getPersistentDataContainer().set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, taskID);
         meta.getPersistentDataContainer().set(JKey.GUI_BORDER ,PersistentDataType.BOOLEAN, true);
         if(glint)meta.setEnchantmentGlintOverride(true);
         if(lore!=null) meta.lore(lore);

@@ -33,8 +33,8 @@ public final class Product extends ItemStack implements Content {
         ItemMeta meta = prototype.getItemMeta();
 
         meta.lore(List.of(
-                text("<!i><gold>sell price: <sell_price></gold>", Placeholder.unparsed("sell_price", sell_price)),
-                text("<!i><gold>buy price: <buy_price></gold>", Placeholder.unparsed("buy_price", buy_price)),
+                text("<!i><gold>sell price: <sell_price></gold>", Placeholder.unparsed("sell_price", ""+sell_price)),
+                text("<!i><gold>buy price: <buy_price></gold>", Placeholder.unparsed("buy_price", ""+buy_price)),
                 text("<!i><dark_green>stock: <v>, demand: <v2></dark_green>",
                         Placeholder.unparsed("v", String.valueOf(stock)),
                         Placeholder.unparsed("v2", String.valueOf(demand))
