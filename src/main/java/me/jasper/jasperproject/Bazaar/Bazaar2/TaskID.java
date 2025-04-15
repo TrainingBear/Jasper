@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.Bazaar.Bazaar2;
 
+import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Product;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
@@ -18,53 +19,21 @@ import java.util.*;
 
 public final class TaskID {
     public static final byte SWAP_CATEGORY = 0;
-  
     public static final byte CLOSE = 11;
-//    public static final byte TITLE = 12; g guna perasaan gw
     public static final byte CATEG_NAV_NEXT = 13;
     public static final byte CATEG_NAV_BACK = 14;
-
     public static final byte SEARCH = 1;
     public static final byte BUY = 2;
     public static final byte SELL = 3;
-    public static final byte SELECT_SUBCATEG = 4;
+    public static final byte UNWRAP_GROUP = 4;
     public static final byte MANAGE_ORDER = 5;
     public static final byte SELL_INV = 6;
-//    public static final byte SELL_
-
 
     public final static Map<Byte, InventoryUpdater> MAP;
     static {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
-          (player, inv , ID) -> {
-            List<Content> contents = Bazaar.getCategories();
-            List<Content> result;
-            Content selected_content = null;
-            for (Content content : contents) {
-                if(content.getID()==ID){
-                    selected_content = content;
-                    int index = contents.indexOf(content);
-                    int subFirst = -(2-index);
-                    int size = contents.size();
-
-                    result = contents.subList(Math.max(subFirst, 0), size);
-                    int[] cs = {1, 2, 3, 4, 5};
-                    for (int c : cs) {
-                        inv.setItem(c, null);
-                    }
-                    int startingIndex = Math.max(-subFirst, 0)+1;
-                    for (int i = 0; i < result.size(); i++) {
-                        if((i+startingIndex)==6) break;
-                        inv.setItem(i+startingIndex, result.get(i).getItem());
-                    }
-                    break;
-                }
-            }
-
-            TaskID.UpdateSubcategory(ID, inv);
-            TaskID.UpdateDecoration(selected_content, inv);
-        });
+                (p , inv, ID)-> SwapCategory(inv,ID+1));
         MAP.put(CLOSE,
             (p , inv, ID) -> p.closeInventory());
         MAP.put(SEARCH,
@@ -82,29 +51,46 @@ public final class TaskID {
                             });
                 });
         MAP.put(CATEG_NAV_NEXT,
-            (p , inv, ID)-> changeCateg(p,inv,true));
+            (p , inv, ID)-> SwapCategory(inv,ID+1));
         MAP.put(CATEG_NAV_BACK,
-                (p , inv, ID)-> changeCateg(p,inv,false));
+                (p , inv, ID)-> SwapCategory(inv,ID+1));
+        MAP.put(UNWRAP_GROUP,
+                (p, inv, id) -> UnwrapGroup(p, inv));
+    }
+
+    private static void UnwrapGroup(Player player, Inventory inventory){
+        int[] indexes = {
+                20, 21, 22, 23, 24, 25,
+                29, 30, 31, 32, 33, 34,
+                38, 39, 40, 41, 42, 43
+        };
+
+
+        for (int i : indexes) {
+            inventory.setItem(i, null);
+        }
 
     }
-    private static void changeCateg(Player p , Inventory inv, boolean isNext){
+
+    private static void SwapCategory(Inventory inv ,int ID) {
         List<Content> contents = Bazaar.getCategories();
-        int ident = inv.getItem(3).getItemMeta().getPersistentDataContainer().get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
+        int[] cs = {1, 2, 3, 4, 5};
+        Content selected_content = null;
+
         for (Content content : contents) {
-            if (content.getID() == ident) {
-                int index = contents.indexOf(content);
-                if(isNext){
-                    index++;
-                    if(index >= contents.size()) index = 0;
-                }else{
-                    index--;
-                    if(index < 0) index = contents.size()-1;
-                }
-                PersistentDataContainer categ = contents.get(index).getItem().getItemMeta().getPersistentDataContainer();
-                TaskID.MAP.get(categ.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE))
-                        .update(p, inv, categ.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
+            if(content.getID()==ID){
+                Arrays.stream(cs).forEach(sI -> inv.setItem(sI, null)); //gw dh mudeng sama forEach so yk what it mean
+                selected_content = content;
+                byte index = (byte) contents.indexOf(content);
+                for (byte i = 0; i < cs.length; i++) inv.setItem(i + 1, contents.get(
+                        (index + (i - 2) + contents.size()) % contents.size()
+                ).getItem());
+                break;
             }
         }
+
+        TaskID.UpdateSubcategory(ID, inv);
+        TaskID.UpdateDecoration(selected_content, inv);
     }
 
     public static void UpdateDecoration(Content selectedItem, Inventory inventory){

@@ -69,6 +69,7 @@ public final class Product extends ItemStack implements Content {
         for (@Nullable ItemStack item : storageContents) {
             if(item==null) i++;
         }
+        player.getInventory().firstEmpty()
         return i;
     }
 
