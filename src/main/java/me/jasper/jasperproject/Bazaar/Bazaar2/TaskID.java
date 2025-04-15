@@ -39,25 +39,16 @@ public final class TaskID {
         MAP.put(SWAP_CATEGORY,
           (player, inv , ID) -> {
             List<Content> contents = Bazaar.getCategories();
-            List<Content> result;
             Content selected_content = null;
             for (Content content : contents) {
                 if(content.getID()==ID){
-                    selected_content = content;
-                    int index = contents.indexOf(content);
-                    int subFirst = -(2-index);
-                    int size = contents.size();
-
-                    result = contents.subList(Math.max(subFirst, 0), size);
                     int[] cs = {1, 2, 3, 4, 5};
-                    for (int c : cs) {
-                        inv.setItem(c, null);
-                    }
-                    int startingIndex = Math.max(-subFirst, 0)+1;
-                    for (int i = 0; i < result.size(); i++) {
-                        if((i+startingIndex)==6) break;
-                        inv.setItem(i+startingIndex, result.get(i).getItem());
-                    }
+                    Arrays.stream(cs).forEach(sI -> inv.setItem(sI, null)); //gw dh mudeng sama forEach so yk what it mean
+                    selected_content = content;
+                    byte index = (byte) contents.indexOf(content);
+                    for (byte i = 0; i < cs.length; i++) inv.setItem(cs[i], contents.get(
+                                    (index + (i - 2) + contents.size()) % contents.size()
+                            ).getItem());
                     break;
                 }
             }
@@ -103,6 +94,7 @@ public final class TaskID {
                 PersistentDataContainer categ = contents.get(index).getItem().getItemMeta().getPersistentDataContainer();
                 TaskID.MAP.get(categ.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE))
                         .update(p, inv, categ.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
+                break;
             }
         }
     }

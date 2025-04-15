@@ -1,6 +1,8 @@
 package me.jasper.jasperproject.Bazaar.Bazaar2;
 
+import me.jasper.jasperproject.Bazaar.BazaarEnum;
 import me.jasper.jasperproject.Util.JKey;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -15,9 +17,10 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e){
         ItemStack curentItem = e.getCurrentItem();
-        if(e.getClick().equals(ClickType.DOUBLE_CLICK)||curentItem==null || !curentItem.hasItemMeta()) return;
+        if(e.getClick().equals(ClickType.DOUBLE_CLICK)
+                || !MiniMessage.miniMessage().serialize(e.getView().title()).startsWith((String) BazaarEnum.TITLE_STRING.get())
+                || curentItem==null || !curentItem.hasItemMeta()) return;
 
-        Player player = (Player) e.getWhoClicked();
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
 
         if(contain(container, JKey.BAZAAR_COMPONENT_ID)){

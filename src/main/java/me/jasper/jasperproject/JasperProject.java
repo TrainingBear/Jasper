@@ -55,7 +55,7 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load(Animation::loadConfig);
+//        animationConfig.load(Animation::loadConfig);
         Bazaar.setCategory();
 
         if (!setupEconomy() ) {
@@ -64,7 +64,7 @@ public final class JasperProject extends JavaPlugin {
             return;
         }
         setupPermissions();
-        setupChat();
+//        setupChat();
 
         ItemManager.getInstance().registerAll();
 
@@ -79,7 +79,7 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
 
-        PM.registerEvents(new BazaarListener(), this);
+//        PM.registerEvents(new BazaarListener(), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new me.jasper.jasperproject.Bazaar.Bazaar2.Listener(), this);
 
