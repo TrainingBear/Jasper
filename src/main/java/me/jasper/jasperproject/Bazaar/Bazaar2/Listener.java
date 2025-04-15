@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -14,15 +15,16 @@ public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e){
         ItemStack curentItem = e.getCurrentItem();
-        if(curentItem==null || !curentItem.hasItemMeta()) return;
+        if(e.getClick().equals(ClickType.DOUBLE_CLICK)||curentItem==null || !curentItem.hasItemMeta()) return;
 
         Player player = (Player) e.getWhoClicked();
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
 
-        if(contain(container, JKey.BAZAAR_CATEGORY)){
-            byte taskID = container.get(JKey.BAZAAR_CATEGORY, PersistentDataType.BYTE);
-            TaskID.MAP.get(taskID).update(e.getInventory(), container.get(JKey.BAZAAR_COMPONENT, PersistentDataType.INTEGER), e);
-
+        if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
+            byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
+            try {
+                TaskID.MAP.get(taskID).update((Player) e.getWhoClicked(), e.getClickedInventory(), container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
+            }catch (NullPointerException ignored){}
         }
 
     }

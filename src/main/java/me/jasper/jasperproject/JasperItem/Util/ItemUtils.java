@@ -4,6 +4,7 @@ import me.jasper.jasperproject.Util.JKey;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -59,6 +60,9 @@ public class ItemUtils {
         return item.getPersistentDataContainer().get(JKey.Enchant, PersistentDataType.TAG_CONTAINER);
     }
 
-
+    public static boolean isInventoryEmpty(Inventory inv){
+        for(ItemStack item : inv.getContents()) if(item != null && item.getAmount() > 0 ) return false;
+        return true;
+    }
 
 }

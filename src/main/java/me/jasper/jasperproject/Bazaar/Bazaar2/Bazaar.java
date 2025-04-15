@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Category;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Items;
 import me.jasper.jasperproject.Bazaar.BazaarEnum;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.ContainerMenu.Border;
 import me.jasper.jasperproject.Util.ContainerMenu.Container;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
@@ -13,11 +14,16 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public final class Bazaar {
+    private static Map<UUID, Container> playerGUI = new HashMap<>();
     private static Container container;
   
     ///                     GUI UTIL
@@ -28,16 +34,25 @@ public final class Bazaar {
     public final static Category CATEG_NAVI_NEXT = new Category(13, Material.SPECTRAL_ARROW,miniMsgDese("<!i>Next") ,TaskID.CATEG_NAV_NEXT);
     public final static Category CATEG_NAVI_BACK = new Category(14, Material.SPECTRAL_ARROW,miniMsgDese("<!i>Back") ,TaskID.CATEG_NAV_BACK);
 
-    private final static Category TITLE_SIGN = new Category(12, Material.ACACIA_HANGING_SIGN
-            , (Component) BazaarEnum.TITLE_NAME.get(),TaskID.TITLE,List.of(
+    private final static Category TITLE_SIGN = new Category(12, Material.ACACIA_HANGING_SIGN, (Component) BazaarEnum.TITLE_NAME.get(),TaskID.SEARCH,List.of(
                 miniMsgDese("<!i><yellow>Worldwide bazaar")
                 ,miniMsgDese("")
-                ,miniMsgDese("<!i>"+BazaarEnum.CLICK_TEXT.get()+" <gray>to search thing")
+                ,miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to search thing")
     ));
     private final static Category CLOSE = new Category(11, Material.BARRIER
             , (Component) BazaarEnum.CLOSE_ITEM.get(),TaskID.CLOSE,List.of(
-            MiniMessage.miniMessage().deserialize("")
-            ,MiniMessage.miniMessage().deserialize("<!i><b><color:#ff261f>Click</color></b> <red>to close")
+            miniMsgDese("")
+            ,miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to close")
+    ));
+    private final static Category SELL_INV = new Category(15, Material.CHEST
+            , miniMsgDese("<!i><gold>Sell items in inventory"),TaskID.SELL_INV,List.of(
+                miniMsgDese("<!i><gray>Currently there's no")
+                ,miniMsgDese("<!i><gray>match item in your inventory")
+
+    ));
+    private final static Category NOTA_BOOK = new Category(16, Material.WRITABLE_BOOK //gw namain nota, gatau namain apa
+            , miniMsgDese("<!i><Yellow>Manage Order"),TaskID.MANAGE_ORDER,List.of(
+            MiniMessage.miniMessage().deserialize("<!i><gray>Currently there's no your order")
     ));
 
     private final static Border CATEG_DEFAULT_DECO = new Border(8, Material.COBWEB, false);
@@ -120,18 +135,29 @@ public final class Bazaar {
 
 
 
-    private static int[][] layout = {
-            {14, 1, 2, 3, 4, 5, 13, 0, 11},
+    private static final int[][] layout = {
+            {14, -1, -1, 1, 2, 3, 13, 0, 11},
             {0, 0, 0, 7, 0, 0, 0, 0, 0},
+            {15, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {16, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 12, 0, 0, 0, 0},
     };
     ///         MAIN METHOD
     public static void open(Player player){
-        Inventory inventory = INSTANCE(player);
-        player.openInventory(INSTANCE(player));
+        byte slotIndex = 18;
+        Inventory inv = INSTANCE(player);
+        if(!ItemUtils.isInventoryEmpty(player.getInventory())){//bisa diganti ama yg laen
+            ItemStack itemSellInv = inv.getItem(slotIndex);
+            ItemMeta itemSellInvMeta = itemSellInv.getItemMeta();
+            itemSellInvMeta.lore( List.of(
+                        miniMsgDese("<!i><gray>You are currently has item")
+                        ,miniMsgDese("<!i><gray>in your inventory")
+                    ));
+            itemSellInv.setItemMeta(itemSellInvMeta);
+            inv.setItem(slotIndex, itemSellInv);
+        }else inv.setItem(slotIndex, SELL_INV.getItem());
+        player.openInventory(inv);
     }
 
     private static Component miniMsgDese(String s, TagResolver... t){
@@ -147,6 +173,8 @@ public final class Bazaar {
             container.addContent(CATEG_NAVI_BACK);
             container.addContent(TITLE_SIGN);
             container.addContent(CLOSE);
+            container.addContent(SELL_INV);
+            container.addContent(NOTA_BOOK);
 
             container.addContent(BLANK);
             container.addContent(BORDER);
@@ -155,7 +183,8 @@ public final class Bazaar {
             TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
             TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
         }
-        return container.getContainer();
+        playerGUI.computeIfAbsent(player.getUniqueId(), k -> container);
+        return playerGUI.get(player.getUniqueId()).getContainer();
     }
 
 }
