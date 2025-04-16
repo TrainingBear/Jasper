@@ -99,7 +99,7 @@ public final class TaskID {
             }
         }
 
-        TaskID.UpdateSubcategory(ID, inv);
+        TaskID.UpdateSubcategory(selected_content.getID(), inv);
         TaskID.UpdateDecoration(selected_content, inv);
     }
 
