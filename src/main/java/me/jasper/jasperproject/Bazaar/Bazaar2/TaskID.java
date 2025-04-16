@@ -1,13 +1,17 @@
 package me.jasper.jasperproject.Bazaar.Bazaar2;
 
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
+import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -30,7 +34,7 @@ public final class TaskID {
     static {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
-                (p , inv, ID)-> SwapCategory(inv,ID+1));
+                (p , inv, ID) -> SwapCategory(inv,ID, (byte) 0));
         MAP.put(CLOSE,
             (p , inv, ID) -> p.closeInventory());
         MAP.put(SEARCH,
@@ -48,9 +52,11 @@ public final class TaskID {
                             });
                 });
         MAP.put(CATEG_NAV_NEXT,
-            (p , inv, ID)-> SwapCategory(inv,ID+1));
+            (p , inv, ID)-> SwapCategory(inv,inv.getItem(3).getItemMeta().getPersistentDataContainer()
+                                                    .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER),(byte) 1));
         MAP.put(CATEG_NAV_BACK,
-                (p , inv, ID)-> SwapCategory(inv,ID+1));
+                (p , inv, ID)-> SwapCategory(inv,inv.getItem(3).getItemMeta().getPersistentDataContainer()
+                        .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER),(byte) 2));
         MAP.put(UNWRAP_GROUP,
                 (p, inv, id) -> UnwrapGroup(p, inv));
     }
@@ -69,7 +75,7 @@ public final class TaskID {
 
     }
 
-    private static void SwapCategory(Inventory inv ,int ID) {
+    private static void SwapCategory(Inventory inv ,int ID,byte type) {
         List<Content> contents = Bazaar.getCategories();
         int[] cs = {1, 2, 3, 4, 5};
         Content selected_content = null;
@@ -77,8 +83,15 @@ public final class TaskID {
         for (Content content : contents) {
             if(content.getID()==ID){
                 Arrays.stream(cs).forEach(sI -> inv.setItem(sI, null)); //gw dh mudeng sama forEach so yk what it mean
-                selected_content = content;
                 byte index = (byte) contents.indexOf(content);
+                if(type==1){
+                    index++;
+                    if(index >= contents.size()) index =0;
+                }else if (type==2){
+                    index--;
+                    if(index < 0) index = (byte) (contents.size()-1);
+                }
+                selected_content = contents.get(index);
                 for (byte i = 0; i < cs.length; i++) inv.setItem(i + 1, contents.get(
                         (index + (i - 2) + contents.size()) % contents.size()
                 ).getItem());
@@ -119,7 +132,7 @@ public final class TaskID {
         selectedItemmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         selectedItemmeta.lore(List.of(
                         MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<color:#77aa77>Selected")
+                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
         ));
         selectedItemStack.setItemMeta(selectedItemmeta);
         inventory.setItem(3, selectedItemStack);

@@ -31,8 +31,10 @@ public final class Bazaar {
     private final static Border BORDER = new Border(0, Material.BLACK_STAINED_GLASS_PANE, false);
     public final static Border POINTER = new Border(7, Material.LIME_STAINED_GLASS_PANE, false
             , miniMsgDese("<!i><green>Selected category"), false);
-    public final static Category CATEG_NAVI_NEXT = new Category(13, Material.SPECTRAL_ARROW,miniMsgDese("<!i>Next") ,TaskID.CATEG_NAV_NEXT);
-    public final static Category CATEG_NAVI_BACK = new Category(14, Material.SPECTRAL_ARROW,miniMsgDese("<!i>Back") ,TaskID.CATEG_NAV_BACK);
+    public final static Category CATEG_NAVI_NEXT = new Category(13, Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Next") ,TaskID.CATEG_NAV_NEXT
+            ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select next"),miniMsgDese("<!i><gray>category")));
+    public final static Category CATEG_NAVI_BACK = new Category(14, Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Back") ,TaskID.CATEG_NAV_BACK
+            ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select previous"),miniMsgDese("<!i><gray>category")));
 
     private final static Category TITLE_SIGN = new Category(12, Material.ACACIA_HANGING_SIGN, (Component) BazaarEnum.TITLE_NAME.get(),TaskID.SEARCH,List.of(
                 miniMsgDese("<!i><yellow>Worldwide bazaar")
