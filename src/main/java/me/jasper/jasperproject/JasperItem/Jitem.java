@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.Util.JKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +22,7 @@ import java.util.List;
 public class Jitem {
     @Getter private long Version; // <---------- 1
     @Setter@Getter private String ID; // <---------- 2
-    @Setter private String item_name; // <---------- 3
+    @Setter private Component item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
     @Setter private boolean upgradeable = true; // <---------- 5
     @Setter private boolean unlimitedUpgradeable = false; // <---------- 6
@@ -37,8 +39,8 @@ public class Jitem {
     // List<GemstoneAttribute> gemstoneSlot = new ArrayList<>();
     @Getter private List<ItemAbility> abilities;
 
-    @Getter private List<String> lore = new ArrayList<>();
-    @Getter private List<String> custom_lore = new ArrayList<>();
+    @Getter private List<Component> lore = new ArrayList<>();
+    @Getter private List<Component> custom_lore = new ArrayList<>();
 
     /**
      * @param name Items Name Display
@@ -63,7 +65,7 @@ public class Jitem {
         this.stats = stats;
         this.enchants = enchant;
 
-        this.item_name = rarity.color+ name;
+        this.item_name = MiniMessage.miniMessage().deserialize("<!i>"+MiniMessage.miniMessage().serialize(rarity.color)+name);
         this.defaultItem_name = defaultName;
         this.baseRarity = baseRarity;
         this.rarity = rarity;
@@ -75,7 +77,7 @@ public class Jitem {
         this.ID = ID;
         this.Version = itemVersion;
         meta.getPersistentDataContainer().set(JKey.Main, PersistentDataType.STRING, ID);
-        meta.getPersistentDataContainer().set(JKey.CustomName, PersistentDataType.STRING, this.item_name);
+        meta.getPersistentDataContainer().set(JKey.CustomName, PersistentDataType.STRING, PlainTextComponentSerializer.plainText().serialize(this.item_name));
         meta.getPersistentDataContainer().set(JKey.Version, PersistentDataType.LONG, itemVersion);
         meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name());
         meta.getPersistentDataContainer().set(JKey.BaseRarity, PersistentDataType.STRING, rarity.name());
@@ -84,7 +86,7 @@ public class Jitem {
         meta.getPersistentDataContainer().set(JKey.UpgradeAble, PersistentDataType.BOOLEAN, upgradeable);
         meta.getPersistentDataContainer().set(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN, unlimitedUpgradeable);
         meta.getPersistentDataContainer().set(JKey.Upgraded, PersistentDataType.BOOLEAN, upgraded);
-        this.meta.setItemName(item_name);
+        this.meta.displayName(item_name);
     }
 
     public void update() {
@@ -167,15 +169,15 @@ public class Jitem {
     }
 
     private void buildLore(){
-        lore.add(ChatColor.RESET+"");
+        lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
         lore.addAll(custom_lore);
         this.lore.addAll(rarity.getDescription(upgraded, type));
-        this.meta.setLore(lore);
+        this.meta.lore(lore);
         this.item.setItemMeta(this.meta);
     }
 
     private PersistentDataContainer getEnchantsdata(PersistentDataContainer data){
-        lore.add(ChatColor.RESET+"");
+        lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
         PersistentDataContainer enchants_name = data.getAdapterContext().newPersistentDataContainer();
             //this gonna make enchants show the description
             //if the size V
@@ -197,10 +199,10 @@ public class Jitem {
                 StringBuilder builder = new StringBuilder();
                 for (ENCHANT enchant : enchants) {
                     if(operator%3==0){
-                        lore.add(builder.toString());
+                        lore.add(MiniMessage.miniMessage().deserialize("<!i>"+ builder));
                         builder = new StringBuilder();
                     }
-                    builder.append(enchant.getDisplay());
+                    builder.append(MiniMessage.miniMessage().serialize(enchant.getDisplay()));
                     operator++;
 
                     enchants_name.set(
@@ -208,13 +210,13 @@ public class Jitem {
                             PersistentDataType.BYTE, enchant.getLevel()
                     );
                 }
-                lore.add(builder.toString());
+                lore.add(MiniMessage.miniMessage().deserialize("<!i>"+ builder));
             }
         return enchants_name;
     }
 
     private PersistentDataContainer getAbilitiesdata(PersistentDataContainer itemMeta){
-        lore.add(ChatColor.RESET+"");
+        lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
         PersistentDataContainer abilities_name = itemMeta.getAdapterContext().newPersistentDataContainer();
         for (ItemAbility ability : abilities) {
             lore.addAll(ability.getLore());
@@ -252,7 +254,7 @@ public class Jitem {
         }
     }
 
-    public static Jitem convertFrom(ItemStack item, List<String> custom_lore) throws IllegalAccessException {
+    public static Jitem convertFrom(ItemStack item, List<Component> custom_lore) throws IllegalAccessException {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 

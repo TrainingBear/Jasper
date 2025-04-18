@@ -1,10 +1,11 @@
-package me.jasper.jasperproject.JasperItem.Product;
+package me.jasper.jasperproject.JasperItem.Product.Tools;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
@@ -16,9 +17,9 @@ public class Blender extends Jitem implements Factory {
         this.getAbilities().add(new Animator());
         this.getCustom_lore().addAll(
                 List.of(
-                        ChatColor.translateAlternateColorCodes('&',"&4&lWARNING!! THIS IS TEST ITEM"),
-                        ChatColor.translateAlternateColorCodes('&',"&4&lMAY BE DELETED IN THE FUTURE"),
-                        ""
+                        MiniMessage.miniMessage().deserialize("<dark_red><b>THIS IS TEST ITEM")
+                        ,MiniMessage.miniMessage().deserialize("<dark_red><b>MAY BE DELETED IN THE FUTURE")
+                        ,MiniMessage.miniMessage().deserialize("")
                 )
         );
     }

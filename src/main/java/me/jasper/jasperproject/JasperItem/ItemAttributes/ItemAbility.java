@@ -6,6 +6,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -35,22 +36,19 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
     @Setter @Getter protected int abilityCost;
     @Setter @Getter protected float cooldown;
     @Getter
-    protected List<String> lore = new ArrayList<>();
+    protected List<Component> lore = new ArrayList<>();
 
-    protected void addLore(List<String> E){
+    protected void addLore(List<Component> E){
         lore.addAll(E);
         if(showCooldown){
-            lore.add(ChatColor.DARK_GRAY + "Cooldown: " + ChatColor.GREEN + cooldown + " seconds");
+            lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
         }
     }
 
     public void setShowCooldown(boolean showCooldown) {
         this.showCooldown = showCooldown;
-        if(this.showCooldown) {
-            lore.add(ChatColor.DARK_GRAY + "Cooldown: " + ChatColor.GREEN + cooldown + " seconds");
-        } else {
-            lore.remove(ChatColor.DARK_GRAY + "Cooldown: " + ChatColor.GREEN + cooldown + " seconds");
-        }
+        if(this.showCooldown) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
+        else lore.remove(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
     }
 
     @Override

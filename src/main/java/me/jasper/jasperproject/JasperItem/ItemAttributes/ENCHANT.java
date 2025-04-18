@@ -1,10 +1,12 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes;
 
 import lombok.Getter;
-import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -14,21 +16,21 @@ import java.util.Stack;
 
 public enum ENCHANT {
     SharpnesV2(20, "Sharpnes", (byte) 6,
-            ChatColor.GRAY+"Deal %s more damage"
+            MiniMessage.miniMessage().deserialize("<!i><gray>Deal <count> more damage")
     );
 
     @Getter private int prestige_level;
     @Getter private double modifier;
-    private final String name;
-    @Getter private String display;
+    private final Component name;
+    @Getter private Component display;
     @Getter private byte level = 1;
     private final byte max_level;
-    @Getter private String lore;
+    @Getter private Component lore;
     @Getter private final NamespacedKey key;
 
-    ENCHANT(int modifier, String name, byte max_level, String lore) {
+    ENCHANT(int modifier, String name, byte max_level, Component lore) {
         this.modifier = modifier;
-        this.name = ChatColor.WHITE+name;
+        this.name = MiniMessage.miniMessage().deserialize("<!i><white>"+name);
         this.max_level = max_level;
         this.lore = lore;
         this.key = new NamespacedKey(JasperProject.getPlugin(),name);
@@ -40,7 +42,9 @@ public enum ENCHANT {
 //        for (String s : base_lore) {
 //            int index = lore.indexOf(s);
 //            lore.remove(s);
-        lore = String.format(lore, modifier*level);
+//        lore = String.format(lore, modifier*level);
+        lore = lore.replaceText(TextReplacementConfig.builder().match("<count>")
+                .replacement(Component.text(""+modifier*level)).build());//, Placeholder.unparsed("count",""+modifier*level));
 //            lore.add(index,s);
 //        }
     }
@@ -51,7 +55,7 @@ public enum ENCHANT {
             return prestige();
         }
         this.level++;
-        this.display = name+" "+Roman(this.level);
+        this.display = MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(name)+" "+Roman(this.level));
         updateLore();
         return this;
     }
@@ -67,14 +71,14 @@ public enum ENCHANT {
         this.prestige_level++;
         this.modifier *= 1.25;
         this.level = 1;
-        this.display = name+" "+Roman(this.level);
+        this.display = MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(name)+" "+Roman(this.level));
         this.display = switch (prestige_level){
-            case 1 -> ChatColor.WHITE + "T1";
-            case 2 -> ChatColor.GREEN + "T2";
-            case 3 -> ChatColor.BLUE + "T3";
-            case 4 -> ChatColor.DARK_PURPLE + "T4";
+            case 1 -> MiniMessage.miniMessage().deserialize("<!i><white>T1"+display);
+            case 2 -> MiniMessage.miniMessage().deserialize("<!i><green>T2"+display);
+            case 3 -> MiniMessage.miniMessage().deserialize("<!i><blue>T3"+display);
+            case 4 -> MiniMessage.miniMessage().deserialize("<!i><dark_purple>T3"+display);
             default -> throw new IllegalStateException("Unexpected value: " + prestige_level);
-        }+display;
+        };
         updateLore();
         return this;
     }

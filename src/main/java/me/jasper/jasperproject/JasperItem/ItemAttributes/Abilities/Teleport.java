@@ -4,6 +4,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -30,11 +31,10 @@ public class Teleport extends ItemAbility{
        this.setRange(range);
        this.setCooldown(cooldown);
        this.addLore(List.of(
-                ChatColor.translateAlternateColorCodes('&',"&6Ability: &l&x&7&E&1&0&E&0Teleport &e(RIGHT CLICK)&r"),
-                ChatColor.translateAlternateColorCodes('&',"&7Blablabla, this gona teleport"),
-                ChatColor.translateAlternateColorCodes('&',"&7you to the direction that u"),
-                ChatColor.translateAlternateColorCodes('&',"&7looking for up to &a" + range),
-                ChatColor.translateAlternateColorCodes('&',"&ablocks&c!&r")
+               MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#7e10e0><b>Teleport <yellow>(RIGHT CLICK)")
+               ,MiniMessage.miniMessage().deserialize("<!i><gray>Teleporting you to the")
+               ,MiniMessage.miniMessage().deserialize("<!i><gray>unobstructed location with")
+               ,MiniMessage.miniMessage().deserialize("<!i><gray>range of "+range)
 
        ));
 

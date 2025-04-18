@@ -34,10 +34,10 @@ public class Warper extends ItemAbility{
         this.setRange(WarpRange);
         this.setCooldown(cooldown);
         addLore(List.of(
-                ChatColor.translateAlternateColorCodes('&',"&6Ability: &l&x&a&9&0&0&d&1Warper &e(SNEAK + RIGHT CLICK)&r")
-                ,ChatColor.translateAlternateColorCodes('&',"&7Warping you to checkpoint coordinate")
-                ,ChatColor.translateAlternateColorCodes('&',"&7that you inputed &x&9&5&9&4&5&B(Sneak + Left Click)")
-                ,ChatColor.translateAlternateColorCodes('&',"&7Max warp range: &5"+WarpRange+" blocks")
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#a900d1><b>Warper <yellow>(RIGHT CLICK & LEFT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Warping you to checkpoint coordinate")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>that you inputed <color:#95945B>(Sneak + Left Click)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: &5"+WarpRange+" blocks")
         ));
 
     }

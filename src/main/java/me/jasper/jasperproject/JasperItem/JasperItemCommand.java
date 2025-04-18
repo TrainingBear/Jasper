@@ -20,7 +20,7 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!(commandSender instanceof Player player)) return false;
         val manager = ItemManager.getInstance().getItems();
-        switch(strings[0]){
+        switch(strings[0].toLowerCase()){
             case "debug" -> {
 //                Items.register();
             }
@@ -31,24 +31,12 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                     throw new RuntimeException(e);
                 }
             }
-            case "EndGateway" -> {
-                manager.get("END_GATEWAY").send(player);
-                player.sendMessage("Sending "+strings[0]+" item");
-            }
-            case "WarpGateway" ->{
-                manager.get("END_GATEWAY").send(player);
-                player.sendMessage("Sending "+strings[0]+" item");
-            }
-            case "grapple"->{
-                manager.get("GRAPPLING_HOOK").send(player);
-                player.sendMessage("Sending "+strings[0]+" item");
-            }case "test"->{
-                manager.get("TEST").send(player);
-                player.sendMessage("Sending "+strings[0]+" item");
-            }case "animate"->{
-                manager.get("ANIMATE").send(player);
-                player.sendMessage("Sending "+strings[0]+" item");
-            }
+            case "endgateway" -> manager.get("END_GATEWAY").send(player);
+            case "warpgateway" -> manager.get("WARP_GATEWAY").send(player);
+            case "grapple"-> manager.get("GRAPPLING_HOOK").send(player);
+            case "test"-> manager.get("TEST").send(player);
+            case "animate"-> manager.get("ANIMATE").send(player);
+            case "titaniumsword"-> manager.get("TITANIUM_SWORD").send(player);
         }
 
         return true;
@@ -62,7 +50,8 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 "WarpGateway",
                 "test",
                 "update",
-                "animate"
+                "animate",
+                "TitaniumSword"
                 );
     }
 }
