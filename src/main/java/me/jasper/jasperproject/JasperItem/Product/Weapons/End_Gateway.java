@@ -11,9 +11,9 @@ import org.bukkit.*;
 
 import java.util.List;
 
-public class EndGateway extends Jitem implements Factory {
-    @Getter private final static EndGateway instance = new EndGateway();
-    public EndGateway() {
+public class End_Gateway extends Jitem implements Factory {
+    @Getter private final static End_Gateway instance = new End_Gateway();
+    public End_Gateway() {
         super("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
         this.getStats()
                 .setBaseDamage(39)

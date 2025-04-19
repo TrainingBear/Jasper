@@ -29,7 +29,7 @@ public class Grappling_Hook extends ItemAbility {
     public Grappling_Hook(float cooldown) {
         this.setCooldown(cooldown);
         addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#e0ffe5><b>Grappling <yellow>(RIGHT CLICK)")
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#e0ffe5>Grappling <b><yellow>(RIGHT CLICK)")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>Pulls the player towards the hook")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>if there is a block around the hook.")
         ));
@@ -53,7 +53,7 @@ public class Grappling_Hook extends ItemAbility {
             Player player = e.getFish().getPlayer();
             Location bobber = e.getFish().getHook().getLocation();
 
-            applyCooldown(e);
+            applyCooldown(e,true);
             if(e.isCancelled()) {
                 ItemUtils.playPSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1.7f);
                 return;
