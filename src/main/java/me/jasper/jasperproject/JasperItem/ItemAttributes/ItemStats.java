@@ -3,6 +3,8 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -113,19 +115,19 @@ public class ItemStats {
      * Stats color Getter
      * @param v Float field name
      * */
-    private String getStatsFormat(String v){
+    private String getStatsFormat(String v,float placeholder){
 //        ChatColor.translateAlternateColorCodes('a',"ab");
         return switch (v){//sekalia lu pake ChatColor translate
-            case "DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&7Damage: &c+%.0f");
-            case "CRIT_DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&7Crit Damage: &x&6&2&4&5&F&F+%.0f");
-            case "CRIT_CHANCE" -> ChatColor.translateAlternateColorCodes('&',"&7Crit Chance: &x&8&B&7&6&F&F+%.0f");
-            case "MANA" -> ChatColor.translateAlternateColorCodes('&',"&7Mana: &x&3&9&F&F&F&TRIGGER+%.0f");
-            case "SPEED" -> ChatColor.translateAlternateColorCodes('&',"&7Speed: &x&F&4&F&F&D&0+%.0f");
-            case "ATTACK_SPEED" -> ChatColor.translateAlternateColorCodes('&',"&7Attack Speed: &e+%.0f");
-            case "DOUBLE_ATTACK" -> ChatColor.translateAlternateColorCodes('&',"&7Double Attack: &x&F&TRIGGER&B&9&4&C+%.0f");
-            case "SWING_RANGE" -> ChatColor.translateAlternateColorCodes('&',"&7Swing Range: &x&F&F&8&6&3&D+%.0f");
-            case "TRUE_DEFENCE" -> ChatColor.translateAlternateColorCodes('&',"&7True Defence: &x&B&5&F&F&TRIGGER&7+%.0f");
-            default -> ChatColor.translateAlternateColorCodes('&',"&7Unknown stats: &0+%.0f");
+            case "DAMAGE" -> "<!i><gray>Damage: <red>+"+placeholder;//'&',"&7Damage: &c+%.0f");
+            case "CRIT_DAMAGE" -> "<!i><gray>Crit Damage: <color:#6245ff>+"+placeholder;//"&7Crit Damage: &x&6&2&4&5&F&F+%.0f");
+            case "CRIT_CHANCE" -> "<!i><gray>Crit Chance: <color:#8B76ff>+"+placeholder;//"&7Crit Chance: &x&8&B&7&6&F&F+%.0f");
+            case "MANA" -> "<!i><gray>Mana: <color:#3f9fff>+" + placeholder;//"&7Mana: &x&3&9&F&F&F&TRIGGER+%.0f");
+            case "SPEED" -> "<!i><gray>Speed: <color:#ff4fd0>+" + placeholder;//"&7Speed: &x&F&4&F&F&D&0+%.0f");
+            case "ATTACK_SPEED" -> "<!i><gray>Attack Speed: <yellow>+" + placeholder;//"&7Attack Speed: &e+%.0f");
+            case "DOUBLE_ATTACK" -> "<!i><gray>Double Attack: <color:#ffB94C>+" + placeholder;//"&7Double Attack: &x&F&TRIGGER&B&9&4&C+%.0f");
+            case "SWING_RANGE" -> "<!i><gray>Swing Range: <color:#ff8a63>+" + placeholder;//"&7Swing Range: &x&F&F&8&6&3&D+%.0f");
+            case "TRUE_DEFENCE" -> "<!i><gray>True Defence: <color:#b5ff7f>+" + placeholder;//"&7True Defence: &x&B&5&F&F&TRIGGER&7+%.0f");
+            default -> "<!i><gray>Unknown stats: <black>+" + placeholder; //"&7Unknown stats: &0+%.0f");
         };
     }
     /**
@@ -138,44 +140,44 @@ public class ItemStats {
         stats += "test";
         if(case1 && case2){
             return switch (stats) {
-                case "DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&E&9&4&TRIGGER&4&TRIGGER+&x&D&1&2&9&2&9%.0f &8|&r &x&E&9&4&TRIGGER&4&Ax&x&D&1&2&9&2&9+%.0f%%&8)");
-                case "CRIT_DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&E&9&4&TRIGGER&4&TRIGGER+&x&D&1&2&9&2&9%.0f &8|&r &x&E&9&4&TRIGGER&4&Ax&x&D&1&2&9&2&9+%.0f%%&8)");
-                case "CRIT_CHANCE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&E&9&4&TRIGGER&4&TRIGGER+&x&D&1&2&9&2&9%.0f &8|&r &x&E&9&4&TRIGGER&4&Ax&x&D&1&2&9&2&9+%.0f%%&8)");
-                case "MANA" -> ChatColor.translateAlternateColorCodes('&',"&8&l(&r&x&4&9&C&6&D&5+&x&2&B&B&2&C&2%.0f &b&l|&r &x&4&9&C&6&D&5+&x&2&B&B&2&C&2%.0f%%&8&l)");
-                case "SPEED" -> ChatColor.translateAlternateColorCodes('&',"&8&l(&r&x&C&B&D&5&TRIGGER&D+&x&B&7&C&0&9&D%.0f &b&l|&r &x&C&B&D&5&TRIGGER&D+&x&B&7&C&0&9&D%.0f%%&8&l)");
-                case "ATTACK_SPEED" -> ChatColor.translateAlternateColorCodes('&',"&8&l(&r&x&C&E&C&D&2&6+&x&B&7&B&6&1&6%.0f &b&l|&r &x&C&E&C&D&2&6+&x&B&7&B&6&1&6%.0f%%&8&l)");
-                case "DOUBLE_ATTACK" -> ChatColor.translateAlternateColorCodes('&',"&8&l(&r&x&D&8&TRIGGER&1&4&3+&x&C&C&9&4&3&6%.0f &b&l|&r &x&D&8&TRIGGER&1&4&3+&x&C&C&9&4&3&6%.0f%%&8&l)");
-                case "SWING_RANGE" -> ChatColor.translateAlternateColorCodes('&',"&8&l(&r&x&D&TRIGGER&7&B&4&2+&x&D&0&6&C&3&0%.0f &b&l|&r &x&D&TRIGGER&7&B&4&2 &x&6&0&4&7&E&F+&x&D&0&6&C&3&0%.0f%%&8&l)");
-                case "TRUE_DEFENCE" -> ChatColor.translateAlternateColorCodes('&',"&8&l(&r&x&6&0&4&7&E&F+&x&9&4&B&D&8&C%.0f &b&l|&r &x&6&0&4&7&E&F+&x&9&4&B&D&8&C%.0f%%&8&l)");
-                default -> "&8(&r&a+%.0f &b&l|&r &9%.0f%%&8)";
+                case "DAMAGE" -> "<gray>(<TRIGGER+><color:#d12929>%.0f <gray>| <TRIGGERA+><color:#d12929>%.0f%%<gray>)";
+                case "CRIT_DAMAGE" -> "<gray>(<TRIGGER+><color:#d12929>%.0f <gray>| <TRIGGERA+><color:#d12929>%.0f%%<gray>)";
+                case "CRIT_CHANCE" -> "<gray>(<TRIGGER+><color:#d12929>%.0f <gray>| <TRIGGERA+><color:#d12929>%.0f%%<gray>)";
+                case "MANA" -> "<dark_gray><bold>(<color:#49c6d5>+<color:#2bb2c2>%.0f <aqua><bold>| <color:#49c6d5>+<color:#2bb2c2>%.0f%%<dark_gray><bold>)";
+                case "SPEED" -> "<dark_gray><bold>(<TRIGGER+><color:#b7c09d>%.0f <aqua><bold>| <TRIGGER+><color:#b7c09d>%.0f%%<dark_gray><bold>)";
+                case "ATTACK_SPEED" -> "<dark_gray><bold>(<color:#cecD26>+<color:#b7b616>%.0f <aqua><bold>| <color:#cecD26>+<color:#b7b616>%.0f%%<dark_gray><bold>)";
+                case "DOUBLE_ATTACK" -> "<dark_gray><bold>(<TRIGGER+><color:#cc9436>%.0f <aqua><bold>| <TRIGGER+><color:#cc9436>%.0f%%<dark_gray><bold>)";
+                case "SWING_RANGE" -> "<dark_gray><bold>(<TRIGGER+><color:#d06c30>%.0f <aqua><bold>| <TRIGGER> <color:#6047ef>+<color:#d06c30>%.0f%%<dark_gray><bold>)";
+                case "TRUE_DEFENCE" -> "<dark_gray><bold>(<color:#6047ef>+<color:#94bd8c>%.0f <aqua><bold>| <color:#6047ef>+<color:#94bd8c>%.0f%%<dark_gray><bold>)";
+                default -> "<gray>(<green>+%.0f <aqua><bold>| <blue>%.0f%%<gray>)";
             };
         }
         if(case1){
             return switch (stats) {
-                case "DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&E&9&4&TRIGGER&4&TRIGGER+&x&D&1&2&9&2&9%.0f&8)");
-                case "CRIT_DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&6&0&4&7&E&F+&x&4&5&2&B&D&7%.0f&8)");
-                case "CRIT_CHANCE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&8&B&8&4&D&F+&x&6&E&6&6&C&E%.0f&8)");
-                case "MANA" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&4&9&C&6&D&5+&x&2&B&B&2&C&2%.0ff&8)");
-                case "SPEED" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&C&B&D&5&TRIGGER&D+&x&B&7&C&0&9&D%.0f&8)");
-                case "ATTACK_SPEED" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&C&E&C&D&2&6+&x&B&7&B&6&1&6%.0f&8)");
-                case "DOUBLE_ATTACK" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&D&8&TRIGGER&1&4&3+&x&C&C&9&4&3&6%.0f&8)");
-                case "SWING_RANGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&D&TRIGGER&7&B&4&2+&x&D&0&6&C&3&0%.0f&8)");
-                case "TRUE_DEFENCE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&B&5&D&7&TRIGGER&F+&x&9&4&B&D&8&C%.0f&8)");
-                default -> "&8(&r&a+%.0f&8)";
+                case "DAMAGE" -> "<gray>(<TRIGGER+><color:#d12929>%.0f<gray>)";
+                case "CRIT_DAMAGE" -> "<gray>(<color:#6047ef>+<color:#452bd7>%.0f<gray>)";
+                case "CRIT_CHANCE" -> "<gray>(<color:#8b84df>+<color:#6e66ce>%.0f<gray>)";
+                case "MANA" -> "<gray>(<color:#49c6d5>+<color:#2bb2c2>%.0ff<gray>)";
+                case "SPEED" -> "<gray>(<TRIGGER+><color:#b7c09d>%.0f<gray>)";
+                case "ATTACK_SPEED" -> "<gray>(<color:#cecD26>+<color:#b7b616>%.0f<gray>)";
+                case "DOUBLE_ATTACK" -> "<gray>(<TRIGGER+><color:#cc9436>%.0f<gray>)";
+                case "SWING_RANGE" -> "<gray>(<TRIGGER+><color:#d06c30>%.0f<gray>)";
+                case "TRUE_DEFENCE" -> "<gray>(<color:#b5d7FF>+<color:#94bd8c>%.0f<gray>)";
+                default -> "<gray>(<green>+%.0f<gray>)";
             };
         }
         if(case2){
             return switch (stats) {
-                case "DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&E&9&4&TRIGGER&4&Ax&x&D&1&2&9&2&9+%.0f%%&8)");
-                case "CRIT_DAMAGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&6&0&4&7&E&Fx&x&4&5&2&B&D&7+%.0f%%&8)");
-                case "CRIT_CHANCE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&8&B&8&4&D&Fx&x&6&E&6&6&C&E+%.0f%%&8)");
-                case "MANA" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&4&9&C&6&D&5x&x&2&B&B&2&C&2+%.0f%%&8)");
-                case "SPEED" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&C&B&D&5&TRIGGER&Dx&x&B&7&C&0&9&D+%.0f%%&8)");
-                case "ATTACK_SPEED" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&C&E&C&D&2&6x&x&B&7&B&6&1&6+%.0f%%&8)");
-                case "DOUBLE_ATTACK" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&D&8&TRIGGER&1&4&3x&x&C&C&9&4&3&6+%.0f%%&8)");
-                case "SWING_RANGE" -> ChatColor.translateAlternateColorCodes('&',"&8(&rx&D&TRIGGER&7&B&4&2 &x&6&0&4&7&E&Fx&x&D&0&6&C&3&0+%.0f%%&8)");
-                case "TRUE_DEFENCE" -> ChatColor.translateAlternateColorCodes('&',"&8(&r&x&B&5&D&7&TRIGGER&Fx&x&9&4&B&D&8&C+%.0f%%&8)");
-                default -> "&8(&9+%.0f%%&8)";
+                case "DAMAGE" -> "<gray>(<TRIGGERA+><color:#d12929>%.0f%%<gray>)";
+                case "CRIT_DAMAGE" -> "<gray>(<color:#6047ef><color:#452bd7>+%.0f%%<gray>)";
+                case "CRIT_CHANCE" -> "<gray>(<color:#8b84df><color:#6e66ce>+%.0f%%<gray>)";
+                case "MANA" -> "<gray>(<color:#49c6d5><color:#2bb2c2>+%.0f%%<gray>)";
+                case "SPEED" -> "<gray>(<TRIGGER><color:#b7c09d>+%.0f%%<gray>)";
+                case "ATTACK_SPEED" -> "<gray>(<color:#cecD26><color:#b7b616>+%.0f%%<gray>)";
+                case "DOUBLE_ATTACK" -> "<gray>(<TRIGGER><color:#cc9436>+%.0f%%<gray>)";
+                case "SWING_RANGE" -> "<gray>(<TRIGGER> <color:#6047ef><color:#d06c30>+%.0f%%<gray>)";
+                case "TRUE_DEFENCE" -> "<gray>(<color:#b5d7FF><color:#94bd8c>+%.0f%%<gray>)";
+                default -> "<gray>(<blue>+%.0f%%<gray>)";
             };
         }
         return "";
@@ -187,19 +189,13 @@ public class ItemStats {
      * @param v2 * modifier
     * */
     private String getModifierFormat(String stats, float v1, float v2){
-        if(v1 <= 0 && v2 <=0){
-            return "";
-        }
-        if(v1 >= 0 && v2 <= 0){
-            return ChatColor.translateAlternateColorCodes('&',
-                    String.format(getModifierFormat(stats, true, false),v1));
-        }
-        if(v2 >= 0 && v1 <= 0){
-            return ChatColor.translateAlternateColorCodes('&',
-                    String.format(getModifierFormat(stats, false, true),v2));
-        }
-        return ChatColor.translateAlternateColorCodes('&',
-                String.format(getModifierFormat(stats, true, true),v1,v2));
+        if(v1 <= 0 && v2 <=0) return "";
+
+        if(v1 >= 0 && v2 <= 0) return String.format(getModifierFormat(stats, true, false),v1);
+
+        if(v2 >= 0 && v1 <= 0) return String.format(getModifierFormat(stats, false, true),v2);
+
+        return String.format(getModifierFormat(stats, true, true),v1,v2);
     }
 
     private float DAMAGE;
@@ -337,8 +333,8 @@ public class ItemStats {
         return finalStats;
     }
 
-    public List<String> getLore() throws IllegalAccessException {
-        List<String> lore = new ArrayList<>();
+    public List<Component> getLore() throws IllegalAccessException {
+        List<Component> lore = new ArrayList<>();
         Field[] fields = this.getClass().getDeclaredFields();
         for(Field field : fields){
             if(field.getType() != float.class) continue;
@@ -351,11 +347,11 @@ public class ItemStats {
             }
             float modifier = getModifiersFromString(field.getName(), false);
             float xmodifier = getModifiersFromString(field.getName(), true);
-            lore.add(
-                    String.format(getStatsFormat(field.getName()), field.getFloat(this))
+            lore.add(MiniMessage.miniMessage().deserialize("<!i>"+
+                    getStatsFormat(field.getName(), field.getFloat(this))
                     +" "
                     +getModifierFormat(field.getName(),modifier,xmodifier)
-            );
+            ));
         }
         return lore;
     }

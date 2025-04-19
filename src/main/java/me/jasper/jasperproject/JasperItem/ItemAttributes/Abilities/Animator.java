@@ -9,6 +9,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -31,10 +32,10 @@ public class Animator extends ItemAbility {
 
     public Animator(){
         addLore(List.of(
-                ChatColor.translateAlternateColorCodes('&',"&6Ability: &c&lCreator &r&e(RIGHT CLICK & LEFT CLICK)"),
-                ChatColor.translateAlternateColorCodes('&',"&7Create a &aAnimation&7 with your"),
-                ChatColor.translateAlternateColorCodes('&',"&7Imagination! Create endless of"),
-                ChatColor.translateAlternateColorCodes('&',"&7Creativity.")
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red><b>Creator <yellow>(RIGHT CLICK & LEFT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Create a <green>Animation</green> with your")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Imagination! Create endless of")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Creativity")
         ));
     }
 

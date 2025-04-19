@@ -1,35 +1,37 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes;
 
 import lombok.Getter;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.List;
 
 public enum Rarity {
-    COMMON(ChatColor.WHITE, 0f, (byte) 0),
-    UNCOMMON(ChatColor.GREEN, 2.5f, (byte) 1),
-    RARE(ChatColor.BLUE, 5.0f, (byte) 2),
-    EPIC(ChatColor.DARK_PURPLE, 7.5f, (byte) 3),
-    LEGENDARY(ChatColor.GOLD, 10.0f, (byte) 4),
-    MYTHIC(ChatColor.LIGHT_PURPLE, 12.5f, (byte) 5);
+    COMMON(MiniMessage.miniMessage().deserialize("<white>"), 0f, (byte) 0),
+    UNCOMMON(MiniMessage.miniMessage().deserialize("<green>"), 2.5f, (byte) 1),
+    RARE(MiniMessage.miniMessage().deserialize("<blue>"), 5.0f, (byte) 2),
+    EPIC(MiniMessage.miniMessage().deserialize("<dark_purple>"), 7.5f, (byte) 3),
+    LEGENDARY(MiniMessage.miniMessage().deserialize("<gold>"), 10.0f, (byte) 4),
+    MYTHIC(MiniMessage.miniMessage().deserialize("<light_purple>"), 12.5f, (byte) 5);
 
-    public final ChatColor color;
+    public final Component color;
     @Getter private final byte weight;
     @Getter private final float boosterModifier;
-    Rarity(ChatColor color, float boosterModifier, byte weight) {
+    Rarity(Component color, float boosterModifier, byte weight) {
         this.weight = weight;
         this.color = color;
         this.boosterModifier = boosterModifier;
     }
 
-    public List<String> getDescription(boolean upgraded, ItemType type){
+    public List<Component> getDescription(boolean upgraded, ItemType type){
 
         return upgraded?
-                List.of(this.color+""+ChatColor.BOLD+"UPGRADED "+name()+String.format(" %s",type.name()),
-                ChatColor.translateAlternateColorCodes('&',"&7Boost this item stats by &a"+ChatColor.GREEN+boosterModifier+"%"))
+                List.of(
+                    MiniMessage.miniMessage().deserialize("<!i>"+MiniMessage.miniMessage().serialize(this.color)+"<bold>UPGRADED "+name()+String.format(" %s",type.name())),
+                    MiniMessage.miniMessage().deserialize("<!i><gray>Boost this item stats by <green>"+boosterModifier + "%"))
                 :
-                List.of(this.color+""+ChatColor.BOLD+this.name()+String.format(" %s",type.name()),
-                ChatColor.translateAlternateColorCodes('&',"&7Boost this item stats by &a"+boosterModifier+"%"));
+                List.of(MiniMessage.miniMessage().deserialize("<!i>"+MiniMessage.miniMessage().serialize(this.color)+"<bold>"+name()+String.format(" %s",type.name())),
+                        MiniMessage.miniMessage().deserialize("<!i><gray>Boost this item stats by <green>"+boosterModifier + "%"));
     }
 
     public Rarity update(Rarity base, byte timesUpdated){

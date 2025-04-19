@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.JasperItem.Product;
+package me.jasper.jasperproject.JasperItem.Product.Tools;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
@@ -15,7 +15,6 @@ public class GraplingHook extends Jitem implements Factory {
         this.setUpgradeable(false);
         this.getAbilities().add(new Grappling_Hook(1.5f));
         this.getEnchants().add(ENCHANT.SharpnesV2);
-        this.getLore().add("line1");
     }
     @Override
     public Jitem create() {
