@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.JasperItem.Product;
+package me.jasper.jasperproject.JasperItem.Product.Weapons;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
@@ -7,6 +7,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -37,11 +38,11 @@ public class TestItem extends Jitem implements Factory {
         this.getEnchants().add(ENCHANT.SharpnesV2);
         this.setUpgradeable(true);
         this.getCustom_lore().addAll(List.of(
-                "",
-                "This is the first item line",
-                "This is the Second item line",
-                "so on",
-                ""
+                MiniMessage.miniMessage().deserialize("")
+                ,MiniMessage.miniMessage().deserialize("This is the first item line")
+                ,MiniMessage.miniMessage().deserialize("This is the Second item line")
+                ,MiniMessage.miniMessage().deserialize("so on")
+                ,MiniMessage.miniMessage().deserialize("")
 
         ));
     }

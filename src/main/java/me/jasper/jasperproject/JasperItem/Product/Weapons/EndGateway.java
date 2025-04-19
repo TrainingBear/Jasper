@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.JasperItem.Product;
+package me.jasper.jasperproject.JasperItem.Product.Weapons;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;

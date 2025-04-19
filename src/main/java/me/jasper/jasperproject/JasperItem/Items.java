@@ -8,6 +8,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -51,7 +52,6 @@ public final class Items {
         grapling.setUpgradeable(false);
         grapling.getAbilities().add(new Grappling_Hook(1.5f));
         grapling.getEnchants().add(ENCHANT.SharpnesV2);
-        grapling.getLore().add("line1");
         grapling.update();
     }
 
@@ -74,12 +74,11 @@ public final class Items {
         test.getEnchants().add(ENCHANT.SharpnesV2);
         test.setUpgradeable(true);
         test.getCustom_lore().addAll(List.of(
-                "",
-                "This is the first item line",
-                "This is the Second item line",
-                "so on",
-                ""
-
+                MiniMessage.miniMessage().deserialize("")
+                ,MiniMessage.miniMessage().deserialize("This is the first item line")
+                ,MiniMessage.miniMessage().deserialize("This is the Second item line")
+                ,MiniMessage.miniMessage().deserialize("so on")
+                ,MiniMessage.miniMessage().deserialize("")
         ));
         test.update();
     }
@@ -88,13 +87,13 @@ public final class Items {
     static {
         animate_wannd = new Jitem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
         animate_wannd.getAbilities().add(new Animator());
-        animate_wannd.getCustom_lore().addAll(
-                List.of(
-                        ChatColor.translateAlternateColorCodes('&',"&4&lWARNING!! THIS IS TEST ITEM"),
-                        ChatColor.translateAlternateColorCodes('&',"&4&lMAY BE DELETED IN THE FUTURE"),
-                        ""
-                )
-        );
+//        animate_wannd.getCustom_lore().addAll(
+//                List.of(
+//                        ChatColor.translateAlternateColorCodes('&',"&4&lWARNING!! THIS IS TEST ITEM"),
+//                        ChatColor.translateAlternateColorCodes('&',"&4&lMAY BE DELETED IN THE FUTURE"),
+//                        ""
+//                )
+//        );
         animate_wannd.update();
     }
 
