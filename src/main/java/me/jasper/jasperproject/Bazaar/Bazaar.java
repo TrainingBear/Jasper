@@ -174,14 +174,7 @@ public abstract class Bazaar {
                 , magic.getID(), MAGICAL_CATEG_DECO
         );
     }
-    private static final int[][] layout = {
-            {14, 4, 5, 1, 2, 3, 13, 0, 11},
-            {0, 0, 0, 7, 0, 0, 0, 0, 0},
-            {15, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {16, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 12, 0, 0, 0, 0},
-    };
+
 
     /**
      * MAIN METHOD
@@ -190,16 +183,6 @@ public abstract class Bazaar {
     public static void open(Player player){
         byte slotIndex = 18;
         Inventory inv = INSTANCE(player);
-        if(!ItemUtils.isInventoryEmpty(player.getInventory())){
-            ItemStack itemSellInv = inv.getItem(slotIndex);
-            ItemMeta itemSellInvMeta = itemSellInv.getItemMeta();
-            itemSellInvMeta.lore( List.of(
-                        miniMsgDese("<!i><gray>You are currently has item")
-                        ,miniMsgDese("<!i><gray>in your inventory")
-                    ));
-            itemSellInv.setItemMeta(itemSellInvMeta);
-            inv.setItem(slotIndex, itemSellInv);
-        }else inv.setItem(slotIndex, SELL_INV.getItem());
         player.openInventory(inv);
     }
 
@@ -207,32 +190,31 @@ public abstract class Bazaar {
         return MiniMessage.miniMessage().deserialize(s, t);
     }
 
-    private static Map<UUID, Container> instances = new HashMap<>();
+    private static final Map<UUID, Container> instances = new HashMap<>();
 
-    private static Inventory INSTANCE(Player player){
+    private static Inventory INSTANCE(@NotNull Player player){
         Container container;
         if(!instances.containsKey(player.getUniqueId())){
-            container = new Container(player, miniMsgDese(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), layout);
-            container.addContent(Categories);
-            container.addContent(POINTER);
-
-            container.addContent(CATEG_NAVI_NEXT);
-            container.addContent(CATEG_NAVI_BACK);
-            container.addContent(TITLE_SIGN);
-            container.addContent(CLOSE);
-            container.addContent(SELL_INV);
-            container.addContent(NOTA_BOOK);
-
-            container.addContent(BLANK);
-            container.addContent(BORDER);
-
-            container.load();
-            TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
-            TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
+            container = new Container(player, miniMsgDese(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), 54);
+            container.load(()->{
+                TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
+                TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
+                putBorder(container.getContainer());
+            });
         } else {
             container = null;
         }
         return instances.computeIfAbsent(player.getUniqueId(), k -> container).getContainer();
+    }
+
+    private static void putBorder(Inventory inventory){
+        int[] indexes = {
+          45, 27, 9, 10, 11, 13, 14, 15, 16, 17, 7
+        };
+
+        for (int i : indexes) {
+            inventory.setItem(i, BORDER.getItem());
+        }
     }
 
 }

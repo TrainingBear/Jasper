@@ -36,13 +36,6 @@ public class BazaarCommand implements JasperCommand {
     @Override
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("Bazaar")
-                .executes(e->{
-                    if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-
-                    Bazaar.open(player);
-
-                    return Command.SINGLE_SUCCESS;
-                })
                 .then(Commands.literal("admin")
                         .then(Commands.literal("new_product")
                                 .then(Commands.argument("group", StringArgumentType.string())
@@ -59,12 +52,16 @@ public class BazaarCommand implements JasperCommand {
                                                             for (NamespacedKey key : getCurrentItemNamespaces(player, false)) {
                                                                 b.suggest(key.getNamespace()+":"+key.getKey());
                                                             }
+                                                            b.suggest("null");
                                                             return b.buildFuture();
                                                         })
                                                         .executes(e -> {
                                                             if(!(e.getSource().getSender()instanceof Player player)) return  Command.SINGLE_SUCCESS;
+                                                            ItemStack item = player.getInventory().getItemInMainHand();
+                                                            val productName = StringArgumentType.getString(e, "product name");
+                                                            val namespace = StringArgumentType.getString(e, "namespace");
 
-                                                            Product product = new Product(item, productName, key);
+                                                            Product product = new Product(item, productName, stringToNamespace(namespace));
                                                             try {
                                                                 ProductManager.createProduct(
                                                                         StringArgumentType.getString(e, "group"),
@@ -79,35 +76,23 @@ public class BazaarCommand implements JasperCommand {
                                                             return Command.SINGLE_SUCCESS;
                                                         })
                                                 )
-
-                                                        .executes(e -> {
-                                                            if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-
-                                                            val productName = StringArgumentType.getString(e, "product name");
-                                                            ItemStack item = player.getInventory().getItemInMainHand();
-                                                            NamespacedKey key = null;
-                                                            Set<NamespacedKey> keys = getCurrentItemNamespaces(player, false);
-                                                            for (NamespacedKey namespacedKey : keys) {
-                                                                key = namespacedKey;
-                                                                break;
-                                                            }
-
-                                                            Product product = new Product(item, productName, key);
-                                                            try {
-                                                                ProductManager.createProduct(
-                                                                        StringArgumentType.getString(e, "group"),
-                                                                        productName,
-                                                                        product
-                                                                );
-                                                            } catch (SQLException ex) {
-                                                                player.sendMessage(ex.getMessage());
-                                                                throw new RuntimeException(ex);
-                                                            }
-
-                                                            return Command.SINGLE_SUCCESS;
-                                                        })
-
-                                        )
+                                        ).executes(e -> {
+                                            if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                            val productName = StringArgumentType.getString(e, "product name");
+                                            ItemStack item = player.getInventory().getItemInMainHand();
+                                            Product product = new Product(item, productName, (NamespacedKey) null);
+                                            try {
+                                                ProductManager.createProduct(
+                                                        StringArgumentType.getString(e, "group"),
+                                                        productName,
+                                                        product
+                                                );
+                                            } catch (SQLException ex) {
+                                                player.sendMessage(ex.getMessage());
+                                                throw new RuntimeException(ex);
+                                            }
+                                            return Command.SINGLE_SUCCESS;
+                                        })
                                 )
 
                         )
@@ -168,18 +153,35 @@ public class BazaarCommand implements JasperCommand {
 
                                 )
                         )
-                )
-                ;
+                ).executes(e->{
+                    if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                    Bazaar.open(player);
+                    return Command.SINGLE_SUCCESS;
+                });
     }
 
-    public Set<NamespacedKey> getCurrentItemNamespaces(Player player, boolean show_player){
+    private NamespacedKey stringToNamespace(@NotNull String namespace){
+        String[] ns = namespace.split(":");
+        NamespacedKey key = null;
+        if(namespace.equals("null")){
+            key = null;
+        } else if (ns.length==2) {
+            key = new NamespacedKey(ns[0], ns[1]);
+        }
+        return key;
+    }
+
+    public Set<NamespacedKey> getCurrentItemNamespaces(@NotNull Player player, boolean show_player){
         ItemStack item = player.getInventory().getItemInMainHand();
         if(item.isEmpty() || !item.hasItemMeta()) return new HashSet<>();
         Set<NamespacedKey> keys = item.getItemMeta().getPersistentDataContainer().getKeys();
         if(!show_player) return keys;
-        player.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>Current item</yellow> <dark_green>namespaces</dark_green>:"));
+        player.sendMessage(MiniMessage.miniMessage().deserialize("<yellow><displayname></yellow> <dark_green>namespaces</dark_green>:",
+                Placeholder.component("displayname", item.displayName())
+                ));
         for (NamespacedKey key : keys) {
-            Component component = MiniMessage.miniMessage().deserialize("<click:copy_to_clipboard:"+key.getNamespace()+" "+key.getKey()+"><hover:show_text:'Click to copy!'><dark_green><namespace></dark_green> <green><key></green></hover></click>",
+            Component component = MiniMessage.miniMessage().deserialize("<click:copy_to_clipboard:"+key.getNamespace()+":"+key.getKey()+"><hover:show_text:'Click to copy!'><dark_green><namespace></dark_green>:<green><key></green></hover></click>",
                     Placeholder.unparsed("namespace", key.getNamespace()),
                     Placeholder.unparsed("key", key.getKey())
             );
