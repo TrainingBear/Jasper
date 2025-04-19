@@ -37,7 +37,7 @@ public class Warper extends ItemAbility{
                 MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#a900d1><b>Warper <yellow>(RIGHT CLICK & LEFT CLICK)")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>Warping you to checkpoint coordinate")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>that you inputed <color:#95945B>(Sneak + Left Click)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: &5"+WarpRange+" blocks")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: "+WarpRange+" blocks")
         ));
 
     }
