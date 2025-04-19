@@ -39,6 +39,13 @@ public class Logger {
     public void infoSound(Sound sound) {
         if(audience!=null)audience.playSound(sound);
     }
+    public void info(Component component){
+        if(audience!=null) {
+            audience.sendMessage(component);
+            return;
+        }
+        JasperProject.getPlugin().getLogger().info(PlainTextComponentSerializer.plainText().serialize(component));
+    }
     public void info(String message, TagResolver... placeholder){
         Component component = MiniMessage.miniMessage().deserialize(message, placeholder);
         if(audience!=null) {

@@ -13,8 +13,8 @@ public class ContentListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e){
-        try {
-            if (e.getCurrentItem().getItemMeta().getPersistentDataContainer().has(JKey.GUI_BORDER)) e.setCancelled(true);
-        }catch(NullPointerException ignored){}
+        ItemStack item = e.getCurrentItem();
+        if (item==null || !item.hasItemMeta()) return;
+        if (item.getItemMeta().getPersistentDataContainer().has(JKey.GUI_BORDER)) e.setCancelled(true);
     }
 }

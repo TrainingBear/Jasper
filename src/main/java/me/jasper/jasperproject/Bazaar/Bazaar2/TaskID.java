@@ -17,7 +17,7 @@ import java.util.*;
 
 public final class TaskID {
     public static final byte SWAP_CATEGORY = 0;
-  
+
     public static final byte CLOSE = 11;
     public static final byte TITLE = 12;
     public static final byte CATEG_NAV_NEXT = 13;
