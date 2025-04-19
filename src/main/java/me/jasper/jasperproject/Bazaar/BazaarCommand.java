@@ -36,6 +36,13 @@ public class BazaarCommand implements JasperCommand {
     @Override
     public LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("Bazaar")
+                .executes(e->{
+                    if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                    Bazaar.open(player);
+
+                    return Command.SINGLE_SUCCESS;
+                })
                 .then(Commands.literal("admin")
                         .then(Commands.literal("new_product")
                                 .then(Commands.argument("group", StringArgumentType.string())
@@ -46,6 +53,33 @@ public class BazaarCommand implements JasperCommand {
                                             return suggestionsBuilder.buildFuture();
                                         })
                                         .then(Commands.argument("product name", StringArgumentType.string())
+                                                .then(Commands.argument("namespace", StringArgumentType.string())
+                                                        .suggests((s, b)->{
+                                                            if(!(s.getSource().getSender()instanceof Player player)) return b.buildFuture();
+                                                            for (NamespacedKey key : getCurrentItemNamespaces(player, false)) {
+                                                                b.suggest(key.getNamespace()+":"+key.getKey());
+                                                            }
+                                                            return b.buildFuture();
+                                                        })
+                                                        .executes(e -> {
+                                                            if(!(e.getSource().getSender()instanceof Player player)) return  Command.SINGLE_SUCCESS;
+
+                                                            Product product = new Product(item, productName, key);
+                                                            try {
+                                                                ProductManager.createProduct(
+                                                                        StringArgumentType.getString(e, "group"),
+                                                                        productName,
+                                                                        product
+                                                                );
+                                                            } catch (SQLException ex) {
+                                                                player.sendMessage(ex.getMessage());
+                                                                throw new RuntimeException(ex);
+                                                            }
+
+                                                            return Command.SINGLE_SUCCESS;
+                                                        })
+                                                )
+
                                                         .executes(e -> {
                                                             if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
 
@@ -75,53 +109,25 @@ public class BazaarCommand implements JasperCommand {
 
                                         )
                                 )
+
                         )
-                ).then(Commands.literal("namespace")
-                        .executes(e -> {
-                            if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-                            getCurrentItemNamespaces(player, true);
-                            return Command.SINGLE_SUCCESS;
-                        })
-                ).then(Commands.literal("remove")
-                        .then(Commands.argument("product name", StringArgumentType.string())
-                                .suggests((s, b)->{
-                                    for (String name : ProductManager.getProducts().keySet()) {
-                                        b.suggest(name);
-                                    }
-                                    return b.buildFuture();
-                                })
-                                .executes(e->{
-                                    try {
-                                        ProductManager.removeProduct(StringArgumentType.getString(e, "product name"));
-                                    } catch (SQLException ex) {
-                                        e.getSource().getSender().sendMessage(ex.getMessage());
-                                        ex.printStackTrace();
-                                        throw new RuntimeException(ex);
-                                    }
+                        .then(Commands.literal("namespace")
+                                .executes(e -> {
+                                    if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                    getCurrentItemNamespaces(player, true);
                                     return Command.SINGLE_SUCCESS;
                                 })
-                        )
-                ).then(Commands.literal("change_group")
-                        .then(Commands.argument("product name", StringArgumentType.string())
-                                .suggests((s, b)->{
-                                    for (String name : ProductManager.getProducts().keySet()) {
-                                        b.suggest(name);
-                                    }
-                                    return b.buildFuture();
-                                })
-                                .then(Commands.argument("new group", StringArgumentType.string())
-                                        .suggests((s, b) ->{
-                                            for (String group : Bazaar.getGroups()) {
-                                                b.suggest(group);
+                        ).then(Commands.literal("remove")
+                                .then(Commands.argument("product name", StringArgumentType.string())
+                                        .suggests((s, b)->{
+                                            for (String name : ProductManager.getProducts().keySet()) {
+                                                b.suggest(name);
                                             }
                                             return b.buildFuture();
                                         })
                                         .executes(e->{
                                             try {
-                                                ProductManager.changeGroup(
-                                                        StringArgumentType.getString(e, "product name"),
-                                                        StringArgumentType.getString(e, "new group")
-                                                );
+                                                ProductManager.removeProduct(StringArgumentType.getString(e, "product name"));
                                             } catch (SQLException ex) {
                                                 e.getSource().getSender().sendMessage(ex.getMessage());
                                                 ex.printStackTrace();
@@ -130,8 +136,40 @@ public class BazaarCommand implements JasperCommand {
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
+                        ).then(Commands.literal("change_group")
+                                .then(Commands.argument("product name", StringArgumentType.string())
+                                        .suggests((s, b)->{
+                                            for (String name : ProductManager.getProducts().keySet()) {
+                                                b.suggest(name);
+                                            }
+                                            return b.buildFuture();
+                                        })
+                                        .then(Commands.argument("new group", StringArgumentType.string())
+                                                .suggests((s, b) ->{
+                                                    for (String group : Bazaar.getGroups()) {
+                                                        b.suggest(group);
+                                                    }
+                                                    return b.buildFuture();
+                                                })
+                                                .executes(e->{
+                                                    try {
+                                                        ProductManager.changeGroup(
+                                                                StringArgumentType.getString(e, "product name"),
+                                                                StringArgumentType.getString(e, "new group")
+                                                        );
+                                                    } catch (SQLException ex) {
+                                                        e.getSource().getSender().sendMessage(ex.getMessage());
+                                                        ex.printStackTrace();
+                                                        throw new RuntimeException(ex);
+                                                    }
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+
+                                )
                         )
-                );
+                )
+                ;
     }
 
     public Set<NamespacedKey> getCurrentItemNamespaces(Player player, boolean show_player){
@@ -141,7 +179,7 @@ public class BazaarCommand implements JasperCommand {
         if(!show_player) return keys;
         player.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>Current item</yellow> <dark_green>namespaces</dark_green>:"));
         for (NamespacedKey key : keys) {
-            Component component = MiniMessage.miniMessage().deserialize("<click:copy_to_clipboard:<namespace> <key>><hover:show_text:'Click to copy!'><dark_green><namespace></dark_green> <green><key></green></hover></click>",
+            Component component = MiniMessage.miniMessage().deserialize("<click:copy_to_clipboard:"+key.getNamespace()+" "+key.getKey()+"><hover:show_text:'Click to copy!'><dark_green><namespace></dark_green> <green><key></green></hover></click>",
                     Placeholder.unparsed("namespace", key.getNamespace()),
                     Placeholder.unparsed("key", key.getKey())
             );

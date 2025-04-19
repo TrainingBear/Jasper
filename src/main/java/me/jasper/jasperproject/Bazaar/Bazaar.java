@@ -1,152 +1,143 @@
 package me.jasper.jasperproject.Bazaar;
 
-import me.jasper.jasperproject.Bazaar.Bazaar2.BazaarEnum;
-import me.jasper.jasperproject.Util.JKey;
+import lombok.Getter;
+import me.jasper.jasperproject.Bazaar.Component.Category;
+import me.jasper.jasperproject.Bazaar.Component.TaskID;
+import me.jasper.jasperproject.Bazaar.anotation.BazaarComponent;
+import me.jasper.jasperproject.Bazaar.anotation.CategoryType;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
+import me.jasper.jasperproject.Util.ContainerMenu.Border;
+import me.jasper.jasperproject.Util.ContainerMenu.Container;
+import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public final class Bazaar {
-    static Map<BazaarEnum, BZItemGroup> category = new HashMap<>();
-    public static void setCategory(){
-        category.put(BazaarEnum.SLIMEFUN_CATEG, new BZItemGroup());
-
+public abstract class Bazaar {
+    private static final AtomicInteger atom = new AtomicInteger();
+    private static int id(){
+        return atom.getAndDecrement();
     }
 
+    @BazaarComponent(name = "Component")
+    private final static Border BLANK = new Border(-1, Material.AIR, false);
+    private final static Border BORDER = new Border(id(), Material.BLACK_STAINED_GLASS_PANE, false);
+    public final static Border POINTER = new Border(id(), Material.LIME_STAINED_GLASS_PANE, false , miniMsgDese("<!i><green>Selected category"), false);
+    public final static Category CATEG_NAVI_NEXT = new Category(id(), Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Next") , TaskID.CATEG_NAV_NEXT ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select next"),miniMsgDese("<!i><gray>category")));
+    public final static Category CATEG_NAVI_BACK = new Category(id(), Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Back") ,TaskID.CATEG_NAV_BACK ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select previous"),miniMsgDese("<!i><gray>category")));
+    private final static Category TITLE_SIGN = new Category(id(), Material.ACACIA_HANGING_SIGN, (Component) BazaarEnum.TITLE_NAME.get(),TaskID.SEARCH,List.of(
+                miniMsgDese("<!i><yellow>Worldwide bazaar")
+                ,miniMsgDese("")
+                ,miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to search thing")
+    ));
+    private final static Category CLOSE = new Category(id(), Material.BARRIER , (Component) BazaarEnum.CLOSE_ITEM.get(),TaskID.CLOSE,List.of(
+            miniMsgDese("")
+            ,miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to close")
+    ));
 
-    /// Opening the default Bazaar GUI
-    public static void openGUI(Player p){
-        p.openInventory(getMainMenu(p));
-    }
-    /// Opening GUI followed query search
-    public static void openGUI(Player p,String query){
-        p.openInventory(getSearchMenu(p,query));
-    }
-    /// GUI when first open the Bazaar
-    private static Inventory getMainMenu(Player p){
-        Inventory bazaarMenuInventory = Bukkit.createInventory(
-                p,54
-                , MiniMessage.miniMessage().deserialize(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"));
+    @BazaarComponent(name = "Instant Sell Inventory")
+    private final static Category SELL_INV = new Category(id(), Material.CHEST
+            , miniMsgDese("<!i><gold>Sell items in inventory"),TaskID.SELL_INV,List.of(
+                miniMsgDese("<!i><gray>Currently there's no")
+                ,miniMsgDese("<!i><gray>match item in your inventory")
 
-        createFrame(bazaarMenuInventory, Material.BROWN_STAINED_GLASS_PANE);
-        switch (new Random().nextInt(0,4)){
-            case 0 -> setToSlimefunCateg(bazaarMenuInventory);
-            case 1 -> setToMobLootCateg(bazaarMenuInventory);
-            case 2 -> setToFarmingCateg(bazaarMenuInventory);
-            case 3 -> setToMiningCateg(bazaarMenuInventory);
+    ));
+
+    @BazaarComponent(name = "Order List")
+    private final static Category NOTA_BOOK = new Category(id(), Material.WRITABLE_BOOK
+            , miniMsgDese("<!i><Yellow>Manage Order"),TaskID.MANAGE_ORDER,List.of(
+            MiniMessage.miniMessage().deserialize("<!i><gray>Currently there's no your order")
+    ));
+
+    @BazaarComponent(name = "Category Component")
+    private static final Category slimefun = new Category(id(), Material.MAGMA_CREAM, miniMsgDese((String) BazaarEnum.SLIMEFUN_CATEG.get()), TaskID.SWAP_CATEGORY);
+    private static final Category mob_loot = new Category(id(), Material.ROTTEN_FLESH, miniMsgDese((String) BazaarEnum.MOB_LOOT_CATEG.get()), TaskID.SWAP_CATEGORY);
+    private static final Category farming = new Category(id(), Material.WHEAT, miniMsgDese((String)BazaarEnum.FARMING_CATEG.get()), TaskID.SWAP_CATEGORY);
+    private static final Category mining = new Category(id(), Material.GOLDEN_PICKAXE, miniMsgDese((String) BazaarEnum.MINING_CATEG.get()), TaskID.SWAP_CATEGORY);
+    private static final Category fishing = new Category(id(), Material.AXOLOTL_BUCKET, miniMsgDese((String) BazaarEnum.FISHING_CATEG.get()), TaskID.SWAP_CATEGORY);
+    private static final Category magic = new Category(id(), Material.GLOWSTONE_DUST, miniMsgDese((String) BazaarEnum.MAGICAL_CATEG.get()), TaskID.SWAP_CATEGORY);
+    @Getter private final static List<Content> Categories = List.of(
+        slimefun, mob_loot, farming, mining, fishing, magic
+    );
+
+    @BazaarComponent(name = "Sub-Category Component")
+
+    @CategoryType(name = "mob_loot")
+    private static final Category monster_mob_loot = new Category(id(), Material.ROTTEN_FLESH, miniMsgDese("<!i>Monster Drop"), TaskID.UNWRAP_GROUP);
+//    private static final Category animal_mob_loot =
+//    private static final Category slimefun_mob_loot =
+//    private static final Category other_mob_loot =
+
+    @CategoryType(name = "farming")
+    private static final Category farm_farming = new Category(id(), Material.WHEAT, miniMsgDese("<!i>Farming commodity"), TaskID.UNWRAP_GROUP);
+    private static final Category seed_farming = new Category(id(), Material.WHEAT_SEEDS, miniMsgDese("<!i>Seeds"), TaskID.UNWRAP_GROUP);
+    private static final Category wood_farming = new Category(id(), Material.OAK_LOG, miniMsgDese("<!i>Woods"), TaskID.UNWRAP_GROUP);
+    private static final Category garden_farming =new Category(id(), Material.OAK_LOG, miniMsgDese("<!i>Garden"), TaskID.UNWRAP_GROUP);
+
+    @CategoryType(name = "slimefun")
+    private static final Category dust_slimefun = new Category(id(), Material.GLOWSTONE_DUST, miniMsgDese("<!i>Dust"), TaskID.UNWRAP_GROUP);
+    private static final Category machine_slimefun = new Category(id(), Material.FURNACE, miniMsgDese("<!i>Machine"), TaskID.UNWRAP_GROUP);
+    private static final Category magic_slimefun = new Category(id(), Material.MAGENTA_DYE, miniMsgDese("<!i>Magic"), TaskID.UNWRAP_GROUP);
+    private static final Category cargo_slimefun = new Category(id(), Material.LIGHTNING_ROD, miniMsgDese("<!i>Cargo"), TaskID.UNWRAP_GROUP);
+
+    @CategoryType(name = "mining")
+    private static final Category mineral_mining = new Category(id(), Material.DIAMOND, miniMsgDese("<!i>Minerals"), TaskID.UNWRAP_GROUP);
+    private static final Category stone_mining = new Category(id(), Material.COBBLESTONE, miniMsgDese("<!i>Stone"), TaskID.UNWRAP_GROUP);
+//    private static final Category _mining = new Category(id(), Material.COBBLESTONE, miniMsgDese("<!i>Stone"), TaskID.UNWRAP_GROUP);
+
+    @CategoryType(name = "fishing")
+    private static final Category fish_fishing = new Category(id(), Material.TROPICAL_FISH, miniMsgDese("<!i>Fish"), TaskID.UNWRAP_GROUP);
+    private static final Category loot_fishing = new Category(id(), Material.FISHING_ROD, miniMsgDese("<!i>Fish loot"), TaskID.UNWRAP_GROUP);
+
+    @CategoryType(name = "magical")
+    private static final Category _magic = new Category(id(), Material.STRUCTURE_VOID, miniMsgDese("<!i>Magic - soon"), TaskID.UNWRAP_GROUP);
+
+    @Getter private final static Map<Integer, List<Category>> SubCategories = Map.of(
+            slimefun.getID(), List.of(
+                    dust_slimefun,
+                    machine_slimefun,
+                    magic_slimefun,
+                    cargo_slimefun
+            )
+            , mob_loot.getID(), List.of(
+                    monster_mob_loot
+            )
+            , farming.getID(), List.of(
+                    farm_farming,
+                    seed_farming,
+                    wood_farming,
+                    garden_farming
+            )
+            , mining.getID(), List.of(
+                    mineral_mining,
+                    stone_mining
+            )
+            , fishing.getID(), List.of(
+                    fish_fishing,
+                    loot_fishing
+            )
+            , magic.getID(), List.of(
+                    _magic
+            )
+    );
+
+    public static @NotNull Set<String> getGroups(){
+        Set<String> groups = new HashSet<>();
+        for (List<Category> list : SubCategories.values()) {
+            for (Category content : list) {
+                groups.add(content.getName());
+            }
         }
-
-        return bazaarMenuInventory;
-    }
-    private static Inventory getSearchMenu(Player p,String query){
-        Inventory bazaarMenuInventory = Bukkit.createInventory(
-                p,54
-                , MiniMessage.miniMessage().deserialize(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"));
-
-        setToSlimefunCateg(bazaarMenuInventory);
-        createFrame(bazaarMenuInventory, Material.BROWN_STAINED_GLASS_PANE);
-
-        return bazaarMenuInventory;
-    }
-    private static void createFrame(Inventory inv,Material m){
-        ItemStack categoryPane = new ItemStack(m);
-        ItemMeta paneMeta = categoryPane.getItemMeta();
-        paneMeta.displayName(MiniMessage.miniMessage().deserialize(""));
-        categoryPane.setItemMeta(paneMeta);
-
-        for(byte i = 9;  i<=16; i++ ) inv.setItem(i, ItemBZGUI.makeCusItem(Material.BLACK_STAINED_GLASS_PANE,"",null));
-        for(byte i = 45; i<=53; i++ ) inv.setItem(i, categoryPane);
-        for(byte i = 9;  i<=27; i+=9) {
-            inv.setItem(10+i, categoryPane);
-            inv.setItem(17+i, categoryPane);
-        }
-
-        inv.setItem(12, ItemBZGUI.getSelectedCategItem(null));
-        inv.setItem(49, ItemBZGUI.getTitleItem());
-        inv.setItem(18, ItemBZGUI.getSellAllInvItem());
-        inv.setItem(27, ItemBZGUI.getSellAllStashItem());
-        inv.setItem(36, ItemBZGUI.getNotaItem());
-
-        inv.setItem(8, ItemBZGUI.getCloseItem());
-        inv.setItem(7, ItemBZGUI.makeCusItem(Material.RED_STAINED_GLASS_PANE,"",null));
-        inv.setItem(17, ItemBZGUI.makeCusItem(Material.RED_STAINED_GLASS_PANE,"",null));
-    }
-
-    //NOTE: Index slot 3 is selected
-
-    public static void setToSlimefunCateg(Inventory inv){
-        createFrame(inv,Material.LIME_STAINED_GLASS_PANE);
-        clearCategItem(inv);
-        inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.SLIMEFUN_CATEG));
-        inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
-        inv.setItem(6, new ItemStack(Material.SPECTRAL_ARROW));
-
-        inv.setItem(3, ItemBZGUI.getSlimefunCategItem(true));//selected
-        inv.setItem(4, ItemBZGUI.getMobLootCategItem(false));
-        inv.setItem(5, ItemBZGUI.getFarmingCategItem(false));
-
-
-    }
-    public static void setToMobLootCateg(Inventory inv){
-        createFrame(inv,Material.BROWN_STAINED_GLASS_PANE);
-        clearCategItem(inv);
-        inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.MOB_LOOT_CATEG));
-        inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
-        inv.setItem(6, new ItemStack(Material.SPECTRAL_ARROW));
-
-        inv.setItem(2, ItemBZGUI.getSlimefunCategItem(false));
-        inv.setItem(3, ItemBZGUI.getMobLootCategItem(true));//selected
-        inv.setItem(4, ItemBZGUI.getFarmingCategItem(false));
-        inv.setItem(5, ItemBZGUI.getMiningCategItem(false));
-
-
-    }
-    public static void setToFarmingCateg(Inventory inv){
-        createFrame(inv,Material.YELLOW_STAINED_GLASS_PANE);
-        clearCategItem(inv);
-        inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.FARMING_CATEG));
-        inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
-        inv.setItem(6, new ItemStack(Material.SPECTRAL_ARROW));
-
-        inv.setItem(1, ItemBZGUI.getSlimefunCategItem(false));
-        inv.setItem(2, ItemBZGUI.getMobLootCategItem(false));
-        inv.setItem(3, ItemBZGUI.getFarmingCategItem(true));//selected
-        inv.setItem(4, ItemBZGUI.getMiningCategItem(false));
-
-
-    }
-    public static void setToMiningCateg(Inventory inv){
-        createFrame(inv,Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-        clearCategItem(inv);
-        inv.setItem(12, ItemBZGUI.getSelectedCategItem(BazaarEnum.MINING_CATEG));
-        inv.setItem(0, new ItemStack(Material.SPECTRAL_ARROW));
-        inv.setItem(6, new ItemStack(Material.SPECTRAL_ARROW));
-
-        inv.setItem(1, ItemBZGUI.getMobLootCategItem(false));
-        inv.setItem(2, ItemBZGUI.getFarmingCategItem(false));
-        inv.setItem(3, ItemBZGUI.getMiningCategItem(true)); //selected
-
-
-    }
-
-
-
-    private static void clearCategItem(Inventory inv){
-        for(byte i = 1 ; i<=5; i++) inv.setItem(i, new ItemStack(Material.AIR));
+        return groups;
     }
 
     public static Map<Integer, String> getGroupsID(){
@@ -159,221 +150,89 @@ public final class Bazaar {
         return groups;
     }
 
+    /**
+     *  the list of products is on ProductManager
+      */
 
-
-    private static final class ItemBZGUI {
-
-
-
-
-        /// Close GUI ; Barrier
-        private static ItemStack getCloseItem(){
-            ItemStack item = new ItemStack(Material.BARRIER);
-            ItemMeta meta = item.getItemMeta();
-
-            meta.displayName((Component) BazaarEnum.CLOSE_ITEM.get());
-            meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i><b><color:#ff261f>Click</color></b> <red>to close")
-            ));
-
-            PersistentDataContainer mainTag = meta.getPersistentDataContainer();
-            PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
-
-            branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Close");
-
-            mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
-
-            item.setItemMeta(meta);
-
-            return item;
-        }
-        /// Title GUI ; Hanging sign item thing
-        private static ItemStack getTitleItem(){
-            ItemStack item = new ItemStack(Material.ACACIA_HANGING_SIGN);
-            ItemMeta meta = item.getItemMeta();
-
-//            meta.displayName((Component) BazaarEnum.TITLE_NAME_COMPO.get());
-            meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("<!i><yellow>Worldwide bazaar")
-                    ,MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+" <gray>to search thing")
-            ));
-
-            PersistentDataContainer mainTag = meta.getPersistentDataContainer();
-            PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
-
-            branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Search");
-
-            mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        /// Selected Category ; lime pane
-        private static ItemStack getSelectedCategItem(BazaarEnum categ){
-            ItemStack item = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(MiniMessage.miniMessage().deserialize("<!i><green>Selected category"));
-            if(categ !=null) switch(categ){
-                case SLIMEFUN_CATEG -> meta.lore(List.of(
-                    MiniMessage.miniMessage().deserialize("")
-                    ,MiniMessage.miniMessage().deserialize("<!i><gray>→ "+BazaarEnum.SLIMEFUN_CATEG.get()+" <gray>←")
-                ));
-                case MOB_LOOT_CATEG -> meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><gray>→ "+BazaarEnum.MOB_LOOT_CATEG.get()+" <gray>←")
-                 ));
-                case FARMING_CATEG -> meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><gray>→ "+BazaarEnum.FARMING_CATEG.get()+" <gray>←")
-                ));
-                case MINING_CATEG -> meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><gray>→ "+BazaarEnum.MINING_CATEG.get()+" <gray>←")
-                ));
-            }
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        /// Sell All Inventory ; Chest
-        private static ItemStack getSellAllInvItem(){
-            ItemStack item = new ItemStack(Material.CHEST);
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(MiniMessage.miniMessage().deserialize(""));
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        /// Sell All Stash ; Bundle
-        private static ItemStack getSellAllStashItem(){
-            ItemStack item = new ItemStack(Material.BUNDLE);
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(MiniMessage.miniMessage().deserialize(""));
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        /// Order / Nota ; Writable book/book&quil
-        private static ItemStack getNotaItem(){
-            ItemStack item = new ItemStack(Material.WRITABLE_BOOK);
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(MiniMessage.miniMessage().deserialize(""));
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        private static ItemStack makeCusItem(Material m, String dispname,List<Component> lore){
-            ItemStack item = new ItemStack(m);
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(MiniMessage.miniMessage().deserialize(dispname));
-            if(lore != null) meta.lore(lore);
-
-            item.setItemMeta(meta);
-            return item;
-        }
-
-        private static ItemStack getSlimefunCategItem(boolean showGlint){
-            ItemStack item = new ItemStack(Material.MAGMA_CREAM);
-            ItemMeta meta = item.getItemMeta();
-            if(showGlint) {
-                meta.addEnchant(Enchantment.UNBREAKING, 1, false);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
-                ));
-            }else{
-                PersistentDataContainer mainTag = meta.getPersistentDataContainer();
-                PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
-                branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:SF");
-                mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-                ));
-            }
-            meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.SLIMEFUN_CATEG.get()));
-
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        private static ItemStack getMobLootCategItem(boolean showGlint){
-            ItemStack item = new ItemStack(Material.ROTTEN_FLESH);
-            ItemMeta meta = item.getItemMeta();
-            if(showGlint) {
-                meta.addEnchant(Enchantment.UNBREAKING, 1, false);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
-                ));
-            }else{
-                PersistentDataContainer mainTag = meta.getPersistentDataContainer();
-                PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
-                branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:MobLoot");
-                mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-                ));
-            }
-            meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.MOB_LOOT_CATEG.get()));
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        private static ItemStack getFarmingCategItem(boolean showGlint){
-            ItemStack item = new ItemStack(Material.IRON_HOE);
-            ItemMeta meta = item.getItemMeta();
-            if(showGlint) {
-                meta.addEnchant(Enchantment.UNBREAKING, 1, false);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
-                ));
-            }else{
-                PersistentDataContainer mainTag = meta.getPersistentDataContainer();
-                PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
-                branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:Farming");
-                mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-                ));
-            }
-            meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.FARMING_CATEG.get()));
-
-            item.setItemMeta(meta);
-            return item;
-        }
-        private static ItemStack getMiningCategItem(boolean showGlint){
-            ItemStack item = new ItemStack(Material.IRON_PICKAXE);
-            ItemMeta meta = item.getItemMeta();
-            if(showGlint) {
-                meta.addEnchant(Enchantment.UNBREAKING, 1, false);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i><color:#77aa77>Selected")
-                ));
-            }else{
-                PersistentDataContainer mainTag = meta.getPersistentDataContainer();
-                PersistentDataContainer branchMainTag = mainTag.getAdapterContext().newPersistentDataContainer();
-                branchMainTag.set(JKey.bazaar_Action, PersistentDataType.STRING, "Categ:Mining");
-                mainTag.set(JKey.bazaar_Item_GUI, PersistentDataType.TAG_CONTAINER, branchMainTag);
-                meta.lore(List.of(
-                        MiniMessage.miniMessage().deserialize("")
-                        ,MiniMessage.miniMessage().deserialize("<!i>"+BazaarEnum.CLICK_TEXT.get()+"<gray> to select this category")
-                ));
-            }
-            meta.displayName(MiniMessage.miniMessage().deserialize((String) BazaarEnum.MINING_CATEG.get()));
-
-            item.setItemMeta(meta);
-            return item;
-        }
+    @BazaarComponent(name = "Decoration")
+    private final static Border CATEG_DEFAULT_DECO = new Border(id(), Material.COBWEB, false);
+    private final static Border SLIMEFUN_CATEG_DECO = new Border(id(), Material.LIME_STAINED_GLASS_PANE, false);
+    private final static Border MOBLOOT_CATEG_DECO = new Border(id(), Material.ORANGE_STAINED_GLASS_PANE, false);
+    private final static Border FARMING_CATEG_DECO = new Border(id(), Material.YELLOW_STAINED_GLASS_PANE, false);
+    private final static Border MINING_CATEG_DECO = new Border(id(), Material.LIGHT_BLUE_STAINED_GLASS_PANE, false);
+    private final static Border FISHING_CATEG_DECO = new Border(id(), Material.BLUE_STAINED_GLASS_PANE, false);
+    private final static Border MAGICAL_CATEG_DECO = new Border(id(), Material.PINK_STAINED_GLASS_PANE, false);
+    @Getter private final static Map<Integer, Border> DecorationMap;
+    static {
+        DecorationMap = Map.of(
+                0, CATEG_DEFAULT_DECO
+                , slimefun.getID(), SLIMEFUN_CATEG_DECO
+                , mob_loot.getID(), MOBLOOT_CATEG_DECO
+                , farming.getID(), FARMING_CATEG_DECO
+                , mining.getID(), MINING_CATEG_DECO
+                , fishing.getID(), FISHING_CATEG_DECO
+                , magic.getID(), MAGICAL_CATEG_DECO
+        );
     }
+    private static final int[][] layout = {
+            {14, 4, 5, 1, 2, 3, 13, 0, 11},
+            {0, 0, 0, 7, 0, 0, 0, 0, 0},
+            {15, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {16, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 12, 0, 0, 0, 0},
+    };
+
+    /**
+     * MAIN METHOD
+     * @param player target
+     */
+    public static void open(Player player){
+        byte slotIndex = 18;
+        Inventory inv = INSTANCE(player);
+        if(!ItemUtils.isInventoryEmpty(player.getInventory())){
+            ItemStack itemSellInv = inv.getItem(slotIndex);
+            ItemMeta itemSellInvMeta = itemSellInv.getItemMeta();
+            itemSellInvMeta.lore( List.of(
+                        miniMsgDese("<!i><gray>You are currently has item")
+                        ,miniMsgDese("<!i><gray>in your inventory")
+                    ));
+            itemSellInv.setItemMeta(itemSellInvMeta);
+            inv.setItem(slotIndex, itemSellInv);
+        }else inv.setItem(slotIndex, SELL_INV.getItem());
+        player.openInventory(inv);
+    }
+
+    private static Component miniMsgDese(String s, TagResolver... t){
+        return MiniMessage.miniMessage().deserialize(s, t);
+    }
+
+    private static Map<UUID, Container> instances = new HashMap<>();
+
+    private static Inventory INSTANCE(Player player){
+        Container container;
+        if(!instances.containsKey(player.getUniqueId())){
+            container = new Container(player, miniMsgDese(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), layout);
+            container.addContent(Categories);
+            container.addContent(POINTER);
+
+            container.addContent(CATEG_NAVI_NEXT);
+            container.addContent(CATEG_NAVI_BACK);
+            container.addContent(TITLE_SIGN);
+            container.addContent(CLOSE);
+            container.addContent(SELL_INV);
+            container.addContent(NOTA_BOOK);
+
+            container.addContent(BLANK);
+            container.addContent(BORDER);
+
+            container.load();
+            TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
+            TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
+        } else {
+            container = null;
+        }
+        return instances.computeIfAbsent(player.getUniqueId(), k -> container).getContainer();
+    }
+
 }
