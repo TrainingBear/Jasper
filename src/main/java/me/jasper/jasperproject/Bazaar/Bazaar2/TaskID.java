@@ -1,8 +1,6 @@
 package me.jasper.jasperproject.Bazaar.Bazaar2;
 
-import me.jasper.jasperproject.Bazaar.Bazaar2.Component.Product;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
-import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -12,8 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
