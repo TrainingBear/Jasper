@@ -5,6 +5,10 @@ import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import io.papermc.paper.math.BlockPosition;
 import me.jasper.jasperproject.Util.Commands.JasperCommand;
 import me.jasper.jasperproject.JasperItem.Items;
 import org.bukkit.Location;
@@ -43,12 +47,12 @@ public class PaperAnimationCommand implements JasperCommand {
                                                 })
                                         )
                                 ).then(Commands.literal("add_member")
-                                        .then(Commands.argument("member", StringArgumentType.greedyString())
+                                        .then(Commands.argument("members", ArgumentTypes.players())
                                                 .executes(c -> {
                                                     if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
                                                     final String animation_name = StringArgumentType.getString(c, "Animation name");
-                                                    final String member = StringArgumentType.getString(c, "member");
-                                                    return Animation.addMember(player, animation_name, member);
+                                                    List<Player> members = c.getArgument("members", PlayerSelectorArgumentResolver.class).resolve(c.getSource());
+                                                    return Animation.addMember(player, animation_name, members);
                                                 })
                                         )
 
@@ -82,28 +86,23 @@ public class PaperAnimationCommand implements JasperCommand {
                                             return Animation.setRegion(player, StringArgumentType.getString(c, "Animation name"));
                                         })
 
-                                ).then(Commands.literal("Location")
+                                ).then(Commands.literal("set_location")
                                                 .executes(e->{
                                                     if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
 
                                                     return Animation.setLocation(player, StringArgumentType.getString(e, "Animation name"));
                                                 })
-                                        .then(Commands.argument("X", IntegerArgumentType.integer())
-                                                .then(Commands.argument("Y", IntegerArgumentType.integer())
-                                                        .then(Commands.argument("Z", IntegerArgumentType.integer())
-                                                                .executes(c -> {
-                                                                    if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
-                                                                    return Animation.setLocation(player, StringArgumentType.getString(c, "Animation name"),
-                                                                            new Location(player.getWorld(),
-                                                                                    IntegerArgumentType.getInteger(c, "X"),
-                                                                                    IntegerArgumentType.getInteger(c, "Y"),
-                                                                                    IntegerArgumentType.getInteger(c, "Z"))
-                                                                    );
-
-                                                                })
-                                                        )
+                                                .then(Commands.argument("coordinate", ArgumentTypes.blockPosition())
+                                                        .executes(c -> {
+                                                            if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                                            BlockPosition coordinate = c.getArgument("coordinate", BlockPositionResolver.class).resolve(c.getSource());
+                                                            Location location = player.getLocation();
+                                                            location.setX(coordinate.x());
+                                                            location.setY(coordinate.y());
+                                                            location.setZ(coordinate.z());
+                                                            return Animation.setLocation(player, StringArgumentType.getString(c, "Animation name"), location);
+                                                        })
                                                 )
-                                        )
                                 ).then(Commands.literal("radius")
                                         .then(Commands.argument("radius", DoubleArgumentType.doubleArg(1, 80))
                                                 .executes(e -> {

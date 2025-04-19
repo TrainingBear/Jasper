@@ -34,7 +34,7 @@ public final class Product implements Content, Serializable {
     @Getter private String product_name;
     @Getter private ItemStack product;
     @Getter private ItemStack prototype;
-    private String name;
+    private String name/*space*/;
     private String key;
 
     private final AtomicInteger atomicInteger = new AtomicInteger();
@@ -44,22 +44,23 @@ public final class Product implements Content, Serializable {
 
     public Product(ItemStack product, String product_name, @Nullable NamespacedKey key) {
         this(product, product_name,key==null? null : key.getNamespace(),key==null? null : key.getKey());
+        setNamespace(key);
     }
     public Product(ItemStack product, String product_name, String key) {
         this(product, product_name, JasperProject.getPlugin().getName().toLowerCase(), key);
+        setNamespace(key);
     }
-    public Product(ItemStack product, String product_name,String name, String key) {
+    public Product(ItemStack product, String product_name,String namespace, String key) {
         this.product = product;
         this.product_name = product_name;
         prototype = product.clone();
         prototype.editMeta(e->{
             PersistentDataContainer pdc = e.getPersistentDataContainer();
-            pdc.set(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING, name);
+            pdc.set(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING, product_name);
             pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
             pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.BUY);
         });
-        this.name = name;
-        this.key = key;
+        setNamespace(name, key);
         this.update();
     }
 
@@ -67,11 +68,21 @@ public final class Product implements Content, Serializable {
         return new NamespacedKey(this.name, this.key);
     }
 
+    public void setNamespace(@Nullable NamespacedKey key){
+        boolean isnull = key==null;
+        String namespace = isnull? null: key.getNamespace();
+        String keys = isnull? null: key.getKey();
+        if(namespace.equals("minecraft")) {
+            namespace=null;
+            keys=null;
+        }
+        setNamespace(namespace, keys);
+    }
     public void setNamespace(String key){
         setNamespace(JasperProject.getPlugin().getName().toLowerCase(), key);
     }
-    public void setNamespace(String name, String key){
-        this.name = name;
+    public void setNamespace(String namespace, String key){
+        this.name = namespace;
         this.key = key;
     }
 
