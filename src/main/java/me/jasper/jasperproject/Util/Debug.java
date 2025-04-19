@@ -1,17 +1,8 @@
 package me.jasper.jasperproject.Util;
 
-import me.jasper.jasperproject.Animation.Animation;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Bazaar;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.ProductManager;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.BazaarItemsDatabase;
+import me.jasper.jasperproject.Bazaar.Bazaar2.Product.BazaarDatabase;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Product.Product;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.Util.ContainerMenu.Border;
-import me.jasper.jasperproject.Util.ContainerMenu.Container;
-import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
-import me.jasper.jasperproject.Util.CustomStructure.Structure;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,9 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -44,9 +32,6 @@ public class Debug implements CommandExecutor {
                 try {
                     ProductManager.createProduct(name, product);
                 } catch (SQLException e) {
-                    for (StackTraceElement stackTraceElement : e.getStackTrace()) {
-                        player.sendMessage(stackTraceElement.getClassLoaderName());
-                    }
                     e.printStackTrace();
                     player.sendMessage(e.getMessage());
                     throw new RuntimeException(e);
@@ -54,11 +39,11 @@ public class Debug implements CommandExecutor {
             }
 
             case "get" ->{
-                if(strings[1].isEmpty()) return false;
+                if(strings.length < 2) return false;
                 String name = strings[1];
 
                 try {
-                    Product product = BazaarItemsDatabase.getProduct(name);
+                    Product product = BazaarDatabase.getProduct(name);
                     assert product != null;
                     player.sendMessage(product.getKey().getKey());
 
@@ -67,6 +52,27 @@ public class Debug implements CommandExecutor {
                     player.sendMessage(e.getMessage());
                     throw new RuntimeException(e);
                 }
+            }
+
+            case "buy" ->{
+                if(strings.length < 2) return false;
+                String name = strings[1];
+
+                try {
+                    Product product = BazaarDatabase.getProduct(name);
+                    player.getInventory().addItem(product.getItem());
+
+                } catch (SQLException | IOException e) {
+                    e.printStackTrace();
+                    player.sendMessage(e.getMessage());
+                    throw new RuntimeException(e);
+                }
+            }
+
+            case "delete" -> {
+
+                if(strings.length < 2) return false;
+                String name = strings[1];
             }
         }
         return true;

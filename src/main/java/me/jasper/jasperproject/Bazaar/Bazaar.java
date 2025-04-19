@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.Bazaar;
 
+import me.jasper.jasperproject.Bazaar.Bazaar2.BazaarEnum;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Bazaar;
+package me.jasper.jasperproject.Bazaar.Bazaar2;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,7 +12,7 @@ public class BazaarCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!(commandSender instanceof Player)) return false;
 
-        Bazaar.openGUI((Player) commandSender);
+        Bazaar.open((Player) commandSender);
 
         return true;
     }

@@ -1,5 +1,8 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2;
+package me.jasper.jasperproject.Bazaar.Bazaar2.Component;
 
+import lombok.val;
+import me.jasper.jasperproject.Bazaar.Bazaar2.Bazaar;
+import me.jasper.jasperproject.Bazaar.Bazaar2.InventoryUpdater;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
@@ -34,7 +37,7 @@ public final class TaskID {
     static {
         MAP = new HashMap<>();
         MAP.put(SWAP_CATEGORY,
-                (p , inv, ID) -> SwapCategory(inv,ID, (byte) 0));
+                (p , inv, ID) -> SwapCategory(inv,ID));
         MAP.put(CLOSE,
             (p , inv, ID) -> p.closeInventory());
         MAP.put(SEARCH,
@@ -48,15 +51,20 @@ public final class TaskID {
                     SignGUI.getInstance().open(p,builtInText, Material.ACACIA_SIGN
                             ,(player, lines, signLoc) -> {
                                 player.sendBlockChange(signLoc, signLoc.getBlock().getBlockData());//turn back to normal
-                                //blablablabla
                             });
                 });
         MAP.put(CATEG_NAV_NEXT,
-            (p , inv, ID)-> SwapCategory(inv,inv.getItem(3).getItemMeta().getPersistentDataContainer()
-                                                    .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER),(byte) 1));
+            (p , inv, ID)-> {
+                val id = inv.getItem(3 + 1).getItemMeta().getPersistentDataContainer()
+                        .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
+                SwapCategory(inv, id);
+            });
         MAP.put(CATEG_NAV_BACK,
-                (p , inv, ID)-> SwapCategory(inv,inv.getItem(3).getItemMeta().getPersistentDataContainer()
-                        .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER),(byte) 2));
+                (p , inv, ID)-> {
+                    val id = inv.getItem(3 - 1).getItemMeta().getPersistentDataContainer()
+                            .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
+                    SwapCategory(inv, id);
+                });
         MAP.put(UNWRAP_GROUP,
                 (p, inv, id) -> UnwrapGroup(p, inv));
     }
@@ -68,14 +76,13 @@ public final class TaskID {
                 38, 39, 40, 41, 42, 43
         };
 
-
         for (int i : indexes) {
             inventory.setItem(i, null);
         }
 
     }
 
-    private static void SwapCategory(Inventory inv ,int ID,byte type) {
+    private static void SwapCategory(Inventory inv ,int ID) {
         List<Content> contents = Bazaar.getCategories();
         int[] cs = {1, 2, 3, 4, 5};
         Content selected_content = null;
@@ -84,13 +91,6 @@ public final class TaskID {
             if(content.getID()==ID){
                 Arrays.stream(cs).forEach(sI -> inv.setItem(sI, null)); //gw dh mudeng sama forEach so yk what it mean
                 byte index = (byte) contents.indexOf(content);
-                if(type==1){
-                    index++;
-                    if(index >= contents.size()) index =0;
-                }else if (type==2){
-                    index--;
-                    if(index < 0) index = (byte) (contents.size()-1);
-                }
                 selected_content = contents.get(index);
                 for (byte i = 0; i < cs.length; i++) inv.setItem(i + 1, contents.get(
                         (index + (i - 2) + contents.size()) % contents.size()

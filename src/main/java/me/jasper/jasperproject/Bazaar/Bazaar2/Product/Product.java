@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.val;
 import me.jasper.jasperproject.Bazaar.Bazaar2.BazaarException;
 import me.jasper.jasperproject.Bazaar.Bazaar2.Component.MessageEnum;
+import me.jasper.jasperproject.Bazaar.Bazaar2.Component.TaskID;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
+import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -16,6 +18,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +43,9 @@ public final class Product implements Content, Serializable {
     @Getter Map<UUID, Map<Integer, Order>> buy_order = new HashMap<>();
 
 
+    public Product(ItemStack product, String product_name, NamespacedKey key) {
+        this(product, product_name, key.getNamespace(), key.getKey());
+    }
     public Product(ItemStack product, String product_name, String key) {
         this(product, product_name, JasperProject.getPlugin().getName().toLowerCase(), key);
     }
@@ -45,8 +53,14 @@ public final class Product implements Content, Serializable {
         this.product = product;
         this.product_name = product_name;
         prototype = product.clone();
+        prototype.editMeta(e->{
+            PersistentDataContainer pdc = e.getPersistentDataContainer();
+            pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
+            pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.BUY);
+        });
         this.name = name;
         this.key = key;
+        this.update();
     }
 
     public NamespacedKey getKey(){
@@ -383,7 +397,7 @@ public final class Product implements Content, Serializable {
     public byte[] serialize(){
         try(
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                ObjectOutputStream oout = new ObjectOutputStream(out)
+                BukkitObjectOutputStream oout = new BukkitObjectOutputStream(out)
         ) {
             oout.writeObject(this);
             return out.toByteArray();
