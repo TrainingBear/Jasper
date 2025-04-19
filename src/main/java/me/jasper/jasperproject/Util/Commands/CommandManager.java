@@ -8,6 +8,9 @@ import me.jasper.jasperproject.JasperProject;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public class CommandManager {
     private static CommandManager instance;
 
@@ -27,14 +30,21 @@ public class CommandManager {
         manager = plugin.getLifecycleManager();
     }
 
-    public CommandManager register(JasperCommand command){
+    public CommandManager register(JasperCommand command, String description, Collection<String> aliases){
         LiteralArgumentBuilder<CommandSourceStack> created = command.createCommand();
         plugin.getLogger().info("[JasperProject] Registering Command{}"+ created.getLiteral());
 
         manager.registerEventHandler(LifecycleEvents.COMMANDS, (c) ->
-                c.registrar().register(created.build())
+                c.registrar().register(created.build(), description, aliases)
         );
         return this;
+    }
+
+    public CommandManager register(@NotNull JasperCommand command, Collection<String> alias){
+        return register(command, null, alias);
+    }
+    public CommandManager register(@NotNull JasperCommand command){
+       return register(command, null, Collections.emptyList());
     }
 
 //    public static CommandManager getInstance(BootstrapContext contex){

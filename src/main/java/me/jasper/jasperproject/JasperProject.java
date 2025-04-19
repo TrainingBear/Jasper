@@ -36,6 +36,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public final class JasperProject extends JavaPlugin {
@@ -79,7 +80,7 @@ public final class JasperProject extends JavaPlugin {
 
         CommandManager.getInstance()
                 .register(new PaperAnimationCommand())
-                .register(new BazaarCommand())
+                .register(new BazaarCommand(), List.of("bazaar", "bz", "BZ", "bZ", "bZ", "pasar"))
         ;
 
         PM.registerEvents(new Joinmsg(this), this);
