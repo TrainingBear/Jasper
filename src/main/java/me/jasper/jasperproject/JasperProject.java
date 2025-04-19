@@ -55,7 +55,7 @@ public final class JasperProject extends JavaPlugin {
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
         animationConfig.load(Animation::loadConfig);
 
-        Bazaar.setCategory();
+//        Bazaar.setCategory();
         BazaarDatabase.startConnection();
         try {
             ProductManager.init();
