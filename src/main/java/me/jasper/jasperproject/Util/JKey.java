@@ -33,6 +33,7 @@ public final class JKey {
 
     public static final NamespacedKey BAZAAR_COMPONENT_TASK_ID = new NamespacedKey(JasperProject.getPlugin(), "TASK");
     public static final NamespacedKey BAZAAR_COMPONENT_ID = new NamespacedKey(JasperProject.getPlugin(), "COMPONENT");
+    public static final NamespacedKey BAZAAR_PRODUCT = new NamespacedKey(JasperProject.getPlugin(), "Product-name");
 
 
     public static final NamespacedKey GUI_BORDER = new NamespacedKey(JasperProject.getPlugin(), "89a7sba");

@@ -17,14 +17,10 @@ public class Listener implements org.bukkit.event.Listener {
         ItemStack curentItem = e.getCurrentItem();
         if(e.getClick().equals(ClickType.DOUBLE_CLICK)||curentItem==null || !curentItem.hasItemMeta()) return;
 
-        Player player = (Player) e.getWhoClicked();
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
-
-        if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
+        if(contain(container, JKey.BAZAAR_COMPONENT_ID) && contain(container, JKey.BAZAAR_COMPONENT_TASK_ID)){
             byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
-            try {
-                TaskID.MAP.get(taskID).update((Player) e.getWhoClicked(), e.getClickedInventory(), container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
-            }catch (NullPointerException ignored){}
+            TaskID.MAP.get(taskID).update((Player) e.getWhoClicked(), e.getClickedInventory(), container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
         }
 
     }
