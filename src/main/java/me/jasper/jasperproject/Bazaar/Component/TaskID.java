@@ -3,6 +3,7 @@ package me.jasper.jasperproject.Bazaar.Component;
 import lombok.val;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.InventoryUpdater;
+import me.jasper.jasperproject.Bazaar.Product.Product;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
@@ -66,18 +67,22 @@ public final class TaskID {
                     SwapCategory(inv, id);
                 });
         MAP.put(UNWRAP_GROUP,
-                (p, inv, id) -> UnwrapGroup(p, inv));
+                (p, inv, id) -> UnwrapGroup(id, inv));
     }
 
-    private static void UnwrapGroup(Player player, Inventory inventory){
+    private static void UnwrapGroup(final int id, Inventory inventory){
         int[] indexes = {
                 20, 21, 22, 23, 24, 25,
                 29, 30, 31, 32, 33, 34,
                 38, 39, 40, 41, 42, 43
         };
 
+        Map<Integer, String> groupsID = Bazaar.getGroupsID();
+        List<Product> products = ProductManager.getProduct_by_group().get(groupsID.get(id));
+
+        Iterator<Product> productIterator = products.iterator();
         for (int i : indexes) {
-            inventory.setItem(i, null);
+            inventory.setItem(i, productIterator.next().getItem());
         }
 
     }
@@ -156,9 +161,9 @@ public final class TaskID {
         };
         for (int i : indexes) inventory.setItem(i, null);
 
-        List<Content> SubCategory = Bazaar.getSubCategories().getOrDefault(ID, null);
+        List<Category> SubCategory = Bazaar.getSubCategories().getOrDefault(ID, null);
         if(SubCategory==null) return;
-        Iterator<Content> iterator = Bazaar.getSubCategories().get(ID).iterator();
+        Iterator<Category> iterator = Bazaar.getSubCategories().get(ID).iterator();
         for (int index : indexes) {
             if(!iterator.hasNext()) return;
             inventory.setItem(index, iterator.next().getItem());

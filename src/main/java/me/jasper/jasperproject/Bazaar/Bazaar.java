@@ -149,6 +149,16 @@ public final class Bazaar {
         for(byte i = 1 ; i<=5; i++) inv.setItem(i, new ItemStack(Material.AIR));
     }
 
+    public static Map<Integer, String> getGroupsID(){
+        Map<Integer, String> groups = new HashMap<>();
+        for (List<Category> list : SubCategories.values()) {
+            for (Category content : list) {
+                groups.put(content.getID(), content.getName());
+            }
+        }
+        return groups;
+    }
+
 
 
     private static final class ItemBZGUI {

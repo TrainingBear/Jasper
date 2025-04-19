@@ -29,13 +29,13 @@ public class Debug implements CommandExecutor {
                 ItemStack item = player.getInventory().getItemInMainHand();
                 Product product = new Product(item, name, key);
 
-                try {
-                    ProductManager.createProduct(name, product);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    player.sendMessage(e.getMessage());
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                    ProductManager.createProduct(name, product);
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                    player.sendMessage(e.getMessage());
+//                    throw new RuntimeException(e);
+//                }
             }
 
             case "get" ->{

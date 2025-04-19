@@ -26,6 +26,9 @@ public abstract class ProductManager {
         }
     }
 
+    public static void init_GroupID(){
+    }
+
     public static void createProduct(String group, String name, @NotNull Product product) throws SQLException {
         if(!Bazaar.getGroups().contains(group)) return;
         BazaarDatabase.newProduct(group, name, product.serialize());
