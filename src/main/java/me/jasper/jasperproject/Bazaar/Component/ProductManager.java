@@ -1,8 +1,9 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Component;
+package me.jasper.jasperproject.Bazaar.Component;
 
-import me.jasper.jasperproject.Bazaar.Bazaar2.Bazaar;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.BazaarDatabase;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.Product;
+import lombok.Getter;
+import me.jasper.jasperproject.Bazaar.Bazaar;
+import me.jasper.jasperproject.Bazaar.Product.BazaarDatabase;
+import me.jasper.jasperproject.Bazaar.Product.Product;
 import me.jasper.jasperproject.JasperProject;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,10 +13,10 @@ import java.util.*;
 
 public abstract class ProductManager {
     ///  String = name, Product = contents
-    private static Map<String, Product> products = new HashMap<>();
+    @Getter private static Map<String, Product> products = new HashMap<>();
 
     ///  String = groub, List<> = contents</>
-    private static Map<String, List<Product>> product_by_group = new HashMap<>();
+    @Getter private static Map<String, List<Product>> product_by_group = new HashMap<>();
 
     public static void init() throws SQLException, IOException {
         products = BazaarDatabase.getProducts();

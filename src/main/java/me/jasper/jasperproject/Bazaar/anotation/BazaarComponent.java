@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.anotation;
+package me.jasper.jasperproject.Bazaar.anotation;
 
 public @interface BazaarComponent {
     String name();

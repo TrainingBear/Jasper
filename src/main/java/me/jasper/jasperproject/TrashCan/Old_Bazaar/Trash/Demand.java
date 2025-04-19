@@ -1,7 +1,7 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Trash;
+package me.jasper.jasperproject.TrashCan.Old_Bazaar.Trash;
 
 import lombok.Setter;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.Curve;
+import me.jasper.jasperproject.Bazaar.Product.Curve;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

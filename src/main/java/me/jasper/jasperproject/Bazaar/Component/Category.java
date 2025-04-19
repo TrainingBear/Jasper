@@ -1,13 +1,11 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Component;
+package me.jasper.jasperproject.Bazaar.Component;
 
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;

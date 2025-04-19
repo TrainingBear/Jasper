@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Component;
+package me.jasper.jasperproject.Bazaar.Component;
 
 import org.bukkit.inventory.ItemStack;
 

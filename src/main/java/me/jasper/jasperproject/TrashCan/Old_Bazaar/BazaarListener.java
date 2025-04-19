@@ -1,6 +1,6 @@
-package me.jasper.jasperproject.Bazaar;
+package me.jasper.jasperproject.TrashCan.Old_Bazaar;
 
-import me.jasper.jasperproject.Bazaar.Bazaar2.BazaarEnum;
+import me.jasper.jasperproject.Bazaar.BazaarEnum;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -1,8 +1,7 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Product;
+package me.jasper.jasperproject.Bazaar.Product;
 
 import java.io.Serializable;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Order extends Curve implements Serializable {
     protected float bank;

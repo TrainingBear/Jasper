@@ -1,8 +1,8 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Component;
+package me.jasper.jasperproject.Bazaar.Component;
 
 import lombok.val;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Bazaar;
-import me.jasper.jasperproject.Bazaar.Bazaar2.InventoryUpdater;
+import me.jasper.jasperproject.Bazaar.Bazaar;
+import me.jasper.jasperproject.Bazaar.InventoryUpdater;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;

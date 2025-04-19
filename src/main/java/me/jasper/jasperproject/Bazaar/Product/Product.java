@@ -1,10 +1,10 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Product;
+package me.jasper.jasperproject.Bazaar.Product;
 
 import lombok.Getter;
 import lombok.val;
-import me.jasper.jasperproject.Bazaar.Bazaar2.BazaarException;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Component.MessageEnum;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Component.TaskID;
+import me.jasper.jasperproject.Bazaar.BazaarException;
+import me.jasper.jasperproject.Bazaar.Component.MessageEnum;
+import me.jasper.jasperproject.Bazaar.Component.TaskID;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,8 +42,8 @@ public final class Product implements Content, Serializable {
     @Getter Map<UUID, Map<Integer, Order>> buy_order = new HashMap<>();
 
 
-    public Product(ItemStack product, String product_name, NamespacedKey key) {
-        this(product, product_name, key.getNamespace(), key.getKey());
+    public Product(ItemStack product, String product_name, @Nullable NamespacedKey key) {
+        this(product, product_name,key==null? null : key.getNamespace(),key==null? null : key.getKey());
     }
     public Product(ItemStack product, String product_name, String key) {
         this(product, product_name, JasperProject.getPlugin().getName().toLowerCase(), key);

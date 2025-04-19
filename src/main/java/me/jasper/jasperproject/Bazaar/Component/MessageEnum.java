@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Component;
+package me.jasper.jasperproject.Bazaar.Component;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -1,6 +1,6 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2;
+package me.jasper.jasperproject.Bazaar;
 
-import me.jasper.jasperproject.Bazaar.Bazaar2.Component.TaskID;
+import me.jasper.jasperproject.Bazaar.Component.TaskID;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.NamespacedKey;

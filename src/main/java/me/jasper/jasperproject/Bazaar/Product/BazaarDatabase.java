@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Bazaar.Bazaar2.Product;
+package me.jasper.jasperproject.Bazaar.Product;
 
 import org.bukkit.util.io.BukkitObjectInputStream;
 

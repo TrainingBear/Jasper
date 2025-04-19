@@ -1,8 +1,8 @@
 package me.jasper.jasperproject.Util;
 
-import me.jasper.jasperproject.Bazaar.Bazaar2.Component.ProductManager;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.BazaarDatabase;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.Product;
+import me.jasper.jasperproject.Bazaar.Component.ProductManager;
+import me.jasper.jasperproject.Bazaar.Product.BazaarDatabase;
+import me.jasper.jasperproject.Bazaar.Product.Product;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

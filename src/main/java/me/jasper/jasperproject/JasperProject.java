@@ -1,12 +1,15 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
-import me.jasper.jasperproject.Bazaar.Bazaar;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Component.ProductManager;
-import me.jasper.jasperproject.Bazaar.Bazaar2.Product.BazaarDatabase;
+import me.jasper.jasperproject.Animation.PaperAnimationCommand;
+import me.jasper.jasperproject.TrashCan.Old_Bazaar.Bazaar;
+import me.jasper.jasperproject.Bazaar.Component.ProductManager;
+import me.jasper.jasperproject.Bazaar.Listener;
+import me.jasper.jasperproject.Bazaar.Product.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
+import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.Jam.*;
@@ -16,7 +19,7 @@ import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListen
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Listener.*;
-import me.jasper.jasperproject.Bazaar.Bazaar2.BazaarCommand;
+import me.jasper.jasperproject.Bazaar.BazaarCommand;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.Debug;
@@ -73,7 +76,11 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("debug").setExecutor(new Debug());
 
-//        CommandManager.getInstance() .register(new PaperAnimationCommand());
+
+        CommandManager.getInstance()
+                .register(new PaperAnimationCommand())
+                .register(new BazaarCommand())
+        ;
 
         PM.registerEvents(new Joinmsg(this), this);
 //        PM.registerEvents(new InvenAhhListener(), this);
@@ -84,7 +91,7 @@ public final class JasperProject extends JavaPlugin {
 
 //        PM.registerEvents(new BazaarListener(), this);
         PM.registerEvents(new ContentListener(), this);
-        PM.registerEvents(new me.jasper.jasperproject.Bazaar.Bazaar2.Listener(), this);
+        PM.registerEvents(new Listener(), this);
 
 
 //        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
@@ -105,8 +112,6 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
-
-        this.getCommand("bazaar").setExecutor(new BazaarCommand());
 
 //        this.getCommand("animate").setExecutor(new AnimationCommand());
 
