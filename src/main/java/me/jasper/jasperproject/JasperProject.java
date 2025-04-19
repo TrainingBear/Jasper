@@ -1,9 +1,5 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
-import me.jasper.jasperproject.Animation.Animation;
-import me.jasper.jasperproject.Bazaar.Bazaar;
-import me.jasper.jasperproject.Animation.PaperAnimationCommand;
-import me.jasper.jasperproject.Util.Commands.CommandManager;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
@@ -16,8 +12,6 @@ import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListen
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Listener.*;
-import me.jasper.jasperproject.Bazaar.BazaarCommand;
-import me.jasper.jasperproject.Bazaar.BazaarListener;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.Debug;
@@ -27,17 +21,11 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static com.sk89q.wepif.VaultResolver.perms;
 
 
 public final class JasperProject extends JavaPlugin {
@@ -56,7 +44,6 @@ public final class JasperProject extends JavaPlugin {
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
 //        animationConfig.load(Animation::loadConfig);
-        Bazaar.setCategory();
 
         if (!setupEconomy() ) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -103,7 +90,7 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
 
-        this.getCommand("bazaar").setExecutor(new BazaarCommand());
+//        this.getCommand("bazaar").setExecutor(new BazaarCommand());
 
 //        this.getCommand("animate").setExecutor(new AnimationCommand());
 

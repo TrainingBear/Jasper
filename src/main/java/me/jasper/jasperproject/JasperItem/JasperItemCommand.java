@@ -37,6 +37,7 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
             case "test"-> manager.get("TEST").send(player);
             case "animate"-> manager.get("ANIMATE").send(player);
             case "titaniumsword"-> manager.get("TITANIUM_SWORD").send(player);
+            case "burstbow" -> manager.get("BURST_BOW").send(player);
         }
 
         return true;
@@ -51,7 +52,8 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 "test",
                 "update",
                 "animate",
-                "TitaniumSword"
+                "TitaniumSword",
+                "BurstBow"
                 );
     }
 }

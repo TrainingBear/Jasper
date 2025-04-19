@@ -31,7 +31,7 @@ public class Teleport extends ItemAbility{
        this.setRange(range);
        this.setCooldown(cooldown);
        this.addLore(List.of(
-               MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#7e10e0><b>Teleport <yellow>(RIGHT CLICK)")
+               MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#7e10e0>Teleport <b><yellow>(RIGHT CLICK)")
                ,MiniMessage.miniMessage().deserialize("<!i><gray>Teleporting you to the")
                ,MiniMessage.miniMessage().deserialize("<!i><gray>unobstructed location with")
                ,MiniMessage.miniMessage().deserialize("<!i><gray>range of "+range)
@@ -53,7 +53,7 @@ public class Teleport extends ItemAbility{
         if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
                 e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())
         ) return;
-        applyCooldown(e);
+        applyCooldown(e,false);
         if(e.isCancelled()) return;
 
         Player player = e.getPlayer();

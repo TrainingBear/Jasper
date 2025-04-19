@@ -29,6 +29,10 @@ public class Debug implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!(commandSender instanceof Player player)) return false;
+        if(strings.length == 0){
+            Bazaar.open(player);
+            return true;
+        }
         switch (strings[0]){
             case "save" ->{
                 if(strings[1].isEmpty()) return false;
