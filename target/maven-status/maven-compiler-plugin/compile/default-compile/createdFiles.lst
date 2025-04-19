@@ -1,7 +1,9 @@
 me\jasper\jasperproject\Dungeon\DungeonMapRenderer.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\ItemType.class
+me\jasper\jasperproject\JasperItem\Product\Weapons\EndGateway.class
 me\jasper\jasperproject\JasperItem\JasperItemCommand.class
 me\jasper\jasperproject\Dungeon\Generator.class
+me\jasper\jasperproject\JasperItem\Product\Weapons\TitaniumSword.class
 me\jasper\jasperproject\Util\FileConfiguration\Consumer.class
 me\jasper\jasperproject\Jam\ClockExecutor.class
 me\jasper\jasperproject\Util\Logger.class
@@ -24,7 +26,6 @@ me\jasper\jasperproject\Animation\Animation.class
 me\jasper\jasperproject\Dungeon\Rooms.class
 me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\JasperItem\Util\ItemPatcher.class
-me\jasper\jasperproject\JasperItem\Product\WarpGateway.class
 me\jasper\jasperproject\JasperItem\Util\TRIGGER$Fishing.class
 me\jasper\jasperproject\Util\Commands\CommandManager.class
 me\jasper\jasperproject\JasperItem\Util\ItemManager.class
@@ -42,11 +43,12 @@ me\jasper\jasperproject\Util\FileConfiguration\Test.class
 me\jasper\jasperproject\Bazaar\Bazaar$ItemBZGUI.class
 me\jasper\jasperproject\Animation\PaperAnimationCommand.class
 me\jasper\jasperproject\Util\CustomStructure\StructureException.class
+me\jasper\jasperproject\JasperItem\Product\Weapons\TestItem.class
 me\jasper\jasperproject\Bazaar\Bazaar2\Component\MessageEnum.class
+me\jasper\jasperproject\JasperItem\Product\Weapons\WarpGateway.class
 me\jasper\jasperproject\JasperItem\ItemCreator.class
 me\jasper\jasperproject\Listener\PlotMenuListener.class
 me\jasper\jasperproject\JasperItem\Items.class
-me\jasper\jasperproject\JasperItem\Util\Factory$JitemFactory.class
 me\jasper\jasperproject\Bazaar\Bazaar.class
 me\jasper\jasperproject\JasperEntity\MobEventListener\JSMDeathEventListener.class
 me\jasper\jasperproject\Dungeon\MapUtil\MapCursorCollection.class
@@ -69,7 +71,6 @@ me\jasper\jasperproject\JasperProject.class
 me\jasper\jasperproject\Util\BlockPacket.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\Abilities\Animator.class
 me\jasper\jasperproject\Util\SummonCustomEntity.class
-me\jasper\jasperproject\JasperItem\Product\GraplingHook.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\ItemStats.class
 me\jasper\jasperproject\JasperItem\ItemAttributes\ItemAbility.class
 me\jasper\jasperproject\Util\FileConfiguration\ConfigConsumer.class
@@ -88,6 +89,7 @@ me\jasper\jasperproject\JasperEntity\JasperEntity.class
 me\jasper\jasperproject\Util\Commands\JasperCommand.class
 me\jasper\jasperproject\Util\FileConfiguration\CompoundConsumer.class
 me\jasper\jasperproject\Dungeon\DungeonUtil.class
+me\jasper\jasperproject\JasperItem\Product\Tools\Blender.class
 me\jasper\jasperproject\Bazaar\BazaarEnum.class
 me\jasper\jasperproject\Bazaar\BazaarListener.class
 me\jasper\jasperproject\Util\ContainerMenu\ContentListener.class
@@ -99,6 +101,7 @@ me\jasper\jasperproject\Dungeon\ExecuteCommand.class
 me\jasper\jasperproject\Dungeon\RoomShape.class
 me\jasper\jasperproject\Util\ContainerMenu\ContentType.class
 me\jasper\jasperproject\Animation\Animation$1temp.class
+me\jasper\jasperproject\JasperItem\Product\Tools\GraplingHook.class
 me\jasper\jasperproject\Jam\ClockUtility$1$1.class
 me\jasper\jasperproject\Animation\Animation$1.class
 me\jasper\jasperproject\Util\FileConfiguration\LaunchPadConfiguration.class
@@ -113,7 +116,4 @@ me\jasper\jasperproject\Jam\Clock.class
 me\jasper\jasperproject\Dungeon\GeneratorCommandExecutor.class
 me\jasper\jasperproject\Util\CustomStructure\Structure.class
 me\jasper\jasperproject\Util\FileConfiguration\ConfigDungeon.class
-me\jasper\jasperproject\JasperItem\Product\Blender.class
-me\jasper\jasperproject\JasperItem\Product\EndGateway.class
-me\jasper\jasperproject\JasperItem\Product\TestItem.class
 me\jasper\jasperproject\JasperItem\Util\Factory.class
