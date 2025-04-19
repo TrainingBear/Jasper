@@ -21,12 +21,16 @@ public class Listener implements org.bukkit.event.Listener {
                 || curentItem==null || !curentItem.hasItemMeta()) return;
 
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
-
+        if(!contain(container, JKey.BAZAAR_COMPONENT_TASK_ID)) return;
         if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
             byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
             try {
                 TaskID.MAP.get(taskID).update((Player) e.getWhoClicked(), e.getClickedInventory(), container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
             }catch (NullPointerException ignored){}
+        }
+        if(contain(container, JKey.BAZAAR_PRODUCT)){
+            String name = container.get(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING);
+            TaskID.openProductMenu(e.getInventory(), name);
         }
 
     }

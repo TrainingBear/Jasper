@@ -54,6 +54,7 @@ public final class Product implements Content, Serializable {
         prototype = product.clone();
         prototype.editMeta(e->{
             PersistentDataContainer pdc = e.getPersistentDataContainer();
+            pdc.set(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING, name);
             pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
             pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.BUY);
         });

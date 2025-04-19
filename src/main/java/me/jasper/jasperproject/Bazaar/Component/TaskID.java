@@ -21,7 +21,7 @@ import java.util.*;
 
 public final class TaskID {
     public static final byte SWAP_CATEGORY = 0;
-  
+
     public static final byte CLOSE = 11;
     public static final byte TITLE = 12;
     public static final byte CATEG_NAV_NEXT = 13;
@@ -33,6 +33,7 @@ public final class TaskID {
     public static final byte UNWRAP_GROUP = 4;
     public static final byte MANAGE_ORDER = 5;
     public static final byte SELL_INV = 6;
+    public static final byte OPEN_PRODUCT_MENU = 7;
 
     public final static Map<Byte, InventoryUpdater> MAP;
     static {
@@ -68,6 +69,13 @@ public final class TaskID {
                 });
         MAP.put(UNWRAP_GROUP,
                 (p, inv, id) -> UnwrapGroup(id, inv));
+
+    }
+
+    public static void openProductMenu(Inventory inventory, String product_name){
+        Map<String, Product> products = ProductManager.getProducts();
+        Product product = products.get(product_name);
+        /// tulis logic lu disini
     }
 
     private static void UnwrapGroup(final int id, Inventory inventory){
