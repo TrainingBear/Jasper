@@ -1,18 +1,24 @@
-package me.jasper.jasperproject.Bazaar.Product;
+package me.jasper.jasperproject.Bazaar.util;
 
+import lombok.Getter;
+import lombok.val;
+import me.jasper.jasperproject.Bazaar.Component.Product;
+import me.jasper.jasperproject.JasperProject;
 import org.bukkit.util.io.BukkitObjectInputStream;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public abstract class BazaarDatabase {
-    private static Connection connection;
-    public static void startConnection(){
+    @Getter private static Connection connection;
+    public static boolean startConnection() throws SQLException {
         try {
             connection = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/",
@@ -22,6 +28,16 @@ public abstract class BazaarDatabase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return connection.createStatement().execute("" +
+                "CREATE TABLE IF NOT EXISTS product(" +
+                "  id mediumint NOT NULL AUTO_INCREMENT," +
+                "  name varchar(255) NOT NULL," +
+                "  product mediumblob NOT NULL," +
+                "  category varchar(255) NOT NULL," +
+                "  PRIMARY KEY (id)," +
+                "  UNIQUE KEY name (name)" +
+                ")");
     }
 
     public static void newProduct(String category, String name, byte[] product) throws SQLException {
@@ -43,7 +59,7 @@ public abstract class BazaarDatabase {
         preparedStatement.execute();
     }
 
-    public static Product getProduct(String name) throws SQLException, IOException {
+    public static @org.jetbrains.annotations.Nullable Product getProduct(String name) throws SQLException, IOException {
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "select * from product where name = ?");
         preparedStatement.setString(1, name);
@@ -61,10 +77,32 @@ public abstract class BazaarDatabase {
         preparedStatement.execute();
     }
 
+    public static void loadDB() throws SQLException, IOException {
+        Map<String, Product> productMap = new HashMap<>();
+        Map<String, List<Product>> groupedProduct = new HashMap<>();
+
+        ResultSet resultSet = connection.createStatement().executeQuery(
+                "select * from product");
+        while (resultSet.next()){
+            val last = System.currentTimeMillis();
+            String name = resultSet.getString("name");
+            byte[] bytes = resultSet.getBytes("product");
+            Product product = (Product) retriveObject(bytes);
+            String category = resultSet.getString("category");
+            productMap.put(name, product);
+            groupedProduct.computeIfAbsent(category, k->new ArrayList<>()).add(product);
+
+            val productName = product.getProduct_name();
+            JasperProject.getPlugin().getLogger().info("[BazaarDB] "+productName+" registered ("+(System.currentTimeMillis()-last)+" ms)");
+        }
+        ProductManager.setProductMap(productMap);
+        ProductManager.setGroupedProduct(groupedProduct);
+    }
+
     public static Map<String, Product> getProducts() throws SQLException, IOException {
         Map<String, Product> products = new HashMap<>();
         ResultSet resultSet = connection.createStatement().executeQuery(
-                "select * from items");
+                "select name, product from product");
         String name;
         Product product;
 
@@ -72,6 +110,7 @@ public abstract class BazaarDatabase {
             name = resultSet.getString("name");
             product = (Product) retriveObject(resultSet.getBytes("product"));
 
+            val productName = product.getProduct_name();
             products.put(name, product);
         }
 

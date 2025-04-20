@@ -2,12 +2,14 @@ package me.jasper.jasperproject.Bazaar.Component;
 
 import lombok.val;
 import me.jasper.jasperproject.Bazaar.Bazaar;
-import me.jasper.jasperproject.Bazaar.InventoryUpdater;
-import me.jasper.jasperproject.Bazaar.Product.Product;
+import me.jasper.jasperproject.Bazaar.util.InventoryUpdater;
+import me.jasper.jasperproject.Bazaar.util.ProductManager;
+import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.SignGUI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -16,6 +18,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -41,7 +44,7 @@ public final class TaskID {
         MAP.put(SWAP_CATEGORY,
                 (p , inv, ID) -> SwapCategory(inv,ID));
         MAP.put(CLOSE,
-            (p , inv, ID) -> p.closeInventory());
+                (p , inv, ID) -> p.closeInventory());
         MAP.put(SEARCH,
                 (p,inv,ID)-> {
                     String[] builtInText= {
@@ -56,39 +59,50 @@ public final class TaskID {
                             });
                 });
         MAP.put(CATEG_NAV_NEXT,
-            (p , inv, ID)-> {
-                SwapCategory(inv, inv.getItem(3 + 1).getItemMeta().getPersistentDataContainer().get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
-            });
+                (p , inv, ID)-> {
+                val id = inv.getItem(3 + 1).getItemMeta().getPersistentDataContainer()
+                        .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
+                SwapCategory(inv, id);
+        });
         MAP.put(CATEG_NAV_BACK,
                 (p , inv, ID)-> {
-                    SwapCategory(inv, inv.getItem(3 - 1).getItemMeta().getPersistentDataContainer().get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
+                    val id = inv.getItem(3 - 1).getItemMeta().getPersistentDataContainer()
+                            .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
+                    SwapCategory(inv, id);
                 });
         MAP.put(UNWRAP_GROUP,
-                (p, inv, id) -> UnwrapGroup(id, inv));
-
+                (p, inv, id) -> {
+                    invokeSubcategory(p, id, inv);
+                });
     }
 
     public static void openProductMenu(Inventory inventory, String product_name){
-        Map<String, Product> products = ProductManager.getProducts();
+        Map<String, Product> products = ProductManager.getProductMap();
         Product product = products.get(product_name);
         /// tulis logic lu disini
     }
 
-    private static void UnwrapGroup(final int id, Inventory inventory){
+    private static void invokeSubcategory(Player p, final int id, @NotNull Inventory inventory){
         int[] indexes = {
                 20, 21, 22, 23, 24, 25,
                 29, 30, 31, 32, 33, 34,
                 38, 39, 40, 41, 42, 43
         };
-
-        Map<Integer, String> groupsID = Bazaar.getGroupsID();
-        List<Product> products = ProductManager.getProduct_by_group().get(groupsID.get(id));
+        val group_name = Bazaar.getGroupsMap_Int().get(id).getName();
+        List<Product> products = ProductManager.getGroupedProduct().get(group_name);
+        ItemStack item = Bazaar.getGroupsMap_String().get(group_name).getItem().clone();
+        item.editMeta(e->{
+            ItemMeta itemMeta = inventory.getItem(12).getItemMeta();
+            e.displayName(itemMeta.displayName());
+            e.lore(itemMeta.lore());
+        });
+        inventory.setItem(12, item);
 
         Iterator<Product> productIterator = products.iterator();
         for (int i : indexes) {
-            inventory.setItem(i, productIterator.next().getItem());
+            inventory.setItem(i, null);
+            if(productIterator.hasNext()) inventory.setItem(i, productIterator.next().getItem());
         }
-
     }
 
     private static void SwapCategory(Inventory inv ,int ID) {
@@ -98,7 +112,6 @@ public final class TaskID {
 
         for (Content content : contents) {
             if(content.getID()==ID){
-                Arrays.stream(cs).forEach(sI -> inv.setItem(sI, null)); //gw dh mudeng sama forEach so yk what it mean
                 byte index = (byte) contents.indexOf(content);
                 selected_content = contents.get(index);
                 for (byte i = 0; i < cs.length; i++) inv.setItem(i + 1, contents.get(
@@ -108,7 +121,7 @@ public final class TaskID {
             }
         }
 
-        TaskID.UpdateSubcategory(selected_content.getID(), inv);
+        TaskID.invokeCategory(selected_content.getID(), inv);
         TaskID.UpdateDecoration(selected_content, inv);
     }
 
@@ -157,20 +170,18 @@ public final class TaskID {
 
     }
 
-    public static void UpdateSubcategory(int ID, Inventory inventory){
+    public static void invokeCategory(int ID, Inventory inventory){
         int[] indexes = {
                 20, 21, 22, 23, 24, 25,
                 29, 30, 31, 32, 33, 34,
                 38, 39, 40, 41, 42, 43
         };
-        for (int i : indexes) inventory.setItem(i, null);
-
-        List<Category> SubCategory = Bazaar.getSubCategories().getOrDefault(ID, null);
+        List<Category> SubCategory = Bazaar.getSubCategoriesMap().getOrDefault(ID, null);
         if(SubCategory==null) return;
-        Iterator<Category> iterator = Bazaar.getSubCategories().get(ID).iterator();
+        Iterator<Category> iterator = SubCategory.iterator();
         for (int index : indexes) {
-            if(!iterator.hasNext()) return;
-            inventory.setItem(index, iterator.next().getItem());
+            inventory.setItem(index, null);
+            if(iterator.hasNext()) inventory.setItem(index, iterator.next().getItem());
         }
     }
 }

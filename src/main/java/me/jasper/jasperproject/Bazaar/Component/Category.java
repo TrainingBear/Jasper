@@ -45,7 +45,10 @@ public class Category implements Content {
 
     public String getName(){
         Component component = item.displayName();
-        return PlainTextComponentSerializer.plainText().serialize(component);
+        String plain = PlainTextComponentSerializer.plainText().serialize(component);
+        String result = plain.replace(' ', '_');
+        result = result.replaceAll("[\\[\\]{}]","");
+        return result;
     }
 
     @Override

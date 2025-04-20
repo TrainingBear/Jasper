@@ -2,10 +2,10 @@ package me.jasper.jasperproject;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.Animation;
 import me.jasper.jasperproject.Animation.PaperAnimationCommand;
-import me.jasper.jasperproject.TrashCan.Old_Bazaar.Bazaar;
-import me.jasper.jasperproject.Bazaar.Component.ProductManager;
-import me.jasper.jasperproject.Bazaar.Listener;
-import me.jasper.jasperproject.Bazaar.Product.BazaarDatabase;
+import me.jasper.jasperproject.Bazaar.Bazaar;
+import me.jasper.jasperproject.Bazaar.BazaarCommand;
+import me.jasper.jasperproject.Bazaar.util.Listener;
+import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
@@ -19,7 +19,6 @@ import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListen
 import me.jasper.jasperproject.JasperItem.JasperItemCommand;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Listener.*;
-import me.jasper.jasperproject.Bazaar.BazaarCommand;
 import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
 
 import me.jasper.jasperproject.Util.Debug;
@@ -54,16 +53,22 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-//        animationConfig.load(Animation::loadConfig);
+        animationConfig.load(Animation::loadConfig);
 
-//        Bazaar.setCategory();
-//        BazaarDatabase.startConnection();
-//        try {
-//            ProductManager.init();
-//        } catch (SQLException | IOException e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
+        Bazaar.init();
+        try {
+            if(BazaarDatabase.startConnection()){
+                this.getLogger().info("Created Bazaar product table!");
+            }
+            try {
+                BazaarDatabase.loadDB();
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         if (!setupEconomy() ) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -71,7 +76,7 @@ public final class JasperProject extends JavaPlugin {
             return;
         }
         setupPermissions();
-//        setupChat();
+        setupChat();
 
         ItemManager.getInstance().registerAll();
 
@@ -80,37 +85,26 @@ public final class JasperProject extends JavaPlugin {
 
         CommandManager.getInstance()
                 .register(new PaperAnimationCommand())
-                .register(new BazaarCommand(), List.of("bazaar", "bz", "BZ", "bZ", "bZ", "pasar"))
+                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
         ;
 
         PM.registerEvents(new Joinmsg(this), this);
-//        PM.registerEvents(new InvenAhhListener(), this);
         PM.registerEvents(new PlotMenuListener(), this);
-
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
-
-//        PM.registerEvents(new BazaarListener(), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);
-
-
-//        BukkitTask analog = new ClockExecutor(this).runTaskTimer(this,0,20);
-//        BukkitTask detak = new ClockExecutor.Detak().runTaskTimer(this,0,40);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
         /// jadi jangan register command disini
         this.getCommand("summondisplayi").setTabCompleter(new SummonItemDisplay(this));
         this.getCommand("summondisplayi").setExecutor(new SummonItemDisplay(this));
-
         this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
         this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
-
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
         this.getCommand("jmob").setExecutor(new EntityCommand());
-
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
 

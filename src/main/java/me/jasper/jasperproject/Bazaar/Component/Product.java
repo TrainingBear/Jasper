@@ -1,10 +1,9 @@
-package me.jasper.jasperproject.Bazaar.Product;
+package me.jasper.jasperproject.Bazaar.Component;
 
 import lombok.Getter;
 import lombok.val;
-import me.jasper.jasperproject.Bazaar.BazaarException;
-import me.jasper.jasperproject.Bazaar.Component.MessageEnum;
-import me.jasper.jasperproject.Bazaar.Component.TaskID;
+import me.jasper.jasperproject.Bazaar.util.BazaarException;
+import me.jasper.jasperproject.Bazaar.util.MessageEnum;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
@@ -34,23 +33,17 @@ public final class Product implements Content, Serializable {
     @Getter private String product_name;
     @Getter private ItemStack product;
     @Getter private ItemStack prototype;
-    private String name/*space*/;
-    private String key;
+    private String namespace;
 
     private final AtomicInteger atomicInteger = new AtomicInteger();
     @Getter Map<UUID, Map<Integer, Order>> sell_order = new HashMap<>();
     @Getter Map<UUID, Map<Integer, Order>> buy_order = new HashMap<>();
 
 
-    public Product(ItemStack product, String product_name, @Nullable NamespacedKey key) {
-        this(product, product_name,key==null? null : key.getNamespace(),key==null? null : key.getKey());
-        setNamespace(key);
+    public Product(ItemStack product, String product_name) {
+        this(product, product_name, null);
     }
-    public Product(ItemStack product, String product_name, String key) {
-        this(product, product_name, JasperProject.getPlugin().getName().toLowerCase(), key);
-        setNamespace(key);
-    }
-    public Product(ItemStack product, String product_name,String namespace, String key) {
+    public Product(@NotNull ItemStack product, String product_name, @Nullable NamespacedKey key) {
         this.product = product;
         this.product_name = product_name;
         prototype = product.clone();
@@ -60,44 +53,33 @@ public final class Product implements Content, Serializable {
             pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
             pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.BUY);
         });
-        setNamespace(namespace, key);
-        try{
-            this.update();
-        } catch (BazaarException e){}
-
+        this.namespace = key==null? null: key.toString();
     }
 
     public NamespacedKey getKey(){
-        return new NamespacedKey(this.name, this.key);
+        return NamespacedKey.fromString(namespace);
     }
 
     public void setNamespace(@Nullable NamespacedKey key){
-        boolean isnull = key==null;
-        String namespace = isnull? null: key.getNamespace();
-        String keys = isnull? null: key.getKey();
-        if(namespace.equals("minecraft")) {
-            namespace=null;
-            keys=null;
-        }
-        setNamespace(namespace, keys);
-    }
-    public void setNamespace(String key){
-        setNamespace(JasperProject.getPlugin().getName().toLowerCase(), key);
-    }
-    public void setNamespace(String namespace, String key){
-        this.name = namespace;
-        this.key = key;
+        this.namespace = key==null? null : key.toString();
     }
 
     public void update() throws BazaarException{
-        Order topSupply = topSellOffer();
-        Order topDemand = topBuyOffer();
+        Order topSupply = null;
+        Order topDemand = null;
+        try{
+            topSupply = topSellOffer();
+            topDemand = topBuyOffer();
+        } catch (BazaarException e) {
+        }
+        Order finalTopSupply = topSupply;
+        Order finalTopDemand = topDemand;
         this.prototype.editMeta(e -> {
             e.lore(List.of(
                     text("<!i><gold>sell price: <sell_price></gold>",
-                            Placeholder.unparsed("sell_price", ""+topSupply.p)),
+                            Placeholder.unparsed("sell_price", finalTopSupply ==null? "N/A": ""+finalTopSupply.p)),
                     text("<!i><gold>buy price: <buy_price></gold>",
-                            Placeholder.unparsed("buy_price", ""+topDemand.p)),
+                            Placeholder.unparsed("buy_price", finalTopDemand ==null? "N/A":""+ finalTopDemand.p)),
                     text("<!i><dark_green>supply: <v>, demand: <v2></dark_green>",
                             Placeholder.unparsed("v", String.valueOf(getSupply())),
                             Placeholder.unparsed("v2", String.valueOf(getDemand()))
@@ -214,7 +196,7 @@ public final class Product implements Content, Serializable {
     }
 
     public void createSellOrder(@NotNull Player seller, int ammount, float price){
-        int id = this.atomicInteger.getAndDecrement();
+        int id = id();
         this.sell_order.computeIfAbsent(seller.getUniqueId(), k -> new HashMap<>()).put(id,
                 new Order(
                         new Curve(ammount, price),
@@ -230,7 +212,7 @@ public final class Product implements Content, Serializable {
         price*=ammount;
         if(!hasPurse(player, price)) return;
 
-        int id = this.atomicInteger.getAndDecrement();
+        int id = id();
         this.buy_order.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>()).put(id,
             new Order(
                 new Curve(ammount, price),
@@ -279,7 +261,7 @@ public final class Product implements Content, Serializable {
         if(order.goods <=0) this.buy_order.remove(player.getUniqueId());
     }
 
-    public void cancelBuyOrder(Player player, int index){
+    public void cancelBuyOrder(@NotNull Player player, int index){
         Economy eco = JasperProject.getEconomy();
 
         Order order = this.buy_order.get(player.getUniqueId()).get(index);
@@ -290,13 +272,10 @@ public final class Product implements Content, Serializable {
         if(order.q <= 0) this.buy_order.remove(player.getUniqueId());
     }
 
-    public synchronized void instantSell(Player seller){
+    public synchronized void instantSell(@NotNull Player seller){
         int ammount= 0;
 
-        NamespacedKey key = null;
-        if(this.name!=null && this.key!=null){
-            key = new NamespacedKey(this.name, this.key);
-        }
+        NamespacedKey key = NamespacedKey.fromString(namespace);
 
         for (ItemStack item : seller.getInventory().getStorageContents()){
             if (item==null) continue;
@@ -321,10 +300,7 @@ public final class Product implements Content, Serializable {
         }
         int quantity = Math.min(order.q, ammount);
 
-        NamespacedKey key = null;
-        if(this.name!=null && this.key!=null){
-            key = new NamespacedKey(this.name, this.key);
-        }
+        NamespacedKey key = NamespacedKey.fromString(namespace);
         for (ItemStack item : seller.getInventory().getStorageContents()) {
             if (item == null) continue;
             if (key == null) {
@@ -400,6 +376,7 @@ public final class Product implements Content, Serializable {
 
     @Override
     public ItemStack getItem() {
+        update();
         return prototype;
     }
 
@@ -418,5 +395,9 @@ public final class Product implements Content, Serializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    private int id(){
+        return atomicInteger.getAndIncrement();
     }
 }

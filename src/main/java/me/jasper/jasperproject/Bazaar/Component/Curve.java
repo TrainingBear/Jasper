@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Bazaar.Product;
+package me.jasper.jasperproject.Bazaar.Component;
 
 import lombok.Getter;
 
