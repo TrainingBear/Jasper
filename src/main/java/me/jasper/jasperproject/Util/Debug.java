@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.Util;
 
+import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.Component.ProductManager;
 import me.jasper.jasperproject.Bazaar.Product.BazaarDatabase;
 import me.jasper.jasperproject.Bazaar.Product.Product;
