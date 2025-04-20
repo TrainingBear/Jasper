@@ -204,7 +204,6 @@ public abstract class Bazaar {
             container = new Container(player, miniMsgDese(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), 54);
             container.load(()->{
                 TaskID.invokeCategory(mining.getID(), container.getContainer());
-                TaskID.UpdateDecoration(mining, container.getContainer());
                 initLayout(container.getContainer());
             });
         } else {

@@ -1,4 +1,5 @@
 me\jasper\jasperproject\Util\ContainerMenu\BorderTest.class
+me\jasper\jasperproject\Bazaar\util\BazaarDatabaseTest.class
 me\jasper\jasperproject\Animation\AnimationTest.class
 me\jasper\jasperproject\FileConfiguration\ConfiguratorTest.class
 me\jasper\jasperproject\JasperItem\CreatedItem\EndGatewayTest.class
