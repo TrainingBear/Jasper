@@ -1,13 +1,10 @@
 package me.jasper.jasperproject.Bazaar;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Component.Category;
 import me.jasper.jasperproject.Bazaar.Component.TaskID;
 import me.jasper.jasperproject.Bazaar.anotation.BazaarComponent;
 import me.jasper.jasperproject.Bazaar.anotation.CategoryType;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.ContainerMenu.Border;
 import me.jasper.jasperproject.Util.ContainerMenu.Container;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
@@ -17,8 +14,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -36,7 +31,7 @@ public abstract class Bazaar {
     public final static Border POINTER = new Border(id(), Material.LIME_STAINED_GLASS_PANE, false , miniMsgDese("<!i><green>Selected category"), false);
     public final static Category CATEG_NAVI_NEXT = new Category(id(), Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Next") , TaskID.CATEG_NAV_NEXT ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select next"),miniMsgDese("<!i><gray>category")));
     public final static Category CATEG_NAVI_BACK = new Category(id(), Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Back") ,TaskID.CATEG_NAV_BACK ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select previous"),miniMsgDese("<!i><gray>category")));
-    private final static Category TITLE_SIGN = new Category(id(), Material.ACACIA_HANGING_SIGN, (Component) BazaarEnum.TITLE_NAME.get(),TaskID.SEARCH,List.of(
+    private final static Category SEARCH = new Category(id(), Material.ACACIA_HANGING_SIGN, (Component) BazaarEnum.TITLE_NAME.get(),TaskID.SEARCH,List.of(
                 miniMsgDese("<!i><yellow>Worldwide bazaar")
                 ,miniMsgDese("")
                 ,miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to search thing")
@@ -55,7 +50,7 @@ public abstract class Bazaar {
     ));
 
     @BazaarComponent(name = "Order List")
-    private final static Category NOTA_BOOK = new Category(id(), Material.WRITABLE_BOOK
+    private final static Category ORDER = new Category(id(), Material.WRITABLE_BOOK
             , miniMsgDese("<!i><Yellow>Manage Order"),TaskID.MANAGE_ORDER,List.of(
             MiniMessage.miniMessage().deserialize("<!i><gray>Currently there's no your order")
     ));
@@ -202,7 +197,7 @@ public abstract class Bazaar {
             container.load(()->{
                 TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
                 TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
-                putMainMenuBorder(container.getContainer());
+                initLayout(container.getContainer());
             });
         } else {
             container = null;
@@ -210,14 +205,26 @@ public abstract class Bazaar {
         return instances.computeIfAbsent(player.getUniqueId(), k -> container).getContainer();
     }
 
-    private static void putMainMenuBorder(Inventory inventory){
-        int[] indexes = {
-          45, 27, 9, 10, 11, 13, 14, 15, 16, 17, 7
+    private static void initLayout(@NotNull Inventory inventory){
+        int[] category = {
+          1, 2, 3, 4, 5, 6
+        };
+        inventory.setItem(8, CLOSE.getItem());
+        inventory.setItem(18, SELL_INV.getItem());
+        inventory.setItem(36, ORDER.getItem());
+        inventory.setItem(49, SEARCH.getItem());
+        inventory.setItem(0, CATEG_NAVI_BACK.getItem());
+        inventory.setItem(7, CATEG_NAVI_NEXT.getItem());
+        Iterator<Content> iterator = Categories.iterator();
+        for (int i : category) {
+            inventory.setItem(i, iterator.next().getItem());
+        }
+        int[] borders = {
+                45, 27, 9, 10, 11, 13, 14, 15, 16, 17, 7
         };
 
-        for (int i : indexes) {
+        for (int i : borders) {
             inventory.setItem(i, BORDER.getItem());
         }
     }
-
 }
