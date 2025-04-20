@@ -60,8 +60,11 @@ public final class Product implements Content, Serializable {
             pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
             pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.BUY);
         });
-        setNamespace(name, key);
-        this.update();
+        setNamespace(namespace, key);
+        try{
+            this.update();
+        } catch (BazaarException e){}
+
     }
 
     public NamespacedKey getKey(){
@@ -86,7 +89,7 @@ public final class Product implements Content, Serializable {
         this.key = key;
     }
 
-    public void update(){
+    public void update() throws BazaarException{
         Order topSupply = topSellOffer();
         Order topDemand = topBuyOffer();
         this.prototype.editMeta(e -> {
