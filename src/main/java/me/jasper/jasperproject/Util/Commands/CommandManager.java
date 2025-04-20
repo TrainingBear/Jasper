@@ -30,7 +30,7 @@ public class CommandManager {
         manager = plugin.getLifecycleManager();
     }
 
-    public CommandManager register(JasperCommand command, String description, Collection<String> aliases){
+    public CommandManager register(@NotNull JasperCommand command, String description, Collection<String> aliases){
         LiteralArgumentBuilder<CommandSourceStack> created = command.createCommand();
         plugin.getLogger().info("[JasperProject] Registering Command{}"+ created.getLiteral());
 
@@ -46,32 +46,4 @@ public class CommandManager {
     public CommandManager register(@NotNull JasperCommand command){
        return register(command, null, Collections.emptyList());
     }
-
-//    public static CommandManager getInstance(BootstrapContext contex){
-//        if(instance==null){
-//            instance = new CommandManager(contex);
-//        }
-//        return instance;
-//    }
-//
-//    @NotNull private LifecycleEventManager<BootstrapContext> manager;
-//    private BootstrapContext bootstrapContext;
-//
-//
-//    CommandManager(BootstrapContext contex){
-//        manager = contex.getLifecycleManager();
-//        bootstrapContext = contex;
-//    }
-//
-//    public CommandManager register(JasperCommand command){
-//        LiteralArgumentBuilder<CommandSourceStack> created = command.createCommand();
-//        bootstrapContext.getLogger().info("[JasperProject] registering {}", created.getLiteral());
-//
-//        manager.registerEventHandler(LifecycleEvents.COMMANDS, (c) ->
-//           c.registrar().register(created.build(), "jasper")
-//        );
-//        return this;
-//    }
-//
-//
 }

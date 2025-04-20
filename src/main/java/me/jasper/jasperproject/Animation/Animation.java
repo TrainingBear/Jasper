@@ -8,7 +8,9 @@ import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import me.jasper.jasperproject.Util.Logger;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.minecraft.core.BlockPosition;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -243,6 +245,32 @@ public abstract class Animation {
         return Command.SINGLE_SUCCESS;
     }
 
+    public static int addMember(Player player, String animation_name, List<Player> members){
+        if(!isAnimationExist(player, animation_name)){
+            return Command.SINGLE_SUCCESS;
+        }
+
+        Logger log = new Logger(player);
+        Configurator config = getCompound(animation_name);
+
+        config.edit(animation_name, e->{
+            if(!e.contains("members")) e.set("members", new ArrayList<>());
+            List<String> list = e.getStringList("members");
+            for (Player member : members) {
+                list.add(member.getName());
+                member.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>You have been just added to </yellow> <dark_green><animation></dark_green> <yellow>animation group by <name></yellow>",
+                        Placeholder.component("name", player.displayName()),
+                        Placeholder.unparsed("animation", animation_name)
+                        ));
+                log.info("<color:#fdff8c>you added <color:#c2ff33><reset><name></reset><color:#fdff8c> to your <color:#06aa00><animation></color> as member!</color>",
+                        Placeholder.component("name", member.displayName()),
+                        Placeholder.unparsed("animation", animation_name));
+            }
+            e.set("members", list);
+            return e;
+        });
+        return Command.SINGLE_SUCCESS;
+    }
     public static int addMember(Player player, String animation_name, String member){
         if(!isAnimationExist(player, animation_name)){
             return Command.SINGLE_SUCCESS;

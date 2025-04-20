@@ -1,5 +1,7 @@
 package me.jasper.jasperproject.Bazaar;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Component.Category;
 import me.jasper.jasperproject.Bazaar.Component.TaskID;
@@ -134,7 +136,9 @@ public abstract class Bazaar {
         Set<String> groups = new HashSet<>();
         for (List<Category> list : SubCategories.values()) {
             for (Category content : list) {
-                groups.add(content.getName());
+                String replace = content.getName().replace(' ', '_');
+                replace = replace.replaceAll("[\\[\\]{}]","");
+                groups.add(replace);
             }
         }
         return groups;
@@ -181,7 +185,6 @@ public abstract class Bazaar {
      * @param player target
      */
     public static void open(Player player){
-        byte slotIndex = 18;
         Inventory inv = INSTANCE(player);
         player.openInventory(inv);
     }
@@ -199,7 +202,7 @@ public abstract class Bazaar {
             container.load(()->{
                 TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
                 TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
-                putBorder(container.getContainer());
+                putMainMenuBorder(container.getContainer());
             });
         } else {
             container = null;
@@ -207,7 +210,7 @@ public abstract class Bazaar {
         return instances.computeIfAbsent(player.getUniqueId(), k -> container).getContainer();
     }
 
-    private static void putBorder(Inventory inventory){
+    private static void putMainMenuBorder(Inventory inventory){
         int[] indexes = {
           45, 27, 9, 10, 11, 13, 14, 15, 16, 17, 7
         };
