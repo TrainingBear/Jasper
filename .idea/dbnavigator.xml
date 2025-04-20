@@ -6,18 +6,28 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
+  </component>
+  <component name="DBNavigator.Project.DatabaseAssistantManager">
+    <assistants>
+      <assistant-state connection-id="e771a06e-2a05-4db0-bceb-0782cd9ccf24" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
+        <messages />
+      </assistant-state>
+      <assistant-state connection-id="90931b07-f795-447f-af16-cc4cc5fc51ed" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
+        <messages />
+      </assistant-state>
+    </assistants>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
-    <show-object-properties value="true" />
+    <show-object-properties value="false" />
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde">
-      <console name="Connection" type="STANDARD" schema="data" session="Main" />
+    <connection id="e771a06e-2a05-4db0-bceb-0782cd9ccf24">
+      <console name="Connection" type="STANDARD" schema="testtt" session="Main"><![CDATA[create database test1;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -27,15 +37,20 @@
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" />
+    <connection id="e771a06e-2a05-4db0-bceb-0782cd9ccf24" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="mysql.default_roles" active-filter-id="" />
-    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="mysql.func" active-filter-id="" />
-    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="data.product" active-filter-id="" />
-  </component>
-  <component name="DBNavigator.Project.ExecutionManager">
-    <retain-sticky-names value="false" />
+    <filter-actions connection-id="e771a06e-2a05-4db0-bceb-0782cd9ccf24" dataset="bazaar.items" active-filter-id="">
+      <filter id="4e264ece-ba0d-44d1-9221-3e67cc727c8d" name="name" temporary="false" custom-name="true" type="basic" join-type="AND">
+        <condition column="string" operator="=" value="" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="e771a06e-2a05-4db0-bceb-0782cd9ccf24" dataset="bazaar.product" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="e771a06e-2a05-4db0-bceb-0782cd9ccf24" dataset="test.items" active-filter-id="54bda821-c399-46ad-a609-8f2e9497fe76">
+      <filter id="54bda821-c399-46ad-a609-8f2e9497fe76" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="id" operator="=" value="" active="true" />
+      </filter>
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -43,44 +58,39 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" active="true" signed="true">
+      <connection id="e771a06e-2a05-4db0-bceb-0782cd9ccf24" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />
           <database-type value="MYSQL" />
           <config-type value="BASIC" />
-          <database-version value="8.0" />
+          <database-version value="9.2" />
           <driver-source value="BUNDLED" />
           <driver-library value="" />
           <driver value="" />
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="3306" />
-          <database value="bazaar" />
+          <database value="mysql" />
           <tns-folder value="" />
           <tns-profile value="" />
           <type value="USER_PASSWORD" />
           <user value="root" />
-          <deprecated-pwd value="bXlzcWwxMjM0NQ==" />
+          <token-type value="" />
+          <token-config-file value="" />
+          <token-profile value="" />
+          <session-user value="root@localhost" />
         </database>
         <properties>
-          <auto-commit value="true" />
-          <properties>
-            <property key="useInformationSchema" value="true" />
-            <property key="useUnicode" value="true" />
-            <property key="useCursorFetch" value="true" />
-            <property key="characterEncoding" value="UTF-8" />
-          </properties>
+          <auto-commit value="false" />
         </properties>
         <ssh-settings>
           <active value="false" />
           <proxy-host value="" />
           <proxy-port value="22" />
           <proxy-user value="" />
-          <deprecated-proxy-pwd value="" />
           <auth-type value="PASSWORD" />
           <key-file value="" />
-          <key-passphrase value="" />
         </ssh-settings>
         <ssl-settings>
           <active value="false" />
@@ -93,7 +103,7 @@
           <session-management value="true" />
           <ddl-file-binding value="true" />
           <database-logging value="true" />
-          <connect-automatically value="false" />
+          <connect-automatically value="true" />
           <restore-workspace value="true" />
           <restore-workspace-deep value="false" />
           <environment-type value="default" />
@@ -137,9 +147,15 @@
             <object-type name="TYPE" enabled="true" />
             <object-type name="TYPE_ATTRIBUTE" enabled="true" />
             <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="JAVA_CLASS" enabled="true" />
+            <object-type name="JAVA_INNER_CLASS" enabled="true" />
+            <object-type name="JAVA_FIELD" enabled="true" />
+            <object-type name="JAVA_METHOD" enabled="true" />
             <object-type name="DIMENSION" enabled="true" />
             <object-type name="CLUSTER" enabled="true" />
             <object-type name="DBLINK" enabled="true" />
+            <object-type name="CREDENTIAL" enabled="true" />
+            <object-type name="AI_PROFILE" enabled="true" />
           </object-type-filter>
         </object-filters>
       </connection>
@@ -175,9 +191,15 @@
           <object-type name="TYPE" enabled="true" />
           <object-type name="TYPE_ATTRIBUTE" enabled="true" />
           <object-type name="ARGUMENT" enabled="true" />
+          <object-type name="JAVA_CLASS" enabled="true" />
+          <object-type name="JAVA_INNER_CLASS" enabled="true" />
+          <object-type name="JAVA_FIELD" enabled="true" />
+          <object-type name="JAVA_METHOD" enabled="true" />
           <object-type name="DIMENSION" enabled="true" />
           <object-type name="CLUSTER" enabled="true" />
           <object-type name="DBLINK" enabled="true" />
+          <object-type name="CREDENTIAL" enabled="true" />
+          <object-type name="AI_PROFILE" enabled="true" />
         </object-type-filter>
       </filters>
       <sorting>
@@ -214,11 +236,17 @@
           <object-type name="FUNCTION" enabled="true" />
           <object-type name="PACKAGE" enabled="true" />
           <object-type name="TYPE" enabled="true" />
+          <object-type name="JAVA CLASS" enabled="true" />
+          <object-type name="INNER CLASS" enabled="true" />
+          <object-type name="JAVA FIELD" enabled="true" />
+          <object-type name="JAVA METHOD" enabled="true" />
+          <object-type name="JAVA PARAMETER" enabled="true" />
           <object-type name="DIMENSION" enabled="false" />
           <object-type name="CLUSTER" enabled="false" />
-          <object-type name="DBLINK" enabled="true" />
+          <object-type name="DBLINK" enabled="false" />
+          <object-type name="CREDENTIAL" enabled="false" />
         </lookup-objects>
-        <force-database-load value="true" />
+        <force-database-load value="false" />
         <prompt-connection-selection value="true" />
         <prompt-schema-selection value="true" />
       </lookup-filters>
@@ -506,6 +534,7 @@
         <mapping file-type-id="TYPE" extensions="tpe" />
         <mapping file-type-id="TYPE_SPEC" extensions="tps" />
         <mapping file-type-id="TYPE_BODY" extensions="tpb" />
+        <mapping file-type-id="JAVA_SOURCE" extensions="sql" />
       </extensions>
       <general>
         <lookup-ddl-files value="true" />
@@ -515,6 +544,11 @@
         <make-scripts-rerunnable value="true" />
       </general>
     </ddl-file-settings>
+    <assistant-settings>
+      <credential-settings>
+        <credentials />
+      </credential-settings>
+    </assistant-settings>
     <general-settings>
       <regional-settings>
         <date-format value="MEDIUM" />
@@ -538,12 +572,6 @@
         </visibility-settings>
       </environment>
     </general-settings>
-    <mybatis-settings>
-      <generator-filters>
-        <initConfigMap />
-        <historyConfigMap />
-      </generator-filters>
-    </mybatis-settings>
   </component>
   <component name="DBNavigator.Project.StatementExecutionManager">
     <execution-variables />
