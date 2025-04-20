@@ -1,36 +1,26 @@
 package me.jasper.jasperproject.Bazaar;
 
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import lombok.val;
-import me.jasper.jasperproject.Bazaar.Component.ProductManager;
-import me.jasper.jasperproject.Bazaar.Product.Product;
+import me.jasper.jasperproject.Bazaar.util.ProductManager;
+import me.jasper.jasperproject.Bazaar.Component.Product;
 import me.jasper.jasperproject.Util.Commands.JasperCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 public class BazaarCommand implements JasperCommand {
 
@@ -41,7 +31,7 @@ public class BazaarCommand implements JasperCommand {
                         .then(Commands.literal("new_product")
                                 .then(Commands.argument("group", StringArgumentType.string())
                                         .suggests((commandContext, suggestionsBuilder) -> {
-                                            for (String group : Bazaar.getGroups()) {
+                                            for (String group : Bazaar.getGroupsMap_String().keySet()) {
                                                 suggestionsBuilder.suggest(group);
                                             }
                                             return suggestionsBuilder.buildFuture();
@@ -107,14 +97,14 @@ public class BazaarCommand implements JasperCommand {
                                 })
                                 .then(Commands.argument("product name", StringArgumentType.string())
                                         .suggests((s, b)->{
-                                            for (String name : ProductManager.getProducts().keySet()) {
+                                            for (String name : ProductManager.getProductMap().keySet()) {
                                                 b.suggest(name);
                                             }
                                             return b.buildFuture();
                                         })
                                         .executes(e ->{
                                             if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-                                            ItemStack product = ProductManager.getProducts().get(StringArgumentType.getString(e, "product name")).getProduct();
+                                            ItemStack product = ProductManager.getProductMap().get(StringArgumentType.getString(e, "product name")).getProduct();
                                             getCurrentItemNamespaces(player, product, true);
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -123,7 +113,7 @@ public class BazaarCommand implements JasperCommand {
                                                         .suggests((s, b)->{
                                                             if(!(s.getSource().getSender()instanceof Player player)) b.buildFuture();
                                                             val productName = StringArgumentType.getString(s, "product name");
-                                                            ItemStack product = ProductManager.getProducts().get(productName).getProduct();
+                                                            ItemStack product = ProductManager.getProductMap().get(productName).getProduct();
                                                             Player player = (Player) s.getSource().getSender();
                                                             for (NamespacedKey currentItemNamespace : getCurrentItemNamespaces(player, product, false)) {
                                                                 String namespace = currentItemNamespace.getNamespace()+""+currentItemNamespace.getKey();
@@ -134,7 +124,7 @@ public class BazaarCommand implements JasperCommand {
                                                         })
                                                         .executes(e->{
                                                             val productName = StringArgumentType.getString(e, "product name");
-                                                            Product product = ProductManager.getProducts().get(productName);
+                                                            Product product = ProductManager.getProductMap().get(productName);
                                                             val namespace = e.getArgument("namespace", NamespacedKey.class);
                                                             product.setNamespace(namespace);
                                                             return Command.SINGLE_SUCCESS;
@@ -145,7 +135,7 @@ public class BazaarCommand implements JasperCommand {
                         ).then(Commands.literal("remove")
                                 .then(Commands.argument("product name", StringArgumentType.string())
                                         .suggests((s, b)->{
-                                            for (String name : ProductManager.getProducts().keySet()) {
+                                            for (String name : ProductManager.getProductMap().keySet()) {
                                                 b.suggest(name);
                                             }
                                             return b.buildFuture();
@@ -164,14 +154,14 @@ public class BazaarCommand implements JasperCommand {
                         ).then(Commands.literal("change_group")
                                 .then(Commands.argument("product name", StringArgumentType.string())
                                         .suggests((s, b)->{
-                                            for (String name : ProductManager.getProducts().keySet()) {
+                                            for (String name : ProductManager.getProductMap().keySet()) {
                                                 b.suggest(name);
                                             }
                                             return b.buildFuture();
                                         })
                                         .then(Commands.argument("new group", StringArgumentType.string())
                                                 .suggests((s, b) ->{
-                                                    for (String group : Bazaar.getGroups()) {
+                                                    for (String group : Bazaar.getGroupsMap_String().keySet()) {
                                                         b.suggest(group);
                                                     }
                                                     return b.buildFuture();

@@ -181,7 +181,7 @@ public class DungeonMapRenderer extends MapRenderer {
     }
     private List<Point> sort(List<Point> body){
         int[][] dirs = {{1,0},{0,1},{-1,0},{0,-1},};
-        List<Point> sorted = new ArrayList<>();
+        LinkedList<Point> sorted = new LinkedList<>();
         for(Point point : body){
             int counter = 0;
             for(int[] dir : dirs){

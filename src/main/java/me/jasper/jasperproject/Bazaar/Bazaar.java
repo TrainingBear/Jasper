@@ -5,6 +5,7 @@ import me.jasper.jasperproject.Bazaar.Component.Category;
 import me.jasper.jasperproject.Bazaar.Component.TaskID;
 import me.jasper.jasperproject.Bazaar.anotation.BazaarComponent;
 import me.jasper.jasperproject.Bazaar.anotation.CategoryType;
+import me.jasper.jasperproject.Bazaar.util.BazaarEnum;
 import me.jasper.jasperproject.Util.ContainerMenu.Border;
 import me.jasper.jasperproject.Util.ContainerMenu.Container;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +24,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Bazaar {
     private static final AtomicInteger atom = new AtomicInteger();
     private static int id(){
-        return atom.getAndDecrement();
+        return atom.getAndIncrement();
+    }
+    @Deprecated
+    public static void init(){
+        updateGroups();
+        update_group_map();
     }
 
     @BazaarComponent(name = "Component")
@@ -98,7 +105,7 @@ public abstract class Bazaar {
     @CategoryType(name = "magical")
     private static final Category _magic = new Category(id(), Material.STRUCTURE_VOID, miniMsgDese("<!i>Magic - soon"), TaskID.UNWRAP_GROUP);
 
-    @Getter private final static Map<Integer, List<Category>> SubCategories = Map.of(
+    @Getter private final static Map<Integer, List<Category>> SubCategoriesMap = Map.of(
             slimefun.getID(), List.of(
                     dust_slimefun,
                     machine_slimefun,
@@ -127,26 +134,27 @@ public abstract class Bazaar {
             )
     );
 
-    public static @NotNull Set<String> getGroups(){
-        Set<String> groups = new HashSet<>();
-        for (List<Category> list : SubCategories.values()) {
-            for (Category content : list) {
-                String replace = content.getName().replace(' ', '_');
-                replace = replace.replaceAll("[\\[\\]{}]","");
-                groups.add(replace);
-            }
+
+    @Getter private static final List<Category> SubCategories;
+    static {
+        SubCategories = new ArrayList<>();
+        for (List<Category> value : SubCategoriesMap.values()) {
+            SubCategories.addAll(value);
         }
-        return groups;
     }
 
-    public static Map<Integer, String> getGroupsID(){
-        Map<Integer, String> groups = new HashMap<>();
-        for (List<Category> list : SubCategories.values()) {
-            for (Category content : list) {
-                groups.put(content.getID(), content.getName());
-            }
+    @Getter private static final Map<String, Category> groupsMap_String = new HashMap<>();
+    public static void updateGroups(){
+        for (Category content : SubCategories) {
+            groupsMap_String.put(content.getName(), content);
         }
-        return groups;
+    }
+
+    @Getter private static Map<Integer, Category> groupsMap_Int = new HashMap<>();
+    public static void update_group_map(){
+        for (Category content : SubCategories) {
+            groupsMap_Int.put(content.getID(), content);
+        }
     }
 
     /**
@@ -184,7 +192,7 @@ public abstract class Bazaar {
         player.openInventory(inv);
     }
 
-    private static Component miniMsgDese(String s, TagResolver... t){
+    private static @NotNull Component miniMsgDese(String s, TagResolver... t){
         return MiniMessage.miniMessage().deserialize(s, t);
     }
 
@@ -195,8 +203,8 @@ public abstract class Bazaar {
         if(!instances.containsKey(player.getUniqueId())){
             container = new Container(player, miniMsgDese(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), 54);
             container.load(()->{
-                TaskID.UpdateDecoration(Categories.get(0), container.getContainer());
-                TaskID.UpdateSubcategory(Categories.get(0).getID(), container.getContainer());
+                TaskID.invokeCategory(mining.getID(), container.getContainer());
+                TaskID.UpdateDecoration(mining, container.getContainer());
                 initLayout(container.getContainer());
             });
         } else {
@@ -207,14 +215,14 @@ public abstract class Bazaar {
 
     private static void initLayout(@NotNull Inventory inventory){
         int[] category = {
-          1, 2, 3, 4, 5, 6
+          1, 2, 3, 4, 5
         };
         inventory.setItem(8, CLOSE.getItem());
         inventory.setItem(18, SELL_INV.getItem());
         inventory.setItem(36, ORDER.getItem());
         inventory.setItem(49, SEARCH.getItem());
         inventory.setItem(0, CATEG_NAVI_BACK.getItem());
-        inventory.setItem(7, CATEG_NAVI_NEXT.getItem());
+        inventory.setItem(6, CATEG_NAVI_NEXT.getItem());
         Iterator<Content> iterator = Categories.iterator();
         for (int i : category) {
             inventory.setItem(i, iterator.next().getItem());
