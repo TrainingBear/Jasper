@@ -1,10 +1,7 @@
 package me.jasper.jasperproject.JasperItem.Product.Weapons;
 
+import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -27,12 +24,13 @@ public class TestItem extends Jitem implements Factory {
                 .setBaseCritChance(100)
                 .setBaseMana(100)
                 .setBaseDamage(33)
+                .setBaseStrength(100)
                 .setBaseSwingRange(100)
                 .setBaseAttackSpeed(100);
-        this.getStats().addModifiers(ItemStats.MODIFIER.crit_chance, 11);
-        this.getStats().addModifiers(ItemStats.MODIFIER.Crit_damage, 20);
-        this.getStats().addModifiers(ItemStats.MODIFIER.damage, 50f);
-        this.getStats().addModifiers(ItemStats.MODIFIER.Damage, 10);
+        this.getStats().addModifiers(StatsEnum.CRIT_CHANCE, 11);
+        this.getStats().addModifiers(StatsEnum.Crit_damage, 20);
+        this.getStats().addModifiers(StatsEnum.DAMAGE, 50f);
+        this.getStats().addModifiers(StatsEnum.Damage, 10);
 
         this.getAbilities().add(new Teleport((short) 12, 0));
         this.getEnchants().add(ENCHANT.SharpnesV2);

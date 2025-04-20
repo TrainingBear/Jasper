@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.Util;
 
+import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.Component.ProductManager;
 import me.jasper.jasperproject.Bazaar.Product.BazaarDatabase;
 import me.jasper.jasperproject.Bazaar.Product.Product;
@@ -17,6 +18,10 @@ public class Debug implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!(commandSender instanceof Player player)) return false;
+        if(strings.length == 0){
+            Bazaar.open(player);
+            return true;
+        }
         switch (strings[0]){
             case "save" ->{
                 if(strings[1].isEmpty()) return false;

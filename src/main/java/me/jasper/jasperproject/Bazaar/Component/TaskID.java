@@ -57,15 +57,11 @@ public final class TaskID {
                 });
         MAP.put(CATEG_NAV_NEXT,
             (p , inv, ID)-> {
-                val id = inv.getItem(3 + 1).getItemMeta().getPersistentDataContainer()
-                        .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
-                SwapCategory(inv, id);
+                SwapCategory(inv, inv.getItem(3 + 1).getItemMeta().getPersistentDataContainer().get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
             });
         MAP.put(CATEG_NAV_BACK,
                 (p , inv, ID)-> {
-                    val id = inv.getItem(3 - 1).getItemMeta().getPersistentDataContainer()
-                            .get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER);
-                    SwapCategory(inv, id);
+                    SwapCategory(inv, inv.getItem(3 - 1).getItemMeta().getPersistentDataContainer().get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER));
                 });
         MAP.put(UNWRAP_GROUP,
                 (p, inv, id) -> UnwrapGroup(id, inv));

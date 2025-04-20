@@ -1,0 +1,451 @@
+{
+  "name" : "performance_schema",
+  "VIEWS" : [ ],
+  "TABLES" : [ {
+    "TABLE_NAME" : "accounts",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "binary_log_transaction_compression_stats",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "cond_instances",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "data_lock_waits",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "data_locks",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "error_log",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_errors_summary_by_account_by_error",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_errors_summary_by_host_by_error",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_errors_summary_by_thread_by_error",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_errors_summary_by_user_by_error",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_errors_summary_global_by_error",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_current",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_history",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_history_long",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_summary_by_account_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_summary_by_host_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_summary_by_thread_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_summary_by_user_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_stages_summary_global_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_current",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_histogram_by_digest",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_histogram_global",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_history",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_history_long",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_by_account_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_by_digest",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_by_host_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_by_program",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_by_thread_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_by_user_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_statements_summary_global_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_current",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_history",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_history_long",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_summary_by_account_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_summary_by_host_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_summary_by_thread_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_summary_by_user_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_transactions_summary_global_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_current",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_history",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_history_long",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_summary_by_account_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_summary_by_host_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_summary_by_instance",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_summary_by_thread_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_summary_by_user_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "events_waits_summary_global_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "file_instances",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "file_summary_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "file_summary_by_instance",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "global_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "global_variables",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "host_cache",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "hosts",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "innodb_redo_log_files",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "keyring_component_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "keyring_keys",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "log_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "memory_summary_by_account_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "memory_summary_by_host_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "memory_summary_by_thread_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "memory_summary_by_user_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "memory_summary_global_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "metadata_locks",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "mutex_instances",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "objects_summary_global_by_type",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "performance_timers",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "persisted_variables",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "prepared_statements_instances",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "processlist",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_applier_configuration",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_applier_filters",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_applier_global_filters",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_applier_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_applier_status_by_coordinator",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_applier_status_by_worker",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_asynchronous_connection_failover",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_asynchronous_connection_failover_managed",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_connection_configuration",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_connection_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_group_member_stats",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_group_members",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "rwlock_instances",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "session_account_connect_attrs",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "session_connect_attrs",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "session_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "session_variables",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "setup_actors",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "setup_consumers",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "setup_instruments",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "setup_objects",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "setup_threads",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "socket_instances",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "socket_summary_by_event_name",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "socket_summary_by_instance",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "status_by_account",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "status_by_host",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "status_by_thread",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "status_by_user",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "table_handles",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "table_io_waits_summary_by_index_usage",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "table_io_waits_summary_by_table",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "table_lock_waits_summary_by_table",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "threads",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "tls_channel_status",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "user_defined_functions",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "user_variables_by_thread",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "users",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "variables_by_thread",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "variables_info",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  } ],
+  "FUNCTIONS" : [ ],
+  "PROCEDURES" : [ ]
+}

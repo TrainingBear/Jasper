@@ -37,7 +37,7 @@ public class Warper extends ItemAbility{
                 MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#a900d1><b>Warper <yellow>(RIGHT CLICK & LEFT CLICK)")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>Warping you to checkpoint coordinate")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>that you inputed <color:#95945B>(Sneak + Left Click)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: &5"+WarpRange+" blocks")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: "+WarpRange+" blocks")
         ));
 
     }
@@ -118,9 +118,9 @@ public class Warper extends ItemAbility{
             float distanceTP = (float) targetToTP.distance(player.getLocation());
 
             int range = e.getRange();
-            if (distanceTP < e.getRange()+.1f) applyCooldown(e);
+            if (distanceTP < e.getRange()+.1f) applyCooldown(e,true);
             else{
-                if(hasCooldown(e)) return;
+//                if(hasCooldown(e)) return;
                 player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>TOO FAR! </b>You're <color:#fa3b2d>" + (distanceTP > 1000
                         ? round((distanceTP-range) / 1000f, 1)+"k" : round((distanceTP-range), 1)) + "</color> blocks away from limit!</red>"));
                 ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.5f);

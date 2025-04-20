@@ -1,17 +1,6 @@
 package me.jasper.jasperproject.JasperItem.Util;
 
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.Jitem;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemFactory;
 
 import java.util.List;
 

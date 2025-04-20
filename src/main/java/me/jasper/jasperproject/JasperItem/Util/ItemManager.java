@@ -1,19 +1,13 @@
 package me.jasper.jasperproject.JasperItem.Util;
 
 import lombok.Getter;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Product.Tools.Blender;
 import me.jasper.jasperproject.JasperItem.Product.Tools.GraplingHook;
-import me.jasper.jasperproject.JasperItem.Product.Weapons.EndGateway;
-import me.jasper.jasperproject.JasperItem.Product.Weapons.TestItem;
-import me.jasper.jasperproject.JasperItem.Product.Weapons.TitaniumSword;
-import me.jasper.jasperproject.JasperItem.Product.Weapons.WarpGateway;
+import me.jasper.jasperproject.JasperItem.Product.Weapons.*;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -53,12 +47,14 @@ public final class ItemManager {
         registerAbility(Grappling_Hook.getInstance());
         registerAbility(Warper.getInstance());
         registerAbility(Animator.getInstance());
+        registerAbility(Burst_Arrow.getInstance());
 
         registerItem(new Blender());
-        registerItem(new EndGateway());
-        registerItem(new WarpGateway());
+        registerItem(new End_Gateway());
+        registerItem(new Warp_Gateway());
         registerItem(new GraplingHook());
         registerItem(new TestItem());
-        registerItem(new TitaniumSword());
+        registerItem(new Titanium_Sword());
+        registerItem(new Burst_Bow());
     }
 }

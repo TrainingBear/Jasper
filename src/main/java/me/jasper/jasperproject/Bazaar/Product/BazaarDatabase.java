@@ -15,9 +15,9 @@ public abstract class BazaarDatabase {
     public static void startConnection(){
         try {
             connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bazaar",
+                    "jdbc:mysql://localhost:3306/",
                     "root",
-                    "1234"
+                    "mysql12345"
             );
         } catch (SQLException e) {
             e.printStackTrace();

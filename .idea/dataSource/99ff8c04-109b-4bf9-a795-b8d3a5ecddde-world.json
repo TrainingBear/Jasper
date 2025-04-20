@@ -1,0 +1,19 @@
+{
+  "name" : "world",
+  "TABLES" : [ {
+    "TABLE_NAME" : "city",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "country",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "countrylanguage",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  } ],
+  "FUNCTIONS" : [ ],
+  "VIEWS" : [ ],
+  "PROCEDURES" : [ ]
+}

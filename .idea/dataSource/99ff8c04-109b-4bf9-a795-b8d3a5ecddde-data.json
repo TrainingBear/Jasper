@@ -1,0 +1,257 @@
+{
+  "name" : "data",
+  "VIEWS" : [ ],
+  "PROCEDURES" : [ ],
+  "FUNCTIONS" : [ ],
+  "DATASET_COLUMNS" : [ {
+    "COLUMN_NAME" : "category",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "POSITION" : 4,
+    "DATA_TYPE_NAME" : "varchar",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : 255,
+    "DATA_PRECISION" : null,
+    "DATA_SCALE" : null,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "N",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  }, {
+    "COLUMN_NAME" : "id",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "POSITION" : 1,
+    "DATA_TYPE_NAME" : "mediumint",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : null,
+    "DATA_PRECISION" : 7,
+    "DATA_SCALE" : 0,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "Y",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  }, {
+    "COLUMN_NAME" : "name",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "POSITION" : 2,
+    "DATA_TYPE_NAME" : "varchar",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : 255,
+    "DATA_PRECISION" : null,
+    "DATA_SCALE" : null,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "N",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  }, {
+    "COLUMN_NAME" : "product",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "POSITION" : 3,
+    "DATA_TYPE_NAME" : "mediumblob",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : 16777215,
+    "DATA_PRECISION" : null,
+    "DATA_SCALE" : null,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "N",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  } ],
+  "ALL_COLUMNS" : [ {
+    "COLUMN_NAME" : "category",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "DATASET_NAME" : "product",
+    "POSITION" : 4,
+    "DATA_TYPE_NAME" : "varchar",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : 255,
+    "DATA_PRECISION" : null,
+    "DATA_SCALE" : null,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "N",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  }, {
+    "COLUMN_NAME" : "id",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "DATASET_NAME" : "product",
+    "POSITION" : 1,
+    "DATA_TYPE_NAME" : "mediumint",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : null,
+    "DATA_PRECISION" : 7,
+    "DATA_SCALE" : 0,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "Y",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  }, {
+    "COLUMN_NAME" : "name",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "DATASET_NAME" : "product",
+    "POSITION" : 2,
+    "DATA_TYPE_NAME" : "varchar",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : 255,
+    "DATA_PRECISION" : null,
+    "DATA_SCALE" : null,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "N",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  }, {
+    "COLUMN_NAME" : "product",
+    "COLUMN_COMMENT" : "",
+    "COLUMN_DEFAULT" : null,
+    "DATASET_NAME" : "product",
+    "POSITION" : 3,
+    "DATA_TYPE_NAME" : "mediumblob",
+    "DECL_TYPE_OWNER" : null,
+    "DECL_TYPE_PROGRAM" : null,
+    "DECL_TYPE_NAME" : null,
+    "DATA_LENGTH" : 16777215,
+    "DATA_PRECISION" : null,
+    "DATA_SCALE" : null,
+    "IS_SET" : "N",
+    "IS_NULLABLE" : "N",
+    "IS_HIDDEN" : "N",
+    "IS_PRIMARY_KEY" : "N",
+    "IS_FOREIGN_KEY" : "N",
+    "IS_UNIQUE_KEY" : "N",
+    "IS_IDENTITY" : "N"
+  } ],
+  "DATASET_INDEXES" : [ {
+    "INDEX_NAME" : "name",
+    "IS_UNIQUE" : "N",
+    "IS_VALID" : "Y"
+  }, {
+    "INDEX_NAME" : "PRIMARY",
+    "IS_UNIQUE" : "N",
+    "IS_VALID" : "Y"
+  } ],
+  "DATASET_CONSTRAINTS" : [ {
+    "DATASET_NAME" : "product",
+    "CONSTRAINT_NAME" : "unq_product",
+    "CONSTRAINT_TYPE" : "UNIQUE",
+    "FK_CONSTRAINT_OWNER" : null,
+    "FK_CONSTRAINT_NAME" : null,
+    "IS_ENABLED" : "Y",
+    "CHECK_CONDITION" : null
+  }, {
+    "DATASET_NAME" : "product",
+    "CONSTRAINT_NAME" : "pk_product",
+    "CONSTRAINT_TYPE" : "PRIMARY KEY",
+    "FK_CONSTRAINT_OWNER" : null,
+    "FK_CONSTRAINT_NAME" : null,
+    "IS_ENABLED" : "Y",
+    "CHECK_CONDITION" : null
+  } ],
+  "DATASET_TRIGGERS" : [ ],
+  "ALL_INDEXES" : [ {
+    "INDEX_NAME" : "name",
+    "TABLE_NAME" : "product",
+    "IS_UNIQUE" : "N",
+    "IS_VALID" : "Y"
+  }, {
+    "INDEX_NAME" : "PRIMARY",
+    "TABLE_NAME" : "product",
+    "IS_UNIQUE" : "N",
+    "IS_VALID" : "Y"
+  } ],
+  "ALL_DATASET_TRIGGERS" : [ ],
+  "ALL_CONSTRAINTS" : [ {
+    "DATASET_NAME" : "product",
+    "CONSTRAINT_NAME" : "unq_product",
+    "CONSTRAINT_TYPE" : "UNIQUE",
+    "FK_CONSTRAINT_OWNER" : null,
+    "FK_CONSTRAINT_NAME" : null,
+    "IS_ENABLED" : "Y",
+    "CHECK_CONDITION" : null
+  }, {
+    "DATASET_NAME" : "product",
+    "CONSTRAINT_NAME" : "pk_product",
+    "CONSTRAINT_TYPE" : "PRIMARY KEY",
+    "FK_CONSTRAINT_OWNER" : null,
+    "FK_CONSTRAINT_NAME" : null,
+    "IS_ENABLED" : "Y",
+    "CHECK_CONDITION" : null
+  } ],
+  "DATASET_INDEX_COLUMNS" : [ {
+    "COLUMN_NAME" : "id",
+    "INDEX_NAME" : "PRIMARY"
+  }, {
+    "COLUMN_NAME" : "name",
+    "INDEX_NAME" : "name"
+  } ],
+  "ALL_INDEX_COLUMNS" : [ {
+    "TABLE_NAME" : "product",
+    "COLUMN_NAME" : "id",
+    "INDEX_NAME" : "PRIMARY"
+  }, {
+    "TABLE_NAME" : "product",
+    "COLUMN_NAME" : "name",
+    "INDEX_NAME" : "name"
+  } ],
+  "ALL_CONSTRAINT_COLUMNS" : [ {
+    "DATASET_NAME" : "product",
+    "COLUMN_NAME" : "name",
+    "CONSTRAINT_NAME" : "unq_product",
+    "POSITION" : 1
+  }, {
+    "DATASET_NAME" : "product",
+    "COLUMN_NAME" : "id",
+    "CONSTRAINT_NAME" : "pk_product",
+    "POSITION" : 1
+  } ],
+  "DATASET_CONSTRAINT_COLUMNS" : [ {
+    "COLUMN_NAME" : "id",
+    "CONSTRAINT_NAME" : "pk_product",
+    "POSITION" : 1
+  }, {
+    "COLUMN_NAME" : "name",
+    "CONSTRAINT_NAME" : "unq_product",
+    "POSITION" : 1
+  } ],
+  "TABLES" : [ ]
+}

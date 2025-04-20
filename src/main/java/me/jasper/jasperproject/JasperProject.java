@@ -54,16 +54,16 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load(Animation::loadConfig);
+//        animationConfig.load(Animation::loadConfig);
 
-        Bazaar.setCategory();
-        BazaarDatabase.startConnection();
-        try {
-            ProductManager.init();
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+//        Bazaar.setCategory();
+//        BazaarDatabase.startConnection();
+//        try {
+//            ProductManager.init();
+//        } catch (SQLException | IOException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
 
         if (!setupEconomy() ) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -71,7 +71,7 @@ public final class JasperProject extends JavaPlugin {
             return;
         }
         setupPermissions();
-        setupChat();
+//        setupChat();
 
         ItemManager.getInstance().registerAll();
 
