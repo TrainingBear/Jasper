@@ -1,15 +1,11 @@
 package me.jasper.jasperproject.JasperItem;
 
+import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hook;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -65,10 +61,10 @@ public final class Items {
                 .setBaseDamage(33)
                 .setBaseSwingRange(100)
                 .setBaseAttackSpeed(100);
-        test.getStats().addModifiers(ItemStats.MODIFIER.crit_chance, 11);
-        test.getStats().addModifiers(ItemStats.MODIFIER.Crit_damage, 20);
-        test.getStats().addModifiers(ItemStats.MODIFIER.damage, 50f);
-        test.getStats().addModifiers(ItemStats.MODIFIER.Damage, 10);
+        test.getStats().addModifiers(StatsEnum.CRIT_CHANCE, 11);
+        test.getStats().addModifiers(StatsEnum.Crit_damage, 20);
+        test.getStats().addModifiers(StatsEnum.DAMAGE, 50f);
+        test.getStats().addModifiers(StatsEnum.Damage, 10);
 
         test.getAbilities().add(new Teleport((short) 12, 0));
         test.getEnchants().add(ENCHANT.SharpnesV2);

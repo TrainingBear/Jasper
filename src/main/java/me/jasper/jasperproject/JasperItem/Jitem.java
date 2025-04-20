@@ -51,8 +51,7 @@ public class Jitem {
      * @param ID THIS IS FINAL ID, DONT CHANGE THIS ID! OR ITEM CANT BE UPDATED
      * */
 
-    public Jitem(String name, Material material, Rarity rarity, ItemType type,
-                 long itemVersion, String ID){
+    public Jitem(String name, Material material, Rarity rarity, ItemType type, long itemVersion, String ID){
         this(false, true, false, (byte) 0, name, name, material, rarity, rarity, type, itemVersion, ID, new ArrayList<>(), new ItemStats(), new ArrayList<>());
     }
 

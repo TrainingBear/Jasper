@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: me.jasper.jasperproject.FileConfiguration.ConfiguratorTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.075 s <<< FAILURE! -- in me.jasper.jasperproject.FileConfiguration.ConfiguratorTest
+me.jasper.jasperproject.FileConfiguration.ConfiguratorTest.getConfig -- Time elapsed: 0.030 s <<< ERROR!
+java.lang.NullPointerException: Cannot read the array length because "<local3>" is null
+	at me.jasper.jasperproject.Util.FileConfiguration.Configurator.load(Configurator.java:59)
+	at me.jasper.jasperproject.FileConfiguration.ConfiguratorTest.getConfig(ConfiguratorTest.java:14)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

@@ -17,6 +17,7 @@ public class End_Gateway extends Jitem implements Factory {
         super("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
         this.getStats()
                 .setBaseDamage(39)
+                .setBaseStrength(30)
                 .setBaseMana(50)
                 .setBaseSpeed(10)
                 .setBaseAttackSpeed(5);

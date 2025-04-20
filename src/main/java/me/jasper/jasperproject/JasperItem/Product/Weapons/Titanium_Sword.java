@@ -14,6 +14,7 @@ public class Titanium_Sword extends Jitem implements Factory {
         super("Titanium Sword", Material.IRON_SWORD, Rarity.UNCOMMON, ItemType.SWORD, 21147L, "TITANIUM_SWORD");
         this.getStats()
                 .setBaseDamage(18)
+                .setBaseStrength(10)
                 .setBaseCrit(30)
                 .setBaseCritChance(15)
                 .setBaseAttackSpeed(3);

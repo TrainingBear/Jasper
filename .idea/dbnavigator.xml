@@ -17,7 +17,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde">
-      <console name="Connection" type="STANDARD" schema="data" session="Main"><![CDATA[describe product;]]></console>
+      <console name="Connection" type="STANDARD" schema="data" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -31,6 +31,11 @@
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="mysql.default_roles" active-filter-id="" />
+    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="mysql.func" active-filter-id="" />
+    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="data.product" active-filter-id="" />
+  </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -51,7 +56,7 @@
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="3306" />
-          <database value="mysql" />
+          <database value="bazaar" />
           <tns-folder value="" />
           <tns-profile value="" />
           <type value="USER_PASSWORD" />
@@ -88,7 +93,7 @@
           <session-management value="true" />
           <ddl-file-binding value="true" />
           <database-logging value="true" />
-          <connect-automatically value="true" />
+          <connect-automatically value="false" />
           <restore-workspace value="true" />
           <restore-workspace-deep value="false" />
           <environment-type value="default" />

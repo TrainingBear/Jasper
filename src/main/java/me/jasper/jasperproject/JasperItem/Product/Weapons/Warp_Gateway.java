@@ -13,6 +13,7 @@ public class Warp_Gateway extends Jitem implements Factory {
         super("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.LEGENDARY, ItemType.SWORD, 2114L, "WARP_GATEWAY");
         this.getStats()
                 .setBaseDamage(45)
+                .setBaseStrength(36)
                 .setBaseMana(75)
                 .setBaseSpeed(15)
                 .setBaseAttackSpeed(8);

@@ -12,6 +12,7 @@ public class Burst_Bow extends Jitem implements Factory {
         super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW, 2114L, "BURST_BOW");
         this.getStats()
                 .setBaseDamage(15)
+                .setBaseStrength(10)
                 .setBaseAttackSpeed(3)
                 .setBaseCrit(30)
                 .setBaseCritChance(10);

@@ -6,7 +6,10 @@ import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -33,7 +36,7 @@ public class Burst_Arrow extends ItemAbility {
         addLore(List.of(
                 MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#eeff00>Burst Arrow <b><yellow>(ON FULL DRAW)")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>Shoot <color:#ba9e9e>"+range+"</color> arrows in rapid succession")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>when shoot at full power in 1 second")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>when shoot at full power in 1.5 second")
         ));
     }
     public Burst_Arrow(int count, float cooldown, Player p, Arrow ar,float force){
@@ -46,15 +49,19 @@ public class Burst_Arrow extends ItemAbility {
     @EventHandler
     public void BurstListener(Burst_Arrow e){
         applyCooldown(e,false);
-        if(e.isCancelled()) return;
+        if(e.isCancelled()) {
+            e.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e)+" seconds!"));
+            return;
+        }
 
-        byte time = (byte) (20/e.getRange()); //1 second duration
+        byte time = (byte) (30/e.getRange()); //1.5 second duration
         new BukkitRunnable() {
             private byte total=0;
             @Override
             public void run() {
                 if(!ItemUtils.hasAbility(Bukkit.getPlayer(e.getPlayer().getUniqueId()).getInventory().getItemInMainHand(), e.getKey())||this.total >= e.getRange()-1) cancel();
                 Arrow panah = e.getPlayer().launchProjectile(Arrow.class);
+                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
 
                 panah.setVelocity(e.getPlayer().getLocation().getDirection().multiply(e.getForce()));
                 panah.setCritical(true);
