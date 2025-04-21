@@ -19,16 +19,16 @@ public class Border implements Serializable, Content, Listener {
     public Border(int ID, Material material, boolean glint){
         this(ID, material, glint, MiniMessage.miniMessage().deserialize(""), true);
     }
-    public Border(int ID, Material material, boolean glint, Component dispName, boolean tooltip){
+    public Border(int ID, Material material, boolean glint, Component dispName, boolean hide_tooltip){
         this.ID = ID;
         if(material == Material.AIR) return;
         border = new ItemStack(material);
-        ItemMeta meta = border.getItemMeta();
-        meta.displayName(dispName);
-        if(tooltip) meta.setHideTooltip(true);
-        if(glint) meta.setEnchantmentGlintOverride(true);
-        meta.getPersistentDataContainer().set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
-        border.setItemMeta(meta);
+        border.editMeta(meta -> {
+            meta.displayName(dispName);
+            if(hide_tooltip) meta.setHideTooltip(true);
+            if(glint) meta.setEnchantmentGlintOverride(true);
+            meta.getPersistentDataContainer().set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
+        });
     }
 
     @Override

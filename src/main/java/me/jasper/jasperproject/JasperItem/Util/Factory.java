@@ -2,10 +2,15 @@ package me.jasper.jasperproject.JasperItem.Util;
 
 import me.jasper.jasperproject.JasperItem.Jitem;
 
+import java.io.ObjectStreamClass;
 import java.util.List;
 
 public interface Factory {
     Jitem create();
+
+    default long getVersion(){
+        return ObjectStreamClass.lookup(this.getClass()).getSerialVersionUID();
+    }
 
 
 //    public static Jitem createEndGateway() {

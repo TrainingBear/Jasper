@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.val;
 import me.jasper.jasperproject.Bazaar.util.BazaarException;
 import me.jasper.jasperproject.Bazaar.util.MessageEnum;
+import me.jasper.jasperproject.Bazaar.util.ProductManager;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
@@ -25,11 +26,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Product implements Content, Serializable {
+    @Serial
+    private static final long serialVersionUID = -8895910399404250457L;
+
     @Getter private String product_name;
     @Getter private ItemStack product;
     @Getter private ItemStack prototype;
@@ -51,7 +56,7 @@ public final class Product implements Content, Serializable {
             PersistentDataContainer pdc = e.getPersistentDataContainer();
             pdc.set(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING, product_name);
             pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
-            pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.BUY);
+            pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.OPEN_PRODUCT_MENU);
         });
         this.namespace = key==null? null: key.toString();
     }
@@ -275,7 +280,7 @@ public final class Product implements Content, Serializable {
     public synchronized void instantSell(@NotNull Player seller){
         int ammount= 0;
 
-        NamespacedKey key = NamespacedKey.fromString(namespace);
+        NamespacedKey key = getKey();
 
         for (ItemStack item : seller.getInventory().getStorageContents()){
             if (item==null) continue;
@@ -329,6 +334,23 @@ public final class Product implements Content, Serializable {
         if (ammount > 0) {
             instantSell(seller, ammount);
         }
+    }
+
+    public synchronized void instantBuy(@NotNull Player buyer) throws BazaarException{
+        int ammount= 0;
+        NamespacedKey key = getKey();
+
+        for (ItemStack item : buyer.getInventory().getStorageContents()){
+            if (item==null) continue;
+            if(key == null){
+                if(item.isSimilar(product)){
+                    ammount+=item.getAmount();
+                }
+            } else if(item.getItemMeta().getPersistentDataContainer().has(key)){
+                ammount+=item.getAmount();
+            }
+        }
+        instantBuy(buyer, ammount);
     }
 
     public synchronized void instantBuy(Player buyer, int ammount) throws BazaarException{
@@ -399,5 +421,9 @@ public final class Product implements Content, Serializable {
     
     private int id(){
         return atomicInteger.getAndIncrement();
+    }
+
+    public static Product fromString(String name){
+        return ProductManager.getProductMap().get(name);
     }
 }

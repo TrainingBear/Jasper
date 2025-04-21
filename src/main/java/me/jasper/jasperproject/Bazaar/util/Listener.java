@@ -24,21 +24,27 @@ public class Listener implements org.bukkit.event.Listener {
 
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
         if(!contain(container, JKey.BAZAAR_COMPONENT_TASK_ID)) return;
+        Player whoClicked = (Player) e.getWhoClicked();
         if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
             byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
             TaskID.MAP.get(taskID)
                     .update(
-                            (Player) e.getWhoClicked(),
+                            whoClicked,
                             e.getClickedInventory(),
                             container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER)
                     );
-//            Bukkit.broadcastMessage(taskID +"invoked!");
         }
         if(contain(container, JKey.BAZAAR_PRODUCT)){
             String name = container.get(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING);
-            TaskID.openProductMenu(e.getInventory(), name);
+            byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
+            whoClicked.sendMessage("You invoked "+taskID);
+            TaskID.PRODUCT_MAP.get(taskID)
+                    .execute(
+                            whoClicked,
+                            e.getClickedInventory(),
+                            name
+                    );
         }
-
     }
 
     private boolean contain(@NotNull PersistentDataContainer container, NamespacedKey key){
