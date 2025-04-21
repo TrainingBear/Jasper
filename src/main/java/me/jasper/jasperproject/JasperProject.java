@@ -53,7 +53,7 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load(Animation::loadConfig);
+//        animationConfig.load(Animation::loadConfig);
 
         Bazaar.init();
         try {
@@ -76,7 +76,7 @@ public final class JasperProject extends JavaPlugin {
             return;
         }
         setupPermissions();
-        setupChat();
+//        setupChat();
 
         ItemManager.getInstance().registerAll();
 

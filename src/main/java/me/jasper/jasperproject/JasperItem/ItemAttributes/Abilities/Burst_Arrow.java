@@ -50,7 +50,7 @@ public class Burst_Arrow extends ItemAbility {
     public void BurstListener(Burst_Arrow e){
         applyCooldown(e,false);
         if(e.isCancelled()) {
-            e.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e)+" seconds!"));
+            e.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
             return;
         }
 

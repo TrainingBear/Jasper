@@ -13,24 +13,24 @@ public enum ItemType {
     PICKAXE,
     SHOVEL,
     ROD,
-    ITEM;
+    WAND,
+    STAFF,
+    INGREDIENTS, //bahan crafting yg sebelumnya udh di craft,
+    // kayak material di craft jadi ingredient, ingredient bisa di craft lg jd bahan ingredient/matang
+    MATERIAL, //bahan mentah, sementah-mentahnya :moyai:
+    ITEM,
+    HELMET,
+    GOOGLES,
+    CHESTPLATE,
+    LEGGINGS,
+    BOOTS;
 
     public static ItemType getFromString(String string){
-        return switch (string){
-            case "ARMOR" -> ARMOR;
-            case "SWORD" -> SWORD;
-            case "LONGSWORD" -> LONGSWORD;
-            case "BOW" -> BOW;
-            case "SHORTBOW" -> SHORTBOW;
-            case "LONGBOW" -> LONGBOW;
-            case "AXE" -> AXE;
-            case "MACE" -> MACE;
-            case "TRIDENT" -> TRIDENT;
-            case "PICKAXE" -> PICKAXE;
-            case "SHOVEL" -> SHOVEL;
-            case "ROD" -> ROD;
-            default -> ITEM;
-        };
+        try{
+            return ItemType.valueOf(string);
+        }catch(IllegalArgumentException e) {
+            return ITEM;
+        }
     }
 
 }

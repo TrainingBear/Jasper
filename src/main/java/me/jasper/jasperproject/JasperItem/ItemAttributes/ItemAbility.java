@@ -70,23 +70,24 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         return stats;
     }
 
-    protected <T extends ItemAbility> boolean hasCooldown(T e){
+    protected <T extends ItemAbility> boolean hasCooldown(T e,boolean sendmessage){
         float cooldown = e.getCooldown();
         float current = ItemAbility.this.cooldownMap.get(player.getUniqueId()) != null ?
                 (System.currentTimeMillis() - ItemAbility.this.cooldownMap.get(player.getUniqueId()) ) / 1000.0f : cooldown+1;
 
         if(current > cooldown) return false;
-        if(!isShowCooldown()) return true;
-        Player player = e.getPlayer();
-        player.sendMessage(
-                MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
-        );
+        if(sendmessage) {
+            if (!isShowCooldown()) return true;
+            e.getPlayer().sendMessage(
+                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait " + round((cooldown - current), 1) + " seconds!</red>")
+            );
+        }
         return true;
     }
-    protected <T extends ItemAbility> float getCdLeft(T e){
+    protected <T extends ItemAbility> float getCdLeft(T e,int defaultIfNull){
         return cooldownMap.containsKey(e.getPlayer().getUniqueId())
                 ? round(e.getCooldown() - ((System.currentTimeMillis() - cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f),1)
-                : 0f;
+                : defaultIfNull;
     }
     protected <T extends ItemAbility> void applyCooldown(T e,boolean showCD) {
         float cooldown = e.getCooldown();

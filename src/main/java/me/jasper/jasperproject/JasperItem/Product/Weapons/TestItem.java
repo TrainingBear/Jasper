@@ -26,7 +26,12 @@ public class TestItem extends Jitem implements Factory {
                 .setBaseDamage(33)
                 .setBaseStrength(100)
                 .setBaseSwingRange(100)
-                .setBaseAttackSpeed(100);
+                .setBaseAttackSpeed(100)
+                .setBaseHealth(100)
+                .setBaseDoubleAttack(100)
+                .setBaseTrueDefense(100)
+                .setBaseHealth(100)
+                .setBaseDefense(100);
         this.getStats().addModifiers(StatsEnum.CRIT_CHANCE, 11);
         this.getStats().addModifiers(StatsEnum.Crit_damage, 20);
         this.getStats().addModifiers(StatsEnum.DAMAGE, 50f);

@@ -21,7 +21,7 @@ public abstract class BazaarDatabase {
     public static boolean startConnection() throws SQLException {
         try {
             connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/",
+                    "jdbc:mysql://localhost:3306/bazaar",
                     "root",
                     "mysql12345"
             );
@@ -29,7 +29,7 @@ public abstract class BazaarDatabase {
             e.printStackTrace();
         }
 
-        return connection.createStatement().execute("" +
+        return connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS product(" +
                 "  id mediumint NOT NULL AUTO_INCREMENT," +
                 "  name varchar(255) NOT NULL," +
