@@ -112,6 +112,4 @@ commands:
     description: justMob
   jitem:
     description: justItem
-  bazaar:
-    description: Open shop menu
 

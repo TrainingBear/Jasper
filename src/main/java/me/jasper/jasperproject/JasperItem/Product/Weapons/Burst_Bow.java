@@ -7,9 +7,11 @@ import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import org.bukkit.Material;
 
+import java.io.ObjectStreamClass;
+
 public class Burst_Bow extends Jitem implements Factory {
     public Burst_Bow(){
-        super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW, 2114L, "BURST_BOW");
+        super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW, 1l, "BURST_BOW");
         this.getStats()
                 .setBaseDamage(15)
                 .setBaseStrength(10)

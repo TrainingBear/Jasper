@@ -7,12 +7,14 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import lombok.val;
+import me.jasper.jasperproject.Bazaar.util.MessageEnum;
 import me.jasper.jasperproject.Bazaar.util.ProductManager;
 import me.jasper.jasperproject.Bazaar.Component.Product;
 import me.jasper.jasperproject.Util.Commands.JasperCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,43 +38,11 @@ public class BazaarCommand implements JasperCommand {
                                             }
                                             return suggestionsBuilder.buildFuture();
                                         })
-                                        .then(Commands.argument("product name", StringArgumentType.string())
-                                                .then(Commands.argument("namespace", ArgumentTypes.namespacedKey())
-                                                        .suggests((s, b)->{
-                                                            if(!(s.getSource().getSender()instanceof Player player)) return b.buildFuture();
-                                                            ItemStack item = player.getInventory().getItemInMainHand();
-                                                            for (NamespacedKey key : getCurrentItemNamespaces(player, item, false)) {
-                                                                b.suggest(key.getNamespace()+":"+key.getKey());
-                                                            }
-                                                            b.suggest("null");
-                                                            return b.buildFuture();
-                                                        })
-                                                        .executes(e -> {
-                                                            if(!(e.getSource().getSender()instanceof Player player)) return  Command.SINGLE_SUCCESS;
-                                                            ItemStack item = player.getInventory().getItemInMainHand();
-                                                            val productName = StringArgumentType.getString(e, "product name");
-                                                            NamespacedKey namespace = e.getArgument("namespace", NamespacedKey.class);
-
-                                                            Product product = new Product(item, productName, namespace);
-                                                            try {
-                                                                ProductManager.createProduct(
-                                                                        StringArgumentType.getString(e, "group"),
-                                                                        productName,
-                                                                        product
-                                                                );
-                                                            } catch (SQLException ex) {
-                                                                player.sendMessage(ex.getMessage());
-                                                                throw new RuntimeException(ex);
-                                                            }
-
-                                                            return Command.SINGLE_SUCCESS;
-                                                        })
-                                                )
-                                        ).executes(e -> {
+                                        .executes(e -> {
                                             if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-                                            val productName = StringArgumentType.getString(e, "product name");
                                             ItemStack item = player.getInventory().getItemInMainHand();
-                                            Product product = new Product(item, productName, (NamespacedKey) null);
+                                            val productName = PlainTextComponentSerializer.plainText().serialize(item.displayName());
+                                            Product product = new Product(item, productName, null);
                                             try {
                                                 ProductManager.createProduct(
                                                         StringArgumentType.getString(e, "group"),
@@ -83,8 +53,51 @@ public class BazaarCommand implements JasperCommand {
                                                 player.sendMessage(ex.getMessage());
                                                 throw new RuntimeException(ex);
                                             }
+                                            player.sendMessage(MessageEnum.BAZAAR.append(MiniMessage.miniMessage().deserialize(
+                                                    "<gold><b>Added <item></b> <yellow>(<product name>)</yellow> <b>to</b> <yellow><group></yellow></gold>",
+                                                    Placeholder.component("item", item.displayName()),
+                                                    Placeholder.unparsed("group", StringArgumentType.getString(e, "group")),
+                                                    Placeholder.unparsed("product name", productName)
+                                            )));
                                             return Command.SINGLE_SUCCESS;
                                         })
+                                        .then(Commands.argument("namespace", ArgumentTypes.namespacedKey())
+                                                .suggests((s, b)->{
+                                                    Player player = (Player) s.getSource().getSender();
+                                                    ItemStack item = player.getInventory().getItemInMainHand();
+                                                    b.suggest("null");
+                                                    for (NamespacedKey key : getCurrentItemNamespaces(player, item, false)) {
+                                                        b.suggest(key.getNamespace()+":"+key.getKey());
+                                                    }
+                                                    return b.buildFuture();
+                                                })
+                                                .executes(e -> {
+                                                    if(!(e.getSource().getSender()instanceof Player player)) return  Command.SINGLE_SUCCESS;
+                                                    ItemStack item = player.getInventory().getItemInMainHand();
+                                                    val productName = PlainTextComponentSerializer.plainText().serialize(item.displayName());
+                                                    NamespacedKey namespace = e.getArgument("namespace", NamespacedKey.class);
+
+                                                    Product product = new Product(item, productName, namespace);
+                                                    try {
+                                                        ProductManager.createProduct(
+                                                                StringArgumentType.getString(e, "group"),
+                                                                productName,
+                                                                product
+                                                        );
+                                                    } catch (SQLException ex) {
+                                                        player.sendMessage(ex.getMessage());
+                                                        throw new RuntimeException(ex);
+                                                    }
+                                                    player.sendMessage(MessageEnum.BAZAAR.append(MiniMessage.miniMessage().deserialize(
+                                                            "<gold><b>Added <item></b> <yellow>(<product name>)</yellow> <b>to</b> <yellow><group></yellow></gold>",
+                                                            Placeholder.component("item", item.displayName()),
+                                                            Placeholder.unparsed("group", StringArgumentType.getString(e, "group")),
+                                                            Placeholder.unparsed("product name", productName)
+                                                    )));
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+
                                 )
 
                         )
@@ -191,18 +204,7 @@ public class BazaarCommand implements JasperCommand {
                 });
     }
 
-    private NamespacedKey stringToNamespace(@NotNull String namespace){
-        String[] ns = namespace.split(":");
-        NamespacedKey key = null;
-        if(namespace.equals("null")){
-            key = null;
-        } else if (ns.length==2) {
-            key = new NamespacedKey(ns[0], ns[1]);
-        }
-        return key;
-    }
-
-    public Set<NamespacedKey> getCurrentItemNamespaces(@NotNull Player player, ItemStack item, boolean show_player){
+    public Set<NamespacedKey> getCurrentItemNamespaces(@NotNull Player player, @NotNull ItemStack item, boolean show_player){
         if(item.isEmpty() || !item.hasItemMeta()) return new HashSet<>();
         Set<NamespacedKey> keys = item.getItemMeta().getPersistentDataContainer().getKeys();
         if(!show_player) return keys;
@@ -210,7 +212,7 @@ public class BazaarCommand implements JasperCommand {
                 Placeholder.component("displayname", item.displayName())
                 ));
         for (NamespacedKey key : keys) {
-            Component component = MiniMessage.miniMessage().deserialize("<click:copy_to_clipboard:"+key.getNamespace()+":"+key.getKey()+"><hover:show_text:'Click to copy!'><dark_green><namespace></dark_green>:<green><key></green></hover></click>",
+            Component component = MiniMessage.miniMessage().deserialize("<click:copy_to_clipboard:"+key.toString()+"><hover:show_text:'Click to copy!'><dark_green><namespace></dark_green>:<green><key></green></hover></click>",
                     Placeholder.unparsed("namespace", key.getNamespace()),
                     Placeholder.unparsed("key", key.getKey())
             );

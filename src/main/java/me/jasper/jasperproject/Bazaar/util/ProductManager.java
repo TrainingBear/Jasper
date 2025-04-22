@@ -33,6 +33,7 @@ public abstract class ProductManager {
 
     public static void changeGroup(String item, String new_group) throws SQLException {
         BazaarDatabase.setCategory(item, new_group);
+
     }
 
     public static void saveAll() throws SQLException {

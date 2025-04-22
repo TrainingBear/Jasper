@@ -34,7 +34,23 @@ public abstract class Bazaar {
 
     @BazaarComponent(name = "Component")
     private final static Border BLANK = new Border(-1, Material.AIR, false);
-    private final static Border BORDER = new Border(id(), Material.BLACK_STAINED_GLASS_PANE, false);
+    public final static Border BORDER = new Border(id(), Material.BLACK_STAINED_GLASS_PANE, false);
+
+
+    public final static Category CREATE_BUY_ORDER = new Category(id(), Material.MOJANG_BANNER_PATTERN, miniMsgDese("<!i><blue>Create Buy Order"), TaskID.CREATE_BUY_ORDER);
+    public final static Category CREATE_SELL_ORDER = new Category(id(), Material.MOJANG_BANNER_PATTERN, miniMsgDese("<!i><blue>Create Sell Order"), TaskID.CREATE_SELL_ORDER);
+    public final static Category FILL_INVENTORY = new Category(id(), Material.CHEST, miniMsgDese("<!i><blue>Fill Inventory"), TaskID.FILL_INVENTORY);
+    public final static Category SELL_INVENTORY = new Category(id(), Material.CHEST, miniMsgDese("<!i><blue>Sell Inventory"), TaskID.SELL_INVENTORY);
+    public final static Category BUY_AMOUNT = new Category(id(), Material.OAK_SIGN, miniMsgDese("<!i><blue>Custom Amount"), TaskID.SET_BUY_AMOUNT);
+    public final static Category SELL_AMOUNT = new Category(id(), Material.OAK_SIGN, miniMsgDese("<!i><blue>Custom Amount"), TaskID.SET_SELL_AMOUNT);
+
+
+    public final static Border BUY_DECO = new Border(id(), Material.GOLD_BLOCK, true , miniMsgDese("<!i><blue>Beli"), false);
+    public final static Border SELL_DECO = new Border(id(), Material.DIAMOND_BLOCK, true , miniMsgDese("<!i><gold>Jual"), false);
+    public final static Border SELL_BORDER = new Border(id(), Material.RED_STAINED_GLASS_PANE, false , miniMsgDese("<!i><red>Tempat Menjual Barang"), false);
+    public final static Border BUY_BORDER = new Border(id(), Material.GREEN_STAINED_GLASS_PANE, false , miniMsgDese("<!i><green>Tempat Membeli Barang"), false);
+
+
     public final static Border POINTER = new Border(id(), Material.LIME_STAINED_GLASS_PANE, false , miniMsgDese("<!i><green>Selected category"), false);
     public final static Category CATEG_NAVI_NEXT = new Category(id(), Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Next") , TaskID.CATEG_NAV_NEXT ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select next"),miniMsgDese("<!i><gray>category")));
     public final static Category CATEG_NAVI_BACK = new Category(id(), Material.SPECTRAL_ARROW,miniMsgDese("<!i><color:#dedc7a>Back") ,TaskID.CATEG_NAV_BACK ,List.of(miniMsgDese(""),miniMsgDese(BazaarEnum.CLICK_TEXT.get()+" <gray>to select previous"),miniMsgDese("<!i><gray>category")));
@@ -50,7 +66,7 @@ public abstract class Bazaar {
 
     @BazaarComponent(name = "Instant Sell Inventory")
     private final static Category SELL_INV = new Category(id(), Material.CHEST
-            , miniMsgDese("<!i><gold>Sell items in inventory"),TaskID.SELL_INV,List.of(
+            , miniMsgDese("<!i><gold>Sell items in inventory"),TaskID.SELL_EVERY_ITEM_IN_INVENTORY,List.of(
                 miniMsgDese("<!i><gray>Currently there's no")
                 ,miniMsgDese("<!i><gray>match item in your inventory")
 
@@ -203,8 +219,8 @@ public abstract class Bazaar {
         if(!instances.containsKey(player.getUniqueId())){
             container = new Container(player, miniMsgDese(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), 54);
             container.load(()->{
-                TaskID.invokeCategory(mining.getID(), container.getContainer());
-                TaskID.UpdateDecoration(mining, container.getContainer());
+                int def = mining.getID();
+                TaskID.SwapCategory(container.getContainer(), def);
                 initLayout(container.getContainer());
             });
         } else {
@@ -214,21 +230,14 @@ public abstract class Bazaar {
     }
 
     private static void initLayout(@NotNull Inventory inventory){
-        int[] category = {
-          1, 2, 3, 4, 5
-        };
-        inventory.setItem(8, CLOSE.getItem());
-        inventory.setItem(18, SELL_INV.getItem());
-        inventory.setItem(36, ORDER.getItem());
+        inventory.setItem(53, CLOSE.getItem());
+        inventory.setItem(45, SELL_INV.getItem());
+        inventory.setItem(46, ORDER.getItem());
         inventory.setItem(49, SEARCH.getItem());
-        inventory.setItem(0, CATEG_NAVI_BACK.getItem());
-        inventory.setItem(6, CATEG_NAVI_NEXT.getItem());
-        Iterator<Content> iterator = Categories.iterator();
-        for (int i : category) {
-            inventory.setItem(i, iterator.next().getItem());
-        }
+        inventory.setItem(1, CATEG_NAVI_BACK.getItem());
+        inventory.setItem(7, CATEG_NAVI_NEXT.getItem());
         int[] borders = {
-                45, 27, 9, 10, 11, 13, 14, 15, 16, 17, 7
+                0, 8, 9, 10, 11, 12, 14, 15, 16, 17
         };
 
         for (int i : borders) {

@@ -9,6 +9,7 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
+import me.jasper.jasperproject.Util.AutoSaveListener;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
@@ -94,6 +95,7 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new JSMDamagedEvent(this), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);
+        PM.registerEvents(new AutoSaveListener(), this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
