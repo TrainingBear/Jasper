@@ -65,7 +65,7 @@ public class Heal extends ItemAbility {
         if(e.isCancelled()) return;
 
         new BukkitRunnable(){
-            byte duration = (byte) (e.getCooldown()-1f);
+            byte duration = (byte) (e.getCooldown()-1f);//<-- downtime
             @Override
             public void run() {
                 if(duration <= 0 ) cancel();
