@@ -284,5 +284,9 @@ public class Jitem {
         convertedItem.update();
         return convertedItem;
     }
+    public Jitem setMaxStack(int maxStack){
+        this.meta.setMaxStackSize(maxStack);
+        return this;
+    }
 
 }

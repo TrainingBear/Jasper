@@ -15,11 +15,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class Heal extends ItemAbility {
     private static Heal instance;
+    HashMap<UUID, BukkitTask> healDuration = new HashMap<>();
     public Heal(){}
 
     public static Heal getInstance(){
@@ -63,22 +68,29 @@ public class Heal extends ItemAbility {
     public void action(Heal e){
         applyCooldown(e,true);
         if(e.isCancelled()) return;
+        if(this.healDuration.containsKey(e.getPlayer().getUniqueId())) this.healDuration.get(e.getPlayer().getUniqueId()).cancel();
 
-        new BukkitRunnable(){
-            byte duration = (byte) (e.getCooldown()-1f);//<-- downtime
+        this.healDuration.put(e.getPlayer().getUniqueId(), new BukkitRunnable(){
+            byte duration = 7;
+            final Player player = e.getPlayer();
+            final UUID uuid = player.getUniqueId();
+            final int range = e.getRange();
             @Override
             public void run() {
-                if(duration <= 0 ) cancel();
-                e.getPlayer().setHealth(Math.min(
-                        e.getPlayer().getHealth()+e.getRange()
-                        , e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
+                if(duration <= 0 ) {
+                    healDuration.remove(this.uuid);
+                    cancel();
+                }
+                this.player.setHealth(Math.min(
+                        this.player.getHealth()+this.range
+                        , this.player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
                 ));
-                e.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<green>Heal "+"▍".repeat(duration)));
-                e.getPlayer().getWorld().spawnParticle(
-                        Particle.HEART , e.getPlayer().getLocation().add(0,0.8f,0) ,2,0.26f,0.35f,0.26f
+                this.player.sendActionBar(MiniMessage.miniMessage().deserialize("<green>Heal "+"▍".repeat(duration)));
+                this.player.getWorld().spawnParticle(
+                        Particle.HEART , this.player.getLocation().add(0,0.8f,0) ,3,0.26f,0.35f,0.26f
                 );
                 duration--;
             }
-        }.runTaskTimer(JasperProject.getPlugin(),0,20);
+        }.runTaskTimer(JasperProject.getPlugin(),0,20));
     }
 }

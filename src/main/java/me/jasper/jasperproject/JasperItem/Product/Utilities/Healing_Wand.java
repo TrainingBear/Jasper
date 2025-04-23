@@ -10,11 +10,11 @@ import org.bukkit.Material;
 public class Healing_Wand extends Jitem implements Factory {
     public Healing_Wand(){
         super("Healing Wand", Material.BREEZE_ROD, Rarity.RARE, ItemType.WAND, 213454L, "HEALING_WAND");
-        this.getStats()
+        this.setMaxStack(1).getStats()
                 .setBaseHealth(50)
                 .setBaseMana(35)
                 .setBaseDefense(10);
-        this.getAbilities().add(new Heal(20,8));
+        this.getAbilities().add(new Heal(20,3));
     }
 
     @Override
