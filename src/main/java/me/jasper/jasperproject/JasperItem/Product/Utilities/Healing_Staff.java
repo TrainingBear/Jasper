@@ -10,11 +10,11 @@ import org.bukkit.Material;
 public class Healing_Staff extends Jitem implements Factory {
     public Healing_Staff(){
         super("Healing Staff", Material.BREEZE_ROD, Rarity.EPIC, ItemType.STAFF, 2114L, "HEALING_STAFF");
-        this.getStats()
+        this.setMaxStack(1).getStats()
                 .setBaseHealth(75)
                 .setBaseMana(45)
                 .setBaseDefense(15);
-        this.getAbilities().add(new Heal(40,8));
+        this.getAbilities().add(new Heal(40,2));
     }
     @Override
     public Jitem create() {

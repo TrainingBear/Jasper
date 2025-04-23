@@ -6,7 +6,6 @@ import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -62,7 +61,7 @@ public class Burst_Arrow extends ItemAbility {
                 if(!ItemUtils.hasAbility(Bukkit.getPlayer(e.getPlayer().getUniqueId()).getInventory().getItemInMainHand(), e.getKey())||this.total >= e.getRange()-1) cancel();
                 Arrow panah = e.getPlayer().launchProjectile(Arrow.class);
                 e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
-
+                panah.getPersistentDataContainer().set(JKey.removeWhenHit, PersistentDataType.BOOLEAN, true);
                 panah.setVelocity(e.getPlayer().getLocation().getDirection().multiply(e.getForce()));
                 panah.setCritical(true);
                 panah.setFireTicks(e.getArrow().getFireTicks());
