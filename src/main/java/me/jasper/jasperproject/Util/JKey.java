@@ -37,4 +37,5 @@ public final class JKey {
 
     public static final NamespacedKey GUI_BORDER = new NamespacedKey(JasperProject.getPlugin(), "89a7sba");
 
+    public static final NamespacedKey removeWhenHit = new NamespacedKey(JasperProject.getPlugin(), "removeWhenHit");
 }

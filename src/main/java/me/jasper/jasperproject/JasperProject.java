@@ -54,7 +54,7 @@ public final class JasperProject extends JavaPlugin {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
-        animationConfig.load(Animation::loadConfig);
+//        animationConfig.load(Animation::loadConfig);
 
         Bazaar.init();
         try {
@@ -77,7 +77,7 @@ public final class JasperProject extends JavaPlugin {
             return;
         }
         setupPermissions();
-        setupChat();
+//        setupChat();
 
         ItemManager.getInstance().registerAll();
 
@@ -89,13 +89,14 @@ public final class JasperProject extends JavaPlugin {
                 .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
         ;
 
+        PM.registerEvents(new ProjectileHit(), this);
         PM.registerEvents(new Joinmsg(this), this);
         PM.registerEvents(new PlotMenuListener(), this);
         PM.registerEvents(new JSMDeathEventListener(), this);
         PM.registerEvents(new JSMDamagedEvent(this), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);
-        PM.registerEvents(new AutoSaveListener(), this);
+//        PM.registerEvents(new AutoSaveListener(), this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang

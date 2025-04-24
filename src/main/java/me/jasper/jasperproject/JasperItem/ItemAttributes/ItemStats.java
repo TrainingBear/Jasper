@@ -14,18 +14,18 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class ItemStats {
+    private int health;
+    private int defence;
     private int damage;
     private int strength;
     private int crit_damage;
     private int crit_chance;
     private int mana;
     private int speed;
+    private int true_defence;
     private int attack_speed;
     private int double_attack;
     private int swing_range;
-    private int true_defense;
-    private int health;
-    private int defense;
 
 
     private HashMap<StatsEnum, Float> modifiers = new HashMap<>();
@@ -101,7 +101,7 @@ public class ItemStats {
     private float SPEED;
     private float TRUE_DEFENCE;
     private float HEALTH;
-    private float DEFENSE;
+    private float DEFENCE;
 
     public void calculateFinalStats(){
         this.DAMAGE = 0;
@@ -141,16 +141,16 @@ public class ItemStats {
         this.SWING_RANGE += ((float) swing_range /10) * (modifiers.get((StatsEnum.Swing_range))/100);
 
         this.TRUE_DEFENCE = 0;
-        this.TRUE_DEFENCE += true_defense + modifiers.get((StatsEnum.TRUE_DEFENSE));
-        this.TRUE_DEFENCE += true_defense * (modifiers.get((StatsEnum.True_defense))/100);
+        this.TRUE_DEFENCE += true_defence + modifiers.get((StatsEnum.TRUE_DEFENCE));
+        this.TRUE_DEFENCE += true_defence * (modifiers.get((StatsEnum.True_defence))/100);
 
         this.HEALTH =0;
         this.HEALTH += health + modifiers.get((StatsEnum.HEALTH));
         this.HEALTH += health * (modifiers.get((StatsEnum.Health))/100);
 
-        this.DEFENSE =0;
-        this.DEFENSE += defense + modifiers.get((StatsEnum.DEFENSE));
-        this.DEFENSE += defense * (modifiers.get((StatsEnum.Defense))/100);
+        this.DEFENCE =0;
+        this.DEFENCE += defence + modifiers.get((StatsEnum.DEFENCE));
+        this.DEFENCE += defence * (modifiers.get((StatsEnum.Defence))/100);
     }
 
     public ItemStats(){
@@ -204,13 +204,17 @@ public class ItemStats {
 
     }
         public ItemStats setBaseTrueDefense ( int true_defense){
-        this.true_defense = true_defense;
+        this.true_defence = true_defense;
         return this;
     }
         public ItemStats setBaseHealth( int health){
         this.health = health;
         return this;
     }
+        public ItemStats setBaseDefense(int defense){
+        this.defence = defense;
+        return this;
+        }
 
     public PersistentDataContainer getBaseStats(PersistentDataContainer data) throws IllegalAccessException {
         PersistentDataContainer stats = data.getAdapterContext().newPersistentDataContainer();
@@ -310,8 +314,8 @@ public class ItemStats {
         this.attack_speed = stats.attack_speed;
         this.double_attack = stats.double_attack;
         this.swing_range = stats.swing_range;
-        this.true_defense = stats.true_defense;
-        this.defense = stats.defense;
+        this.true_defence = stats.true_defence;
+        this.defence = stats.defence;
         this.health = stats.health;
     }
 

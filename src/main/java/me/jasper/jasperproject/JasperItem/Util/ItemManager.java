@@ -7,6 +7,10 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Jitem;
 import me.jasper.jasperproject.JasperItem.Product.Tools.Blender;
 import me.jasper.jasperproject.JasperItem.Product.Tools.GraplingHook;
+import me.jasper.jasperproject.JasperItem.Product.Tools.Titanium_Pickaxe;
+import me.jasper.jasperproject.JasperItem.Product.Utilities.Feather_Jumper;
+import me.jasper.jasperproject.JasperItem.Product.Utilities.Healing_Staff;
+import me.jasper.jasperproject.JasperItem.Product.Utilities.Healing_Wand;
 import me.jasper.jasperproject.JasperItem.Product.Weapons.*;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.plugin.Plugin;
@@ -48,6 +52,9 @@ public final class ItemManager {
         registerAbility(Warper.getInstance());
         registerAbility(Animator.getInstance());
         registerAbility(Burst_Arrow.getInstance());
+        registerAbility(Heal.getInstance());
+        registerAbility(Jumper.getInstance());
+        registerAbility(BackStab.getInstance());
 
         registerItem(new Blender());
         registerItem(new End_Gateway());
@@ -56,5 +63,10 @@ public final class ItemManager {
         registerItem(new TestItem());
         registerItem(new Titanium_Sword());
         registerItem(new Burst_Bow());
+        registerItem(new Healing_Wand());
+        registerItem(new Healing_Staff());
+        registerItem(new Titanium_Pickaxe());
+        registerItem(new Feather_Jumper());
+        registerItem(new Assassin_Dagger());
     }
 }
