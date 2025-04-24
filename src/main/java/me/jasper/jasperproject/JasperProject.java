@@ -84,10 +84,10 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("debug").setExecutor(new Debug());
 
 
-        CommandManager.getInstance()
-                .register(new PaperAnimationCommand())
-                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
-        ;
+//        CommandManager.getInstance()
+//                .register(new PaperAnimationCommand())
+//                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
+//        ;
 
         PM.registerEvents(new Joinmsg(this), this);
         PM.registerEvents(new PlotMenuListener(), this);

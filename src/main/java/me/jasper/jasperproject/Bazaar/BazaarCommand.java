@@ -46,7 +46,6 @@ public class BazaarCommand implements JasperCommand {
                                             try {
                                                 ProductManager.createProduct(
                                                         StringArgumentType.getString(e, "group"),
-                                                        productName,
                                                         product
                                                 );
                                             } catch (SQLException ex) {
@@ -54,10 +53,10 @@ public class BazaarCommand implements JasperCommand {
                                                 throw new RuntimeException(ex);
                                             }
                                             player.sendMessage(MessageEnum.BAZAAR.append(MiniMessage.miniMessage().deserialize(
-                                                    "<gold><b>Added <item></b> <yellow>(<product name>)</yellow> <b>to</b> <yellow><group></yellow></gold>",
+                                                    "<gold><b>Added <item></b> <yellow>(<product_name>)</yellow> <b>to</b> <yellow><group></yellow></gold>",
                                                     Placeholder.component("item", item.displayName()),
                                                     Placeholder.unparsed("group", StringArgumentType.getString(e, "group")),
-                                                    Placeholder.unparsed("product name", productName)
+                                                    Placeholder.component("product_name", Component.text(product.getProduct_name()))
                                             )));
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -81,7 +80,6 @@ public class BazaarCommand implements JasperCommand {
                                                     try {
                                                         ProductManager.createProduct(
                                                                 StringArgumentType.getString(e, "group"),
-                                                                productName,
                                                                 product
                                                         );
                                                     } catch (SQLException ex) {
@@ -89,10 +87,10 @@ public class BazaarCommand implements JasperCommand {
                                                         throw new RuntimeException(ex);
                                                     }
                                                     player.sendMessage(MessageEnum.BAZAAR.append(MiniMessage.miniMessage().deserialize(
-                                                            "<gold><b>Added <item></b> <yellow>(<product name>)</yellow> <b>to</b> <yellow><group></yellow></gold>",
+                                                            "<gold><b>Added <item></b> <yellow>(<product_name>)</yellow> <b>to</b> <yellow><group></yellow></gold>",
                                                             Placeholder.component("item", item.displayName()),
                                                             Placeholder.unparsed("group", StringArgumentType.getString(e, "group")),
-                                                            Placeholder.unparsed("product name", productName)
+                                                            Placeholder.component("product_name", Component.text(product.getProduct_name()))
                                                     )));
                                                     return Command.SINGLE_SUCCESS;
                                                 })

@@ -27,7 +27,7 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="e771a06e-2a05-4db0-bceb-0782cd9ccf24">
-      <console name="Connection" type="STANDARD" schema="testtt" session="Main"><![CDATA[create database test1;]]></console>
+      <console name="Connection" type="STANDARD" schema="mysql" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -51,6 +51,9 @@
         <condition column="id" operator="=" value="" active="true" />
       </filter>
     </filter-actions>
+    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="mysql.default_roles" active-filter-id="" />
+    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="mysql.func" active-filter-id="" />
+    <filter-actions connection-id="99ff8c04-109b-4bf9-a795-b8d3a5ecddde" dataset="data.product" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
