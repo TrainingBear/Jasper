@@ -5,10 +5,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -17,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Jumper extends ItemAbility {
     private static Jumper instance;
@@ -57,15 +55,27 @@ public class Jumper extends ItemAbility {
     public void action(Jumper e){
         applyCooldown(e,true);
         if(e.isCancelled()) return;
+        Location playerLoc = e.getPlayer().getLocation();
 
         e.getPlayer().setVelocity(e.getPlayer().getVelocity().setY(Math.sqrt(0.16 * e.getRange()+.35f)));
         e.getPlayer().getWorld().playSound(
-                e.getPlayer().getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH
-                , SoundCategory.PLAYERS,0.85f,1.425f);
+                playerLoc
+                ,Sound.ENTITY_FIREWORK_ROCKET_LAUNCH
+                ,SoundCategory.PLAYERS,0.85f,1.425f
+        );
         e.getPlayer().getWorld().spawnParticle(
-                Particle.FIREWORK,e.getPlayer().getLocation().add(new Vector(0,1,0))
-                ,50,.3f,.3f,.3f,0); //<-- later it would be change
-        e.getPlayer().setFallDistance(0);
-//        e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(),Sound.);
+                Particle.FIREWORK
+                ,playerLoc.clone().add(0,.36f,0)
+                ,25,.3f,0.2f,.3f,0
+        ); //<-- later it would be change
+        byte point = 10;
+        for(short i = 0;i < point ; i++){
+            float angle = (float) (2 * Math.PI * i / point);
+            e.getPlayer().getWorld().spawnParticle(
+                    Particle.FIREWORK
+                    ,playerLoc.clone().add((Math.cos(angle) * .5f),.25f,(Math.sin(angle) * .5f))
+                    ,0 ,0,1,0, ThreadLocalRandom.current().nextFloat(.125f,.36f)
+                    );
+        }
     }
 }
