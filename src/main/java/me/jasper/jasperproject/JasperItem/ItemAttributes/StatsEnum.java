@@ -28,16 +28,15 @@ public enum StatsEnum {
 
     DOUBLE_ATTACK("⫻","Double attack",MiniMessage.miniMessage().deserialize("<color:#ffB94C>")),
     Double_attack(true),
-    //gw push kg
 
     SWING_RANGE("⌀","Swing range",MiniMessage.miniMessage().deserialize("<color:#ff8a63>")),
     Swing_range(true),
 
-    DEFENSE("🛡","Defense",MiniMessage.miniMessage().deserialize("<color:#00ff3c>")),
-    Defense(true),
+    DEFENCE("🛡","Defense",MiniMessage.miniMessage().deserialize("<color:#00ff3c>")),
+    Defence(true),
 
-    TRUE_DEFENSE("⛨","True defense",MiniMessage.miniMessage().deserialize("<color:#b5ff7f>")),
-    True_defense(true),
+    TRUE_DEFENCE("⛨","True defense",MiniMessage.miniMessage().deserialize("<color:#b5ff7f>")),
+    True_defence(true),
 
     HEALTH("❤","Health" , MiniMessage.miniMessage().deserialize("<red>")),
     Health(true);

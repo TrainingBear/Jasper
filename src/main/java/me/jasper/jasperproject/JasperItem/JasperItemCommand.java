@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JasperItemCommand implements CommandExecutor, TabCompleter {
@@ -31,29 +32,13 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                     throw new RuntimeException(e);
                 }
             }
-            case "endgateway" -> manager.get("END_GATEWAY").send(player);
-            case "warpgateway" -> manager.get("WARP_GATEWAY").send(player);
-            case "grapple"-> manager.get("GRAPPLING_HOOK").send(player);
-            case "test"-> manager.get("TEST").send(player);
-            case "animate"-> manager.get("ANIMATE").send(player);
-            case "titaniumsword"-> manager.get("TITANIUM_SWORD").send(player);
-            case "burstbow" -> manager.get("BURST_BOW").send(player);
+            default -> manager.get(strings[0].toUpperCase()).send(player);
         }
-
         return true;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return List.of(
-                "grapple",
-                "EndGateway",
-                "WarpGateway",
-                "test",
-                "update",
-                "animate",
-                "TitaniumSword",
-                "BurstBow"
-                );
+        return new ArrayList<>(ItemManager.getInstance().getItems().keySet());
     }
 }
