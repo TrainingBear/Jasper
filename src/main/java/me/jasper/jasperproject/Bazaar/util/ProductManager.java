@@ -20,10 +20,10 @@ public abstract class ProductManager {
     @Setter(AccessLevel.PROTECTED)
     @Getter private static Map<String, List<Product>> groupedProduct;
 
-    public static void createProduct(String group, String name, @NotNull Product product) throws SQLException {
+    public static void createProduct(String group, @NotNull Product product) throws SQLException {
         if(!Bazaar.getGroupsMap_String().keySet().contains(group)) return;
-        BazaarDatabase.newProduct(group, name, product.serialize());
-        productMap.put("name", product);
+        BazaarDatabase.newProduct(group, product.getProduct_name(), product.serialize());
+        productMap.put(product.getProduct_name(), product);
         groupedProduct.computeIfAbsent(group, k->new ArrayList<>()).add(product);
     }
 
