@@ -129,18 +129,10 @@ public class Warper extends ItemAbility{
 
             if(e.isCancelled()) return;
 
-            player.getWorld().spawnParticle(
-                    Particle.DUST, player.getLocation().add(0,1,0), 60
-                    ,.3f,.4f,.3f,0
-                    ,new Particle.DustOptions(Color.fromRGB(214,0,230),1.425f), false);
-            player.getWorld().spawnParticle(
-                    Particle.DUST, player.getLocation().add(0,1,0), 60
-                    ,.3f,.4f,.3f,0
-                    ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
-
             float trail = (float) Math.min(distanceTP, 6.0); // parameter ke 2 bisa di ubah jarak maxnya
             int steps = (int) Math.max(trail, 1);
             float factor = (float) (1.0 /distanceTP);
+
             for (byte i = 0; i <= steps; i++) {
                 float prog = ((float) i / steps) * trail;
                 player.getWorld().spawnParticle(
@@ -151,6 +143,15 @@ public class Warper extends ItemAbility{
                         ,5, 0.2, 0.2, 0.2,
                         0,null,false);
             }
+
+            player.getWorld().spawnParticle(
+                    Particle.DUST, player.getLocation().add(0,1,0), 60
+                    ,.3f,.4f,.3f,0
+                    ,new Particle.DustOptions(Color.fromRGB(214,0,230),1.425f), false);
+            player.getWorld().spawnParticle(
+                    Particle.DUST, player.getLocation().add(0,1,0), 60
+                    ,.3f,.4f,.3f,0
+                    ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
             player.teleport(targetToTP);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
             e.setCancelled(true);
