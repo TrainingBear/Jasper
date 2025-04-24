@@ -10,7 +10,7 @@ import org.bukkit.Material;
 public class Feather_Jumper extends Jitem implements Factory {
     public Feather_Jumper(){
         super("Feather Jumper", Material.FEATHER, Rarity.UNCOMMON, ItemType.ITEM, 2342L,"FEATHER_JUMPER");
-        this.getAbilities().add(new Jumper(5,1));
+        this.getAbilities().add(new Jumper(5,10));
     }
     @Override
     public Jitem create(){
