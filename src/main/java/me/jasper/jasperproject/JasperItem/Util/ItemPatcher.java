@@ -7,7 +7,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemStats;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import org.bukkit.Bukkit;
@@ -47,7 +47,7 @@ public class ItemPatcher {
                 if(!hasCustomID(item)) continue;
                 val items = ItemManager.getInstance().getItems();
                 if(!items.containsKey(getID(item))) continue;
-                Jitem newVer = ItemManager.getInstance().getItems().get(getID(item));
+                JItem newVer = ItemManager.getInstance().getItems().get(getID(item));
                 if(getVersion(item) == newVer.getVersion()) continue;
 
                 plugin.getLogger().info("Detected new Version of "+ getID(item)+" -> "+newVer.getVersion()+". Starting updating item... ");
@@ -74,13 +74,13 @@ public class ItemPatcher {
         return getBukkitValues(item).getString(JKey.Main.toString());
     }
 
-    private static void updateBaseStats(ItemStack lastVer, Jitem newVer) throws IllegalAccessException {
+    private static void updateBaseStats(ItemStack lastVer, JItem newVer) throws IllegalAccessException {
         ItemStats newStats = new ItemStats();
         newStats.getStatsFromItem(lastVer);
         newStats.setBaseStats(newVer.getStats());
     }
-    private static ItemStack Patch(ItemStack lastVer, Jitem newVer) throws IllegalAccessException {
-        Jitem LastVersion = Jitem.convertFrom(lastVer, newVer.getCustom_lore());
+    private static ItemStack Patch(ItemStack lastVer, JItem newVer) throws IllegalAccessException {
+        JItem LastVersion = JItem.convertFrom(lastVer, newVer.getCustom_lore());
 
 //        Set Base item stats
         ItemStats newStats = new ItemStats();

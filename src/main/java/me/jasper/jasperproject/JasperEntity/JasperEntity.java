@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JasperEntity;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.Util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -89,9 +90,9 @@ public class JasperEntity implements Listener {
     }
 
     private String getHealthDisplay(double health){
-        if(health >= 1000000000) return ItemAbility.round((float) health/1000000000, 2) + "B ❤ "; //milyar/billion
-        else if(health >= 1000000) return ItemAbility.round((float) health/1000000, 2)+"M ❤ ";//juta
-        else if(health >= 1000) return ItemAbility.round((float) health/1000, 2)+"k ❤ "; //seribu
+        if(health >= 1000000000) return Util.round((float) health/1000000000, 2) + "B ❤ "; //milyar/billion
+        else if(health >= 1000000) return Util.round((float) health/1000000, 2)+"M ❤ ";//juta
+        else if(health >= 1000) return Util.round((float) health/1000, 2)+"k ❤ "; //seribu
         else return health +" ❤ ";
     }
 

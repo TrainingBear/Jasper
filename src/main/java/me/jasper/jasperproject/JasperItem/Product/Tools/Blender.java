@@ -3,15 +3,14 @@ package me.jasper.jasperproject.JasperItem.Product.Tools;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import java.util.List;
 
-public class Blender extends Jitem implements Factory {
+public class Blender extends JItem implements Factory {
     public Blender(){
         super("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
         this.getAbilities().add(new Animator());
@@ -24,7 +23,7 @@ public class Blender extends Jitem implements Factory {
         );
     }
     @Override
-    public Jitem create() {
+    public JItem create() {
         return this;
     }
 }

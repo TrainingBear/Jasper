@@ -4,7 +4,7 @@ import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Product.Tools.Blender;
 import me.jasper.jasperproject.JasperItem.Product.Tools.GraplingHook;
 import me.jasper.jasperproject.JasperItem.Product.Tools.Titanium_Pickaxe;
@@ -32,13 +32,13 @@ public final class ItemManager {
     private final Plugin plugin = JasperProject.getPlugin();
 
     private final HashSet<ItemAbility> abilities = new HashSet<>();
-    private final HashMap<String, Jitem> items = new HashMap<>();
+    private final HashMap<String, JItem> items = new HashMap<>();
     private final HashSet<ENCHANT> enchants = new HashSet<>();
 
     private void registerItem(Factory factory){
-        Jitem item = factory.create();
+        JItem item = factory.create();
         item.update();
-        items.put(item.getID(), item);
+        items.put(item.getID().toUpperCase(), item);
     }
     private void registerAbility(ItemAbility ability){
         pluginManager.registerEvents(ability, plugin);

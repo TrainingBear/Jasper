@@ -2,14 +2,14 @@ package me.jasper.jasperproject.JasperItem.Product.Weapons;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
 import java.util.List;
 
-public class TestItem extends Jitem implements Factory {
+public class TestItem extends JItem implements Factory {
     private static TestItem instance;
     public static TestItem getInstance(){
         if(instance==null){
@@ -51,7 +51,7 @@ public class TestItem extends Jitem implements Factory {
     }
 
     @Override
-    public Jitem create() {
+    public JItem create() {
         return this;
     }
 }

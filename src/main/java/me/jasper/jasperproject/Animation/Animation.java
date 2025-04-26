@@ -84,7 +84,6 @@ public abstract class Animation {
             e.set("isRunning", false);
             e.set("schem", new ArrayList<>());
             e.set("location", player.getLocation());
-            return e;
         });
         loadConfig(comp.getFile(animation_name));
         return Command.SINGLE_SUCCESS;
@@ -97,7 +96,7 @@ public abstract class Animation {
         }
         getCompound(name).edit(name, e -> {
             e.set("isRunning", false);
-            return e;
+            
         });
         Logger log = new Logger(player);
         log.info("<green>You stopped</green> <dark_green><name></dark_green>",
@@ -136,7 +135,7 @@ public abstract class Animation {
         }
         compound.edit(animationName, e -> {
             e.set("isRunning", true);
-            return e;
+            
         });
 
         File[] files = compound.getParent().listFiles((dir, name) -> !name.endsWith(".yml"));
@@ -179,7 +178,7 @@ public abstract class Animation {
                         runningTask.remove(animationName);
                         getCompound(animationName).edit(animationName, e -> {
                             e.set("isRunning", false);
-                            return e;
+                            
                         });
                         return;
                     }
@@ -208,7 +207,7 @@ public abstract class Animation {
             e.set("isRunning", false);
             e.set("schem", new ArrayList<>());
             e.set("location", player.getLocation());
-            return e;
+            
         });
         animationNameTabCompleter.put(player.getName(), List.of(animation_name));
         return Command.SINGLE_SUCCESS;
@@ -237,7 +236,7 @@ public abstract class Animation {
             List<String> list = e.getStringList("schem");
             if(!list.contains(frame_name)) list.add(frame_name);
             e.set("schem", list);
-            return e;
+            
         });
         Structure.saveFrame(player, getCompound(animation_name).getParent(), frame_name);
         log.info(frame_name +" saved as schem");
@@ -267,7 +266,7 @@ public abstract class Animation {
                         Placeholder.unparsed("animation", animation_name));
             }
             e.set("members", list);
-            return e;
+            
         });
         return Command.SINGLE_SUCCESS;
     }
@@ -282,7 +281,7 @@ public abstract class Animation {
             List<String> list = e.getStringList("members");
             list.add(member);
             e.set("members", list);
-            return e;
+            
         });
 
         log.info("<color:#fdff8c>you added <color:#c2ff33><reset><name></reset><color:#fdff8c> to your <color:#06aa00><animation></color> as member!</color>",
@@ -299,7 +298,7 @@ public abstract class Animation {
         final Configurator config = getCompound(animation_name);
         config.edit(animation_name, e -> {
             if(!e.contains("schem")) e.set("schem", new ArrayList<>());
-            return e;
+            
         });
 
         Logger log = new Logger(player);
@@ -327,7 +326,7 @@ public abstract class Animation {
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e ->{
             if(!e.contains("schem")) e.set("schem", new ArrayList<>());
-            return e;
+            
         });
         Logger log = new Logger(player);
         if(!config.getConfig(animation_name).contains("schem")) {
@@ -344,7 +343,7 @@ public abstract class Animation {
             List<String> schem = e.getStringList("schem");
             schem.remove(frame_name);
             e.set("schem", schem);
-            return e;
+            
         });
 
         return Command.SINGLE_SUCCESS;
@@ -357,7 +356,7 @@ public abstract class Animation {
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e->{
             if(!e.contains("schem")) e.set("schem", new ArrayList<>());
-            return e;
+            
         });
         Logger log = new Logger(player);
         if(!config.getConfig(animation_name).contains("schem")) {
@@ -373,7 +372,7 @@ public abstract class Animation {
         }
         config.edit(animation_name, e ->{
             e.set("schem", new ArrayList<>());
-            return e;
+            
         });
         return Command.SINGLE_SUCCESS;
     }
@@ -385,7 +384,7 @@ public abstract class Animation {
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e ->{
             e.set("fps", v);
-            return e;
+            
         });
         Logger log = new Logger(player);
         log.info(animation_name +" fps has been set to " +v);
@@ -401,7 +400,7 @@ public abstract class Animation {
         Configurator config = getCompound(animation_name);
         config.edit(animation_name, e->{
             e.set("location", v);
-            return e;
+            
         });
         log.info("<dark_green><name></dark_green> <green>location has been set to</green> <yellow><x>, <y>, <z>!</yellow>",
                 Placeholder.unparsed("name", animation_name),
@@ -433,7 +432,7 @@ public abstract class Animation {
         Logger log = new Logger(player);
         getCompound(animation_name).edit(animation_name, e ->{
             e.set("radius", radius);
-            return e;
+            
         });
         log.info("<dark_green><name></dark_green> <green>radius has been set to</green> <yellow><value></yellow>",
                 Placeholder.unparsed("name", animation_name),

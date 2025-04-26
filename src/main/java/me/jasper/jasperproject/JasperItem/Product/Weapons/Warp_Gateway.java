@@ -4,11 +4,11 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Warper;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import org.bukkit.Material;
 
-public class Warp_Gateway extends Jitem implements Factory {
+public class Warp_Gateway extends JItem implements Factory {
     public Warp_Gateway(){
         super("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.LEGENDARY, ItemType.SWORD, 2114L, "WARP_GATEWAY");
         this.getStats()
@@ -22,7 +22,7 @@ public class Warp_Gateway extends Jitem implements Factory {
     }
 
     @Override
-    public Jitem create() {
+    public JItem create() {
         return this;
     }
 }

@@ -14,9 +14,9 @@ import java.util.List;
 
 @Deprecated
 public final class Items {
-    public static final Jitem EndGateway;
+    public static final JItem EndGateway;
     static {
-        EndGateway = new Jitem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        EndGateway = new JItem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
         EndGateway.getStats()
                 .setBaseDamage(39)
                 .setBaseMana(50)
@@ -30,9 +30,9 @@ public final class Items {
         EndGateway.getAbilities().add(new Teleport(10, 0.2f));
         EndGateway.update();
     }
-    public static final Jitem WarpGateway;
+    public static final JItem WarpGateway;
     static {
-        WarpGateway = new Jitem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        WarpGateway = new JItem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
         WarpGateway.getStats()
                 .setBaseDamage(50)
                 .setBaseMana(65)
@@ -42,18 +42,18 @@ public final class Items {
         WarpGateway.getAbilities().add(new Warper(20,20));
         WarpGateway.update();
     }
-    public static final Jitem grapling;
+    public static final JItem grapling;
     static {
-        grapling = new Jitem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 3565L, "GRAPPLING_HOOK");
+        grapling = new JItem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 3565L, "GRAPPLING_HOOK");
         grapling.setUpgradeable(false);
         grapling.getAbilities().add(new Grappling_Hook(1.5f));
         grapling.getEnchants().add(ENCHANT.SharpnesV2);
         grapling.update();
     }
 
-    public static final Jitem test;
+    public static final JItem test;
     static {
-        test = new Jitem("Test Items",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
+        test = new JItem("Test Items",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
         test.getStats()
                 .setBaseCrit(100)
                 .setBaseCritChance(100)
@@ -79,9 +79,9 @@ public final class Items {
         test.update();
     }
 
-    public static final Jitem animate_wannd;
+    public static final JItem animate_wannd;
     static {
-        animate_wannd = new Jitem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
+        animate_wannd = new JItem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
         animate_wannd.getAbilities().add(new Animator());
 //        animate_wannd.getCustom_lore().addAll(
 //                List.of(
@@ -93,7 +93,7 @@ public final class Items {
         animate_wannd.update();
     }
 
-    public static void sendItems(Player player, Jitem item){
+    public static void sendItems(Player player, JItem item){
         ItemStack itemStack = item.getItem();
         player.getInventory().addItem(itemStack);
     }

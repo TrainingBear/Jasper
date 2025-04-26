@@ -1,20 +1,19 @@
 package me.jasper.jasperproject.JasperItem.Util;
 
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 
 import java.io.ObjectStreamClass;
-import java.util.List;
 
 public interface Factory {
-    Jitem create();
+    JItem create();
 
     default long getVersion(){
         return ObjectStreamClass.lookup(this.getClass()).getSerialVersionUID();
     }
 
 
-//    public static Jitem createEndGateway() {
-//        Jitem product = new Jitem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+//    public static JItem createEndGateway() {
+//        JItem product = new JItem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
 //        product.getStats()
 //                .setBaseDamage(39)
 //                .setBaseMana(50)
@@ -29,8 +28,8 @@ public interface Factory {
 //        product.update();
 //        return product;
 //    }
-//    public static Jitem createWarpGateway(){
-//        Jitem product = new Jitem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+//    public static JItem createWarpGateway(){
+//        JItem product = new JItem("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
 //        product.getStats()
 //                .setBaseDamage(50)
 //                .setBaseMana(65)
@@ -41,16 +40,16 @@ public interface Factory {
 //        product.update();
 //        return product;
 //    }
-//    public static Jitem createGraplingHook(){
-//        Jitem product = new Jitem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 15L, "GRAPPLING_HOOK");
+//    public static JItem createGraplingHook(){
+//        JItem product = new JItem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 15L, "GRAPPLING_HOOK");
 //        product.setUpgradeable(false);
 //        product.getAbilities().add(new Grappling_Hook(1.5f));
 //        product.getEnchants().add(ENCHANT.SharpnesV2);
 //        product.update();
 //        return product;
 //    }
-//    public static Jitem createTest(){
-//        Jitem test = new Jitem("Test Items",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
+//    public static JItem createTest(){
+//        JItem test = new JItem("Test Items",Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
 //        test.getStats()
 //                .setBaseCrit(100)
 //                .setBaseCritChance(100)
@@ -77,8 +76,8 @@ public interface Factory {
 //        test.update();
 //        return test;
 //    }
-//    public static Jitem createAnimationWand(){
-//        Jitem animate_wannd = new Jitem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
+//    public static JItem createAnimationWand(){
+//        JItem animate_wannd = new JItem("Blender", Material.DIAMOND_HORSE_ARMOR, Rarity.MYTHIC, ItemType.ITEM, 1132L, "ANIMATE");
 //        animate_wannd.getAbilities().add(new Animator());
 ////        animate_wannd.getCustom_lore().addAll(
 ////                List.of(
@@ -91,16 +90,16 @@ public interface Factory {
 //        return animate_wannd;
 //    }
 //
-//    public static Jitem creatNewProduct(JitemFactory product){
+//    public static JItem creatNewProduct(JitemFactory product){
 //        return product.create();
 //    }
 //    interface JitemFactory{
-//        Jitem create();
+//        JItem create();
 //    }
 //
 //    private void demo(){
 //        creatNewProduct(() -> {
-//            Jitem item = null;
+//            JItem item = null;
 //            return null;
 //        });
 //    }

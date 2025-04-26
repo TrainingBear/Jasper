@@ -37,7 +37,7 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
             }
             default -> {
                 try {
-                    manager.get(strings[0].toUpperCase()).send(player);
+                    manager.get(strings[0]).send(player);
                 }catch (NullPointerException ignored){
                     player.sendMessage(MiniMessage.miniMessage().deserialize("<red>There is no that kind of item"));
                 }
@@ -46,9 +46,9 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    List<String> list = ItemManager.getInstance().getItems().keySet().stream().map(String::toLowerCase).toList();
+    private static final List<String> list = ItemManager.getInstance().getItems().keySet().stream().toList();
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] strings) {
-        return list.stream().filter(name -> name.contains(strings[0])).toList();
+        return list;
     }
 }
