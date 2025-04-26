@@ -6,8 +6,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -65,15 +64,31 @@ public class BackStab extends ItemAbility {
         }
         Location entityLoc = entity.getLocation().clone();
         entityLoc.setPitch(0);
-
         Location lokasiTujuan = entityLoc.clone().add(entityLoc.getDirection().normalize().multiply(-1));
         if(lokasiTujuan.getBlock().isSolid() || lokasiTujuan.clone().add(0,1,0).getBlock().isSolid()){
             e.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<red><b>INVALID!</b> Location is obstructed"));
             return;
         }
-        e.getPlayer().teleport(lokasiTujuan);
-        e.getPlayer().attack(entity);
-        e.getPlayer().swingHand(e.getHand());
+        applyCooldown(e,true);
+        if(e.isCancelled()) return;
+        Player player= e.getPlayer();
 
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_MIRROR_MOVE,0.75f,1.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_CAST_SPELL,0.75f,1.5f);
+        player.getWorld().spawnParticle(
+                Particle.DUST, player.getLocation().add(0,1,0), 60
+                ,.3f,.4f,.3f,0
+                ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
+
+        player.setFallDistance(0);
+        player.teleport(lokasiTujuan);
+        player.attack(entity);
+        player.swingHand(e.getHand());
+
+        if(entity instanceof Player targetPlayer) targetPlayer.playSound(entity.getLocation(), Sound.ENTITY_GHAST_HURT,1f,0.85f);
+        player.getWorld().spawnParticle(
+                Particle.DUST, player.getLocation().add(0,1,0), 60
+                ,.3f,.4f,.3f,0
+                ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
     }
 }

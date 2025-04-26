@@ -1,0 +1,159 @@
+{
+  "name" : "mysql",
+  "VIEWS" : [ ],
+  "PROCEDURES" : [ ],
+  "FUNCTIONS" : [ ],
+  "TABLES" : [ {
+    "TABLE_NAME" : "columns_priv",
+    "TABLE_COMMENT" : "Column privileges",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "component",
+    "TABLE_COMMENT" : "Components",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "db",
+    "TABLE_COMMENT" : "Database privileges",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "default_roles",
+    "TABLE_COMMENT" : "Default roles",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "engine_cost",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "func",
+    "TABLE_COMMENT" : "User defined functions",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "general_log",
+    "TABLE_COMMENT" : "General log",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "global_grants",
+    "TABLE_COMMENT" : "Extended global grants",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "gtid_executed",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "help_category",
+    "TABLE_COMMENT" : "help categories",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "help_keyword",
+    "TABLE_COMMENT" : "help keywords",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "help_relation",
+    "TABLE_COMMENT" : "keyword-topic relation",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "help_topic",
+    "TABLE_COMMENT" : "help topics",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "innodb_index_stats",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "innodb_table_stats",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "ndb_binlog_index",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "password_history",
+    "TABLE_COMMENT" : "Password history for user accounts",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "plugin",
+    "TABLE_COMMENT" : "MySQL plugins",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "procs_priv",
+    "TABLE_COMMENT" : "Procedure privileges",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "proxies_priv",
+    "TABLE_COMMENT" : "User proxy privileges",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_asynchronous_connection_failover",
+    "TABLE_COMMENT" : "The source configuration details",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_asynchronous_connection_failover_managed",
+    "TABLE_COMMENT" : "The managed source configuration details",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_group_configuration_version",
+    "TABLE_COMMENT" : "The group configuration version.",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "replication_group_member_actions",
+    "TABLE_COMMENT" : "The member actions configuration.",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "role_edges",
+    "TABLE_COMMENT" : "Role hierarchy and role grants",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "server_cost",
+    "TABLE_COMMENT" : "",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "servers",
+    "TABLE_COMMENT" : "MySQL Foreign Servers table",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "slave_master_info",
+    "TABLE_COMMENT" : "Master Information",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "slave_relay_log_info",
+    "TABLE_COMMENT" : "Relay Log Information",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "slave_worker_info",
+    "TABLE_COMMENT" : "Worker Information",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "slow_log",
+    "TABLE_COMMENT" : "Slow log",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "tables_priv",
+    "TABLE_COMMENT" : "Table privileges",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "time_zone",
+    "TABLE_COMMENT" : "Time zones",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "time_zone_leap_second",
+    "TABLE_COMMENT" : "Leap seconds information for time zones",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "time_zone_name",
+    "TABLE_COMMENT" : "Time zone names",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "time_zone_transition",
+    "TABLE_COMMENT" : "Time zone transitions",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "time_zone_transition_type",
+    "TABLE_COMMENT" : "Time zone transition types",
+    "IS_TEMPORARY" : "N"
+  }, {
+    "TABLE_NAME" : "user",
+    "TABLE_COMMENT" : "Users and global privileges",
+    "IS_TEMPORARY" : "N"
+  } ]
+}
