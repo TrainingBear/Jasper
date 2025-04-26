@@ -2,22 +2,24 @@ package me.jasper.jasperproject.JasperItem.Product.Weapons;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Stats;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.Map;
 
 public class Titanium_Sword extends JItem implements Factory {
     public Titanium_Sword() {
         super("Titanium Sword", Material.IRON_SWORD, Rarity.UNCOMMON, ItemType.SWORD, 21147L, "TITANIUM_SWORD");
-        this.getStats()
-                .setBaseDamage(18)
-                .setBaseStrength(10)
-                .setBaseCrit(30)
-                .setBaseCritChance(15)
-                .setBaseAttackSpeed(3);
+        Map<Stats, Float> stats = this.getStats();
+        stats.put(Stats.DAMAGE, 18f);
+        stats.put(Stats.STRENGTH, 10f);
+        stats.put(Stats.CRIT_DAMAGE, 30f);
+        stats.put(Stats.CRIT_CHANCE, 15f);
+        stats.put(Stats.ATTACK_SPEED, 3f);
         this.getCustom_lore().addAll(List.of(
                 MiniMessage.miniMessage().deserialize("<!i><dark_gray>This type of blade was once forged"),
                 MiniMessage.miniMessage().deserialize("<!i><dark_gray>by the greatest blacksmith of his"),

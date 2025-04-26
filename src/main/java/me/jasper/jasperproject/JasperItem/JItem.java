@@ -7,7 +7,6 @@ import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JItem implements Cloneable{
-    @Getter private long Version; // <---------- 1
+    @Getter@Setter private long Version; // <---------- 1
     @Setter@Getter private String ID; // <---------- 2
     @Setter private Component item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
@@ -47,22 +46,28 @@ public class JItem implements Cloneable{
      * @param material Items Material
      * @param rarity use Rarity.enum for item rarity
      * @param type use ItemType.enum for item Type category
-     * @param itemVersion THIS IS ITEM VERSION, PLEASE CHANGE THE VERSION IF UPDATE ARE NEEDED
      * @param ID THIS IS FINAL ID, DONT CHANGE THIS ID! OR ITEM CANT BE UPDATED
      * */
 
-    public JItem(String name, Material material, Rarity rarity, ItemType type, long itemVersion, String ID){
-        this(false, true, false, (byte) 0, name, name, material, rarity, rarity, type, itemVersion, ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
+    public JItem(String name, Material material, Rarity rarity, ItemType type, String ID){
+        this(false, true, false, (byte) 0, name, name, material, rarity, rarity, type, 0L, ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
+    }
+    public JItem(String name, Material material, Rarity rarity,
+                 ItemType type, long itemVersion, String ID){
+        this(false, true, false, (byte) 0,
+                name, name, material, rarity, rarity, type, itemVersion,
+                ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
     }
 
-    public JItem(boolean upgraded, boolean upgrade, boolean UPGRADE, byte occur, String name,
-                 String defaultName, Material material, @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
-                 long itemVersion, String ID, List<ItemAbility> abilities, Map<Stats, Float> stats, List<ENCHANT> enchant){
+    public JItem(boolean upgraded, boolean upgrade, boolean UPGRADE,
+                 byte occur, String name, String defaultName, Material material,
+                 @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
+                 long itemVersion, String ID, List<ItemAbility> abilities,
+                 Map<Stats, Float> stats, List<ENCHANT> enchant){
         this.item = new ItemStack(material);
         this.abilities = abilities;
         this.stats = stats;
         this.enchants = enchant;
-
         this.item_name = MiniMessage.miniMessage().deserialize("<!i>"+MiniMessage.miniMessage().serialize(rarity.color)+name);
         this.defaultItem_name = defaultName;
         this.baseRarity = baseRarity;
@@ -90,18 +95,14 @@ public class JItem implements Cloneable{
 
     public void update() {
         this.lore.clear();
-        try{
-            applyItemStats();
-        } catch (IllegalAccessException e) {
-            Bukkit.getLogger().info("[JasperProject] something went wrong when applying this "+ this.item_name+" item stats");
-        }
+        applyItemStats();
         applyItemEnchantments();
         applyItemAbilities();
         buildLore();
     }
 
     public void send(Player player){
-        player.getInventory().addItem(item);
+        player.getInventory().addItem(item.clone());
     }
 
     public boolean upgrade(){
@@ -123,7 +124,7 @@ public class JItem implements Cloneable{
         this.stats = stats;
     }
 
-    private void applyItemStats() throws IllegalAccessException {
+    private void applyItemStats() {
         item.editMeta(meta->{
             meta.getPersistentDataContainer()
                     .set(
@@ -131,12 +132,6 @@ public class JItem implements Cloneable{
                             PersistentDataType.TAG_CONTAINER,
                             Stats.toPDC(meta.getPersistentDataContainer().getAdapterContext(), this.stats)
                     );
-//            meta.getPersistentDataContainer()
-//                    .set(
-//                            JKey.StatsModifier,
-//                            PersistentDataType.TAG_CONTAINER,
-//                            stats.getModifierStats(meta.getPersistentDataContainer())
-//                    );
         });
         lore.addAll(Stats.toLore(this.stats));
     }
@@ -253,8 +248,16 @@ public class JItem implements Cloneable{
         return convertedItem;
     }
 
-    public JItem setMaxStack(int maxStack){
-        item.getItemMeta().setMaxStackSize(maxStack);
+    public void setMaxStack(int maxStack){
+        item.editMeta(e->e.setMaxStackSize(maxStack));
+    }
+    
+    public JItem patch(JItem newVer){
+        this.stats = newVer.stats;
+        this.custom_lore = newVer.getCustom_lore();
+        this.abilities = newVer.abilities;
+        this.baseRarity = newVer.baseRarity;
+        this.defaultItem_name = newVer.defaultItem_name;
         return this;
     }
 

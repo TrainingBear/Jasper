@@ -8,6 +8,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class TestItem extends JItem implements Factory {
     private static TestItem instance;
@@ -19,23 +21,11 @@ public class TestItem extends JItem implements Factory {
     }
     public TestItem(){
         super("Test Items", Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
-        this.getStats()
-                .setBaseCrit(100)
-                .setBaseCritChance(100)
-                .setBaseMana(100)
-                .setBaseDamage(33)
-                .setBaseStrength(100)
-                .setBaseSwingRange(100)
-                .setBaseAttackSpeed(100)
-                .setBaseHealth(100)
-                .setBaseDoubleAttack(100)
-                .setBaseTrueDefense(100)
-                .setBaseHealth(100)
-                .setBaseDefense(100);
-        this.getStats().addModifiers(StatsEnum.CRIT_CHANCE, 11);
-        this.getStats().addModifiers(StatsEnum.Crit_damage, 20);
-        this.getStats().addModifiers(StatsEnum.DAMAGE, 50f);
-        this.getStats().addModifiers(StatsEnum.Damage, 10);
+        Map<Stats, Float> stats = this.getStats();
+        Random random = new Random();
+        for (Stats value : Stats.values()) {
+            stats.put(value, random.nextFloat(Float.MAX_VALUE));
+        }
 
         this.getAbilities().add(new Teleport((short) 12, 0));
         this.getEnchants().add(ENCHANT.SharpnesV2);

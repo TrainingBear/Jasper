@@ -70,15 +70,11 @@ public enum Stats {
 
     public static List<Component> toLore(Map<Stats, Float> stats){
         List<Component> lore = new ArrayList<>();
-        for (var entry : stats.entrySet()) {
+        for (Stats stat : stats.keySet()) {
             lore.add(
-                Util.deserialize("<gray>"+entry.getKey().symbol+" "+entry.getKey().name+": "+entry.getKey().getColor()+format(entry.getValue()))
-            );
+                Util.deserialize("<gray>"+stat.symbol+" "+stat.name+": "
+                        +stat.color+Util.round(stats.get(stat),1)));
         }
         return lore;
-    }
-    private static String format(float number){
-        if (number == (int) number) return String.format("%d", (int) number);
-        else return Float.toString(number);
     }
 }

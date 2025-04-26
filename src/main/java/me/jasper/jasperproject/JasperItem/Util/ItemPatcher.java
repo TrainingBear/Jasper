@@ -55,8 +55,8 @@ public class ItemPatcher {
 
                 //ReadWriteNBT -> ItemStack
                 ItemStack lastVer = NBTItem.convertNBTtoItem(updateItem);
-                lastVer = Patch(lastVer, newVer);
-                item.mergeCompound(NBTItem.convertItemtoNBT(lastVer));
+                ItemStack patched_item = JItem.convertFrom(lastVer, newVer.getCustom_lore()).patch(newVer).getItem();
+                item.mergeCompound(NBTItem.convertItemtoNBT(patched_item));
                 total_item_updated++;
             }
             playernbt.save();
@@ -73,53 +73,11 @@ public class ItemPatcher {
     private static String getID(ReadWriteNBT item){
         return getBukkitValues(item).getString(JKey.Main.toString());
     }
-
-    private static void updateBaseStats(ItemStack lastVer, JItem newVer) throws IllegalAccessException {
-        ItemStats newStats = new ItemStats();
-        newStats.getStatsFromItem(lastVer);
-        newStats.setBaseStats(newVer.getStats());
-    }
-    private static ItemStack Patch(ItemStack lastVer, JItem newVer) throws IllegalAccessException {
-        JItem LastVersion = JItem.convertFrom(lastVer, newVer.getCustom_lore());
-
-//        Set Base item stats
-        ItemStats newStats = new ItemStats();
-        newStats.getStatsFromItem(lastVer);
-        newStats.setBaseStats(newVer.getStats());
-        newStats.setModifiers(newVer.getStats());
-        newStats.calculateFinalStats();
-        LastVersion.replaceStats(newStats);
-
-        //update the lore
-        LastVersion.getCustom_lore().clear();
-        LastVersion.getCustom_lore().addAll(newVer.getCustom_lore());
-
-        //update item abilities
-        LastVersion.getAbilities().clear();
-        LastVersion.getAbilities().addAll(newVer.getAbilities());
-
-        //update base item rarity
-        LastVersion.setBaseRarity(newVer.getBaseRarity());
-
-        //update base item Name
-        LastVersion.setDefaultItem_name(newVer.getDefaultItem_name());
-
-        //update item ability
-        LastVersion.getAbilities().clear();
-        LastVersion.getAbilities().addAll(newVer.getAbilities());
-
-
-        LastVersion.update();
-        return LastVersion.getItem();
-    }
-
-
-     private static boolean hasCustomID(ReadWriteNBT item){
+    private static boolean hasCustomID(ReadWriteNBT item){
         return item.hasTag("components") &&
                 item.getCompound("components").hasTag("minecraft:custom_data") &&
                 item.getCompound("components").getCompound("minecraft:custom_data").hasTag("PublicBukkitValues");
     }
-
     private static ReadWriteNBT getBukkitValues(ReadWriteNBT item){
         return item.getCompound("components").getCompound("minecraft:custom_data")
                 .getCompound("PublicBukkitValues");
