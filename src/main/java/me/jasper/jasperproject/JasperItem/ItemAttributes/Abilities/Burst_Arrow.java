@@ -56,16 +56,19 @@ public class Burst_Arrow extends ItemAbility {
         byte time = (byte) (30/e.getRange()); //1.5 second duration
         new BukkitRunnable() {
             private byte total=0;
+            Player pleryer = e.getPlayer();
             @Override
             public void run() {
-                if(!ItemUtils.hasAbility(Bukkit.getPlayer(e.getPlayer().getUniqueId()).getInventory().getItemInMainHand(), e.getKey())||this.total >= e.getRange()-1) cancel();
-                Arrow panah = e.getPlayer().launchProjectile(Arrow.class);
-                e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
+                if(!this.pleryer.isOnline()
+                        ||!ItemUtils.hasAbility(Bukkit.getPlayer(this.pleryer.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
+                        ||this.total >= e.getRange()-1) cancel();
+                Arrow panah = this.pleryer.launchProjectile(Arrow.class);
+                this.pleryer.getWorld().playSound(this.pleryer.getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
                 panah.getPersistentDataContainer().set(JKey.removeWhenHit, PersistentDataType.BOOLEAN, true);
-                panah.setVelocity(e.getPlayer().getLocation().getDirection().multiply(e.getForce()));
+                panah.setVelocity(this.pleryer.getLocation().getDirection().multiply(e.getForce()));
                 panah.setCritical(true);
                 panah.setFireTicks(e.getArrow().getFireTicks());
-                panah.setShooter(e.getPlayer());
+                panah.setShooter(this.pleryer);
                 panah.setTicksLived(200);
                 panah.setPickupStatus(AbstractArrow.PickupStatus.CREATIVE_ONLY);
 //                panah.setDamage();
