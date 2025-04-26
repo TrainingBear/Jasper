@@ -3,6 +3,7 @@ package me.jasper.jasperproject.JasperItem;
 import lombok.val;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemPatcher;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,13 +15,15 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JasperItemCommand implements CommandExecutor, TabCompleter {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] strings) {
         if(!(commandSender instanceof Player player)) return false;
         val manager = ItemManager.getInstance().getItems();
+        if(strings[0].isEmpty()) player.sendMessage(MiniMessage.miniMessage().deserialize("<red>Input the item name bruv"));
         switch(strings[0].toLowerCase()){
             case "debug" -> {
 //                Items.register();
@@ -32,13 +35,20 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                     throw new RuntimeException(e);
                 }
             }
-            default -> manager.get(strings[0].toUpperCase()).send(player);
+            default -> {
+                try {
+                    manager.get(strings[0].toUpperCase()).send(player);
+                }catch (NullPointerException ignored){
+                    player.sendMessage(MiniMessage.miniMessage().deserialize("<red>There is no that kind of item"));
+                }
+            }
         }
         return true;
     }
 
+    List<String> list = ItemManager.getInstance().getItems().keySet().stream().map(String::toLowerCase).toList();
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return new ArrayList<>(ItemManager.getInstance().getItems().keySet());
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] strings) {
+        return list.stream().filter(name -> name.contains(strings[0])).toList();
     }
 }
