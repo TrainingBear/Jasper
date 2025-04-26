@@ -1,0 +1,481 @@
+{
+  "name" : "information_schema",
+  "PROCEDURES" : [ ],
+  "VIEWS" : [ {
+    "VIEW_NAME" : "ADMINISTRABLE_ROLE_AUTHORIZATIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "APPLICABLE_ROLES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "CHARACTER_SETS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "CHECK_CONSTRAINTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "COLLATION_CHARACTER_SET_APPLICABILITY",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "COLLATIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "COLUMN_PRIVILEGES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "COLUMN_STATISTICS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "COLUMNS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "COLUMNS_EXTENSIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ENABLED_ROLES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ENGINES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "EVENTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "FILES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_BUFFER_PAGE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_BUFFER_PAGE_LRU",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_BUFFER_POOL_STATS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CACHED_INDEXES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CMP",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CMP_PER_INDEX",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CMP_PER_INDEX_RESET",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CMP_RESET",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CMPMEM",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_CMPMEM_RESET",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_COLUMNS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_DATAFILES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FIELDS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FOREIGN",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FOREIGN_COLS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FT_BEING_DELETED",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FT_CONFIG",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FT_DEFAULT_STOPWORD",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FT_DELETED",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FT_INDEX_CACHE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_FT_INDEX_TABLE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_INDEXES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_METRICS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_SESSION_TEMP_TABLESPACES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_TABLES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_TABLESPACES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_TABLESPACES_BRIEF",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_TABLESTATS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_TEMP_TABLE_INFO",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_TRX",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "INNODB_VIRTUAL",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "KEY_COLUMN_USAGE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "KEYWORDS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "OPTIMIZER_TRACE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "PARAMETERS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "PARTITIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "PLUGINS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "PROCESSLIST",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "PROFILING",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "REFERENTIAL_CONSTRAINTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "RESOURCE_GROUPS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ROLE_COLUMN_GRANTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ROLE_ROUTINE_GRANTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ROLE_TABLE_GRANTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ROUTINES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "SCHEMA_PRIVILEGES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "SCHEMATA",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "SCHEMATA_EXTENSIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ST_GEOMETRY_COLUMNS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ST_SPATIAL_REFERENCE_SYSTEMS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "ST_UNITS_OF_MEASURE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "STATISTICS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLE_CONSTRAINTS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLE_CONSTRAINTS_EXTENSIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLE_PRIVILEGES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLES_EXTENSIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLESPACES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TABLESPACES_EXTENSIONS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "TRIGGERS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "USER_ATTRIBUTES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "USER_PRIVILEGES",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "VIEW_ROUTINE_USAGE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "VIEW_TABLE_USAGE",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  }, {
+    "VIEW_NAME" : "VIEWS",
+    "VIEW_COMMENT" : "",
+    "VIEW_TYPE_OWNER" : null,
+    "VIEW_TYPE" : null,
+    "IS_SYSTEM_VIEW" : "Y"
+  } ],
+  "TABLES" : [ ],
+  "FUNCTIONS" : [ ]
+}
