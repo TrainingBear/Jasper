@@ -2,11 +2,11 @@ package me.jasper.jasperproject.JasperItem.Product.Tools;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import org.bukkit.Material;
 
-public class Titanium_Pickaxe extends Jitem implements Factory {
+public class Titanium_Pickaxe extends JItem implements Factory {
     public Titanium_Pickaxe(){
         super("Titanium Pickaxe", Material.IRON_PICKAXE, Rarity.UNCOMMON, ItemType.PICKAXE,1121L,"TITANIUM_PICKAXE");
         //here is the blablablablablablalblabla
@@ -14,7 +14,7 @@ public class Titanium_Pickaxe extends Jitem implements Factory {
         //this one also blablablabla
     }
     @Override
-    public Jitem create(){
+    public JItem create(){
         return this;
     }
 

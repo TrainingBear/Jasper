@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * YAML CONFIGURATOR
@@ -54,14 +55,14 @@ public final class Configurator {
      * @param consumer For every .yml file loaded, u can run your logic of your config.yml
      *                 after .yml file loaded or before if the file is directory/folder.
      */
-    public void load(Consumer consumer){
+    public void load(Consumer<File> consumer){
         File[] files = parent.listFiles();
         for (File file : files) {
             if(file.getName().endsWith(".yml")) {
                 String name = file.getName();
                 this.file.add(name);
                 Bukkit.getLogger().info("[JasperProject] [Configurator] loaded "+name);
-                if(consumer!=null) consumer.run(file);
+                if(consumer!=null) consumer.accept(file);
             }
             if(file.isDirectory()){
                 Configurator compound = new Configurator(file);
@@ -95,14 +96,14 @@ public final class Configurator {
         throw new JasperConfiguratorException("This file already exist!");
     }
 
-    public void edit(String name, Editor editor) {
+    public void edit(String name, Consumer<FileConfiguration> editor) {
         File file = getFile(name);
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         try{
-            editor.edit(config).save(getFile(name));
+            editor.accept(config); 
+            config.save(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }finally {
         }
     }
 
@@ -208,7 +209,7 @@ public final class Configurator {
             returnedList.add("new element");
             config.set("test", returnedList);
 
-            return config;
+            
         });
 
         /**                     PERCABANGAN
@@ -222,7 +223,7 @@ public final class Configurator {
 
         /// cara edit cabang yang lu buat:
         final Configurator cabang2 = cabang1.getCompound("Cabang2");
-        cabang2.edit("a", c->c);
+        cabang2.edit("a", c->{});
 
 
         ///             KALO STARTUP HARUS DI REGISTER DI MAIN CLASS! onEnable()!

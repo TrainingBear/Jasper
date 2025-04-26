@@ -5,13 +5,24 @@ import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
+import org.bukkit.entity.Cat;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Category implements Content {
+    private static Map<Integer, Category> INSTANCE;
+    public synchronized static Map<Integer, Category> getINSTANCE() {
+        if(INSTANCE==null){
+            INSTANCE = new HashMap<>();
+        }
+        return INSTANCE;
+    }
+
     private int ID;
     private ItemStack item;
 
@@ -41,6 +52,7 @@ public class Category implements Content {
             if(glint)meta.setEnchantmentGlintOverride(true);
             if(lore!=null) meta.lore(lore);
         });
+        getINSTANCE().put(ID, this);
     }
 
     public String getName(){

@@ -7,7 +7,6 @@ import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,10 +16,12 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Jitem {
-    @Getter private long Version; // <---------- 1
+public class JItem implements Cloneable{
+    @Getter@Setter private long Version; // <---------- 1
     @Setter@Getter private String ID; // <---------- 2
     @Setter private Component item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
@@ -31,15 +32,13 @@ public class Jitem {
     @Getter private ItemStack item;
     @Getter @Setter private Rarity baseRarity; // <---------- 9
     @Getter @Setter private Rarity rarity; // <---------- 10
-    private ItemMeta meta;
     final private ItemType type; // <---------- 11
 
-    @Getter private ItemStats stats;
+    @Getter private Map<Stats, Float> stats;
     @Getter private List<ENCHANT> enchants;
-    // List<GemstoneAttribute> gemstoneSlot = new ArrayList<>();
     @Getter private List<ItemAbility> abilities;
 
-    @Getter private List<Component> lore = new ArrayList<>();
+    private List<Component> lore = new ArrayList<>();
     @Getter private List<Component> custom_lore = new ArrayList<>();
 
     /**
@@ -47,23 +46,28 @@ public class Jitem {
      * @param material Items Material
      * @param rarity use Rarity.enum for item rarity
      * @param type use ItemType.enum for item Type category
-     * @param itemVersion THIS IS ITEM VERSION, PLEASE CHANGE THE VERSION IF UPDATE ARE NEEDED
      * @param ID THIS IS FINAL ID, DONT CHANGE THIS ID! OR ITEM CANT BE UPDATED
      * */
 
-    public Jitem(String name, Material material, Rarity rarity, ItemType type, long itemVersion, String ID){
-        this(false, true, false, (byte) 0, name, name, material, rarity, rarity, type, itemVersion, ID, new ArrayList<>(), new ItemStats(), new ArrayList<>());
+    public JItem(String name, Material material, Rarity rarity, ItemType type, String ID){
+        this(false, true, false, (byte) 0, name, name, material, rarity, rarity, type, 0L, ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
+    }
+    public JItem(String name, Material material, Rarity rarity,
+                 ItemType type, long itemVersion, String ID){
+        this(false, true, false, (byte) 0,
+                name, name, material, rarity, rarity, type, itemVersion,
+                ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
     }
 
-    public Jitem(boolean upgraded, boolean upgrade, boolean UPGRADE, byte occur, String name,
-                 String defaultName, Material material, @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
-                 long itemVersion, String ID, List<ItemAbility> abilities, ItemStats stats, List<ENCHANT> enchant){
+    public JItem(boolean upgraded, boolean upgrade, boolean UPGRADE,
+                 byte occur, String name, String defaultName, Material material,
+                 @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
+                 long itemVersion, String ID, List<ItemAbility> abilities,
+                 Map<Stats, Float> stats, List<ENCHANT> enchant){
         this.item = new ItemStack(material);
-        this.meta = this.item.getItemMeta();
         this.abilities = abilities;
         this.stats = stats;
         this.enchants = enchant;
-
         this.item_name = MiniMessage.miniMessage().deserialize("<!i>"+MiniMessage.miniMessage().serialize(rarity.color)+name);
         this.defaultItem_name = defaultName;
         this.baseRarity = baseRarity;
@@ -75,104 +79,92 @@ public class Jitem {
         this.type = type;
         this.ID = ID;
         this.Version = itemVersion;
-        meta.getPersistentDataContainer().set(JKey.Main, PersistentDataType.STRING, ID);
-        meta.getPersistentDataContainer().set(JKey.CustomName, PersistentDataType.STRING, PlainTextComponentSerializer.plainText().serialize(this.item_name));
-        meta.getPersistentDataContainer().set(JKey.Version, PersistentDataType.LONG, itemVersion);
-        meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name());
-        meta.getPersistentDataContainer().set(JKey.BaseRarity, PersistentDataType.STRING, rarity.name());
-        meta.getPersistentDataContainer().set(JKey.Category, PersistentDataType.STRING, type.name());
-        meta.getPersistentDataContainer().set(JKey.RarityUpdated, PersistentDataType.BYTE, upgradesOccur);
-        meta.getPersistentDataContainer().set(JKey.UpgradeAble, PersistentDataType.BOOLEAN, upgradeable);
-        meta.getPersistentDataContainer().set(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN, unlimitedUpgradeable);
-        meta.getPersistentDataContainer().set(JKey.Upgraded, PersistentDataType.BOOLEAN, upgraded);
-        this.meta.displayName(item_name);
+        item.editMeta(meta->{
+            meta.getPersistentDataContainer().set(JKey.Main, PersistentDataType.STRING, ID);
+            meta.getPersistentDataContainer().set(JKey.CustomName, PersistentDataType.STRING, PlainTextComponentSerializer.plainText().serialize(this.item_name));
+            meta.getPersistentDataContainer().set(JKey.Version, PersistentDataType.LONG, itemVersion);
+            meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name());
+            meta.getPersistentDataContainer().set(JKey.BaseRarity, PersistentDataType.STRING, rarity.name());
+            meta.getPersistentDataContainer().set(JKey.Category, PersistentDataType.STRING, type.name());
+            meta.getPersistentDataContainer().set(JKey.RarityUpdated, PersistentDataType.BYTE, upgradesOccur);
+            meta.getPersistentDataContainer().set(JKey.UpgradeAble, PersistentDataType.BOOLEAN, upgradeable);
+            meta.getPersistentDataContainer().set(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN, unlimitedUpgradeable);
+            meta.getPersistentDataContainer().set(JKey.Upgraded, PersistentDataType.BOOLEAN, upgraded);
+        });
     }
 
     public void update() {
         this.lore.clear();
-        try{
-            applyItemStats();
-        } catch (IllegalAccessException e) {
-            Bukkit.getLogger().info("[JasperProject] something went wrong when applying this "+ this.item_name+" item stats");
-        }
+        applyItemStats();
         applyItemEnchantments();
         applyItemAbilities();
         buildLore();
-        item.setItemMeta(meta);
     }
 
     public void send(Player player){
-        player.getInventory().addItem(item);
+        player.getInventory().addItem(item.clone());
     }
 
     public boolean upgrade(){
         if(unlimitedUpgradeable || (!upgradeable || upgraded || rarity == Rarity.MYTHIC)) return false;
         this.upgraded = true;
         this.rarity = rarity.upgrade();
-        meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name());
+        item.editMeta(meta->meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name()));
         upgradesOccur++;
         return true;
     }
 
     public void updateRarity(){
         this.rarity = rarity.update(baseRarity, upgradesOccur);
-        meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name());
+        item.editMeta(meta->meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name()));
+
     }
 
-    public void replaceStats(ItemStats stats){
+    public void replaceStats(Map<Stats, Float> stats){
         this.stats = stats;
     }
 
-    private void applyItemStats() throws IllegalAccessException {
-        this.meta.getPersistentDataContainer()
-                .set(
-                        JKey.Stats,
-                        PersistentDataType.TAG_CONTAINER,
-                        stats.getAndApplyFinalStats(meta.getPersistentDataContainer())
-                );
-        this.meta.getPersistentDataContainer()
-                .set(
-                        JKey.BaseStats,
-                        PersistentDataType.TAG_CONTAINER,
-                        stats.getBaseStats(meta.getPersistentDataContainer())
-                );
-        this.meta.getPersistentDataContainer()
-                .set(
-                        JKey.StatsModifier,
-                        PersistentDataType.TAG_CONTAINER,
-                        stats.getModifierStats(meta.getPersistentDataContainer())
-                );
-        item.setItemMeta(this.meta);
-        lore.addAll(stats.getLore());
+    private void applyItemStats() {
+        item.editMeta(meta->{
+            meta.getPersistentDataContainer()
+                    .set(
+                            JKey.Stats,
+                            PersistentDataType.TAG_CONTAINER,
+                            Stats.toPDC(meta.getPersistentDataContainer().getAdapterContext(), this.stats)
+                    );
+        });
+        lore.addAll(Stats.toLore(this.stats));
     }
 
     private void applyItemEnchantments(){
         if(enchants.isEmpty()) return;
-        this.meta.getPersistentDataContainer()
-                .set(
-                        JKey.Enchant,
-                        PersistentDataType.TAG_CONTAINER,
-                        getEnchantsdata(this.meta.getPersistentDataContainer())
-                );
+        item.editMeta(meta->{
+            meta.getPersistentDataContainer()
+                    .set(
+                            JKey.Enchant,
+                            PersistentDataType.TAG_CONTAINER,
+                            getEnchantsdata(meta.getPersistentDataContainer())
+                    );
+        });
     }
-
 
     public void applyItemAbilities(){
         if(abilities.isEmpty()) return;
-        this.meta.getPersistentDataContainer()
-                .set(
-                        JKey.Ability,
-                        PersistentDataType.TAG_CONTAINER,
-                        getAbilitiesdata(meta.getPersistentDataContainer())
-                );
+        item.editMeta(meta->{
+            meta.getPersistentDataContainer()
+                    .set(
+                            JKey.Ability,
+                            PersistentDataType.TAG_CONTAINER,
+                            ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities, lore)
+                    );
+        });
     }
 
     private void buildLore(){
         lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
         lore.addAll(custom_lore);
-        this.lore.addAll(rarity.getDescription(upgraded, type));
-        this.meta.lore(lore);
-        this.item.setItemMeta(this.meta);
+        lore.addAll(rarity.getDescription(upgraded, type));
+        item.editMeta(meta-> meta.lore(lore));
     }
 
     private PersistentDataContainer getEnchantsdata(PersistentDataContainer data){
@@ -191,8 +183,6 @@ public class Jitem {
                     );
                 }
             }
-
-            //else yaudah ilang
             else {
                 byte operator = 0;
                 StringBuilder builder = new StringBuilder();
@@ -214,46 +204,21 @@ public class Jitem {
         return enchants_name;
     }
 
-    private PersistentDataContainer getAbilitiesdata(PersistentDataContainer itemMeta){
-        lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
-        PersistentDataContainer abilities_name = itemMeta.getAdapterContext().newPersistentDataContainer();
-        for (ItemAbility ability : abilities) {
-            lore.addAll(ability.getLore());
-            abilities_name.set(
-                    ability.getKey(),
-                    PersistentDataType.TAG_CONTAINER, ability.getStatsContainer(abilities_name)
-            );
-        }
-        return abilities_name;
-    }
-
-
-    public Jitem(Jitem item) throws IllegalAccessException {
-        this.item_name = item.item_name;
-        this.upgradeable = item.upgradeable;
-        this.unlimitedUpgradeable = item.unlimitedUpgradeable;
-        this.upgraded = item.upgraded;
-        this.item = item.item;
-        this.rarity = item.rarity;
-        this.meta = this.item.getItemMeta();
-        this.type = item.type;
-        this.stats = item.stats;
-        this.enchants = item.enchants;
-        this.abilities = item.abilities;
-        this.lore = item.lore;
-
-    }
-
     @Override
-    public Jitem clone() {
-        try {
-            return new Jitem(this);
-        } catch (IllegalAccessException e) {
+    public JItem clone() {
+        try{
+            JItem clone = (JItem) super.clone();
+            clone.abilities = List.copyOf(this.abilities);
+            clone.stats = Map.copyOf(this.stats);
+            clone.enchants = List.copyOf(this.enchants);
+            clone.item = this.item.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Jitem convertFrom(ItemStack item, List<Component> custom_lore) throws IllegalAccessException {
+    public static JItem convertFrom(ItemStack item, List<Component> custom_lore) throws IllegalAccessException {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
@@ -270,13 +235,11 @@ public class Jitem {
         boolean unlimitedUpgradeable = data.get(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN);
         boolean upgraded = data.get(JKey.Upgraded, PersistentDataType.BOOLEAN);
 
-        ItemStats stats = new ItemStats();
-        stats.getStatsFromItem(item);
-
+        Map<Stats, Float> stats = Stats.fromItem(item);
         List<ItemAbility> ability = ItemAbility.convertFrom(item);
         List<ENCHANT> enchants = ENCHANT.convertFrom(meta);
 
-        Jitem convertedItem = new Jitem(upgraded, upgradeable, unlimitedUpgradeable, updatedOCCUR,
+        JItem convertedItem = new JItem(upgraded, upgradeable, unlimitedUpgradeable, updatedOCCUR,
                 name, defaultName, material, rarity, baseRarity, category, version, ID, ability,
                 stats, enchants);
         convertedItem.getCustom_lore().clear();
@@ -284,8 +247,17 @@ public class Jitem {
         convertedItem.update();
         return convertedItem;
     }
-    public Jitem setMaxStack(int maxStack){
-        this.meta.setMaxStackSize(maxStack);
+
+    public void setMaxStack(int maxStack){
+        item.editMeta(e->e.setMaxStackSize(maxStack));
+    }
+    
+    public JItem patch(JItem newVer){
+        this.stats = newVer.stats;
+        this.custom_lore = newVer.getCustom_lore();
+        this.abilities = newVer.abilities;
+        this.baseRarity = newVer.baseRarity;
+        this.defaultItem_name = newVer.defaultItem_name;
         return this;
     }
 

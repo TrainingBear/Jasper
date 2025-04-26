@@ -9,8 +9,8 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.math.BlockPosition;
+import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Util.Commands.JasperCommand;
-import me.jasper.jasperproject.JasperItem.Items;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -159,7 +159,7 @@ public class PaperAnimationCommand implements JasperCommand {
                 ).then(Commands.literal("wand")
                         .executes(c -> {
                             if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
-                            Items.animate_wannd.send(player);
+                            ItemManager.getInstance().getItems().get("BLENDER").send(player);
                             return Command.SINGLE_SUCCESS;
                         })
                 ).then(Commands.literal("list")

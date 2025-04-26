@@ -6,6 +6,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
@@ -13,9 +14,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -79,14 +82,14 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         if(sendmessage) {
             if (!isShowCooldown()) return true;
             e.getPlayer().sendMessage(
-                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait " + round((cooldown - current), 1) + " seconds!</red>")
+                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait " + Util.round((cooldown - current), 1) + " seconds!</red>")
             );
         }
         return true;
     }
     protected <T extends ItemAbility> float getCdLeft(T e,int defaultIfNull){
         return cooldownMap.containsKey(e.getPlayer().getUniqueId())
-                ? round(e.getCooldown() - ((System.currentTimeMillis() - cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f),1)
+                ? Util.round(e.getCooldown() - ((System.currentTimeMillis() - cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f),1)
                 : defaultIfNull;
     }
     protected <T extends ItemAbility> void applyCooldown(T e,boolean showCD) {
@@ -106,7 +109,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
             e.setCancelled(true);
             if(!showCD) return;
             player.sendMessage(
-                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+round((cooldown - current),1)+" seconds!</red>")
+                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+ Util.round((cooldown - current),1)+" seconds!</red>")
             );
 
             return;
@@ -115,12 +118,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
 
     }
 
-    public static float round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
 
-        BigDecimal bd = BigDecimal.valueOf(value).setScale(places,RoundingMode.HALF_UP);
-        return bd.floatValue();
-    }
 
     public static List<ItemAbility> convertFrom(ItemStack item){
         List<ItemAbility> abilities = new ArrayList<>();
@@ -131,6 +129,18 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
             }
         }
         return abilities;
+    }
+
+    public static PersistentDataContainer toPDC(PersistentDataAdapterContext context, List<ItemAbility> abilities, @Nullable List<Component> lore){
+        PersistentDataContainer abilities_name = context.newPersistentDataContainer();
+        for (ItemAbility ability : abilities) {
+            if(lore!=null) lore.addAll(ability.getLore());
+            abilities_name.set(
+                    ability.getKey(),
+                    PersistentDataType.TAG_CONTAINER, ability.getStatsContainer(abilities_name)
+            );
+        }
+        return abilities_name;
     }
 
 }

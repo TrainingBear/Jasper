@@ -7,14 +7,11 @@ import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ContainerMenu.Content;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Logger;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -56,7 +53,7 @@ public final class Product implements Content, Serializable {
         prototype = product.clone();
         prototype.editMeta(e->{
             PersistentDataContainer pdc = e.getPersistentDataContainer();
-            pdc.set(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING, product_name);
+            pdc.set(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING, this.product_name);
             pdc.set(JKey.GUI_BORDER, PersistentDataType.BOOLEAN, true);
             pdc.set(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE, TaskID.OPEN_PRODUCT_MENU);
         });
@@ -82,11 +79,11 @@ public final class Product implements Content, Serializable {
             Order finalTopDemand = topBuyOffer();
             this.prototype.editMeta(e -> {
                 e.lore(List.of(
-                        text("<!i><gold>sell price: <sell_price></gold>",
+                        Util.deserialize("<!i><gold>sell price: <sell_price></gold>",
                                 Placeholder.unparsed("sell_price", ""+finalTopSupply.getOffer())),
-                        text("<!i><gold>buy price: <buy_price></gold>",
+                        Util.deserialize("<!i><gold>buy price: <buy_price></gold>",
                                 Placeholder.unparsed("buy_price", ""+ finalTopDemand.getOffer())),
-                        text("<!i><dark_green>supply: <v>, demand: <v2></dark_green>",
+                        Util.deserialize("<!i><dark_green>supply: <v>, demand: <v2></dark_green>",
                                 Placeholder.unparsed("v", String.valueOf(getGlobalSupply())),
                                 Placeholder.unparsed("v2", String.valueOf(getDemand()))
                         )
@@ -95,11 +92,11 @@ public final class Product implements Content, Serializable {
         } catch (OrderException ex) {
             this.prototype.editMeta(e -> {
                 e.lore(List.of(
-                        text("<!i><gold>sell price: <sell_price></gold>",
+                        Util.deserialize("<!i><gold>sell price: <sell_price></gold>",
                                 Placeholder.unparsed("sell_price", stock ==null? "N/A": ""+stock.getSellOffer())),
-                        text("<!i><gold>buy price: <buy_price></gold>",
+                        Util.deserialize("<!i><gold>buy price: <buy_price></gold>",
                                 Placeholder.unparsed("buy_price", stock ==null? "N/A":""+ stock.getBuyOffer())),
-                        text("<!i><dark_green>supply: <v>, demand: <v2></dark_green>",
+                        Util.deserialize("<!i><dark_green>supply: <v>, demand: <v2></dark_green>",
                                 Placeholder.unparsed("v", String.valueOf(getGlobalSupply())),
                                 Placeholder.unparsed("v2", String.valueOf(getDemand()))
                         )
@@ -261,7 +258,7 @@ public final class Product implements Content, Serializable {
                     item.setAmount(0);
                     quantity-=value;
                 }
-                result.addCart(order.getBusinessman(), order, quantity);
+                result.addCart(order, quantity);
                 if(quantity>0) return instantSell(seller, quantity, result);
             }
         } catch (OrderException e){
@@ -317,7 +314,7 @@ public final class Product implements Content, Serializable {
             if(ammount<=0) return result;
 
             val quantity = Math.min(stock, ammount);
-            result.addCart(order.getBusinessman(), order, quantity);
+            result.addCart(order, quantity);
             ammount-=quantity;
             if(ammount > 0) return instantBuy(buyer, ammount, result);
         }catch (OrderException e){
@@ -330,7 +327,7 @@ public final class Product implements Content, Serializable {
             result.addCart(substitute, quantity);
             ammount-=quantity;
 
-            if(ammount > 0) throw new OrderException("Cant find offers, You are buying "+result.getItem()+" items ("+result.getBills()+" rupiah). click to continue");
+            if(ammount > 0) throw new OrderException("Cant find offers, You are buying "+result.getAmount()+" items ("+result.getBills()+" rupiah). click to continue");
         }
         return result;
     }
@@ -356,12 +353,13 @@ public final class Product implements Content, Serializable {
         return this.product.getMaxStackSize() * getPlayerAvailableSlot(player);
     }
 
-    private void deposit(Player player, float amount){
+    public static boolean deposit(Player player, float amount){
         Economy eco = JasperProject.getEconomy();
         eco.depositPlayer(player, amount);
-        player.sendMessage(MessageEnum.BAZAAR.append(text("<blue> You have been recived <value> rupiah",
+        player.sendMessage(MessageEnum.BAZAAR.append(Util.deserialize("<blue> You have been recived <value> rupiah",
             Placeholder.component("value", Component.text(amount))
         )));
+        return true;
     }
     public static boolean withdraw(Player player, float amount){
         Economy eco = JasperProject.getEconomy();
@@ -375,15 +373,13 @@ public final class Product implements Content, Serializable {
         Logger log = new Logger(online_buyer);
         if(!eco.has(online_buyer, price)){
             double morecoin = price - eco.getBalance(online_buyer);
-            log.info(MessageEnum.BAZAAR.append(text("<red>You need <v> more coins to buy this item!</red>", Placeholder.unparsed("v", String.valueOf(morecoin)))));
+            log.info(MessageEnum.BAZAAR.append(Util.deserialize("<red>You need <v> more coins to buy this item!</red>", Placeholder.unparsed("v", String.valueOf(morecoin)))));
             return false;
         }
         return true;
     }
 
-    private static @NotNull Component text(String s, TagResolver... r){
-        return MiniMessage.miniMessage().deserialize(s, r);
-    }
+
 
     @Override
     public int getID() {

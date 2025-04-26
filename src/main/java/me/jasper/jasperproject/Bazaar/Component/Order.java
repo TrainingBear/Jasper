@@ -53,11 +53,12 @@ public class Order implements Serializable {
      * @param amount
      * @return return total price (amount * this order buy offer)
      */
-    public float fillBuyOrder(int amount){
-        this.goods += amount;
+    public boolean fillBuyOrder(Player seller, int amount){
         val price = amount * this.offer;
+        if(Product.deposit(seller, price)) return false;
+        this.goods += amount;
         this.bank -= price;
-        return price;
+        return true;
     }
     public boolean fillSellOrder(Player buyer, int amount){
         val price = amount * this.offer;

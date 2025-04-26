@@ -4,11 +4,11 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Grappling_Hoo
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JasperItem.Jitem;
+import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import org.bukkit.Material;
 
-public class GraplingHook extends Jitem implements Factory {
+public class GraplingHook extends JItem implements Factory {
 
     public GraplingHook(){
         super("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, 15L, "GRAPPLING_HOOK");
@@ -17,7 +17,7 @@ public class GraplingHook extends Jitem implements Factory {
         this.getEnchants().add(ENCHANT.SharpnesV2);
     }
     @Override
-    public Jitem create() {
+    public JItem create() {
         return this;
     }
 }

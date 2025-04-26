@@ -19,21 +19,11 @@ public class Listener implements org.bukkit.event.Listener {
     public void onClick(@NotNull InventoryClickEvent e){
         ItemStack curentItem = e.getCurrentItem();
         if(e.getClick().equals(ClickType.DOUBLE_CLICK)
-                || !MiniMessage.miniMessage().serialize(e.getView().title()).startsWith((String) BazaarEnum.TITLE_STRING.get())
-                || curentItem==null || !curentItem.hasItemMeta()) return;
+                || curentItem==null ) return;
 
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
         if(!contain(container, JKey.BAZAAR_COMPONENT_TASK_ID)) return;
         Player whoClicked = (Player) e.getWhoClicked();
-        if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
-            byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
-            TaskID.MAP.get(taskID)
-                    .update(
-                            whoClicked,
-                            e.getClickedInventory(),
-                            container.get(JKey.BAZAAR_COMPONENT_ID, PersistentDataType.INTEGER)
-                    );
-        }
         if(contain(container, JKey.BAZAAR_PRODUCT)){
             String name = container.get(JKey.BAZAAR_PRODUCT, PersistentDataType.STRING);
             byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
@@ -44,7 +34,18 @@ public class Listener implements org.bukkit.event.Listener {
                             e.getClickedInventory(),
                             name
                     );
+            return;
         }
+        if(contain(container, JKey.BAZAAR_COMPONENT_ID)){
+            byte taskID = container.get(JKey.BAZAAR_COMPONENT_TASK_ID, PersistentDataType.BYTE);
+            TaskID.MAP.get(taskID)
+                    .update(
+                            whoClicked,
+                            e.getClickedInventory(),
+                            curentItem
+                    );
+        }
+
     }
 
     private boolean contain(@NotNull PersistentDataContainer container, NamespacedKey key){
