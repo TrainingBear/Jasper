@@ -19,32 +19,36 @@ import java.util.List;
 import java.util.Map;
 
 public enum Stats {
-    DAMAGE("⚔","Damage",MiniMessage.miniMessage().deserialize("<red>")),
-    STRENGTH("❁","Strength",MiniMessage.miniMessage().deserialize("<color:#ff1e00>")),
-    CRIT_DAMAGE("✴","Crit damage",MiniMessage.miniMessage().deserialize("<color:#6245ff>")),
-    CRIT_CHANCE("✧","Crit Chance",MiniMessage.miniMessage().deserialize("<color:#8B76ff>")),
-    MANA("✎","Mana",MiniMessage.miniMessage().deserialize("<color:#3f9fff>")),
-    SPEED("➠","Speed",MiniMessage.miniMessage().deserialize("<color:#ff4fd0>")),
-    ATTACK_SPEED("⥂","Attack speed",MiniMessage.miniMessage().deserialize("<yellow>")),
-    DOUBLE_ATTACK("⫻","Double attack",MiniMessage.miniMessage().deserialize("<color:#ffB94C>")),
-    SWING_RANGE("⌀","Swing range",MiniMessage.miniMessage().deserialize("<color:#ff8a63>")),
-    DEFENCE("🛡","Defense",MiniMessage.miniMessage().deserialize("<color:#00ff3c>")),
-    TRUE_DEFENCE("⛨","True defense",MiniMessage.miniMessage().deserialize("<color:#b5ff7f>")),
-    HEALTH("❤","Health" , MiniMessage.miniMessage().deserialize("<red>"));
+    DAMAGE("⚔","Damage","<red>"),
+    STRENGTH("❁","Strength","<color:#ff1e00>"),
+    CRIT_DAMAGE("✴","Crit damage","<color:#6245ff>"),
+    CRIT_CHANCE("✧","Crit Chance","<color:#8B76ff>"),
+    MANA("✎","Mana","<color:#3f9fff>"),
+    SPEED("➠","Speed","<color:#ff4fd0>"),
+    ATTACK_SPEED("⥂","Attack speed","<yellow>"),
+    DOUBLE_ATTACK("⫻","Double attack","<color:#ffB94C>"),
+    SWING_RANGE("⌀","Swing range","<color:#ff8a63>"),
+    DEFENCE("🛡","Defense","<color:#00ff3c>"),
+    TRUE_DEFENCE("⛨","True defense","<color:#b5ff7f>"),
+    HEALTH("❤","Health" , "<red>"),
+    MENDING("☄","Mending","<color:#7aff6e>"),
+    MAGIC_LUCK("☆","Magic Luck","<color:#87ffc5>"),
+    MINING_SPEED("⛏","Mining Speed","<color:#ffcc00>"),
+    DURABILITY("\uD83D\uDEE0","Durability","");
 
     @Getter private String symbol;
     @Getter private String name;
-    @Getter private Component color;
+    @Getter private String color;
     @Getter private NamespacedKey key;
-    Stats(String symbol, String name, Component color){
+    Stats(String symbol, String name, String color){
         this.symbol = symbol;
         this.name = name;
         this.color = color;
         this.key = new NamespacedKey(JasperProject.getPlugin(), name);
     }
 
-    public String getNameColor(){
-        return MiniMessage.miniMessage().serialize(color);
+    public Component getColorAsCompo(){
+        return MiniMessage.miniMessage().deserialize(color);
     }
 
     public static PersistentDataContainer toPDC(PersistentDataAdapterContext context, Map<Stats, Float> stats){
@@ -72,7 +76,7 @@ public enum Stats {
         List<Component> lore = new ArrayList<>();
         for (Stats stat : stats.keySet()) {
             lore.add(
-                Util.deserialize("<gray>"+stat.symbol+" "+stat.name+": "
+                Util.deserialize("<!i><gray>"+stat.symbol+" "+stat.name+": "
                         +stat.color+Util.round(stats.get(stat),1)));
         }
         return lore;
