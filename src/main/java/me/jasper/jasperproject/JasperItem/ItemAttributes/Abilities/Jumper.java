@@ -62,9 +62,8 @@ public class Jumper extends ItemAbility {
                 , SoundCategory.PLAYERS,0.85f,1.425f);
         e.getPlayer().getWorld().spawnParticle(
                 Particle.FIREWORK,e.getPlayer().getLocation().add(new Vector(0,1,0))
-                ,50,.3f,.3f,.3f,0); //<-- later it would be change
+                ,50,.3f,.3f,.3f,0);
         e.getPlayer().setFallDistance(0);
-//        e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(),Sound.);
     }
 
     @Override

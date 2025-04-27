@@ -6,6 +6,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -61,7 +62,7 @@ public class Teleport extends ItemAbility{
         target.setPitch(player.getLocation().getPitch());
 
         Location afterTP = target.add(0 ,player.getLocation().getPitch() < 0 ? -1:0, 0);
-        player.teleport(afterTP);
+        Util.teleportPlayer(player,afterTP,false);
         player.setFallDistance(0);
         ItemUtils.playPSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f
                 , (float) Math.min(1.7, 0.5f + (beforeTP.distance(afterTP) * 0.05f)));

@@ -23,7 +23,7 @@ public abstract class BazaarDatabase {
             connection = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/bazaar",
                     "root",
-                    "1234"
+                    "mysql12345"
             );
         } catch (SQLException e) {
             e.printStackTrace();
