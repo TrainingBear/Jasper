@@ -2,7 +2,8 @@ package me.jasper.jasperproject.JasperItem.Util;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.*;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ENCHANT;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Enchant;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Product.Tools.Blender;
@@ -33,7 +34,7 @@ public final class ItemManager {
 
     private final HashSet<ItemAbility> abilities = new HashSet<>();
     private final HashMap<String, JItem> items = new HashMap<>();
-    private final HashSet<ENCHANT> enchants = new HashSet<>();
+    private final HashSet<Enchant> enchants = new HashSet<>();
 
     private void registerItem(Factory factory){
         JItem item = factory.create();
@@ -43,6 +44,11 @@ public final class ItemManager {
     private void registerAbility(ItemAbility ability){
         pluginManager.registerEvents(ability, plugin);
         abilities.add(ability);
+    }
+
+    private void registerEnchant(Enchant enchant){
+        pluginManager.registerEvents(enchant, plugin);
+        enchants.add(enchant);
     }
 
     public void registerAll(){
@@ -68,5 +74,7 @@ public final class ItemManager {
         registerItem(new Titanium_Pickaxe());
         registerItem(new Feather_Jumper());
         registerItem(new Assassin_Dagger());
+
+        registerEnchant(new Sharpness());
     }
 }

@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Animator extends ItemAbility {
@@ -26,8 +27,8 @@ public class Animator extends ItemAbility {
         return instance;
     }
 
-    private static HashMap<UUID, BlockVector3> firstPos = new HashMap<>();
-    private static HashMap<UUID, BlockVector3> secondPost = new HashMap<>();
+    private static final HashMap<UUID, BlockVector3> firstPos = new HashMap<>();
+    private static final HashMap<UUID, BlockVector3> secondPost = new HashMap<>();
     @Getter private static HashMap<UUID, Region> regions = new HashMap<>();
 
     public Animator(){
@@ -68,4 +69,5 @@ public class Animator extends ItemAbility {
         regions.put(player.getUniqueId(), region);
         Structure.createBox(player);
     }
+
 }
