@@ -8,6 +8,7 @@ import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.SignGUI;
 import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -34,13 +35,6 @@ public class Warper extends ItemAbility{
     public Warper(float cooldown, int WarpRange){
         this.setRange(WarpRange);
         this.setCooldown(cooldown);
-        addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#a900d1><b>Warper <yellow>(RIGHT CLICK & LEFT CLICK)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Warping you to checkpoint coordinate")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>that you inputed <color:#95945B>(Sneak + Left Click)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: "+WarpRange+" blocks")
-        ));
-
     }
     public Warper(int WarpRange, float cooldown, PlayerInteractEvent e){
         setRange(WarpRange);
@@ -185,5 +179,15 @@ public class Warper extends ItemAbility{
             e.setCancelled(true);
         }
 
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#a900d1><b>Warper <yellow>(RIGHT CLICK & LEFT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Warping you to checkpoint coordinate")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>that you inputed <color:#95945B>(Sneak + Left Click)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Max warp range: "+this.range+" blocks")
+        );
     }
 }

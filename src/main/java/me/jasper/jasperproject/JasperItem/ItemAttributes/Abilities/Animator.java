@@ -9,6 +9,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -32,12 +33,7 @@ public class Animator extends ItemAbility {
     @Getter private static HashMap<UUID, Region> regions = new HashMap<>();
 
     public Animator(){
-        addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red><b>Creator <yellow>(RIGHT CLICK & LEFT CLICK)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Create a <green>Animation</green> with your")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Imagination! Create endless of")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Creativity")
-        ));
+
     }
 
     @EventHandler
@@ -70,4 +66,13 @@ public class Animator extends ItemAbility {
         Structure.createBox(player);
     }
 
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red><b>Creator <yellow>(RIGHT CLICK & LEFT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Create a <green>Animation</green> with your")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Imagination! Create endless of")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Creativity")
+        );
+    }
 }

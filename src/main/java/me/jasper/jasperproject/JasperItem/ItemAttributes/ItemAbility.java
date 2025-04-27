@@ -39,20 +39,12 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
     @Setter @Getter protected int damage;
     @Setter @Getter protected int abilityCost;
     @Setter @Getter protected float cooldown;
-    @Getter
-    protected List<Component> lore = new ArrayList<>();
 
-    protected void addLore(List<Component> E){
-        lore.addAll(E);
-        if(showCooldown){
-            lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
-        }
-    }
-
-    public void setShowCooldown(boolean showCooldown) {
-        this.showCooldown = showCooldown;
-        if(this.showCooldown) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
-        else lore.remove(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
+    protected abstract List<Component> createLore();
+    protected List<Component> getLore(){
+        List<Component> lore = new ArrayList<>(createLore());
+        if(showCooldown) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
+        return lore;
     }
 
     @Override
@@ -114,9 +106,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
 
     public Object clone() {
        try{
-           ItemAbility clone = (ItemAbility) super.clone();
-           clone.lore = List.copyOf(this.lore);
-           return clone;
+           return (ItemAbility) super.clone();
        } catch (CloneNotSupportedException e) {
            throw new RuntimeException(e);
        }
@@ -137,7 +127,6 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
                 clone.damage = container.get(JKey.key_damage, PersistentDataType.INTEGER);
                 clone.cooldown = container.get(JKey.key_cooldown, PersistentDataType.FLOAT);
                 clone.abilityCost = container.get(JKey.key_abilityCost, PersistentDataType.INTEGER);
-                clone.lore = ability.lore;
                 abilities.add(clone);
             }
         }
@@ -152,10 +141,21 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         return stats;
     }
 
-    public static @NotNull PersistentDataContainer toPDC(@NotNull PersistentDataAdapterContext context, @NotNull List<ItemAbility> abilities, @Nullable List<Component> lore){
+    public static List<Component> toLore(List<ItemAbility> abilities){
+        List<Component> lore = new ArrayList<>();
+        for (ItemAbility ability : abilities) {
+            for (Component component : ability.getLore()) {
+                Bukkit.broadcast(component);
+            }
+            lore.add(Util.deserialize("<reset>"));
+            lore.addAll(ability.getLore());
+        }
+        return lore;
+    }
+
+    public static @NotNull PersistentDataContainer toPDC(@NotNull PersistentDataAdapterContext context, @NotNull List<ItemAbility> abilities){
         PersistentDataContainer abilities_name = context.newPersistentDataContainer();
         for (ItemAbility ability : abilities) {
-            if(lore!=null) lore.addAll(ability.getLore());
             PersistentDataContainer stats = abilities_name.getAdapterContext().newPersistentDataContainer();
             stats.set(JKey.key_range, PersistentDataType.INTEGER, ability.range);
             stats.set(JKey.key_damage, PersistentDataType.INTEGER, ability.damage);

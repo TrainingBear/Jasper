@@ -7,6 +7,8 @@ import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -119,15 +121,15 @@ public class JItem implements Cloneable{
         }
         ///         APLLYING ABILITIES
         if(!abilities.isEmpty()){
-            lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
             item.editMeta(meta->{
                 meta.getPersistentDataContainer()
                         .set(
                                 JKey.Ability,
                                 PersistentDataType.TAG_CONTAINER,
-                                ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities, lore)
+                                ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities)
                         );
             });
+            lore.addAll(ItemAbility.toLore(abilities));
         }
 
         buildLore();
@@ -178,7 +180,8 @@ public class JItem implements Cloneable{
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
-        String name = meta.getItemName();
+        String name = Util.escapeRegex(PlainTextComponentSerializer.plainText().serialize(meta.displayName()));
+        Bukkit.broadcast(Util.deserialize(name).append(meta.displayName()));
         String defaultName = data.get(JKey.CustomName, PersistentDataType.STRING);
         Material material = item.getType();
         Rarity rarity = Rarity.getFromString(Objects.requireNonNull(data.get(JKey.Rarity, PersistentDataType.STRING)));
