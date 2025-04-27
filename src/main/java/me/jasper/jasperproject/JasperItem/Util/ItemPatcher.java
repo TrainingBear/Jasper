@@ -55,7 +55,7 @@ public class ItemPatcher {
 
                 //ReadWriteNBT -> ItemStack
                 ItemStack lastVer = NBTItem.convertNBTtoItem(updateItem);
-                ItemStack patched_item = JItem.convertFrom(lastVer, newVer.getCustom_lore()).patch(newVer).getItem();
+                ItemStack patched_item = JItem.convertFrom(lastVer).patch(newVer).getItem();
                 item.mergeCompound(NBTItem.convertItemtoNBT(patched_item));
                 total_item_updated++;
             }

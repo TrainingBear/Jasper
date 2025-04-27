@@ -4,6 +4,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -28,10 +29,7 @@ public class Jumper extends ItemAbility {
     public Jumper(int blockHigh, float cooldown){
         this.setRange(blockHigh);
         this.setCooldown(cooldown);
-        this.addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#bad2ff>Jumper <b><yellow>(RIGHT CLICK)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Launching you up "+range+" blocks")
-        ));
+
     }
     @EventHandler
     public void Trigger(PlayerInteractEvent e){
@@ -66,5 +64,13 @@ public class Jumper extends ItemAbility {
                 Particle.FIREWORK,e.getPlayer().getLocation().add(new Vector(0,1,0))
                 ,50,.3f,.3f,.3f,0);
         e.getPlayer().setFallDistance(0);
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#bad2ff>Jumper <b><yellow>(RIGHT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Launching you up "+range+" blocks")
+        );
     }
 }

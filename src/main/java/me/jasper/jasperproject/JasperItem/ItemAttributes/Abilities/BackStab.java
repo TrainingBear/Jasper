@@ -5,7 +5,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
-import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -29,11 +29,7 @@ public class BackStab extends ItemAbility {
     public BackStab(float cooldown,int distance){
         this.setCooldown(cooldown);
         this.setRange(distance);
-        addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>BackStab <b><yellow>(SNEAK+RIGHT CLICK)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Teleport to behind looked Entity in")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>range of "+range+" blocks and <color:#aa7a7f>BackStab</color>'em")
-        ));
+
     }
     public BackStab(float cooldown, int range, Player player, EquipmentSlot equipmentSlot){
         this.setCooldown(cooldown);
@@ -93,4 +89,12 @@ public class BackStab extends ItemAbility {
                 ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
     }
 
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>BackStab <b><yellow>(SNEAK+RIGHT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Teleport to behind looked Entity in")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>range of "+this.range+" blocks and <color:#aa7a7f>BackStab</color>'em")
+        );
+    }
 }

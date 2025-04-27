@@ -3,10 +3,13 @@ package me.jasper.jasperproject.JasperItem;
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
+import me.jasper.jasperproject.JasperItem.Util.ItemManager;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class JItem implements Cloneable{
+public abstract class JItem implements Cloneable{
     @Getter@Setter private long Version; // <---------- 1
     @Setter@Getter private String ID; // <---------- 2
     @Setter private String item_name; // <---------- 3
@@ -36,7 +39,6 @@ public class JItem implements Cloneable{
     @Getter private List<ItemAbility> abilities;
 
     private List<Component> lore = new ArrayList<>();
-    @Getter private List<Component> custom_lore = new ArrayList<>();
 
     /**
      * @param name Items Name Display
@@ -93,6 +95,11 @@ public class JItem implements Cloneable{
         });
     }
 
+    protected abstract List<Component> createLore();
+    public List<Component> getLore(){
+        return createLore();
+    }
+
     public void update() {
         this.lore.clear();
         item.editMeta(meta->{
@@ -119,15 +126,15 @@ public class JItem implements Cloneable{
         }
         ///         APLLYING ABILITIES
         if(!abilities.isEmpty()){
-            lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
             item.editMeta(meta->{
                 meta.getPersistentDataContainer()
                         .set(
                                 JKey.Ability,
                                 PersistentDataType.TAG_CONTAINER,
-                                ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities, lore)
+                                ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities)
                         );
             });
+            lore.addAll(ItemAbility.toLore(abilities));
         }
 
         buildLore();
@@ -155,7 +162,7 @@ public class JItem implements Cloneable{
 
     private void buildLore(){
         lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
-        lore.addAll(custom_lore);
+        lore.addAll(createLore());
         lore.addAll(rarity.getDescription(upgraded, type));
         item.editMeta(meta-> meta.lore(lore));
     }
@@ -174,11 +181,12 @@ public class JItem implements Cloneable{
         }
     }
 
-    public static JItem convertFrom(ItemStack item, List<Component> custom_lore) {
+    public static JItem convertFrom(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
-        String name = meta.getItemName();
+        String name = Util.escapeRegex(PlainTextComponentSerializer.plainText().serialize(meta.displayName()));
+        Bukkit.broadcast(Util.deserialize(name).append(meta.displayName()));
         String defaultName = data.get(JKey.CustomName, PersistentDataType.STRING);
         Material material = item.getType();
         Rarity rarity = Rarity.getFromString(Objects.requireNonNull(data.get(JKey.Rarity, PersistentDataType.STRING)));
@@ -197,9 +205,12 @@ public class JItem implements Cloneable{
 
         JItem convertedItem = new JItem(upgraded, upgradeable, unlimitedUpgradeable, updatedOCCUR,
                 name, defaultName, material, rarity, baseRarity, category, version, ID, ability,
-                stats, enchants);
-        convertedItem.getCustom_lore().clear();
-        convertedItem.getCustom_lore().addAll(custom_lore);
+                stats, enchants) {
+            @Override
+            protected List<Component> createLore() {
+                return ItemManager.getInstance().getItems().get(ID.toUpperCase()).getLore();
+            }
+        };
         convertedItem.update();
         return convertedItem;
     }
@@ -210,7 +221,6 @@ public class JItem implements Cloneable{
     
     public JItem patch(JItem newVer){
         this.stats = newVer.stats;
-        this.custom_lore = newVer.getCustom_lore();
         this.abilities = newVer.abilities;
         this.baseRarity = newVer.baseRarity;
         this.defaultItem_name = newVer.defaultItem_name;

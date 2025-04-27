@@ -5,6 +5,7 @@ import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -35,11 +36,7 @@ public class Heal extends ItemAbility {
     public Heal(int howMuchHealth, float cooldown){
         this.setRange(howMuchHealth);
         this.setCooldown(cooldown);
-        this.addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <green>Heal <b><yellow>(RIGHT CLICK)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Healing you <color:#749e70>"+range+"</color> healths")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>for 7 seconds duration")
-        ));
+
     }
 
     @EventHandler
@@ -92,5 +89,14 @@ public class Heal extends ItemAbility {
                 duration--;
             }
         }.runTaskTimer(JasperProject.getPlugin(),0,20));
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <green>Heal <b><yellow>(RIGHT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Healing you <color:#749e70>"+range+"</color> healths")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>for 7 seconds duration")
+        );
     }
 }

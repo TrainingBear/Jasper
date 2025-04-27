@@ -5,6 +5,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -32,11 +33,7 @@ public class Burst_Arrow extends ItemAbility {
     public Burst_Arrow(float cooldown,int count){
         this.setCooldown(cooldown);
         this.setRange(count);
-        addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#eeff00>Burst Arrow <b><yellow>(ON FULL DRAW)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Shoot <color:#ba9e9e>"+range+"</color> arrows in rapid succession")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>when shoot at full power in 1.5 second")
-        ));
+
     }
     public Burst_Arrow(int count, float cooldown, Player p, Arrow ar,float force){
         this.setCooldown(cooldown);
@@ -96,4 +93,12 @@ public class Burst_Arrow extends ItemAbility {
         );
     }
 
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#eeff00>Burst Arrow <b><yellow>(ON FULL DRAW)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Shoot <color:#ba9e9e>"+range+"</color> arrows in rapid succession")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>when shoot at full power in 1.5 second")
+        );
+    }
 }

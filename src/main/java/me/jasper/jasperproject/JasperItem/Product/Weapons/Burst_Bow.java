@@ -6,8 +6,10 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Stats;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
+import java.util.List;
 import java.util.Map;
 
 public class Burst_Bow extends JItem implements Factory {
@@ -24,5 +26,10 @@ public class Burst_Bow extends JItem implements Factory {
     @Override
     public JItem create() {
         return this;
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of();
     }
 }

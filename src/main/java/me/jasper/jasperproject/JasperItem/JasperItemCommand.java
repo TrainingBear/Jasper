@@ -46,7 +46,7 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
                 }
                 player.getInventory().setItemInMainHand(null);
 
-                JItem abc = JItem.convertFrom(currentItem, List.of(Component.text("abc")));
+                JItem abc = JItem.convertFrom(currentItem);
                 for (Enchant enchant : abc.getEnchants()) {
                     enchant.addLevel();
                 }

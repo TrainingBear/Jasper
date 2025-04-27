@@ -5,6 +5,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -28,11 +29,7 @@ public class Grappling_Hook extends ItemAbility {
 
     public Grappling_Hook(float cooldown) {
         this.setCooldown(cooldown);
-        addLore(List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#e0ffe5>Grappling <b><yellow>(RIGHT CLICK)")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>Pulls the player towards the hook")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>if there is a block around the hook.")
-        ));
+
 
     }
 
@@ -113,5 +110,14 @@ public class Grappling_Hook extends ItemAbility {
             }
         }
         return false;
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <color:#e0ffe5>Grappling <b><yellow>(RIGHT CLICK)")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>Pulls the player towards the hook")
+                ,MiniMessage.miniMessage().deserialize("<!i><gray>if there is a block around the hook.")
+        );
     }
 }

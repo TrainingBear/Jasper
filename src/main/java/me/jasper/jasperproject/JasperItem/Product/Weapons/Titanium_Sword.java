@@ -5,6 +5,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Stats;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
@@ -20,16 +21,21 @@ public class Titanium_Sword extends JItem implements Factory {
         stats.put(Stats.CRIT_DAMAGE, 30f);
         stats.put(Stats.CRIT_CHANCE, 15f);
         stats.put(Stats.ATTACK_SPEED, 3f);
-        this.getCustom_lore().addAll(List.of(
+
+    }
+    @Override
+    public JItem create() {
+        return this;
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
                 MiniMessage.miniMessage().deserialize("<!i><dark_gray>This type of blade was once forged"),
                 MiniMessage.miniMessage().deserialize("<!i><dark_gray>by the greatest blacksmith of his"),
                 MiniMessage.miniMessage().deserialize("<!i><dark_gray>time, but nowadays this blade just"),
                 MiniMessage.miniMessage().deserialize("<!i><dark_gray>an ordinary titanium blade"),
                 MiniMessage.miniMessage().deserialize("")
-        ));
-    }
-    @Override
-    public JItem create() {
-        return this;
+        );
     }
 }

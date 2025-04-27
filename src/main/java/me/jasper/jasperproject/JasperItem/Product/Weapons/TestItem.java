@@ -5,6 +5,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
@@ -31,18 +32,23 @@ public class TestItem extends JItem implements Factory {
         this.getAbilities().add(new Teleport((short) 12, 0));
         this.getEnchants().add(new Sharpness());
         this.setUpgradeable(true);
-        this.getCustom_lore().addAll(List.of(
+
+    }
+
+    @Override
+    public JItem create() {
+        return this;
+    }
+
+    @Override
+    protected List<Component> createLore() {
+        return List.of(
                 MiniMessage.miniMessage().deserialize("")
                 ,MiniMessage.miniMessage().deserialize("This is the first item line")
                 ,MiniMessage.miniMessage().deserialize("This is the Second item line")
                 ,MiniMessage.miniMessage().deserialize("so on")
                 ,MiniMessage.miniMessage().deserialize("")
 
-        ));
-    }
-
-    @Override
-    public JItem create() {
-        return this;
+        );
     }
 }
