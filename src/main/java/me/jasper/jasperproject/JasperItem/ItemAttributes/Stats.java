@@ -44,7 +44,7 @@ public enum Stats {
         this.symbol = symbol;
         this.name = name;
         this.color = color;
-        this.key = new NamespacedKey(JasperProject.getPlugin(), name);
+        this.key = new NamespacedKey(JasperProject.getPlugin(), Util.escapeRegex(name).replaceAll(" ", ""));
     }
 
     public Component getColorAsCompo(){

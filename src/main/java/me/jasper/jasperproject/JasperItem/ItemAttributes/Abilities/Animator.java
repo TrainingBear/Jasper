@@ -6,9 +6,9 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
@@ -38,7 +38,7 @@ public class Animator extends ItemAbility {
 
     @EventHandler
     public void onPlayerInteraction(PlayerInteractEvent e){
-        if(!ItemUtils.hasAbility(e.getItem(),this.getKey())) return;
+        if(!Util.hasAbility(e.getItem(),this.getKey())) return;
         org.bukkit.entity.Player player = e.getPlayer();
 
         if(TRIGGER.Interact.LEFT_CLICK_BLOCK(e)){

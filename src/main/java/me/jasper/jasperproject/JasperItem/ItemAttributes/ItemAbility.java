@@ -3,14 +3,12 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes;
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -19,10 +17,7 @@ import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 public abstract class ItemAbility extends Event implements Cancellable, Listener, Cloneable {
@@ -41,9 +36,9 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
     @Setter @Getter protected float cooldown;
 
     protected abstract List<Component> createLore();
-    protected List<Component> getLore(){
+    public List<Component> getLore(){
         List<Component> lore = new ArrayList<>(createLore());
-        if(showCooldown) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
+        if(cooldown > 0) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
         return lore;
     }
 
@@ -56,8 +51,6 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
     public boolean isCancelled() {
         return cancelled;
     }
-
-
 
     protected <T extends ItemAbility> boolean hasCooldown(T e,boolean sendmessage){
         float cooldown = e.getCooldown();
@@ -119,7 +112,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
             return abilities;
         }
         pdc = pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER);
-        for (ItemAbility ability : ItemManager.getInstance().getAbilities()) {
+        for (ItemAbility ability : ItemManager.getAbilities()) {
             if(pdc.has(ability.getKey())){
                 PersistentDataContainer container = pdc.get(ability.getKey(), PersistentDataType.TAG_CONTAINER);
                 ItemAbility clone = (ItemAbility) ability.clone();
@@ -144,9 +137,6 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
     public static List<Component> toLore(List<ItemAbility> abilities){
         List<Component> lore = new ArrayList<>();
         for (ItemAbility ability : abilities) {
-            for (Component component : ability.getLore()) {
-                Bukkit.broadcast(component);
-            }
             lore.add(Util.deserialize("<reset>"));
             lore.addAll(ability.getLore());
         }

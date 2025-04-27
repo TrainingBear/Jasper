@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public abstract class JItem implements Cloneable{
-    @Getter@Setter private long Version; // <---------- 1
-    @Setter@Getter private String ID; // <---------- 2
+    @Getter @Setter private long Version; // <---------- 1
+    @Setter @Getter private String ID; // <---------- 2
     @Setter private String item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
     @Setter private boolean upgradeable = true; // <---------- 5
@@ -179,7 +179,6 @@ public abstract class JItem implements Cloneable{
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
         String name = Util.escapeRegex(PlainTextComponentSerializer.plainText().serialize(meta.displayName()));
-        Bukkit.broadcast(Util.deserialize(name).append(meta.displayName()));
         String defaultName = data.get(JKey.CustomName, PersistentDataType.STRING);
         Material material = item.getType();
         Rarity rarity = Rarity.getFromString(Objects.requireNonNull(data.get(JKey.Rarity, PersistentDataType.STRING)));
@@ -201,7 +200,7 @@ public abstract class JItem implements Cloneable{
                 stats, enchants) {
             @Override
             protected List<Component> createLore() {
-                return ItemManager.getInstance().getItems().get(ID.toUpperCase()).getLore();
+                return ItemManager.getItems().get(ID.toUpperCase()).getLore();
             }
         };
         convertedItem.update();
@@ -213,6 +212,7 @@ public abstract class JItem implements Cloneable{
     }
     
     public JItem patch(JItem newVer){
+        this.Version = newVer.Version;
         this.stats = newVer.stats;
         this.abilities = newVer.abilities;
         this.baseRarity = newVer.baseRarity;

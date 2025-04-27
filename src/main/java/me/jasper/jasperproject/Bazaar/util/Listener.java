@@ -17,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 public class Listener implements org.bukkit.event.Listener {
     @EventHandler
     public void onClick(@NotNull InventoryClickEvent e){
-        ItemStack curentItem = e.getCurrentItem();
+        ItemStack currentItem = e.getCurrentItem();
         if(e.getClick().equals(ClickType.DOUBLE_CLICK)
-                || curentItem==null ) return;
+                || currentItem==null || !currentItem.hasItemMeta()) return;
 
         PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
         if(!contain(container, JKey.BAZAAR_COMPONENT_TASK_ID)) return;
@@ -42,7 +42,7 @@ public class Listener implements org.bukkit.event.Listener {
                     .update(
                             whoClicked,
                             e.getClickedInventory(),
-                            curentItem
+                            currentItem
                     );
         }
 
