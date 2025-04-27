@@ -2,9 +2,9 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
@@ -52,7 +52,7 @@ public class Grappling_Hook extends ItemAbility {
 
             applyCooldown(e,true);
             if(e.isCancelled()) {
-                ItemUtils.playPSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1.7f);
+                Util.playPSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1.7f);
                 return;
             }
             //per-1 value = 20 blocks/s
@@ -67,7 +67,7 @@ public class Grappling_Hook extends ItemAbility {
             // 3 block = 0.3
 
             player.setVelocity(velocity);
-            ItemUtils.playPSound(player, Sound.ENTITY_ARROW_SHOOT, 1f, 1.55f);
+            Util.playPSound(player, Sound.ENTITY_ARROW_SHOOT, 1f, 1.55f);
         }
     }
 
@@ -84,11 +84,11 @@ public class Grappling_Hook extends ItemAbility {
 
     @EventHandler
     public void onHook(PlayerFishEvent e) {
-        if (!ItemUtils.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), this.getKey()))  return;
+        if (!Util.hasAbility(e.getPlayer().getInventory().getItemInMainHand(), this.getKey()))  return;
 
         if (TRIGGER.Fishing.FISHING_THROW(e) || TRIGGER.Fishing.CAUGHT_ENTITY(e)
             ||TRIGGER.Fishing.REEL_WITHOUT_CATCHING(e) || TRIGGER.Fishing.BOBBER_ON_GROUND(e)){
-            PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getPlayer().getInventory().getItemInMainHand(), this.getKey());
+            PersistentDataContainer itemData = Util.getAbilityComp(e.getPlayer().getInventory().getItemInMainHand(), this.getKey());
 
             Bukkit.getPluginManager().callEvent(new Grappling_Hook(
                     itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),

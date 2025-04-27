@@ -6,19 +6,18 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Animator extends ItemAbility {
@@ -38,27 +37,27 @@ public class Animator extends ItemAbility {
 
     @EventHandler
     public void onPlayerInteraction(PlayerInteractEvent e){
-        if(!ItemUtils.hasAbility(e.getItem(),this.getKey())) return;
+        if(!Util.hasAbility(e.getItem(),this.getKey())) return;
         org.bukkit.entity.Player player = e.getPlayer();
 
         if(TRIGGER.Interact.LEFT_CLICK_BLOCK(e)){
             Block block = e.getClickedBlock();
             BlockVector3 pos = BlockVector3.at(block.getX(), block.getY(), block.getZ());
             firstPos.put(player.getUniqueId(), pos);
-            player.sendMessage(ChatColor.YELLOW+"You selected first pos!");
+            player.sendMessage(NamedTextColor.YELLOW+"You selected first pos!");
             e.setCancelled(true);
         }if(TRIGGER.Interact.RIGHT_CLICK_BLOCK(e)){
             Block block = e.getClickedBlock();
             BlockVector3 pos = BlockVector3.at(block.getX(), block.getY(), block.getZ());
             secondPost.put(player.getUniqueId(), pos);
-            player.sendMessage(ChatColor.YELLOW+"You selected second pos!");
+            player.sendMessage(NamedTextColor.YELLOW+"You selected second pos!");
             e.setCancelled(true);
         }
         if(!firstPos.containsKey(player.getUniqueId())) {
-            player.sendMessage(ChatColor.YELLOW+"Right click to select post2!");
+            player.sendMessage(NamedTextColor.YELLOW+"Right click to select post2!");
             return;
         }if(!secondPost.containsKey(player.getUniqueId())) {
-            player.sendMessage(ChatColor.YELLOW+"Left click to select post1!");
+            player.sendMessage(NamedTextColor.YELLOW+"Left click to select post1!");
             return;
         }
         Region region = new CuboidRegion(BukkitAdapter.adapt(player.getWorld()), firstPos.get(player.getUniqueId()), secondPost.get(player.getUniqueId()));

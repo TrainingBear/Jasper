@@ -1,19 +1,22 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Burnt extends ItemAbility {
@@ -41,27 +44,33 @@ public class Burnt extends ItemAbility {
         new BukkitRunnable(){
             final Player p = e.getPlayer();
             final Location loc = p.getLocation();
-            final byte[] dir = direction[(int) ((loc.getYaw() % 360 + 360) % 360)];
+            final byte[] dir = direction[Math.floorMod(Math.round(this.loc.getYaw() / 90f), 4)];
             byte frame = 0;
             @Override
             public void run(){
                 if(!this.p.isOnline()
-                        ||!ItemUtils.hasAbility(Bukkit.getPlayer(this.p.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
+                        ||!Util.hasAbility(Bukkit.getPlayer(this.p.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
                         ||this.frame >= 4) cancel();
-                if(dir[0]!=0) for(byte i = -1;i<=1;i++) loc.add(dir[0]+frame,0,i);
-                else for(byte i = -1;i<=1;i++) loc.add(i,0,dir[0]+frame);
+                if(dir[0]!=0) {
+                    p.sendMessage(Arrays.toString(dir));
+                    for(byte i = -1;i<=1;i++) loc.clone().add(dir[0]+frame,0,i).getBlock().setType(Material.FIRE);
+                }
+                else {
+                    p.sendMessage(Arrays.toString(dir));
+                    for(byte i = -1;i<=1;i++) loc.clone().add(i,0,dir[0]+frame).getBlock().setType(Material.FIRE);
+                }
                 frame++;
             }
         }.runTaskTimer(JasperProject.getPlugin(),0,10);
     }
     @EventHandler
     public void trigger(PlayerInteractEvent e){
-        if(!ItemUtils.hasAbility(e.getItem(), this.getKey())) return;
-        if(TRIGGER.Interact.RIGHT_CLICK(e)) {
+        if(!Util.hasAbility(e.getItem(), this.getKey())) return;
+        if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e)) {
 
             Bukkit.getPluginManager().callEvent(
                     new Burnt(
-                            ItemUtils.getAbilityComp(e.getItem(), this.getKey()).get(JKey.key_cooldown, PersistentDataType.FLOAT)
+                            Util.getAbilityComp(e.getItem(), this.getKey()).get(JKey.key_cooldown, PersistentDataType.FLOAT)
                             ,e.getPlayer()
                     )
             );
@@ -69,6 +78,9 @@ public class Burnt extends ItemAbility {
     }
     @Override
     protected List<Component> createLore() {
-        return List.of();
+        return List.of(
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>Burnt <b><yellow>(SNEAK RIGHT CLICK)")
+//                ,
+        );
     }
 }

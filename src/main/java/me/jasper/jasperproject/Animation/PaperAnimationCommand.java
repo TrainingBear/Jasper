@@ -24,10 +24,10 @@ public class PaperAnimationCommand implements JasperCommand {
         return Commands.literal("animate")
                 .then(Commands.literal("edit")
                         .then(Commands.argument("Animation name", StringArgumentType.string()).suggests(
-                                (context, builder) -> {
-                                    if(!(context.getSource().getSender() instanceof Player player)) return builder.buildFuture();
-                                    return Animation.SUGGEST(player.getName(), builder);
-                                })
+                                        (context, builder) -> {
+                                            if(!(context.getSource().getSender() instanceof Player player)) return builder.buildFuture();
+                                            return Animation.SUGGEST(player.getName(), builder);
+                                        })
                                 .then(Commands.literal("add_frame")
                                         .then(Commands.argument("Frame name",StringArgumentType.string())
                                                 .executes(contex ->
@@ -87,22 +87,22 @@ public class PaperAnimationCommand implements JasperCommand {
                                         })
 
                                 ).then(Commands.literal("set_location")
-                                                .executes(e->{
-                                                    if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                        .executes(e->{
+                                            if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
 
-                                                    return Animation.setLocation(player, StringArgumentType.getString(e, "Animation name"));
+                                            return Animation.setLocation(player, StringArgumentType.getString(e, "Animation name"));
+                                        })
+                                        .then(Commands.argument("coordinate", ArgumentTypes.blockPosition())
+                                                .executes(c -> {
+                                                    if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                                    BlockPosition coordinate = c.getArgument("coordinate", BlockPositionResolver.class).resolve(c.getSource());
+                                                    Location location = player.getLocation();
+                                                    location.setX(coordinate.x());
+                                                    location.setY(coordinate.y());
+                                                    location.setZ(coordinate.z());
+                                                    return Animation.setLocation(player, StringArgumentType.getString(c, "Animation name"), location);
                                                 })
-                                                .then(Commands.argument("coordinate", ArgumentTypes.blockPosition())
-                                                        .executes(c -> {
-                                                            if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
-                                                            BlockPosition coordinate = c.getArgument("coordinate", BlockPositionResolver.class).resolve(c.getSource());
-                                                            Location location = player.getLocation();
-                                                            location.setX(coordinate.x());
-                                                            location.setY(coordinate.y());
-                                                            location.setZ(coordinate.z());
-                                                            return Animation.setLocation(player, StringArgumentType.getString(c, "Animation name"), location);
-                                                        })
-                                                )
+                                        )
                                 ).then(Commands.literal("radius")
                                         .then(Commands.argument("radius", DoubleArgumentType.doubleArg(1, 80))
                                                 .executes(e -> {
@@ -159,7 +159,7 @@ public class PaperAnimationCommand implements JasperCommand {
                 ).then(Commands.literal("wand")
                         .executes(c -> {
                             if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
-                            ItemManager.getInstance().getItems().get("BLENDER").send(player);
+                            ItemManager.getItems().get("BLENDER").send(player);
                             return Command.SINGLE_SUCCESS;
                         })
                 ).then(Commands.literal("list")
@@ -196,15 +196,15 @@ public class PaperAnimationCommand implements JasperCommand {
                         )
 
                 ).then(Commands.literal("repair").then(Commands.argument("Animation name", StringArgumentType.word())
-                        .suggests((c,b) -> {
-                            if(!(c.getSource().getSender() instanceof Player player)) return b.buildFuture();
-                            return Animation.SUGGEST(player.getName(), b);
-                        }).executes(e -> {
-                            if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
-                            return Animation.repair(player, StringArgumentType.getString(e, "Animation name"));
-                        })
+                                .suggests((c,b) -> {
+                                    if(!(c.getSource().getSender() instanceof Player player)) return b.buildFuture();
+                                    return Animation.SUGGEST(player.getName(), b);
+                                }).executes(e -> {
+                                    if(!(e.getSource().getSender()instanceof Player player)) return Command.SINGLE_SUCCESS;
+                                    return Animation.repair(player, StringArgumentType.getString(e, "Animation name"));
+                                })
 
-                    )
+                        )
                 );
     }
 

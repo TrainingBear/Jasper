@@ -18,26 +18,26 @@ import java.util.Map;
 
 public abstract class BazaarDatabase {
     @Getter private static Connection connection;
-    public static boolean startConnection() throws SQLException {
+    public static boolean startConnection() {
         try {
             connection = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/bazaar",
                     "root",
                     "mysql12345"
             );
+            return connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS product(" +
+                            "  id mediumint NOT NULL AUTO_INCREMENT," +
+                            "  name varchar(255) NOT NULL," +
+                            "  product mediumblob NOT NULL," +
+                            "  category varchar(255) NOT NULL," +
+                            "  PRIMARY KEY (id)," +
+                            "  UNIQUE KEY name (name)" +
+                            ")");
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-
-        return connection.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS product(" +
-                "  id mediumint NOT NULL AUTO_INCREMENT," +
-                "  name varchar(255) NOT NULL," +
-                "  product mediumblob NOT NULL," +
-                "  category varchar(255) NOT NULL," +
-                "  PRIMARY KEY (id)," +
-                "  UNIQUE KEY name (name)" +
-                ")");
     }
 
     public static void newProduct(String category, String name, byte[] product) throws SQLException {
@@ -52,7 +52,7 @@ public abstract class BazaarDatabase {
     public static void saveProduct(String name, byte[] product) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "update product set " +
-                "product = ? where name = ?"
+                        "product = ? where name = ?"
         );
         preparedStatement.setBytes(1, product);
         preparedStatement.setString(2, name);
@@ -77,26 +77,30 @@ public abstract class BazaarDatabase {
         preparedStatement.execute();
     }
 
-    public static void loadDB() throws SQLException, IOException {
+    public static void loadDB() {
         Map<String, Product> productMap = new HashMap<>();
         Map<String, List<Product>> groupedProduct = new HashMap<>();
 
-        ResultSet resultSet = connection.createStatement().executeQuery(
-                "select * from product");
-        while (resultSet.next()){
-            val last = System.currentTimeMillis();
-            String name = resultSet.getString("name");
-            byte[] bytes = resultSet.getBytes("product");
-            Product product = (Product) retriveObject(bytes);
-            String category = resultSet.getString("category");
-            productMap.put(name, product);
-            groupedProduct.computeIfAbsent(category, k->new ArrayList<>()).add(product);
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery(
+                    "select * from product");
+            while (resultSet.next()){
+                val last = System.currentTimeMillis();
+                String name = resultSet.getString("name");
+                byte[] bytes = resultSet.getBytes("product");
+                Product product = (Product) retriveObject(bytes);
+                String category = resultSet.getString("category");
+                productMap.put(name, product);
+                groupedProduct.computeIfAbsent(category, k->new ArrayList<>()).add(product);
 
-            val productName = product.getProduct_name();
-            JasperProject.getPlugin().getLogger().info("[BazaarDB] "+productName+" registered ("+(System.currentTimeMillis()-last)+" ms)");
+                val productName = product.getProduct_name();
+                JasperProject.getPlugin().getLogger().info("[BazaarDB] "+productName+" registered ("+(System.currentTimeMillis()-last)+" ms)");
+            }
+            ProductManager.setProductMap(productMap);
+            ProductManager.setGroupedProduct(groupedProduct);
+        }catch (SQLException | IOException e){
+            e.printStackTrace();
         }
-        ProductManager.setProductMap(productMap);
-        ProductManager.setGroupedProduct(groupedProduct);
     }
 
     public static Map<String, Product> getProducts() throws SQLException, IOException {

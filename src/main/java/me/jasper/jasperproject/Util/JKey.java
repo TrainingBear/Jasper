@@ -8,7 +8,6 @@ import org.bukkit.NamespacedKey;
 public final class JKey {
     public static final NamespacedKey Main = new NamespacedKey(JasperProject.getPlugin(), "JasperItem");
     public static final NamespacedKey CustomName = new NamespacedKey(JasperProject.getPlugin(), "CustomName");
-    public static final NamespacedKey CustomLore = new NamespacedKey(JasperProject.getPlugin(), "CustomLore");
     public static final NamespacedKey Stats = new NamespacedKey(JasperProject.getPlugin(), "item_stats");
     public static final NamespacedKey Ability = new NamespacedKey(JasperProject.getPlugin(), "item_ability");
     public static final NamespacedKey Version = new NamespacedKey(JasperProject.getPlugin(), "Version");
@@ -42,7 +41,6 @@ public final class JKey {
     public static final NamespacedKey removeWhenHit = new NamespacedKey(JasperProject.getPlugin(), "removeWhenHit");
 
     public static final NamespacedKey ENCHANT = new NamespacedKey(JasperProject.getPlugin(), "Enchants");
-    public static final NamespacedKey ENCHANT_LORE = new NamespacedKey(JasperProject.getPlugin(), "Enchants-customlore");
     public static final NamespacedKey ENCHANT_LEVEL = new NamespacedKey(JasperProject.getPlugin(), "Enchant-level");
     public static final NamespacedKey ENCHANT_MAX_LEVEL = new NamespacedKey(JasperProject.getPlugin(), "Enchant-maxLevel");
     public static final NamespacedKey ENCHANT_MODIFIER = new NamespacedKey(JasperProject.getPlugin(), "Enchant-modifier");

@@ -1,6 +1,5 @@
 package me.jasper.jasperproject;
 import lombok.Getter;
-import me.jasper.jasperproject.Animation.Animation;
 import me.jasper.jasperproject.Animation.PaperAnimationCommand;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.BazaarCommand;
@@ -9,7 +8,6 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
-import me.jasper.jasperproject.Util.AutoSaveListener;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
@@ -34,8 +32,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 
@@ -57,20 +53,10 @@ public final class JasperProject extends JavaPlugin {
 //        animationConfig.load(Animation::loadConfig);
 
         Bazaar.init();
-        try {
-            if(BazaarDatabase.startConnection()){
-                this.getLogger().info("Created Bazaar product table!");
-            }
-            try {
-                BazaarDatabase.loadDB();
-            } catch (SQLException | IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if(BazaarDatabase.startConnection()){
+            this.getLogger().info("Created Bazaar product table!");
         }
-
+        BazaarDatabase.loadDB();
         if (!setupEconomy() ) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -79,15 +65,16 @@ public final class JasperProject extends JavaPlugin {
         setupPermissions();
 //        setupChat();
 
-        ItemManager.getInstance().registerAll();
+        ItemManager.registerAll();
+        ItemManager.runUpdater();
 
         this.getCommand("debug").setExecutor(new Debug());
 
 
-//        CommandManager.getInstance()
-//                .register(new PaperAnimationCommand())
-//                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
-//        ;
+        CommandManager.getInstance()
+                .register(new PaperAnimationCommand())
+                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
+        ;
 
         PM.registerEvents(new ProjectileHit(), this);
         PM.registerEvents(new Joinmsg(this), this);

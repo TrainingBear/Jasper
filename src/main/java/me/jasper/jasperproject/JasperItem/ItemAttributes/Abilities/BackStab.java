@@ -2,7 +2,6 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -40,9 +39,9 @@ public class BackStab extends ItemAbility {
     }
     @EventHandler
     public void trigger(PlayerInteractEvent e){
-        if(!ItemUtils.hasAbility(e.getItem(), this.getKey())) return;
+        if(!Util.hasAbility(e.getItem(), this.getKey())) return;
         if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e)){
-            PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getItem(), this.getKey());
+            PersistentDataContainer itemData = Util.getAbilityComp(e.getItem(), this.getKey());
             Bukkit.getPluginManager().callEvent(
                     new BackStab(
                             itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),
@@ -93,7 +92,7 @@ public class BackStab extends ItemAbility {
     @Override
     protected List<Component> createLore() {
         return List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>BackStab <b><yellow>(SNEAK+RIGHT CLICK)")
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>BackStab <b><yellow>(SNEAK RIGHT CLICK)")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>Teleport to behind looked Entity in")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>range of "+this.range+" blocks and <color:#aa7a7f>BackStab</color>'em")
         );
