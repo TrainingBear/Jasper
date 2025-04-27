@@ -9,6 +9,7 @@ import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-public abstract class ItemAbility extends Event implements Cancellable, Listener {
+public abstract class ItemAbility extends Event implements Cancellable, Listener, Cloneable {
     @Getter public final Map<UUID, Long> cooldownMap = new HashMap<>();;
     @Getter public final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());;
 
@@ -64,14 +65,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         return cancelled;
     }
 
-    public PersistentDataContainer getStatsContainer(PersistentDataContainer TagContainer){
-        PersistentDataContainer stats = TagContainer.getAdapterContext().newPersistentDataContainer();
-            stats.set(JKey.key_range, PersistentDataType.INTEGER, range);
-            stats.set(JKey.key_damage, PersistentDataType.INTEGER, damage);
-            stats.set(JKey.key_cooldown, PersistentDataType.FLOAT, cooldown);
-            stats.set(JKey.key_abilityCost, PersistentDataType.INTEGER, abilityCost);
-        return stats;
-    }
+
 
     protected <T extends ItemAbility> boolean hasCooldown(T e,boolean sendmessage){
         float cooldown = e.getCooldown();
@@ -118,26 +112,58 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
 
     }
 
+    public Object clone() {
+       try{
+           ItemAbility clone = (ItemAbility) super.clone();
+           clone.lore = List.copyOf(this.lore);
+           return clone;
+       } catch (CloneNotSupportedException e) {
+           throw new RuntimeException(e);
+       }
+    }
 
-
-    public static List<ItemAbility> convertFrom(ItemStack item){
+    public static @NotNull List<ItemAbility> convertFrom(@NotNull ItemStack item){
         List<ItemAbility> abilities = new ArrayList<>();
-        if(!ItemUtils.hasAbility(item)) return abilities;
+        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        if(!pdc.has(JKey.Ability)) {
+            return abilities;
+        }
+        pdc = pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER);
         for (ItemAbility ability : ItemManager.getInstance().getAbilities()) {
-            if(!ItemUtils.hasAbility(item, ability.getKey())){
-                abilities.add(ability);
+            if(pdc.has(ability.getKey())){
+                PersistentDataContainer container = pdc.get(ability.getKey(), PersistentDataType.TAG_CONTAINER);
+                ItemAbility clone = (ItemAbility) ability.clone();
+                clone.range = container.get(JKey.key_range, PersistentDataType.INTEGER);
+                clone.damage = container.get(JKey.key_damage, PersistentDataType.INTEGER);
+                clone.cooldown = container.get(JKey.key_cooldown, PersistentDataType.FLOAT);
+                clone.abilityCost = container.get(JKey.key_abilityCost, PersistentDataType.INTEGER);
+                clone.lore = ability.lore;
+                abilities.add(clone);
             }
         }
         return abilities;
     }
+    public PersistentDataContainer toPDC(@NotNull PersistentDataAdapterContext context){
+        PersistentDataContainer stats = context.newPersistentDataContainer();
+        stats.set(JKey.key_range, PersistentDataType.INTEGER, range);
+        stats.set(JKey.key_damage, PersistentDataType.INTEGER, damage);
+        stats.set(JKey.key_cooldown, PersistentDataType.FLOAT, cooldown);
+        stats.set(JKey.key_abilityCost, PersistentDataType.INTEGER, abilityCost);
+        return stats;
+    }
 
-    public static PersistentDataContainer toPDC(PersistentDataAdapterContext context, List<ItemAbility> abilities, @Nullable List<Component> lore){
+    public static @NotNull PersistentDataContainer toPDC(@NotNull PersistentDataAdapterContext context, @NotNull List<ItemAbility> abilities, @Nullable List<Component> lore){
         PersistentDataContainer abilities_name = context.newPersistentDataContainer();
         for (ItemAbility ability : abilities) {
             if(lore!=null) lore.addAll(ability.getLore());
+            PersistentDataContainer stats = abilities_name.getAdapterContext().newPersistentDataContainer();
+            stats.set(JKey.key_range, PersistentDataType.INTEGER, ability.range);
+            stats.set(JKey.key_damage, PersistentDataType.INTEGER, ability.damage);
+            stats.set(JKey.key_cooldown, PersistentDataType.FLOAT, ability.cooldown);
+            stats.set(JKey.key_abilityCost, PersistentDataType.INTEGER, ability.abilityCost);
             abilities_name.set(
                     ability.getKey(),
-                    PersistentDataType.TAG_CONTAINER, ability.getStatsContainer(abilities_name)
+                    PersistentDataType.TAG_CONTAINER, stats
             );
         }
         return abilities_name;

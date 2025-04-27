@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JasperItem.Product.Weapons;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Teleport;
+import me.jasper.jasperproject.JasperItem.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -28,7 +29,7 @@ public class TestItem extends JItem implements Factory {
         }
 
         this.getAbilities().add(new Teleport((short) 12, 0));
-        this.getEnchants().add(ENCHANT.SharpnesV2);
+        this.getEnchants().add(new Sharpness());
         this.setUpgradeable(true);
         this.getCustom_lore().addAll(List.of(
                 MiniMessage.miniMessage().deserialize("")

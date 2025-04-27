@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.Util.JKey;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,15 +15,12 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JItem implements Cloneable{
     @Getter@Setter private long Version; // <---------- 1
     @Setter@Getter private String ID; // <---------- 2
-    @Setter private Component item_name; // <---------- 3
+    @Setter private String item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
     @Setter private boolean upgradeable = true; // <---------- 5
     @Setter private boolean unlimitedUpgradeable = false; // <---------- 6
@@ -35,7 +32,7 @@ public class JItem implements Cloneable{
     final private ItemType type; // <---------- 11
 
     @Getter private Map<Stats, Float> stats;
-    @Getter private List<ENCHANT> enchants;
+    @Getter private List<Enchant> enchants;
     @Getter private List<ItemAbility> abilities;
 
     private List<Component> lore = new ArrayList<>();
@@ -50,7 +47,10 @@ public class JItem implements Cloneable{
      * */
 
     public JItem(String name, Material material, Rarity rarity, ItemType type, String ID){
-        this(false, true, false, (byte) 0, name, name, material, rarity, rarity, type, 0L, ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
+        this(false, true, false,
+                (byte) 0, name, name, material, rarity, rarity,
+                type, 0L, ID, new ArrayList<>(),
+                new HashMap<>(), new ArrayList<>());
     }
     public JItem(String name, Material material, Rarity rarity,
                  ItemType type, long itemVersion, String ID){
@@ -63,13 +63,13 @@ public class JItem implements Cloneable{
                  byte occur, String name, String defaultName, Material material,
                  @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
                  long itemVersion, String ID, List<ItemAbility> abilities,
-                 Map<Stats, Float> stats, List<ENCHANT> enchant){
+                 Map<Stats, Float> stats, List<Enchant> enchant){
         this.item = new ItemStack(material);
         this.abilities = abilities;
         this.stats = stats;
         this.enchants = enchant;
-        this.item_name = MiniMessage.miniMessage().deserialize("<!i>"+MiniMessage.miniMessage().serialize(rarity.color)+name);
         this.defaultItem_name = defaultName;
+        this.item_name = name;
         this.baseRarity = baseRarity;
         this.rarity = rarity;
         this.upgradeable = upgrade;
@@ -81,7 +81,7 @@ public class JItem implements Cloneable{
         this.Version = itemVersion;
         item.editMeta(meta->{
             meta.getPersistentDataContainer().set(JKey.Main, PersistentDataType.STRING, ID);
-            meta.getPersistentDataContainer().set(JKey.CustomName, PersistentDataType.STRING, PlainTextComponentSerializer.plainText().serialize(this.item_name));
+            meta.getPersistentDataContainer().set(JKey.CustomName, PersistentDataType.STRING, this.item_name);
             meta.getPersistentDataContainer().set(JKey.Version, PersistentDataType.LONG, itemVersion);
             meta.getPersistentDataContainer().set(JKey.Rarity, PersistentDataType.STRING, rarity.name());
             meta.getPersistentDataContainer().set(JKey.BaseRarity, PersistentDataType.STRING, rarity.name());
@@ -95,10 +95,43 @@ public class JItem implements Cloneable{
 
     public void update() {
         this.lore.clear();
-        applyItemStats();
-        applyItemEnchantments();
-        applyItemAbilities();
+        item.editMeta(meta->{
+            meta.getPersistentDataContainer()
+                    .set(
+                            JKey.Stats,
+                            PersistentDataType.TAG_CONTAINER,
+                            Stats.toPDC(meta.getPersistentDataContainer().getAdapterContext(), this.stats)
+                    );
+        });
+        lore.addAll(Stats.toLore(this.stats));
+
+        ///         APLLYING ENCHANTS
+        if(!enchants.isEmpty()) {
+            lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
+            item.editMeta(meta->{
+                meta.getPersistentDataContainer()
+                        .set(
+                                JKey.ENCHANT,
+                                PersistentDataType.TAG_CONTAINER,
+                                Enchant.toPDC(meta.getPersistentDataContainer().getAdapterContext(), enchants, lore)
+                        );
+            });
+        }
+        ///         APLLYING ABILITIES
+        if(!abilities.isEmpty()){
+            lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
+            item.editMeta(meta->{
+                meta.getPersistentDataContainer()
+                        .set(
+                                JKey.Ability,
+                                PersistentDataType.TAG_CONTAINER,
+                                ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities, lore)
+                        );
+            });
+        }
+
         buildLore();
+        item.editMeta(e->e.displayName(Util.deserialize("<!i>"+this.item_name).color(this.rarity.color)));
     }
 
     public void send(Player player){
@@ -120,88 +153,11 @@ public class JItem implements Cloneable{
 
     }
 
-    public void replaceStats(Map<Stats, Float> stats){
-        this.stats = stats;
-    }
-
-    private void applyItemStats() {
-        item.editMeta(meta->{
-            meta.getPersistentDataContainer()
-                    .set(
-                            JKey.Stats,
-                            PersistentDataType.TAG_CONTAINER,
-                            Stats.toPDC(meta.getPersistentDataContainer().getAdapterContext(), this.stats)
-                    );
-        });
-        lore.addAll(Stats.toLore(this.stats));
-    }
-
-    private void applyItemEnchantments(){
-        if(enchants.isEmpty()) return;
-        item.editMeta(meta->{
-            meta.getPersistentDataContainer()
-                    .set(
-                            JKey.Enchant,
-                            PersistentDataType.TAG_CONTAINER,
-                            getEnchantsdata(meta.getPersistentDataContainer())
-                    );
-        });
-    }
-
-    public void applyItemAbilities(){
-        if(abilities.isEmpty()) return;
-        item.editMeta(meta->{
-            meta.getPersistentDataContainer()
-                    .set(
-                            JKey.Ability,
-                            PersistentDataType.TAG_CONTAINER,
-                            ItemAbility.toPDC(meta.getPersistentDataContainer().getAdapterContext(), abilities, lore)
-                    );
-        });
-    }
-
     private void buildLore(){
         lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
         lore.addAll(custom_lore);
         lore.addAll(rarity.getDescription(upgraded, type));
         item.editMeta(meta-> meta.lore(lore));
-    }
-
-    private PersistentDataContainer getEnchantsdata(PersistentDataContainer data){
-        lore.add(MiniMessage.miniMessage().deserialize("<reset>"));
-        PersistentDataContainer enchants_name = data.getAdapterContext().newPersistentDataContainer();
-            //this gonna make enchants show the description
-            //if the size V
-            if(enchants.size() <= 5){
-                for (ENCHANT enchant : enchants){
-                    lore.add(enchant.getDisplay());
-                    lore.add(enchant.getLore());
-
-                    enchants_name.set(
-                            enchant.getKey(),
-                            PersistentDataType.BYTE, enchant.getLevel()
-                    );
-                }
-            }
-            else {
-                byte operator = 0;
-                StringBuilder builder = new StringBuilder();
-                for (ENCHANT enchant : enchants) {
-                    if(operator%3==0){
-                        lore.add(MiniMessage.miniMessage().deserialize("<!i>"+ builder));
-                        builder = new StringBuilder();
-                    }
-                    builder.append(MiniMessage.miniMessage().serialize(enchant.getDisplay()));
-                    operator++;
-
-                    enchants_name.set(
-                            enchant.getKey(),
-                            PersistentDataType.BYTE, enchant.getLevel()
-                    );
-                }
-                lore.add(MiniMessage.miniMessage().deserialize("<!i>"+ builder));
-            }
-        return enchants_name;
     }
 
     @Override
@@ -218,26 +174,26 @@ public class JItem implements Cloneable{
         }
     }
 
-    public static JItem convertFrom(ItemStack item, List<Component> custom_lore) throws IllegalAccessException {
+    public static JItem convertFrom(ItemStack item, List<Component> custom_lore) {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
 
         String name = meta.getItemName();
         String defaultName = data.get(JKey.CustomName, PersistentDataType.STRING);
         Material material = item.getType();
-        Rarity rarity = Rarity.getFromString(data.get(JKey.Rarity, PersistentDataType.STRING));
-        Rarity baseRarity = Rarity.getFromString(data.get(JKey.BaseRarity, PersistentDataType.STRING));
+        Rarity rarity = Rarity.getFromString(Objects.requireNonNull(data.get(JKey.Rarity, PersistentDataType.STRING)));
+        Rarity baseRarity = Rarity.getFromString(Objects.requireNonNull(data.get(JKey.BaseRarity, PersistentDataType.STRING)));
         ItemType category = ItemType.getFromString(data.get(JKey.Category, PersistentDataType.STRING));
         long version = data.get(JKey.Version, PersistentDataType.LONG);
         String ID = data.get(JKey.Main, PersistentDataType.STRING);
         byte updatedOCCUR = data.get(JKey.RarityUpdated, PersistentDataType.BYTE);
-        boolean upgradeable = data.get(JKey.UpgradeAble, PersistentDataType.BOOLEAN);
-        boolean unlimitedUpgradeable = data.get(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN);
-        boolean upgraded = data.get(JKey.Upgraded, PersistentDataType.BOOLEAN);
+        boolean upgradeable = Boolean.TRUE.equals(data.get(JKey.UpgradeAble, PersistentDataType.BOOLEAN));
+        boolean unlimitedUpgradeable = Boolean.TRUE.equals(data.get(JKey.UnlimitedUpgradeAble, PersistentDataType.BOOLEAN));
+        boolean upgraded = Boolean.TRUE.equals(data.get(JKey.Upgraded, PersistentDataType.BOOLEAN));
 
         Map<Stats, Float> stats = Stats.fromItem(item);
         List<ItemAbility> ability = ItemAbility.convertFrom(item);
-        List<ENCHANT> enchants = ENCHANT.convertFrom(meta);
+        List<Enchant> enchants = Enchant.convertFrom(item);
 
         JItem convertedItem = new JItem(upgraded, upgradeable, unlimitedUpgradeable, updatedOCCUR,
                 name, defaultName, material, rarity, baseRarity, category, version, ID, ability,

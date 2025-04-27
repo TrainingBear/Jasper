@@ -49,7 +49,7 @@ public final class Product implements Content, Serializable {
     }
     public Product(@NotNull ItemStack product, String product_name, @Nullable NamespacedKey key, int stock, float sell_price, float buy_price, float bank) {
         this.product = product;
-        this.product_name = escapeRegex(product_name);
+        this.product_name = Util.escapeRegex(product_name);
         prototype = product.clone();
         prototype.editMeta(e->{
             PersistentDataContainer pdc = e.getPersistentDataContainer();
@@ -61,9 +61,6 @@ public final class Product implements Content, Serializable {
         this.stock = new BazaarStock(stock, sell_price, buy_price, bank);
     }
 
-    private String escapeRegex(String name){
-        return name.replaceAll("([\\\\\\[\\]{}()*+?^$|])", "");
-    }
 
     public NamespacedKey getKey(){
         return NamespacedKey.fromString(namespace);

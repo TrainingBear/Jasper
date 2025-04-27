@@ -32,15 +32,15 @@ public enum Stats {
     TRUE_DEFENCE("⛨","True defense",MiniMessage.miniMessage().deserialize("<color:#b5ff7f>")),
     HEALTH("❤","Health" , MiniMessage.miniMessage().deserialize("<red>"));
 
-    @Getter private String symbol;
-    @Getter private String name;
-    @Getter private Component color;
-    @Getter private NamespacedKey key;
+    @Getter private final String symbol;
+    @Getter private final String name;
+    @Getter private final Component color;
+    @Getter private final NamespacedKey key;
     Stats(String symbol, String name, Component color){
         this.symbol = symbol;
         this.name = name;
         this.color = color;
-        this.key = new NamespacedKey(JasperProject.getPlugin(), name);
+        this.key = new NamespacedKey(JasperProject.getPlugin(), Util.escapeRegex(name.replaceAll(" ", "_")));
     }
 
     public String getNameColor(){
@@ -72,8 +72,13 @@ public enum Stats {
         List<Component> lore = new ArrayList<>();
         for (Stats stat : stats.keySet()) {
             lore.add(
-                Util.deserialize("<gray>"+stat.symbol+" "+stat.name+": "
-                        +stat.color+Util.round(stats.get(stat),1)));
+                Util.deserialize("<!i><gray>"+stat.symbol+" "+stat.name+": ")
+                        .append(stat.color
+                                .append(Component.text(Util.round(stats.get(stat),1))
+                                )
+                        )
+            );
+
         }
         return lore;
     }

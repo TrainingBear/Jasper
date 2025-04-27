@@ -39,25 +39,13 @@ public class ItemUtils {
     public static boolean hasStats(ItemMeta item){
         return  item.getPersistentDataContainer().has(JKey.Stats);
     }
-    public static boolean hasModifierStats(ItemMeta item){
-        return  item.getPersistentDataContainer().has(JKey.StatsModifier);
-    }
     public static boolean hasEnchants(ItemMeta item){
-        return item.getPersistentDataContainer().has(JKey.Enchant);
+        return item.getPersistentDataContainer().has(JKey.ENCHANT);
     }
 
 
     public static PersistentDataContainer getStats(ItemMeta item){
         return item.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
-    }
-    public static PersistentDataContainer getModifier(ItemMeta item){
-        return item.getPersistentDataContainer().get(JKey.StatsModifier, PersistentDataType.TAG_CONTAINER);
-    }
-    public static PersistentDataContainer getBaseStats(ItemMeta item){
-        return item.getPersistentDataContainer().get(JKey.BaseStats, PersistentDataType.TAG_CONTAINER);
-    }
-    public static PersistentDataContainer getEnchants(ItemMeta item){
-        return item.getPersistentDataContainer().get(JKey.Enchant, PersistentDataType.TAG_CONTAINER);
     }
 
     public static boolean isInventoryEmpty(Inventory inv){
