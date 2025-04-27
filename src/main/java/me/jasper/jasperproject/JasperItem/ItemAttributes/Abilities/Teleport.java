@@ -2,9 +2,12 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
+import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -31,6 +34,8 @@ public class Teleport extends ItemAbility{
     public Teleport(int range, float cooldown){
        this.setRange(range);
        this.setCooldown(cooldown);
+
+
     }
 
     public Teleport(int range, float cooldown, Player player){
@@ -43,7 +48,7 @@ public class Teleport extends ItemAbility{
 
     @EventHandler
     public void action(Teleport e) {
-        if(e.getPlayer().isSneaking() && Util.hasAbility(
+        if(e.getPlayer().isSneaking() && ItemUtils.hasAbility(
                 e.getPlayer().getInventory().getItemInMainHand(), Warper.getInstance().getKey())
         ) return;
         applyCooldown(e,false);
@@ -59,7 +64,7 @@ public class Teleport extends ItemAbility{
         Location afterTP = target.add(0 ,player.getLocation().getPitch() < 0 ? -1:0, 0);
         Util.teleportPlayer(player,afterTP,false);
         player.setFallDistance(0);
-        Util.playPSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f
+        ItemUtils.playPSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f
                 , (float) Math.min(1.7, 0.5f + (beforeTP.distance(afterTP) * 0.05f)));
     }
 
@@ -67,10 +72,10 @@ public class Teleport extends ItemAbility{
     //This gonna be my Event trigger
     @EventHandler
     public void Trigger(PlayerInteractEvent e){
-        if(!Util.hasAbility(e.getItem(), this.getKey())) return;
+        if(!ItemUtils.hasAbility(e.getItem(), this.getKey())) return;
         if(TRIGGER.Interact.RIGHT_CLICK(e)){
 
-            PersistentDataContainer itemData = Util.getAbilityComp(e.getItem(), this.getKey());
+            PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getItem(), this.getKey());
 
             Bukkit.getPluginManager().callEvent(
                     new Teleport(

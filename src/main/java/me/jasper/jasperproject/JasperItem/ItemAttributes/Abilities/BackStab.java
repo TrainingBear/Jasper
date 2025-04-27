@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -39,9 +40,9 @@ public class BackStab extends ItemAbility {
     }
     @EventHandler
     public void trigger(PlayerInteractEvent e){
-        if(!Util.hasAbility(e.getItem(), this.getKey())) return;
+        if(!ItemUtils.hasAbility(e.getItem(), this.getKey())) return;
         if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e)){
-            PersistentDataContainer itemData = Util.getAbilityComp(e.getItem(), this.getKey());
+            PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getItem(), this.getKey());
             Bukkit.getPluginManager().callEvent(
                     new BackStab(
                             itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),

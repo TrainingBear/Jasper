@@ -3,6 +3,7 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes;
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JasperItem.Util.ItemManager;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.ComponentBuilder;
 import me.jasper.jasperproject.Util.JKey;
@@ -11,7 +12,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -31,6 +31,7 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
 
     private final String name = this.getClass().getSimpleName();
     protected Component display;
+    @Setter protected String lore = "<!i> Unknown <modifier>";
     @Getter protected final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());
 
     @Getter protected int customValue = 0;
@@ -51,7 +52,10 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
         return display;
     }
 
-    public abstract List<Component> getLore();
+    public Component getLore(){
+        if(baseModifier<=0) return Util.deserialize(lore);
+        return Util.deserialize(lore, Placeholder.component("modifier", Component.text(modifier+"%").color(NamedTextColor.GREEN))).color(NamedTextColor.GRAY);
+    }
 
     public ItemStack getBook(){
         return null;
@@ -59,34 +63,25 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
 
     public byte addLevel(){
         if(this.level==this.max_level){
-            Bukkit.broadcastMessage("prestiged!");
             return prestige();
         }
         this.level++;
         this.modifier = prestigedModifier * level;
-        updateDisplay();
+        display = Util.deserialize(name+" "+Util.toRoman(level));
         return this.level;
     }
 
     public byte prestige(){
         this.level = 1;
         prestigeLevel++;
-        this.prestigedModifier = baseModifier*1.15f*(prestigeLevel);
+        this.prestigedModifier = baseModifier*1.15f*(prestigeLevel+1);
         this.modifier = prestigedModifier;
+        display = Util.deserialize("T"+prestigeLevel+"-"+name+" I").color(getPrestigeColor(prestigeLevel));
         return this.level;
-    }
-
-    private void updateDisplay(){
-        if(prestigeLevel>0){
-            display = Util.deserialize("T"+prestigeLevel+"-"+name +" "+Util.toRoman(this.level)).color(getPrestigeColor(prestigeLevel));
-            return;
-        }
-        this.display = Util.deserialize(name +" "+Util.toRoman(this.level));
     }
 
     private TextColor getPrestigeColor(byte lvl){
         return switch (lvl){
-            case 0 -> NamedTextColor.WHITE;
             case 1 -> NamedTextColor.GREEN;
             case 2 -> NamedTextColor.YELLOW;
             case 3 -> NamedTextColor.GOLD;
@@ -104,7 +99,7 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
             for (Enchant enchant : enchants){
                 if(lore!=null){
                     lore.add(enchant.getDisplay());
-                    lore.addAll(enchant.getLore());
+                    lore.add(enchant.getLore());
                 }
                 PersistentDataContainer enchant_name = pdc.getAdapterContext().newPersistentDataContainer();
                 enchant_name.set(JKey.ENCHANT_LEVEL, PersistentDataType.BYTE, enchant.getLevel());
@@ -115,6 +110,7 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
                 enchant_name.set(JKey.ENCHANT_PRESTIGELEVEL, PersistentDataType.BYTE, enchant.getPrestigeLevel());
                 enchant_name.set(JKey.ENCHANT_CUSTOMVALUE, PersistentDataType.INTEGER, enchant.getCustomValue());
                 enchant_name.set(JKey.ENCHANT_MAXPRESTIGE, PersistentDataType.BYTE, enchant.getMaxPrestige());
+                enchant_name.set(JKey.ENCHANT_LORE, PersistentDataType.STRING, enchant.lore);
                 pdc.set(enchant.getKey(), PersistentDataType.TAG_CONTAINER, enchant_name);
             }
         }
@@ -137,6 +133,7 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
                 enchant_name.set(JKey.ENCHANT_PRESTIGELEVEL, PersistentDataType.BYTE, enchant.getPrestigeLevel());
                 enchant_name.set(JKey.ENCHANT_CUSTOMVALUE, PersistentDataType.INTEGER, enchant.getCustomValue());
                 enchant_name.set(JKey.ENCHANT_MAXPRESTIGE, PersistentDataType.BYTE, enchant.getMaxPrestige());
+                enchant_name.set(JKey.ENCHANT_LORE, PersistentDataType.STRING, enchant.lore);
                 pdc.set(enchant.getKey(), PersistentDataType.TAG_CONTAINER, enchant_name);
             }
             if(lore!=null) lore.add(builder.getComponent());
@@ -149,7 +146,7 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
         if(!pdc.has(JKey.ENCHANT)) return enchants;
         pdc = pdc.get(JKey.ENCHANT, PersistentDataType.TAG_CONTAINER);
-        for (Enchant enchants_ : ItemManager.getEnchants()) {
+        for (Enchant enchants_ : ItemManager.getInstance().getEnchants()) {
             if (pdc.has(enchants_.getKey())){
                 PersistentDataContainer container = pdc.get(enchants_.getKey(), PersistentDataType.TAG_CONTAINER);
                 Enchant enchant = (Enchant) enchants_.clone();
@@ -162,7 +159,7 @@ public abstract class Enchant extends Event implements Listener, Cloneable {
                 enchant.prestigeLevel = container.get(JKey.ENCHANT_PRESTIGELEVEL, PersistentDataType.BYTE);
                 enchant.customValue = container.get(JKey.ENCHANT_CUSTOMVALUE, PersistentDataType.INTEGER);
                 enchant.maxPrestige = container.get(JKey.ENCHANT_MAXPRESTIGE, PersistentDataType.BYTE);
-
+                enchant.lore = container.get(JKey.ENCHANT_LORE, PersistentDataType.STRING);
                 enchants.add(enchant);
             }
         }

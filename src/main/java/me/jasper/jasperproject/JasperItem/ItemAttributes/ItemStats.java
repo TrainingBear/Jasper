@@ -1,5 +1,18 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes;
 
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
+import me.jasper.jasperproject.JasperProject;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.lang.reflect.Field;
+import java.util.*;
+
 public class ItemStats {
 //    private int health;
 //    private int defence;

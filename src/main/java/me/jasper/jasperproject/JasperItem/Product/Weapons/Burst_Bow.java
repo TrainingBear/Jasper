@@ -17,6 +17,7 @@ public class Burst_Bow extends JItem implements Factory {
         super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW,  "BURST_BOW");
         Map<Stats, Float> stats = this.getStats();
         stats.put(Stats.DAMAGE, 40f);
+        stats.put(Stats.STRENGTH, 20f);
         stats.put(Stats.ATTACK_SPEED, 10f);
         stats.put(Stats.CRIT_DAMAGE, 40f);
         stats.put(Stats.CRIT_CHANCE, 5f);

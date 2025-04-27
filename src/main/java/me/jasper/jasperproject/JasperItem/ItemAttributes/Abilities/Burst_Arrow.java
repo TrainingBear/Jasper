@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -46,7 +47,7 @@ public class Burst_Arrow extends ItemAbility {
     public void BurstListener(Burst_Arrow e){
         applyCooldown(e,false);
         if(e.isCancelled()) {
-            e.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
+            e.getPlayer().sendActionBar(Util.deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
             return;
         }
 
@@ -57,7 +58,7 @@ public class Burst_Arrow extends ItemAbility {
             @Override
             public void run() {
                 if(!this.pleryer.isOnline()
-                        ||!Util.hasAbility(Bukkit.getPlayer(this.pleryer.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
+                        ||!ItemUtils.hasAbility(Bukkit.getPlayer(this.pleryer.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
                         ||this.total >= e.getRange()-1) cancel();
                 Arrow panah = this.pleryer.launchProjectile(Arrow.class);
                 this.pleryer.getWorld().playSound(this.pleryer.getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
@@ -77,13 +78,13 @@ public class Burst_Arrow extends ItemAbility {
 
     @EventHandler
     public void onShoot(EntityShootBowEvent e){
-        if(!Util.hasAbility(e.getBow(), this.getKey())) return;
+        if(!ItemUtils.hasAbility(e.getBow(), this.getKey())) return;
         if(!(e.getProjectile() instanceof Arrow ar)) return;
         if(!(e.getEntity() instanceof Player pl)) return;
         if(!ar.isCritical()) return;
 
 
-        PersistentDataContainer itemData = Util.getAbilityComp(e.getBow(), this.getKey());
+        PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getBow(), this.getKey());
         Bukkit.getPluginManager().callEvent(
             new Burst_Arrow(
                     itemData.get(JKey.key_range, PersistentDataType.INTEGER),

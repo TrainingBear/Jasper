@@ -159,7 +159,7 @@ public class PaperAnimationCommand implements JasperCommand {
                 ).then(Commands.literal("wand")
                         .executes(c -> {
                             if(!(c.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
-                            ItemManager.getItems().get("BLENDER").send(player);
+                            ItemManager.getInstance().getItems().get("BLENDER").send(player);
                             return Command.SINGLE_SUCCESS;
                         })
                 ).then(Commands.literal("list")

@@ -11,15 +11,18 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.Map;
 
 public class Assassin_Dagger extends JItem implements Factory {
     public Assassin_Dagger(){
         super("Assassin Dagger", Material.DIAMOND_SWORD, Rarity.LEGENDARY, ItemType.SWORD,"ASSASSIN_DAGGER");
         this.getAbilities().add(new BackStab(30f,10));
-        this.getStats().put(Stats.DAMAGE, 130f);
-        this.getStats().put(Stats.ATTACK_SPEED, 130f);
-        this.getStats().put(Stats.SPEED, 130f);
-        this.getStats().put(Stats.TRUE_DEFENCE, 10f);
+        Map<Stats, Float> stats = this.getStats();
+        stats.put(Stats.DAMAGE, 130f);
+        stats.put(Stats.STRENGTH, 100f);
+        stats.put(Stats.ATTACK_SPEED, 130f);
+        stats.put(Stats.SPEED, 130f);
+        stats.put(Stats.TRUE_DEFENCE, 10f);
     }
     @Override
     public JItem create(){

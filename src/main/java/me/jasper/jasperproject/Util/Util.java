@@ -4,14 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -88,24 +83,5 @@ public final class Util {
         roman.append(romanUnique[digit].repeat(last_digit));
         memory.add(roman.toString());
         return numberToRoman(numbers/10, digit+2, memory);
-    }
-
-    public static boolean hasAbility(ItemStack item, @Nullable NamespacedKey key){
-        if(key==null) return  item != null &&
-                item.hasItemMeta() &&
-                item.getItemMeta().getPersistentDataContainer().has(JKey.Ability);
-        return  item != null &&
-                item.hasItemMeta() &&
-                item.getItemMeta().getPersistentDataContainer().has(JKey.Ability) &&
-                item.getItemMeta().getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(key);
-    }
-
-    public static void playPSound(Player player, Sound sound, float volume, float pitch){
-        player.playSound(player.getLocation(), sound, volume, pitch);
-    }
-
-    public static PersistentDataContainer getAbilityComp(ItemStack item, NamespacedKey ItemAbility){
-        return item.getItemMeta().getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER)
-                .get(ItemAbility, PersistentDataType.TAG_CONTAINER);
     }
 }

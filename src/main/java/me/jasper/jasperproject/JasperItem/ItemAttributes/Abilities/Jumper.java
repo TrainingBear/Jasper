@@ -1,9 +1,9 @@
 package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
-import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -33,9 +33,9 @@ public class Jumper extends ItemAbility {
     }
     @EventHandler
     public void Trigger(PlayerInteractEvent e){
-        if(!Util.hasAbility(e.getItem(), this.getKey())) return;
+        if(!ItemUtils.hasAbility(e.getItem(), this.getKey())) return;
         if(TRIGGER.Interact.RIGHT_CLICK(e)){
-            PersistentDataContainer itemData = Util.getAbilityComp(e.getItem(), this.getKey());
+            PersistentDataContainer itemData = ItemUtils.getAbilityComp(e.getItem(), this.getKey());
             Bukkit.getPluginManager().callEvent(
                     new Jumper(
                             itemData.get(JKey.key_range, PersistentDataType.INTEGER),

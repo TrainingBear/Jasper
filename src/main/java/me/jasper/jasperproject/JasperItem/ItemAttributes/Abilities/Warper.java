@@ -3,6 +3,7 @@ package me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities;
 import lombok.Getter;
 import lombok.val;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.SignGUI;
@@ -62,7 +63,7 @@ public class Warper extends ItemAbility{
                         if(coordinate.length==1&&coordinate[0].isEmpty()) return;
                         if(coordinate.length!=3){
                             p.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Please input 3 argument of coordinate</red>"));
-                            Util.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
+                            ItemUtils.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
                             return;
                         }
                         int[] playerLOC = {p.getLocation().getBlockX(),p.getLocation().getBlockY(),p.getLocation().getBlockZ()};
@@ -73,7 +74,7 @@ public class Warper extends ItemAbility{
                             if (coordinate[i].contains("~")) {
                                 if(coordinate[i].charAt(0) != '~') {
                                     p.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Coordinate is not valid</red>"));
-                                    Util.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
+                                    ItemUtils.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
                                     return;
                                 }
                                 else if(coordinate[i].equals("~")) coordinate[i] = String.valueOf(playerLOC[i]);
@@ -83,13 +84,13 @@ public class Warper extends ItemAbility{
                                 savedCordinate[i] = Integer.parseInt(coordinate[i]);
                             } catch (NumberFormatException exception) {
                                 p.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Coordinate is not valid</red>"));
-                                Util.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
+                                ItemUtils.playPSound(p,Sound.BLOCK_END_PORTAL_FRAME_FILL, 1, 0f);
                                 return;
                             }
                         }
                         p.sendMessage(MiniMessage.miniMessage().deserialize("<color:#b100db><b>ABILITY</b> Set coordinate to: </color><color:#dd00ed><click:\"copy_to_clipboard\":"
                                         +String.join(", ",coordinate) +">"+ String.join(", ",coordinate)+"</click></color>"));
-                        Util.playPSound(p,Sound.BLOCK_BEACON_POWER_SELECT, 1, 1.65f);
+                        ItemUtils.playPSound(p,Sound.BLOCK_BEACON_POWER_SELECT, 1, 1.65f);
 
                         target.put(e.getPlayer().getUniqueId(), savedCordinate.clone());
 //                                Placeholder.unparsed("x", coordinate[0]),
@@ -101,7 +102,7 @@ public class Warper extends ItemAbility{
         else if((e.getActionPlayer().equals(Action.RIGHT_CLICK_BLOCK)||e.getActionPlayer().equals(Action.RIGHT_CLICK_AIR))&& e.getPlayer().isSneaking()){
             if(!target.containsKey(e.getPlayer().getUniqueId())){
                 e.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<red><b>ABILITY</b> Please input coordinate (Left click + Sneak)</red>"));
-                Util.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE,1,0.5f);
+                ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE,1,0.5f);
                 return;
             }
             
@@ -117,7 +118,7 @@ public class Warper extends ItemAbility{
 //                if(hasCooldown(e)) return;
                 player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>TOO FAR! </b>You're <color:#fa3b2d>" + (distanceTP > 1000
                         ? Util.round((distanceTP-range) / 1000f, 1)+"k" : Util.round((distanceTP-range), 1)) + "</color> blocks away from limit!</red>"));
-                Util.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.5f);
+                ItemUtils.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.5f);
                 return;
             }
 
@@ -156,8 +157,8 @@ public class Warper extends ItemAbility{
             player.getWorld().spawnParticle(
                     Particle.TOTEM_OF_UNDYING ,player.getLocation().add(0,1.5f,0), 20
                     , .15f, .15f, .15f, 0.2f , null, false);
-            Util.playPSound(player, Sound.ENTITY_ENDER_DRAGON_HURT,1,(float) Math.min(1.7, 0.5f + (distanceTP * 0.025f)));
-            Util.playPSound(e.getPlayer(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED,0.5f
+            ItemUtils.playPSound(player, Sound.ENTITY_ENDER_DRAGON_HURT,1,(float) Math.min(1.7, 0.5f + (distanceTP * 0.025f)));
+            ItemUtils.playPSound(e.getPlayer(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED,0.5f
                     ,1.6f);
         }
     }
@@ -165,11 +166,11 @@ public class Warper extends ItemAbility{
     @EventHandler
     public void trigger(PlayerInteractEvent e){
         val item = e.getPlayer().getInventory().getItemInMainHand();
-        if (!Util.hasAbility(item, this.getKey()))  return;
+        if (!ItemUtils.hasAbility(item, this.getKey()))  return;
 
         if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e) || TRIGGER.Interact.SHIFT_LEFT_CLICK(e)){
 
-            PersistentDataContainer itemData = Util.getAbilityComp(item, this.getKey());
+            PersistentDataContainer itemData = ItemUtils.getAbilityComp(item, this.getKey());
             Bukkit.getPluginManager().callEvent(new Warper(
                     itemData.get(JKey.key_range, PersistentDataType.INTEGER),
                     itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),
