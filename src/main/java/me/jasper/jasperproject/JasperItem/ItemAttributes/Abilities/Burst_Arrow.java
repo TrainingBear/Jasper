@@ -56,7 +56,7 @@ public class Burst_Arrow extends ItemAbility {
         byte time = (byte) (30/e.getRange()); //1.5 second duration
         new BukkitRunnable() {
             private byte total=0;
-            Player pleryer = e.getPlayer();
+            final Player pleryer = e.getPlayer();
             @Override
             public void run() {
                 if(!this.pleryer.isOnline()

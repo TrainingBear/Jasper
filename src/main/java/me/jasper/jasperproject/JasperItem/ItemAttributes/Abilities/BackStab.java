@@ -5,6 +5,7 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JasperItem.Util.ItemUtils;
 import me.jasper.jasperproject.JasperItem.Util.TRIGGER;
 import me.jasper.jasperproject.Util.JKey;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -65,7 +66,7 @@ public class BackStab extends ItemAbility {
         Location entityLoc = entity.getLocation().clone();
         entityLoc.setPitch(0);
         Location lokasiTujuan = entityLoc.clone().add(entityLoc.getDirection().normalize().multiply(-1));
-        if(lokasiTujuan.getBlock().isSolid() || lokasiTujuan.clone().add(0,1,0).getBlock().isSolid()){
+        if(lokasiTujuan.toBlockLocation().getBlock().isSolid() || lokasiTujuan.clone().toBlockLocation().add(0,1,0).getBlock().isSolid()){
             e.getPlayer().sendMessage(MiniMessage.miniMessage().deserialize("<red><b>INVALID!</b> Location is obstructed"));
             return;
         }
@@ -81,7 +82,7 @@ public class BackStab extends ItemAbility {
                 ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
         player.setFallDistance(0);
-        player.teleport(lokasiTujuan);
+        Util.teleportPlayer(player,lokasiTujuan,false);
         player.attack(entity);
         player.swingHand(e.getHand());
 
