@@ -74,7 +74,7 @@ public class Heal extends ItemAbility {
             final int range = e.getRange();
             @Override
             public void run() {
-                if(duration <= 0 ) {
+                if(duration <= 0 || !this.player.isOnline()) {
                     healDuration.remove(this.uuid);
                     cancel();
                 }

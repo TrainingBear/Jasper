@@ -148,7 +148,7 @@ public class Warper extends ItemAbility{
                     ,.3f,.4f,.3f,0
                     ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
-            player.teleport(targetToTP);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
+            Util.teleportPlayer(player,targetToTP,false);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
             e.setCancelled(true);
 
             player.getWorld().spawnParticle(
