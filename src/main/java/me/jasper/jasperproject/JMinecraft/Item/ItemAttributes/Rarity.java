@@ -12,7 +12,7 @@ public enum Rarity {
     COMMON(NamedTextColor.WHITE, 0f, (byte) 0),
     UNCOMMON(NamedTextColor.GREEN, 2.5f, (byte) 1),
     RARE(NamedTextColor.BLUE, 5.0f, (byte) 2),
-    EPIC(NamedTextColor.DARK_BLUE, 7.5f, (byte) 3),
+    EPIC(NamedTextColor.DARK_PURPLE, 7.5f, (byte) 3),
     LEGENDARY(NamedTextColor.GOLD, 10.0f, (byte) 4),
     MYTHIC(NamedTextColor.LIGHT_PURPLE, 12.5f, (byte) 5);
 
