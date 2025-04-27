@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Titanium_Sword extends JItem implements Factory {
     public Titanium_Sword() {
-        super("Titanium Sword", Material.IRON_SWORD, Rarity.UNCOMMON, ItemType.SWORD, 21147L, "TITANIUM_SWORD");
+        super("Titanium Sword", Material.IRON_SWORD, Rarity.UNCOMMON, ItemType.SWORD,  "TITANIUM_SWORD");
         Map<Stats, Float> stats = this.getStats();
         stats.put(Stats.DAMAGE, 18f);
         stats.put(Stats.STRENGTH, 10f);

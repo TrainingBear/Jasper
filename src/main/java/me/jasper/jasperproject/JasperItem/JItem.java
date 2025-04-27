@@ -54,13 +54,6 @@ public abstract class JItem implements Cloneable{
                 type, 0L, ID, new ArrayList<>(),
                 new HashMap<>(), new ArrayList<>());
     }
-    public JItem(String name, Material material, Rarity rarity,
-                 ItemType type, long itemVersion, String ID){
-        this(false, true, false, (byte) 0,
-                name, name, material, rarity, rarity, type, itemVersion,
-                ID, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
-    }
-
     public JItem(boolean upgraded, boolean upgrade, boolean UPGRADE,
                  byte occur, String name, String defaultName, Material material,
                  @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,

@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Burst_Bow extends JItem implements Factory {
     public Burst_Bow(){
-        super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW, 1l, "BURST_BOW");
+        super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW,  "BURST_BOW");
         Map<Stats, Float> stats = this.getStats();
         stats.put(Stats.DAMAGE, 40f);
         stats.put(Stats.ATTACK_SPEED, 10f);

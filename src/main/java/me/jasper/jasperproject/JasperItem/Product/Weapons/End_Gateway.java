@@ -17,7 +17,7 @@ import java.util.Map;
 public class End_Gateway extends JItem implements Factory {
     @Getter private final static End_Gateway instance = new End_Gateway();
     public End_Gateway() {
-        super("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD, 2114L, "END_GATEWAY");
+        super("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, ItemType.SWORD,  "END_GATEWAY");
         Map<Stats, Float> stats = this.getStats();
         stats.put(Stats.DAMAGE, 39f);
         stats.put(Stats.STRENGTH, 30f);

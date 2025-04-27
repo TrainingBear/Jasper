@@ -4,11 +4,15 @@ import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JasperItem.JItem;
 import me.jasper.jasperproject.JasperItem.Util.Factory;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+
+import java.util.List;
 
 public class Titanium_Pickaxe extends JItem implements Factory {
     public Titanium_Pickaxe(){
-        super("Titanium Pickaxe", Material.IRON_PICKAXE, Rarity.UNCOMMON, ItemType.PICKAXE,1121L,"TITANIUM_PICKAXE");
+        super("Titanium Pickaxe", Material.IRON_PICKAXE, Rarity.UNCOMMON, ItemType.PICKAXE,"TITANIUM_PICKAXE");
+        this.setVersion(getVersion());
         //here is the blablablablablablalblabla
         //samehere maybe blabal
         //this one also blablablabla
@@ -18,4 +22,8 @@ public class Titanium_Pickaxe extends JItem implements Factory {
         return this;
     }
 
+    @Override
+    protected List<Component> createLore() {
+        return List.of();
+    }
 }

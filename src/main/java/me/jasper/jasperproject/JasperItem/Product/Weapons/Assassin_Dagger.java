@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Assassin_Dagger extends JItem implements Factory {
     public Assassin_Dagger(){
-        super("Assassin Dagger", Material.DIAMOND_SWORD, Rarity.LEGENDARY, ItemType.SWORD,2131L,"ASSASSIN_DAGGER");
+        super("Assassin Dagger", Material.DIAMOND_SWORD, Rarity.LEGENDARY, ItemType.SWORD,"ASSASSIN_DAGGER");
         this.getAbilities().add(new BackStab(30f,10));
 
 

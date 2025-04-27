@@ -7,6 +7,12 @@ import java.io.ObjectStreamClass;
 public interface Factory {
     JItem create();
 
+    default JItem finish(){
+        JItem product = create();
+        product.setVersion(getVersion());
+        product.update();
+        return product;
+    }
     default long getVersion(){
         return ObjectStreamClass.lookup(this.getClass()).getSerialVersionUID();
     }

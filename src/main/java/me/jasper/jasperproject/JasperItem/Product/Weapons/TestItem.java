@@ -22,7 +22,7 @@ public class TestItem extends JItem implements Factory {
         return instance;
     }
     public TestItem(){
-        super("Test Items", Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD, 2363474L, "TEST");
+        super("Test Items", Material.NETHERITE_AXE, Rarity.MYTHIC, ItemType.SWORD,  "TEST");
         Map<Stats, Float> stats = this.getStats();
         Random random = new Random();
         for (Stats value : Stats.values()) {

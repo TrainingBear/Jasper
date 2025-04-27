@@ -37,8 +37,7 @@ public final class ItemManager {
     private final HashSet<Enchant> enchants = new HashSet<>();
 
     private void registerItem(Factory factory){
-        JItem item = factory.create();
-        item.update();
+        JItem item = factory.finish();
         items.put(item.getID().toUpperCase(), item);
     }
     private void registerAbility(ItemAbility ability){

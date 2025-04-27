@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class Warp_Gateway extends JItem implements Factory {
     public Warp_Gateway(){
-        super("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.LEGENDARY, ItemType.SWORD, 2114L, "WARP_GATEWAY");
+        super("Warp Gateway", Material.DIAMOND_SHOVEL, Rarity.LEGENDARY, ItemType.SWORD,  "WARP_GATEWAY");
         Map<Stats, Float> stats = this.getStats();
         stats.put(Stats.DAMAGE, 45f);
         stats.put(Stats.STRENGTH, 36f);
