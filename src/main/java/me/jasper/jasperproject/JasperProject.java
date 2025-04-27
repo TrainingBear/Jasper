@@ -8,19 +8,21 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
+import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.Jam.*;
-import me.jasper.jasperproject.JasperEntity.EntityCommand;
-import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDamagedEvent;
-import me.jasper.jasperproject.JasperEntity.MobEventListener.JSMDeathEventListener;
-import me.jasper.jasperproject.JasperItem.JasperItemCommand;
-import me.jasper.jasperproject.JasperItem.Util.ItemManager;
-import me.jasper.jasperproject.Listener.*;
-import me.jasper.jasperproject.TabCompleter.SummonItemDisplay;
+import me.jasper.jasperproject.JMinecraft.Entity.EntityCommand;
+import me.jasper.jasperproject.JMinecraft.Entity.MobEventListener.JSMDamagedEvent;
+import me.jasper.jasperproject.JMinecraft.Entity.MobEventListener.JSMDeathEventListener;
+import me.jasper.jasperproject.JMinecraft.Item.JasperItemCommand;
+import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
 
 import me.jasper.jasperproject.Util.Debug;
+import me.jasper.jasperproject.Util.Listener.Joinmsg;
+import me.jasper.jasperproject.Util.Listener.PlotMenuListener;
+import me.jasper.jasperproject.Util.Listener.ProjectileHit;
 import me.jasper.jasperproject.Util.SignGUI;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import net.milkbowl.vault.chat.Chat;
@@ -83,13 +85,12 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new JSMDamagedEvent(this), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);
+        PM.registerEvents(new JPlayer(), this);
 //        PM.registerEvents(new AutoSaveListener(), this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
         /// jadi jangan register command disini
-        this.getCommand("summondisplayi").setTabCompleter(new SummonItemDisplay(this));
-        this.getCommand("summondisplayi").setExecutor(new SummonItemDisplay(this));
         this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
         this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
         this.getCommand("test").setExecutor(new ExecuteCommand(this));

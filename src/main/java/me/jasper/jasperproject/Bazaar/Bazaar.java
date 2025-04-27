@@ -150,7 +150,6 @@ public abstract class Bazaar {
         );
     }
 
-
     /**
      * MAIN METHOD
      * @param player target
@@ -167,11 +166,9 @@ public abstract class Bazaar {
         Container container;
         if(!instances.containsKey(player.getUniqueId())){
             container = new Container(player, Util.deserialize(BazaarEnum.TITLE_STRING.get()+" <yellow>Worldwide bazaar"), 54);
-            container.load(()->{
-                int def = mining.getID();
-                TaskID.SwapCategory(container.getContainer(), def);
-                initLayout(container.getContainer());
-            });
+            int def = mining.getID();
+            TaskID.SwapCategory(container.getContainer(), def);
+            initLayout(container.getContainer());
         } else {
             container = null;
         }

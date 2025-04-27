@@ -1,12 +1,10 @@
 package me.jasper.jasperproject.Util;
 
-import lombok.Getter;
-import lombok.Setter;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.NamespacedKey;
 
 public final class JKey {
-    public static final NamespacedKey Main = new NamespacedKey(JasperProject.getPlugin(), "JasperItem");
+    public static final NamespacedKey JasperItem = new NamespacedKey(JasperProject.getPlugin(), "JasperItem");
     public static final NamespacedKey CustomName = new NamespacedKey(JasperProject.getPlugin(), "CustomName");
     public static final NamespacedKey Stats = new NamespacedKey(JasperProject.getPlugin(), "item_stats");
     public static final NamespacedKey Ability = new NamespacedKey(JasperProject.getPlugin(), "item_ability");
@@ -26,9 +24,6 @@ public final class JKey {
     public static final NamespacedKey key_cooldown = new NamespacedKey(JasperProject.getPlugin(), "cooldown");
     public static final NamespacedKey key_abilityCost = new NamespacedKey(JasperProject.getPlugin(), "ability_cost");
     public static final NamespacedKey key_damage = new NamespacedKey(JasperProject.getPlugin(), "damage");
-
-    public static final NamespacedKey bazaar_Item_GUI = new NamespacedKey(JasperProject.getPlugin(), "Bazaar");
-    public static final NamespacedKey bazaar_Action = new NamespacedKey(JasperProject.getPlugin(), "Bazaar-Action");
 
     public static final NamespacedKey BAZAAR_COMPONENT_TASK_ID = new NamespacedKey(JasperProject.getPlugin(), "TASK");
     public static final NamespacedKey BAZAAR_COMPONENT_ID = new NamespacedKey(JasperProject.getPlugin(), "COMPONENT");

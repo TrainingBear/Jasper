@@ -9,7 +9,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.math.BlockPosition;
-import me.jasper.jasperproject.JasperItem.Util.ItemManager;
+import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
 import me.jasper.jasperproject.Util.Commands.JasperCommand;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
