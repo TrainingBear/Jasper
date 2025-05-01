@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * @since Jul 30, 2015
  */
 public enum ArmorType{
-    HELMET(5), CHESTPLATE(6), LEGGINGS(7), BOOTS(8);
+    HELMET(5), CHESTPLATE(6), LEGGINGS(7), BOOTS(8), OFF_HAND(0), MAIN_HAND(0);
 
     private final int slot;
 

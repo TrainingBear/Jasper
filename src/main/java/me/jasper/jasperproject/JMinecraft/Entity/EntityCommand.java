@@ -11,11 +11,6 @@ public class EntityCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command command, @NotNull String s, @NotNull String[] strings) {
         Player player = (Player) commandSender;
         if(strings.length == 0) return false;
-        JMob mob = new JMob(EntityType.ZOMBIE, player.getLocation(), ChatColor.GRAY+"Zombies")
-                .setDamage(5)
-                .setAgroRange(10)
-                .setKB_Resistance(2)
-                .setMaxHealth(Double.parseDouble(strings[0]));
         return true;
     }
 }

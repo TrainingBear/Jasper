@@ -29,10 +29,6 @@ public class JSMDamagedEvent implements Listener {
                 (e.getDamager() instanceof Player player) &&
                 mob.getScoreboardTags().contains("JasperMob")){
             e.setCancelled(true);
-            JMob.getMob(mob)
-                    .damageThisMob( (int) e.getDamage())
-                    .updateHealthDisplay()
-                    .playHurtAnimation(player);
         }
     }
 

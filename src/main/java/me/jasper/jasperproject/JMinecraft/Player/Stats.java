@@ -1,10 +1,13 @@
 package me.jasper.jasperproject.JMinecraft.Player;
 
 import lombok.Getter;
+import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +18,7 @@ import org.bukkit.persistence.PersistentDataType;
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Getter
 public enum Stats {
     DAMAGE("⚔","Damage","<red>", 1),
     STRENGTH("❁","Strength","<color:#ff1e00>", 0),
@@ -48,36 +52,46 @@ public enum Stats {
     MINING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
     FORAGING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
     FISHING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
-    ENCHANTING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0);
+    ENCHANTING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
 
-    @Getter private final String symbol;
-    @Getter private final String name;
-    @Getter private final String color;
-    @Getter private final NamespacedKey key;
-    @Getter private final float baseValue;
-    @Getter private final NamespacedKey baseKey;
-    Stats(String symbol, String name, String color, float base_value){
+    MELEE_MODIFIER("", "Melee Multiplier", NamedTextColor.RED, 1, false),
+    MAGIC_MODIFIER("", "Ability Multiplier", NamedTextColor.LIGHT_PURPLE, 1, false),
+    ARROW_MODIFIER("", "Projectile Multiplier", NamedTextColor.AQUA, 1, false);
+
+    private final boolean visible;
+    private final String symbol;
+    private final String name;
+    private final String color;
+    private final NamespacedKey key;
+    private final float baseValue;
+    private TextColor textColor;
+
+    Stats(String symbol, String name, TextColor color, float base_value, boolean visible){
+        this(symbol, name, "<"+color.asHexString()+">", base_value, visible);
+        this.textColor = color;
+    }
+    Stats(String symbol, String name, String color, float baseValue){
+        this(symbol, name, color, baseValue, true);
+    }
+    Stats(String symbol, String name, String color , float base_value, boolean visible){
+        this.visible = visible;
         this.symbol = symbol;
         this.name = name;
         this.color = color;
         this.baseValue = base_value;
         this.key = new NamespacedKey(JasperProject.getPlugin(), Util.escapeRegex(name).replaceAll(" ", ""));
-        this.baseKey = new NamespacedKey(JasperProject.getPlugin(), key.getKey()+"BASE");
     }
 
     public static void putIfAbsent(Player player){
         PersistentDataContainer pdc = player.getPersistentDataContainer();
-        boolean hasStats = pdc.has(JKey.Stats);
-        if(true || !hasStats){
-            PersistentDataContainer stats = pdc.getAdapterContext().newPersistentDataContainer();
-            for (Stats stat : Stats.values()) {
-                if(stat.getBaseValue() == -1) continue;
-                stats.set(stat.getKey(), PersistentDataType.FLOAT, 0f);
-                stats.set(stat.getBaseKey(), PersistentDataType.FLOAT, stat.getBaseValue());
-            }
-            pdc.set(JKey.Stats, PersistentDataType.TAG_CONTAINER, stats);
+        PersistentDataContainer stats = pdc.getAdapterContext().newPersistentDataContainer();
+        if(!pdc.has(JKey.Stats)) pdc.set(JKey.Stats, PersistentDataType.TAG_CONTAINER, stats);
+        stats = pdc.get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
+        for (Stats stat : Stats.values()) {
+            if(stats.has(stat.getKey())) continue;
+            stats.set(stat.getKey(), PersistentDataType.FLOAT, 0f);
         }
-
+        pdc.set(JKey.Stats, PersistentDataType.TAG_CONTAINER, stats);
     }
 
     public static PersistentDataContainer toPDC(PersistentDataAdapterContext context, Map<Stats, Float> stats){
@@ -88,20 +102,20 @@ public enum Stats {
         return pdc;
     }
 
-    public static void apply(Player player, ItemStack item, JPlayer.Type type){
+    public static void apply(Player player, ItemStack item, ArmorType type){
        apply(player, fromItem(item), type);
        JPlayer jPlayer = PlayerManager.getJPlayer(player);
        jPlayer.setLastItems(type, item);
     }
-    public static void apply(Player player, Map<Stats, Float> stats, JPlayer.Type type){
+    public static void apply(Player player, Map<Stats, Float> stats, ArmorType type){
         putIfAbsent(player);
         PersistentDataContainer pdc = player.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
 
         ///     CLEAR LAST STATS EFFECT
         JPlayer jPlayer = PlayerManager.getJPlayer(player);
         ItemStack lastItems = jPlayer.getLastItems(type);
-        Map<Stats, Float> lastItemStats = fromItem(lastItems);
         if(lastItems!=null){
+            Map<Stats, Float> lastItemStats = fromItem(lastItems);
             for (Stats stat : lastItemStats.keySet()) {
                 pdc.set(stat.getKey(),
                         PersistentDataType.FLOAT,
@@ -140,8 +154,7 @@ public enum Stats {
         for (Stats value : Stats.values()) {
             if(value.getBaseValue() == -1) continue;
             float stat = pdc.get(value.getKey(), PersistentDataType.FLOAT);
-            float base_stat = pdc.get(value.getBaseKey(), PersistentDataType.FLOAT);
-            stats.put(value, stat+base_stat);
+            stats.put(value, stat);
         }
         return stats;
     }

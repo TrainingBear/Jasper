@@ -8,6 +8,7 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
+import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
@@ -72,17 +73,15 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("debug").setExecutor(new Debug());
 
-
-        CommandManager.getInstance()
-                .register(new PaperAnimationCommand())
-                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
-        ;
+//        CommandManager.getInstance()
+//                .register(new PaperAnimationCommand())
+//                .register(new BazaarCommand(), List.of("bazaar", "bz", "pasar"))
+//        ;
 
         PM.registerEvents(new ProjectileHit(), this);
         PM.registerEvents(new Joinmsg(this), this);
         PM.registerEvents(new PlotMenuListener(), this);
-        PM.registerEvents(new JSMDeathEventListener(), this);
-        PM.registerEvents(new JSMDamagedEvent(this), this);
+        PM.registerEvents(new JMob.MobListener(), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);
         PM.registerEvents(new JPlayer(), this);

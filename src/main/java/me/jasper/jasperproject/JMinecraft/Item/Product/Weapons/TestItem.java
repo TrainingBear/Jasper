@@ -2,7 +2,6 @@ package me.jasper.jasperproject.JMinecraft.Item.Product.Weapons;
 
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.*;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Teleport;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JMinecraft.Item.JItem;
