@@ -37,7 +37,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
     protected abstract List<Component> createLore();
     public List<Component> getLore(){
         List<Component> lore = new ArrayList<>(createLore());
-        if(cooldown > 0) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+cooldown+" seconds"));
+        if(cooldown > 0) lore.add(MiniMessage.miniMessage().deserialize("<!italic><dark_gray>Cooldown: <green>"+Util.round(cooldown,1)+" seconds"));
         return lore;
     }
 
@@ -53,14 +53,29 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
 
     protected <T extends ItemAbility> boolean hasCooldown(T e,boolean sendmessage){
         float cooldown = e.getCooldown();
-        float current = ItemAbility.this.cooldownMap.get(player.getUniqueId()) != null ?
-                (System.currentTimeMillis() - ItemAbility.this.cooldownMap.get(player.getUniqueId()) ) / 1000.0f : cooldown+1;
+        float current = ItemAbility.this.cooldownMap.get(e.getPlayer().getUniqueId()) != null
+                ? (System.currentTimeMillis() - ItemAbility.this.cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f
+                : cooldown+1;
 
         if(current > cooldown) return false;
         if(sendmessage) {
             if (!isShowCooldown()) return true;
             e.getPlayer().sendMessage(
                     MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait " + Util.round((cooldown - current), 1) + " seconds!</red>")
+            );
+        }
+        return true;
+    }
+    protected <T extends ItemAbility> boolean hasCooldown(T e,float customCD,boolean sendmessage){
+        float current = ItemAbility.this.cooldownMap.get(e.getPlayer().getUniqueId()) != null
+                ? (System.currentTimeMillis() - ItemAbility.this.cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f
+                : customCD +1;
+
+        if(current > customCD) return false;
+        if(sendmessage) {
+            if (!isShowCooldown()) return true;
+            e.getPlayer().sendMessage(
+                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait " + Util.round((customCD - current), 1) + " seconds!</red>")
             );
         }
         return true;
@@ -88,6 +103,30 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
             if(!showCD) return;
             player.sendMessage(
                     MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+ Util.round((cooldown - current),1)+" seconds!</red>")
+            );
+
+            return;
+        }
+        cooldownMap.put(player.getUniqueId(), System.currentTimeMillis());
+
+    }
+    protected <T extends ItemAbility> void applyCooldown(T e,float customCD,boolean showCD) {
+        if (customCD <= 0) return;
+        Player player = e.getPlayer();
+
+
+        if (cooldownMap.containsKey(player.getUniqueId())) {
+            float current = (System.currentTimeMillis() - cooldownMap.get(player.getUniqueId()) ) / 1000.0f;
+            if(current >= customCD){
+                cooldownMap.remove(player.getUniqueId());
+                cooldownMap.put(player.getUniqueId(), System.currentTimeMillis());
+                return;
+            }
+
+            e.setCancelled(true);
+            if(!showCD) return;
+            player.sendMessage(
+                    MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait "+ Util.round((customCD - current),1)+" seconds!</red>")
             );
 
             return;

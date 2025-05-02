@@ -52,6 +52,6 @@ public class JasperItemCommand implements CommandExecutor, TabCompleter {
     List<String> list = ItemManager.getItems().keySet().stream().toList();
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] strings) {
-        return list.stream().filter(name -> name.contains(strings[0])).toList();
+        return list.stream().filter(name -> name.contains(strings[0].toUpperCase())).toList();
     }
 }

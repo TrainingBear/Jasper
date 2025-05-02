@@ -27,7 +27,7 @@ public class Warper extends ItemAbility{
     }
 
     @Getter private Action ActionPlayer;
-    HashMap<UUID, int[]> target = new HashMap<>();
+    @Getter private static HashMap<UUID, int[]> target = new HashMap<>();
 
     public Warper(){
     }
@@ -147,7 +147,7 @@ public class Warper extends ItemAbility{
                     ,.3f,.4f,.3f,0
                     ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
-            Util.teleportPlayer(player,targetToTP,false);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
+            Util.teleportEntity(player,targetToTP,false);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
             e.setCancelled(true);
 
             player.getWorld().spawnParticle(
@@ -167,7 +167,7 @@ public class Warper extends ItemAbility{
         val item = e.getPlayer().getInventory().getItemInMainHand();
         if (!Util.hasAbility(item, this.getKey()))  return;
 
-        if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e) || TRIGGER.Interact.SHIFT_LEFT_CLICK(e)){
+        if(TRIGGER.Interact.SNEAK_RIGHT_CLICK(e) || TRIGGER.Interact.SNEAK_LEFT_CLICK(e)){
 
             PersistentDataContainer itemData = Util.getAbilityComp(item, this.getKey());
             Bukkit.getPluginManager().callEvent(new Warper(

@@ -21,7 +21,8 @@ public class Listener implements org.bukkit.event.Listener {
         if(e.getClick().equals(ClickType.DOUBLE_CLICK)
                 || curentItem==null ) return;
 
-        PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
+        try {
+            PersistentDataContainer container = e.getCurrentItem().getItemMeta().getPersistentDataContainer();
         if(!contain(container, JKey.BAZAAR_COMPONENT_TASK_ID)) return;
         Player whoClicked = (Player) e.getWhoClicked();
         if(contain(container, JKey.BAZAAR_PRODUCT)){
@@ -45,7 +46,7 @@ public class Listener implements org.bukkit.event.Listener {
                             curentItem
                     );
         }
-
+        }catch(NullPointerException ignore){}
     }
 
     private boolean contain(@NotNull PersistentDataContainer container, NamespacedKey key){

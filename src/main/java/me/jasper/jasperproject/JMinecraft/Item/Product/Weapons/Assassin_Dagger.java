@@ -6,8 +6,8 @@ import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
 import me.jasper.jasperproject.JMinecraft.Player.Stats;
 import me.jasper.jasperproject.JMinecraft.Item.JItem;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Factory;
+import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -32,10 +32,10 @@ public class Assassin_Dagger extends JItem implements Factory {
     @Override
     protected List<Component> createLore() {
         return List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gray>This dagger has a faint blood on it")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>looks like this thing has been passed")
-                ,MiniMessage.miniMessage().deserialize("<!i><gray>many bloodies experiences")
-                ,MiniMessage.miniMessage().deserialize("")
+                Util.deserialize("<!i><dark_gray>This dagger has a faint blood on it")
+                ,Util.deserialize("<!i><dark_gray>looks like this thing has been passed")
+                ,Util.deserialize("<!i><dark_gray>many bloodies experiences")
+                ,Util.deserialize("")
         );
     }
 }

@@ -27,8 +27,8 @@ public class Animator extends ItemAbility {
         return instance;
     }
 
-    private static final HashMap<UUID, BlockVector3> firstPos = new HashMap<>();
-    private static final HashMap<UUID, BlockVector3> secondPost = new HashMap<>();
+    @Getter private static final HashMap<UUID, BlockVector3> firstPos = new HashMap<>();
+    @Getter private static final HashMap<UUID, BlockVector3> secondPost = new HashMap<>();
     @Getter private static HashMap<UUID, Region> regions = new HashMap<>();
 
     public Animator(){

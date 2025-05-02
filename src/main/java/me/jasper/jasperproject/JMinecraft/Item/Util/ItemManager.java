@@ -6,22 +6,15 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import lombok.Getter;
-import me.jasper.jasperproject.Item.ItemAttributes.Abilities.*;
-import me.jasper.jasperproject.Item.Product.Weapons.*;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JMinecraft.Item.Product.Weapons.*;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.*;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchant;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.JItem;
-import me.jasper.jasperproject.JMinecraft.Item.Product.Tools.Blender;
-import me.jasper.jasperproject.JMinecraft.Item.Product.Tools.GraplingHook;
-import me.jasper.jasperproject.JMinecraft.Item.Product.Tools.Titanium_Pickaxe;
-import me.jasper.jasperproject.JMinecraft.Item.Product.Utilities.Feather_Jumper;
-import me.jasper.jasperproject.JMinecraft.Item.Product.Utilities.Healing_Staff;
-import me.jasper.jasperproject.JMinecraft.Item.Product.Utilities.Healing_Wand;
-import me.jasper.jasperproject.JasperItem.Product.Weapons.*;
+import me.jasper.jasperproject.JMinecraft.Item.Product.Tools.*;
+import me.jasper.jasperproject.JMinecraft.Item.Product.Utilities.*;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import org.bukkit.Bukkit;
@@ -45,13 +38,17 @@ public final class ItemManager {
     @Getter private static final HashMap<String, JItem> items = new HashMap<>();
     @Getter private static final HashSet<Enchant> enchants = new HashSet<>();
 
-    private static void registerItem(Factory factory){
-        JItem item = factory.finish();
-        items.put(item.getID().toUpperCase(), item);
+    private static void registerItem(Factory... factory){
+        for(Factory fac : factory){
+            JItem item = fac.finish();
+            items.put(item.getID().toUpperCase(), item);
+        }
     }
-    private static void registerAbility(ItemAbility ability){
-        pluginManager.registerEvents(ability, plugin);
-        abilities.add(ability);
+    private static void registerAbility(ItemAbility... ability){
+        for(ItemAbility abilti : ability){
+            pluginManager.registerEvents(abilti, plugin);
+            abilities.add(abilti);
+        }
     }
 
     private static void registerEnchant(Enchant enchant){
@@ -61,27 +58,35 @@ public final class ItemManager {
 
     public static void registerAll(){
 
-        registerAbility(Teleport.getInstance());
-        registerAbility(Grappling_Hook.getInstance());
-        registerAbility(Warper.getInstance());
-        registerAbility(Animator.getInstance());
-        registerAbility(Burst_Arrow.getInstance());
-        registerAbility(Heal.getInstance());
-        registerAbility(Jumper.getInstance());
-        registerAbility(BackStab.getInstance());
+        registerAbility(
+                Teleport.getInstance(),
+                Grappling_Hook.getInstance(),
+                Warper.getInstance(),
+                Animator.getInstance(),
+                Burst_Arrow.getInstance(),
+                Heal.getInstance(),
+                Jumper.getInstance(),
+                BackStab.getInstance(),
+                Burnt.getInstance(),
+                Bash.getInstance()
+        );
 
-        registerItem(new Blender());
-        registerItem(new End_Gateway());
-        registerItem(new Warp_Gateway());
-        registerItem(new GraplingHook());
-        registerItem(new TestItem());
-        registerItem(new Titanium_Sword());
-        registerItem(new Burst_Bow());
-        registerItem(new Healing_Wand());
-        registerItem(new Healing_Staff());
-        registerItem(new Titanium_Pickaxe());
-        registerItem(new Feather_Jumper());
-        registerItem(new Assassin_Dagger());
+        registerItem(
+                new Blender(),
+                new End_Gateway(),
+                new Warp_Gateway(),
+                new GraplingHook(),
+                new TestItem(),
+                new Titanium_Sword(),
+                new Burst_Bow(),
+                new Healing_Wand(),
+                new Healing_Staff(),
+                new Titanium_Pickaxe(),
+                new Feather_Jumper(),
+                new Assassin_Dagger(),
+                new Stack_Steels(),
+                new Heavy_Axe()
+        );
 
         registerEnchant(new Sharpness());
     }

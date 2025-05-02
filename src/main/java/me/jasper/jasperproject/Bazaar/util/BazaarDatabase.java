@@ -82,6 +82,8 @@ public abstract class BazaarDatabase {
         Map<String, List<Product>> groupedProduct = new HashMap<>();
 
         try {
+            if(connection == null) return; //failsafe, ganggu anjay hrs nyalain sql
+
             ResultSet resultSet = connection.createStatement().executeQuery(
                     "select * from product");
             while (resultSet.next()){

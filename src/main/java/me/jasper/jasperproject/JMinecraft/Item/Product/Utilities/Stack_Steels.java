@@ -1,10 +1,10 @@
-package me.jasper.jasperproject.JasperItem.Product.Utilities;
+package me.jasper.jasperproject.JMinecraft.Item.Product.Utilities;
 
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Abilities.Burnt;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JasperItem.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JasperItem.JItem;
-import me.jasper.jasperproject.JasperItem.Util.Factory;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Burnt;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
+import me.jasper.jasperproject.JMinecraft.Item.JItem;
+import me.jasper.jasperproject.JMinecraft.Item.Util.Factory;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 

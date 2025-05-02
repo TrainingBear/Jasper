@@ -6,11 +6,13 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -19,13 +21,13 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 public final class Util {
-    public static void teleportPlayer(Player p, Location loc,boolean invulWhenTP){
-        p.teleport(loc);
-        if(!invulWhenTP) p.setNoDamageTicks(0);
+    public static void teleportEntity(LivingEntity e, Location loc, boolean invulWhenTP){
+        e.teleport(loc);
+        if(!invulWhenTP) e.setNoDamageTicks(0);
     }
-    public static void teleportPlayer(Player p, Location loc, PlayerTeleportEvent.TeleportCause cause, boolean invulWhenTP){
-        p.teleport(loc,cause);
-        if(!invulWhenTP) p.setNoDamageTicks(0);
+    public static void teleportEntity(LivingEntity e, Location loc, PlayerTeleportEvent.TeleportCause cause, boolean invulWhenTP){
+        e.teleport(loc,cause);
+        if(!invulWhenTP) e.setNoDamageTicks(0);
     }
 
     public static Component deserialize(String message, TagResolver... tags){
