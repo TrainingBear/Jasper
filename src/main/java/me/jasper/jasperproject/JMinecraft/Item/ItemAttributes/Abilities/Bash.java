@@ -82,32 +82,31 @@ public class Bash extends ItemAbility {
         UUID uuid = p.getUniqueId();
         if(hasCooldown(e)) return;
         if(e.isReleased()) {
+            Bukkit.broadcastMessage("Has been released");
             float power = powers.get(uuid);
             e.getPlayer().sendMessage("You have been released the power of "+power);
             bashAnimation(p, power, e);
             applyCooldown(e,  true);
-            powers.remove(uuid);
+            powers.put(uuid, 0f);
             return;
         }
 
-        Runnable onRelease = () -> {
-            Bash event = (Bash) e.clone();
-            event.setReleased(true);
-            Bukkit.getPluginManager().callEvent(event);
-        };
-
-        BiConsumer<Long, BukkitRunnable> onTicking = (elapsed, on_release) -> {
+        HoldEvent holdEvent = new HoldEvent(p, (elapsed, on_release) -> {
             powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
             float power = powers.get(uuid);
             if(power > e.getRange()){
+                powers.put(uuid, (float) e.getRange());
                 on_release.runTask(JasperProject.getPlugin());
-                return;
+                return true;
             }
             p.sendMessage("Charged "+power);
             p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
-        };
-
-        HoldEvent holdEvent = new HoldEvent(p, onTicking, onRelease);
+            return false;
+        }, ()->{
+            Bash event = (Bash) e.clone();
+            event.setReleased(true);
+            Bukkit.getPluginManager().callEvent(event);
+        });
         Bukkit.getPluginManager().callEvent(holdEvent);
     }
 
@@ -136,7 +135,7 @@ public class Bash extends ItemAbility {
                 ply.setVelocity(ply.getVelocity().add(new Vector(0, power * .075f, 0)));
                 continue;
             }
-            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false, power/max_power);
+            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false);
             final double yDiff = entity.getY() - p.getY();
             if (yDiff <= 2d && yDiff >= -1d) {
                 entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * power + 0.25f, 0)));

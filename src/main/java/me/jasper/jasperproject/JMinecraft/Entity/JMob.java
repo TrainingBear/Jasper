@@ -34,15 +34,9 @@ import java.util.UUID;
 
 public class JMob<T extends EntityLiving> implements Listener {
     @Getter private CraftLivingEntity mob;
-    @Getter private TextDisplay display;
 
-    public JMob(EntityLiving entityLiving, World world){
-        CraftWorld world1 = world.getWorld();
+    public JMob(EntityLiving entityLiving){
         this.mob = (CraftLivingEntity) entityLiving.getBukkitEntity();
-        this.display = world1.spawn(world1.getSpawnLocation(), TextDisplay.class);
-        this.display.setVisualFire(false);
-        this.display.setBillboard(Display.Billboard.CENTER);
-        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
         mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_REPLACE_HITREGIS, PersistentDataType.BOOLEAN, true);
     }
 
@@ -101,6 +95,10 @@ public class JMob<T extends EntityLiving> implements Listener {
     }
 
     public void spawn(Location location){
+        TextDisplay display= location.getWorld().spawn(location, TextDisplay.class);
+        display.setVisualFire(false);
+        display.setBillboard(Display.Billboard.CENTER);
+        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
         updateDisplay();
         mob.addPassenger(display);
         mob.spawnAt(location);
@@ -124,40 +122,26 @@ public class JMob<T extends EntityLiving> implements Listener {
         @EventHandler
         public void onHurt(EntityDamageByEntityEvent e){
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
-            DamageResult result = null;
-            Bukkit.broadcastMessage(e.getCause().name());
-            if((e.getDamager() instanceof Player player)){
-                JPlayer jPlayer = PlayerManager.getJPlayer(player);
-                 if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
-                    result = DamageResult.builder()
-                            .damage((int) e.getDamage())
-                            .type(DamageType.ABSTRACT)
-                            .build();
-                } else {
-                    result = jPlayer.attack(null, ArmorType.MAIN_HAND, DamageType.MELEE, e.isCritical(), 1);
-                }
-                entity.setNoDamageTicks(0);
-            }
-            else if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
-                result = DamageResult.builder()
-                        .type(DamageType.PROJECTILE)
-                        .damage((int) e.getDamage())
-                        .build();
-            }
-            if(result==null) result = DamageResult.builder()
-                    .type(DamageType.MAGIC)
-                    .damage((int) e.getDamage())
-                    .build();
-
+            DamageResult result = DamageResult.builder(null).build();
             float true_defence = entity.getPersistentDataContainer().has(Stats.TRUE_DEFENCE.getKey()) ?
                     entity.getPersistentDataContainer().get(Stats.TRUE_DEFENCE.getKey(), PersistentDataType.FLOAT) :
                     0;
             float defence = entity.getPersistentDataContainer().has(Stats.DEFENCE.getKey()) ?
                     entity.getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT) :
                     0;
-            result.setDefence((int) defence);
-            result.setTrue_defence((int) true_defence);
-            result.recalculate();
+            if((e.getDamager() instanceof Player player)){
+                JPlayer jPlayer = PlayerManager.getJPlayer(player);
+                 if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
+                    result = DamageResult.patch((float) e.getDamage(), defence, true_defence, DamageType.MELEE);
+                } else {
+                     Bukkit.broadcastMessage(e.getCause().name());
+                     result = jPlayer.attack(null, ArmorType.MAIN_HAND, DamageType.MELEE, e.isCritical());
+                }
+                entity.setNoDamageTicks(0);
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
+                result = DamageResult.patch((float) e.getDamage(), defence, true_defence, DamageType.MELEE);
+            }
             e.setDamage(result.getFinal_damage());
             DamageEvent damageEvent = new DamageEvent(result, entity);
             if(e.isCancelled()) damageEvent.setCancelled(true);
@@ -168,53 +152,60 @@ public class JMob<T extends EntityLiving> implements Listener {
         public void onHurtByNonEntity(EntityDamageEvent e){
             if((e.getDamageSource().getCausingEntity() instanceof Player)) return;
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
-            DamageResult result = null;
-            AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
-                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
-                result = DamageResult.builder()
-                        .type(DamageType.FIRE)
-                        .damage((int) (max_health/25))
-                        .build();
-            }
-            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE)){
-                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
-                result = DamageResult.builder()
-                        .type(DamageType.FIRE)
-                        .damage((int) (max_health/10))
-                        .build();
-            }
-            else if(e.getCause().equals(EntityDamageEvent.DamageCause.LAVA)){
-                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
-                result = DamageResult.builder()
-                        .type(DamageType.FIRE)
-                        .damage((int) (max_health/5))
-                        .build();
-            }
-            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
-                double max_health = maxHealthAttribute.getBaseValue();
-                float fallDistance = Math.min(entity.getFallDistance(), 100);
-                int damage = (int) (max_health * (fallDistance/100));
-                result = DamageResult.builder()
-                        .type(DamageType.ABSTRACT)
-                        .damage(damage)
-                        .trueDamage(true)
-                        .build();
-            }
-            if(result==null) result = DamageResult.builder()
-                    .type(DamageType.MAGIC)
-                    .damage((int) e.getDamage())
-                    .build();
-
             float true_defence = entity.getPersistentDataContainer().has(Stats.TRUE_DEFENCE.getKey()) ?
                     entity.getPersistentDataContainer().get(Stats.TRUE_DEFENCE.getKey(), PersistentDataType.FLOAT) :
                     0;
             float defence = entity.getPersistentDataContainer().has(Stats.DEFENCE.getKey()) ?
                     entity.getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT) :
                     0;
-            result.setDefence((int) defence);
-            result.setTrue_defence((int) true_defence);
-            result.recalculate();
+            DamageResult result = null;
+            AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
+                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
+                result = DamageResult.builder(null)
+                        .type(DamageType.FIRE)
+                        .final_damage((int) (max_health/25))
+                        .true_defence((int) true_defence)
+                        .defence((int) defence)
+                        .build();
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE)){
+                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
+                result = DamageResult.builder(null)
+                        .type(DamageType.FIRE)
+                        .final_damage((int) (max_health/10))
+                        .true_defence((int) true_defence)
+                        .defence((int) defence)
+                        .build();
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.LAVA)){
+                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
+                result = DamageResult.builder(null)
+                        .type(DamageType.FIRE)
+                        .final_damage((int) (max_health/5))
+                        .true_defence((int) true_defence)
+                        .defence((int) defence)
+                        .build();
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
+                double max_health = maxHealthAttribute.getBaseValue();
+                float fallDistance = Math.min(entity.getFallDistance(), 100);
+                int damage = (int) (max_health * (fallDistance/100));
+                result = DamageResult.builder(null)
+                        .type(DamageType.ABSTRACT)
+                        .final_damage(damage)
+                        .true_defence((int) true_defence)
+                        .defence((int) defence)
+                        .trueDamage(true)
+                        .build();
+            }
+            if(result==null) result = DamageResult.builder(null)
+                    .type(DamageType.MAGIC)
+                    .final_damage((int) e.getDamage())
+                    .true_defence((int) true_defence)
+                    .defence((int) defence)
+                    .build();
+
             e.setDamage(result.getFinal_damage());
             DamageEvent damageEvent = new DamageEvent(result, entity);
             if(e.isCancelled()) damageEvent.setCancelled(true);

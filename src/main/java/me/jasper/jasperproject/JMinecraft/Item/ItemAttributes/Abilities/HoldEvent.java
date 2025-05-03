@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperProject;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,18 +11,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 
 public class HoldEvent extends Event implements Listener, Cancellable {
-    private static final HandlerList HANDLER_LIST = new HandlerList();public static HandlerList getHandlerList() {return HANDLER_LIST;}@Override public @NotNull HandlerList getHandlers() {return HANDLER_LIST;}
+    private static final HandlerList HANDLER_LIST = new HandlerList(); public HoldEvent() { } public static HandlerList getHandlerList() {return HANDLER_LIST;}@Override public @NotNull HandlerList getHandlers() {return HANDLER_LIST;}
     @Getter private static final Map<UUID, Long> lastClick = new HashMap<>();
     @Getter private static final Map<UUID, BukkitRunnable> task = new HashMap<>();
     @Getter private UUID player;
-    @Getter private BiConsumer<Long, BukkitRunnable> onTicking;
+    @Getter private onTicking onTicking;
     @Getter private Runnable onRelease;
     private boolean cancelled;
 
-    public HoldEvent(Player player, BiConsumer<Long, BukkitRunnable> onTicking, Runnable onRelease) {
+    public HoldEvent(Player player, onTicking onTicking, Runnable onRelease) {
         this.player = player.getUniqueId();
         this.onRelease = onRelease;
         this.onTicking = onTicking;
@@ -47,12 +47,13 @@ public class HoldEvent extends Event implements Listener, Cancellable {
         BukkitRunnable task_ = new BukkitRunnable() {
             @Override
             public void run() {
+                Bukkit.broadcastMessage("released");
                 e.getOnRelease().run();
                 lastClick.remove(uuid);
             }
         };
-        e.getOnTicking().accept(elapsed, task_);
         task.put(uuid, task_);
+        if(e.getOnTicking().accept(elapsed, task_)) return;
         task_.runTaskLater(JasperProject.getPlugin(), 12L);
     }
 
@@ -63,6 +64,11 @@ public class HoldEvent extends Event implements Listener, Cancellable {
 
     @Override
     public void setCancelled(boolean b) {
-cancelled=b;
+        cancelled=b;
+    }
+
+    @FunctionalInterface
+    public interface onTicking{
+        boolean accept(Long elapse, BukkitRunnable onRelease);
     }
 }
