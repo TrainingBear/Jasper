@@ -49,12 +49,13 @@ public class JPlayer implements Listener {
      * @return total damage amount
      */
 
-//    public static Holder<DamageType> createDamageSource(MinecraftServer server){
-//        ResourceKey<net.minecraft.world.damagesource.DamageType> a = ResourceKey.a(Registries.s, var);
+    public static Holder<DamageType> createDamageSource(MinecraftServer server){
+        ResourceKey<net.minecraft.world.damagesource.DamageType> a = ResourceKey.a(Registries.s, var);
 
-//        RegistryAccess access = server.bd().
+        RegistryAccess access = server.bd().;
 
-//    }
+        DamageSource
+    }
 
     public DamageResult attack(@Nullable LivingEntity target, ArmorType type, DamageType damageType, boolean critical, float modifier){
         Player bukkitPlayer = getBukkitPlayer();
