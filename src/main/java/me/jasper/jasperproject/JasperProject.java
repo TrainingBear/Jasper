@@ -1,4 +1,6 @@
 package me.jasper.jasperproject;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.PaperAnimationCommand;
 import me.jasper.jasperproject.Bazaar.Bazaar;
@@ -21,6 +23,7 @@ import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
 import me.jasper.jasperproject.Util.Debug;
 import me.jasper.jasperproject.Util.Listener.AutoSaveListener;
 import me.jasper.jasperproject.Util.Listener.Joinmsg;
+import me.jasper.jasperproject.Util.Listener.PlayerQuitListener;
 import me.jasper.jasperproject.Util.Listener.PlotMenuListener;
 import me.jasper.jasperproject.Util.Listener.ProjectileHit;
 import me.jasper.jasperproject.Util.SignGUI;
@@ -46,6 +49,7 @@ public final class JasperProject extends JavaPlugin {
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
     @Getter private static Configurator animationConfig;
+    @Getter private static ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
     @Override
     public void onEnable() {
@@ -79,6 +83,7 @@ public final class JasperProject extends JavaPlugin {
 
         PM.registerEvents(new ProjectileHit(), this);
         PM.registerEvents(new Joinmsg(this), this);
+        PM.registerEvents(new PlayerQuitListener(), this);
         PM.registerEvents(new PlotMenuListener(), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);

@@ -46,7 +46,7 @@ public class Burst_Arrow extends ItemAbility {
     public void BurstListener(Burst_Arrow e){
         applyCooldown(e,false);
         if(e.isCancelled()) {
-            e.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
+            e.getPlayer().sendActionBar(Util.deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
             return;
         }
 
@@ -54,8 +54,7 @@ public class Burst_Arrow extends ItemAbility {
         new BukkitRunnable() {
             private byte total=0;
             final Player pleryer = e.getPlayer();
-            @Override
-            public void run() {
+            @Override public void run() {
                 if(!this.pleryer.isOnline()
                         ||!Util.hasAbility(Bukkit.getPlayer(this.pleryer.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
                         ||this.total >= e.getRange()-1) cancel();

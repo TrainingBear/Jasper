@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities;
 
+import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
 import me.jasper.jasperproject.JasperProject;
@@ -24,7 +25,7 @@ import java.util.UUID;
 
 public class Heal extends ItemAbility {
     private static Heal instance;
-    HashMap<UUID, BukkitTask> healDuration = new HashMap<>();
+    @Getter static HashMap<UUID, BukkitTask> healDuration = new HashMap<>();
     public Heal(){}
 
     public static Heal getInstance(){
@@ -64,15 +65,14 @@ public class Heal extends ItemAbility {
     public void action(Heal e){
         applyCooldown(e,true);
         if(e.isCancelled()) return;
-        if(this.healDuration.containsKey(e.getPlayer().getUniqueId())) this.healDuration.get(e.getPlayer().getUniqueId()).cancel();
+        if(healDuration.containsKey(e.getPlayer().getUniqueId())) healDuration.get(e.getPlayer().getUniqueId()).cancel();
 
-        this.healDuration.put(e.getPlayer().getUniqueId(), new BukkitRunnable(){
+        healDuration.put(e.getPlayer().getUniqueId(), new BukkitRunnable(){
             byte duration = 7;
             final Player player = e.getPlayer();
             final UUID uuid = player.getUniqueId();
             final int range = e.getRange();
-            @Override
-            public void run() {
+            @Override public void run() {
                 if(duration <= 0 || !this.player.isOnline()) {
                     healDuration.remove(this.uuid);
                     cancel();
@@ -87,7 +87,7 @@ public class Heal extends ItemAbility {
                 );
                 duration--;
             }
-        }.runTaskTimer(JasperProject.getPlugin(),0,20));
+        }.runTaskTimerAsynchronously(JasperProject.getPlugin(),0,20));
     }
 
     @Override

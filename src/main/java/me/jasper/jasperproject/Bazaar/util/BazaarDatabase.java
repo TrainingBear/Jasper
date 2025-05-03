@@ -23,7 +23,7 @@ public abstract class BazaarDatabase {
             connection = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/bazaar",
                     "root",
-                    "1234"
+                    "mysql12345"
             );
             return connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS product(" +
@@ -52,7 +52,7 @@ public abstract class BazaarDatabase {
     public static void saveProduct(String name, byte[] product) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "update product set " +
-                "product = ? where name = ?"
+                        "product = ? where name = ?"
         );
         preparedStatement.setBytes(1, product);
         preparedStatement.setString(2, name);
@@ -82,6 +82,8 @@ public abstract class BazaarDatabase {
         Map<String, List<Product>> groupedProduct = new HashMap<>();
 
         try {
+            if(connection == null) return; //failsafe, ganggu anjay hrs nyalain sql
+
             ResultSet resultSet = connection.createStatement().executeQuery(
                     "select * from product");
             while (resultSet.next()){

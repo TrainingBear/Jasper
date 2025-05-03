@@ -40,7 +40,7 @@ public class BackStab extends ItemAbility {
     @EventHandler
     public void trigger(PlayerInteractEvent e){
         if(!Util.hasAbility(e.getItem(), this.getKey())) return;
-        if(TRIGGER.Interact.SHIFT_RIGHT_CLICK(e)){
+        if(TRIGGER.Interact.SNEAK_RIGHT_CLICK(e)){
             PersistentDataContainer itemData = Util.getAbilityComp(e.getItem(), this.getKey());
             Bukkit.getPluginManager().callEvent(
                     new BackStab(
@@ -78,8 +78,8 @@ public class BackStab extends ItemAbility {
                 ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
         player.setFallDistance(0);
-        Util.teleportPlayer(player,lokasiTujuan,false);
-        player.attack(entity);
+        Util.teleportEntity(player,lokasiTujuan,false);
+        player.attack(entity); //Damage logic.........
         player.swingHand(e.getHand());
 
         if(entity instanceof Player targetPlayer) targetPlayer.playSound(entity.getLocation(), Sound.ENTITY_GHAST_HURT,1f,0.85f);
@@ -92,7 +92,7 @@ public class BackStab extends ItemAbility {
     @Override
     protected List<Component> createLore() {
         return List.of(
-                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>BackStab <b><yellow>(SNEAK+RIGHT CLICK)")
+                MiniMessage.miniMessage().deserialize("<!i><gold>Ability: <red>BackStab <b><yellow>(SNEAK RIGHT CLICK)")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>Teleport to behind looked Entity in")
                 ,MiniMessage.miniMessage().deserialize("<!i><gray>range of "+this.range+" blocks and <color:#aa7a7f>BackStab</color>'em")
         );
