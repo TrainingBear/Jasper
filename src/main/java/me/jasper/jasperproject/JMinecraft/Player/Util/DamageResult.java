@@ -14,7 +14,7 @@ public class DamageResult {
     @Setter private boolean trueDamage;
     @Setter private int true_defence;
     private int final_damage;
-    private final Component display;
+    private Component display;
 
     public DamageResult(DamageType type, int damage, boolean critical, int defence, boolean trueDamage, int true_defence, int finalDamage, Component display) {
         this.type = type;
@@ -36,9 +36,10 @@ public class DamageResult {
         label: {
             if(trueDamage) break label;
             final_damage-=true_defence;
-            final_damage/= (defence/100)+1;
+            final_damage = (int) ((float) final_damage / ((float) defence/100f)+1);
         }
         Component display = Util.deserialize(type.getSymbol()+" "+final_damage).color(type.getColor());
+        this.display = display;
         this.final_damage = final_damage;
     }
 
@@ -80,7 +81,7 @@ public class DamageResult {
             label: {
                 if(trueDamage) break label;
                 final_damage-=true_defence;
-                final_damage/= (defence/100)+1;
+                final_damage = (int) ((float) final_damage / ((float) defence/100f)+1);
             }
             Component display = Util.deserialize(type.getSymbol()+" "+final_damage).color(type.getColor());
             return new DamageResult(type, damage, critical, defence, true, true_defence, final_damage, display);

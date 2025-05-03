@@ -1,6 +1,10 @@
 package me.jasper.jasperproject;
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.events.PacketListener;
 import lombok.Getter;
 import me.jasper.jasperproject.Animation.PaperAnimationCommand;
 import me.jasper.jasperproject.Bazaar.Bazaar;
@@ -103,9 +107,17 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
 
-//        this.getCommand("animate").setExecutor(new AnimationCommand());
+        protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.ENTITY_STATUS) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                byte b = event.getPacket().getBytes().read(0);
+                if(b == 2){
+                    event.setCancelled(true);
+                }
+            }
+        });
 
-        System.out.println("Jasper is online now!");
+        this.getLogger().info("Plugin Loaded!");
     }
 
     @Override
