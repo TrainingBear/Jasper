@@ -214,7 +214,7 @@ public abstract class JItem implements Cloneable{
     public void setMaxStack(int maxStack){
         item.editMeta(e->e.setMaxStackSize(maxStack));
     }
-    
+
     public JItem patch(JItem newVer){
         this.Version = newVer.Version;
         this.stats = newVer.stats;

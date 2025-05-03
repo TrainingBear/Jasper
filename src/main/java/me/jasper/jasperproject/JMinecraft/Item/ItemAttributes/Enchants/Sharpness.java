@@ -27,7 +27,7 @@ public class Sharpness extends Enchant {
         return List.of(
                 Util.deserialize("<!i>Deal <modifier> more damage with your melee damage!",
                         Placeholder.component("modifier", Component.text(modifier+"%").color(NamedTextColor.GREEN))
-                        ).color(NamedTextColor.GRAY)
+                ).color(NamedTextColor.GRAY)
         );
     }
 }
