@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataAdapterContext;
@@ -133,7 +134,7 @@ public enum Stats {
 
     public static Map<Stats, Float> fromItem(ItemStack item){
         Map<Stats, Float> stats = new HashMap<>();
-        if(!item.hasItemMeta()) return stats;
+        if(item == null || !item.hasItemMeta()) return stats;
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
         if(!pdc.has(JKey.Stats)) return stats;
         pdc = pdc.get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
@@ -147,15 +148,26 @@ public enum Stats {
     }
 
     public static Map<Stats, Float> fromPlayer(Player player){
+        return fromPlayer(player, player.getInventory().getItemInMainHand(), player.getInventory().getItemInOffHand());
+    }
+    public static Map<Stats, Float> fromPlayer(Player player, ItemStack item){
+        return fromPlayer(player, item, null);
+    }
+    public static Map<Stats, Float> fromPlayer(Player player, @Nullable ItemStack mainHand, @Nullable ItemStack offHand){
+        putIfAbsent(player);
         Map<Stats, Float> stats = new HashMap<>();
+        Map<Stats, Float> mainhand_stats = fromItem(mainHand);
+        Map<Stats, Float> offhand_stats = fromItem(offHand);
         PersistentDataContainer pdc = player.getPersistentDataContainer();
         if(!pdc.has(JKey.Stats)) putIfAbsent(player);
         pdc = pdc.get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
         for (Stats value : Stats.values()) {
             if(value.getBaseValue() == -1) continue;
             float stat = pdc.get(value.getKey(), PersistentDataType.FLOAT);
-            stats.put(value, stat);
+            stats.put(value, stat + value.getBaseValue());
         }
+        for (Stats stat : mainhand_stats.keySet()) stats.put(stat, stats.computeIfAbsent(stat, k->0f)+mainhand_stats.get(stat));
+        for (Stats stat : offhand_stats.keySet()) stats.put(stat, stats.computeIfAbsent(stat, k->0f)+offhand_stats.get(stat));
         return stats;
     }
 

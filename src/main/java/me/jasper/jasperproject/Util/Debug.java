@@ -17,9 +17,7 @@ public class Debug implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!(commandSender instanceof Player player)) return false;
-        Location location = player.getLocation();
-        Zombie zombie = new Zombie(((CraftWorld) location.getWorld()).getHandle());
-        zombie.getDelegate().spawn(location);
+        Menu.open(player);
         return true;
     }
 

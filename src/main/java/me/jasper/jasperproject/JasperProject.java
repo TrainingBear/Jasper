@@ -15,12 +15,11 @@ import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.Jam.*;
 import me.jasper.jasperproject.JMinecraft.Entity.EntityCommand;
-import me.jasper.jasperproject.JMinecraft.Entity.MobEventListener.JSMDamagedEvent;
-import me.jasper.jasperproject.JMinecraft.Entity.MobEventListener.JSMDeathEventListener;
 import me.jasper.jasperproject.JMinecraft.Item.JasperItemCommand;
 import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
 
 import me.jasper.jasperproject.Util.Debug;
+import me.jasper.jasperproject.Util.Listener.AutoSaveListener;
 import me.jasper.jasperproject.Util.Listener.Joinmsg;
 import me.jasper.jasperproject.Util.Listener.PlotMenuListener;
 import me.jasper.jasperproject.Util.Listener.ProjectileHit;
@@ -66,7 +65,7 @@ public final class JasperProject extends JavaPlugin {
             return;
         }
         setupPermissions();
-//        setupChat();
+        setupChat();
 
         ItemManager.registerAll();
         ItemManager.runUpdater();
@@ -81,11 +80,12 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new ProjectileHit(), this);
         PM.registerEvents(new Joinmsg(this), this);
         PM.registerEvents(new PlotMenuListener(), this);
-        PM.registerEvents(new JMob.MobListener(), this);
         PM.registerEvents(new ContentListener(), this);
         PM.registerEvents(new Listener(), this);
         PM.registerEvents(new JPlayer(), this);
-//        PM.registerEvents(new AutoSaveListener(), this);
+        PM.registerEvents(new JMob.MobListener(), this);
+        PM.registerEvents(new AutoSaveListener(), this);
+        PM.registerEvents(new JMob.DamageEvent(), this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang

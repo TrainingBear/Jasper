@@ -1,16 +1,17 @@
 package me.jasper.jasperproject.JMinecraft.Entity;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
 import me.jasper.jasperproject.JMinecraft.Player.Stats;
+import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
+import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
+import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
-import net.minecraft.world.damagesource.DamageSource;
+import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,18 +19,18 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftTextDisplay;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_21_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import javax.annotation.Nullable;
+import java.util.Random;
 import java.util.UUID;
 
 public class JMob<T extends EntityLiving> implements Listener {
@@ -43,6 +44,7 @@ public class JMob<T extends EntityLiving> implements Listener {
         this.display.setVisualFire(false);
         this.display.setBillboard(Display.Billboard.CENTER);
         mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
+        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_REPLACE_HITREGIS, PersistentDataType.BOOLEAN, true);
     }
 
     public JMob setLevel(short level){
@@ -56,13 +58,10 @@ public class JMob<T extends EntityLiving> implements Listener {
     }
 
     public JMob setMaxHealth(float d){
-        AttributeInstance attribute = mob.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if(attribute!=null) {
-            short level = mob.getPersistentDataContainer().get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
-            float v = d * level / 10;
-            attribute.setBaseValue(v);
-            mob.setHealth(d);
-        }
+        short level = mob.getPersistentDataContainer().get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
+        int v = (int) (d + (d*((float) level /10)));
+        mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(v);
+        mob.setHealth(v);
         return this;
     }
     public JMob setSpeed(float d){
@@ -108,6 +107,13 @@ public class JMob<T extends EntityLiving> implements Listener {
         mob.spawnAt(location);
     }
 
+    public static void hurt(LivingEntity entity, @Nullable Entity damager, int damage){
+        if (damager!=null) entity.setVelocity(damager.getLocation().toVector());
+        entity.playHurtAnimation(1f);
+        entity.getLocation().getWorld().playSound(entity.getLocation(), entity.getHurtSound(), 10f, 1f);
+        entity.setHealth(Math.max(0, entity.getHealth() - damage));
+    }
+
     public String getHealthDisplay(double health){
         if(health >= 1000000000) return Util.round((float) health/1000000000, 2) + "B ❤ "; //milyar/billion
         else if(health >= 1000000) return Util.round((float) health/1000000, 2)+"M ❤ ";//juta
@@ -115,16 +121,130 @@ public class JMob<T extends EntityLiving> implements Listener {
         else return health +" ❤ ";
     }
 
-    public static class MobListener implements org.bukkit.event.Listener {
+    public static class MobListener implements Listener {
         @EventHandler
         public void onHurt(EntityDamageByEntityEvent e){
-            if(!(e.getDamager() instanceof Player )){
-                Player player = (Player) e.getDamager();
+            if(!(e.getEntity() instanceof LivingEntity entity)) return;
+            DamageResult result = null;
+            if((e.getDamager() instanceof Player player)){
                 JPlayer jPlayer = PlayerManager.getJPlayer(player);
-                float defence = e.getEntity().getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT);
-                e.setDamage(jPlayer.attack(JPlayer.AttackType.MELEE, defence));
-                updateDisplay((LivingEntity) e.getEntity());
+                if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
+                    result = DamageResult.builder()
+                            .type(DamageType.PROJECTILE)
+                            .damage((int) e.getDamage())
+                            .build();
+                }else {
+                    result = jPlayer.attack(null, ArmorType.MAIN_HAND, e.isCritical());
+                }
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
+                double max_health = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+                result = DamageResult.builder()
+                        .type(DamageType.FIRE)
+                        .damage((int) (max_health/25))
+                        .build();
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE)){
+                double max_health = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+                result = DamageResult.builder()
+                        .type(DamageType.FIRE)
+                        .damage((int) (max_health/25))
+                        .build();
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
+                double max_health = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+                float fallDistance = Math.min(entity.getFallDistance(), 100);
+                int damage = (int) (max_health * (fallDistance/100));
+                result = DamageResult.builder()
+                        .type(DamageType.ABSTRACT)
+                        .damage(damage)
+                        .trueDamage(true)
+                        .build();
+            }
+            else if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
+                result = DamageResult.builder()
+                        .type(DamageType.PROJECTILE)
+                        .damage((int) e.getDamage())
+                        .build();
+            }
+
+            if(result==null) return;
+            float true_defence = entity.getPersistentDataContainer().has(Stats.TRUE_DEFENCE.getKey()) ?
+                    entity.getPersistentDataContainer().get(Stats.TRUE_DEFENCE.getKey(), PersistentDataType.FLOAT) :
+                    0;
+            float defence = entity.getPersistentDataContainer().has(Stats.DEFENCE.getKey()) ?
+                    entity.getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT) :
+                    0;
+            result.setDefence((int) defence);
+            result.setTrue_defence((int) true_defence);
+            result.recalculate();
+            e.setDamage(result.getFinal_damage());
+            DamageEvent damageEvent = new DamageEvent(result, entity);
+            if(e.isCancelled()) damageEvent.setCancelled(true);
+            Bukkit.getPluginManager().callEvent(damageEvent);
+        }
+
+        @EventHandler
+        public void onDeath(EntityDeathEvent e){
+            LivingEntity entity = e.getEntity();
+            if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
+                String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
+                Bukkit.getEntity(UUID.fromString(s)).remove();
             }
         }
     }
+
+    public static class DamageEvent extends Event implements Listener, Cancellable {
+        private final static HandlerList handle = new HandlerList();
+        @Getter private DamageResult result;
+        @Getter private LivingEntity entity;
+        private boolean cancelled;
+
+        public DamageEvent(DamageResult result, LivingEntity entity){
+            this.result = result;
+            this.entity = entity;
+        }
+
+        public DamageEvent() {
+
+        }
+
+        @EventHandler
+        public void onDamage(DamageEvent e){
+            if(e.isCancelled()) return;
+            Random random = new Random();
+            Location location = e.getEntity().getEyeLocation().clone();
+            location.add(
+                    random.nextFloat(-1f, 1f),
+                    random.nextFloat(-1f, 1f),
+                    random.nextFloat(-1f, 1f)
+            );
+            TextDisplay damage_display = location.getWorld().spawn(location, TextDisplay.class);
+            updateDisplay(e.getEntity());
+            damage_display.text(e.getResult().getDisplay());
+            damage_display.setBillboard(Display.Billboard.CENTER);
+            Bukkit.getScheduler().runTaskLater(JasperProject.getPlugin(), damage_display::remove, 30L);
+        }
+
+        @Override
+        public @NotNull HandlerList getHandlers() {
+            return handle;
+        }
+        public static @NotNull HandlerList getHandlerList() {
+            return handle;
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return cancelled;
+        }
+
+        @Override
+        public void setCancelled(boolean b) {
+            cancelled = b;
+        }
+    }
+
+
+
 }

@@ -49,4 +49,5 @@ public final class JKey {
     public static final NamespacedKey MOBATRIBUTE_DISPLAY = new NamespacedKey(JasperProject.getPlugin(), "MOB-display");
     public static final NamespacedKey MOBATRIBUTE_NAME = new NamespacedKey(JasperProject.getPlugin(), "MOB-name");
     public static final NamespacedKey MOBATRIBUTE_LEVEL = new NamespacedKey(JasperProject.getPlugin(), "MOB-level");
+    public static final NamespacedKey MOBATRIBUTE_REPLACE_HITREGIS = new NamespacedKey(JasperProject.getPlugin(), "MOB-defaultHitRegis");
 }

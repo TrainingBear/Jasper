@@ -33,4 +33,10 @@ public enum ItemType {
         }
     }
 
+    public static boolean isMelee(String s){
+        return s.equals(SWORD.name()) || s.equals(LONGSWORD.name()) ||
+                s.equals(AXE.name()) ||s.equals(MACE.name()) ||
+                s.equals(TRIDENT.name()) ||s.equals(SHOVEL.name()) ||
+                s.equals(PICKAXE.name());
+    }
 }
