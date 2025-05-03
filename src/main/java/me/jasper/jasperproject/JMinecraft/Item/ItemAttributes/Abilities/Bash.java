@@ -1,9 +1,14 @@
 package me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
-import me.jasper.jasperproject.JMinecraft.Item.Util.Charg;
+import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
+import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
+import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
+import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
+import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -12,22 +17,30 @@ import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
+import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 public class Bash extends ItemAbility {
     private static Bash instance;
     @Getter static Map<UUID, Float> kuldawn = new HashMap<>();
+    @Getter private static final Map<UUID, Float> powers = new HashMap<>();
+    @Getter private static final Map<UUID, Long> lastClick = new HashMap<>();
+    @Getter private static final Map<UUID, BukkitRunnable> task = new HashMap<>();
+    @Getter @Setter private boolean released;
+
 
     public static Bash getInstance() {
         if (instance == null) instance = new Bash();
@@ -66,48 +79,83 @@ public class Bash extends ItemAbility {
 
     @EventHandler
     public void action(Bash e) {
-        if(hasCooldown(e,(2.6f * Math.min(5f, kuldawn.getOrDefault(e.getPlayer().getUniqueId(), e.getCooldown())) + 22), true)) return;
+        if(e.isCancelled()) return;
+        Player p = e.getPlayer();
+        UUID uuid = p.getUniqueId();
+        if(hasCooldown(e)) return;
+        if(e.isReleased()) {
+            float power = powers.get(uuid);
+            e.getPlayer().sendMessage("You have been released the power of "+power);
+            bashAnimation(p, power, e);
+            lastClick.remove(uuid);
+            applyCooldown(e,  true);
+            powers.remove(uuid);
+            return;
+        }
 
-        Charg.getInstance().charging(e.getPlayer(), (byte) 5, new Charg.ChargAction() {
-            @Override public void doAction(Player player, float power) {
-                bashAnimation(player, power, e);
-            }
+        lastClick.putIfAbsent(uuid, System.currentTimeMillis());
+        long last = lastClick.put(uuid, System.currentTimeMillis());
+        long current = System.currentTimeMillis();
+        float elapsed = (current - last);
+        if(elapsed <= 100) return;
+        BukkitRunnable bukkitRunnable = new BukkitRunnable() {
+            @Override
+            public void run() {
 
-            @Override public void whileCharg(Player p, float power) {
-                p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
             }
-        });
+        };
+        task.putIfAbsent(uuid, bukkitRunnable);
+        bukkitRunnable.runTask(JasperProject.getPlugin());
+        task.get(uuid).cancel();
+        BukkitRunnable task_ = new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bash event = (Bash) e.clone();
+                event.setReleased(true);
+                Bukkit.getPluginManager().callEvent(event);
+            }
+        };
+        powers.put(uuid, powers.getOrDefault(uuid, 0f) + elapsed/1000f);
+        float power = powers.get(uuid);
+        if(power > e.getRange()){
+            task_.runTask(JasperProject.getPlugin());
+            return;
+        }
+        e.getPlayer().sendMessage("Charged "+power);
+        p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
+        task.put(uuid, task_);
+        task_.runTaskLater(JasperProject.getPlugin(), 12L);
+
     }
 
     @Override
     protected List<Component> createLore() {
         return List.of(
                 Util.deserialize("<!i><gold>Ability: <b><red>Bash <yellow>(HOLD SNEAK RIGHT CLICK)")
-                ,Util.deserialize("<!i><gray>Smash the axe to ground and create smash")
-                ,Util.deserialize("<!i><gray>area in circle based how long you <color:#95945B>HOLD</color> and")
-                ,Util.deserialize("<!i><gray>launch living entity in area up a little")
+                ,Util.deserialize("<!i><gray>Release a smash on hit and deal")
+                ,Util.deserialize("<!i><gray>10% damage to nearby entities<color:#95945B>HOLD</color> and")
+                ,Util.deserialize("<!i><gray>SHIFT + RIGHT CLICK to store axe power!")
         );
     }
 
-    private void basEM(Player p, float power,Location hitLoc) {
+    private void basEM(Player p, float power, float max_power, Location hitLoc) {
         final float[] layout = {
                 1,
                 1.5f, 2, 3,
                 4, 4.5f, 4.8f
         };
         final float range = p.isSwimming() ? layout[(int) Math.min(5f, power)] * .5f : layout[(int) Math.min(5f, power)];
-
         final BlockData blok = hitLoc.clone().add(0, -1, 0).getBlock().getBlockData();
+        JPlayer jPlayer = PlayerManager.getJPlayer(p);
 
         for (LivingEntity entity : p.getLocation().getNearbyLivingEntities(range)) {
             if (entity instanceof Player ply) {
                 ply.setVelocity(ply.getVelocity().add(new Vector(0, power * .075f, 0)));
                 continue;
             }
+            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false, power/max_power);
             final double yDiff = entity.getY() - p.getY();
             if (yDiff <= 2d && yDiff >= -1d) {
-                //Damage logic.........
-                //Damage logic...............
                 entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * power + 0.25f, 0)));
 
                 new BukkitRunnable(){
@@ -161,13 +209,6 @@ public class Bash extends ItemAbility {
     }
 
     private void bashAnimation(Player p, float power, Bash e) {
-        if(!p.isOnline() || !Util.hasAbility(Bukkit.getPlayer(p.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
-        ) return;
-
-        kuldawn.put(p.getUniqueId(), Math.min(5f,power));
-        applyCooldown(e, (2.6f * kuldawn.get(p.getUniqueId()) + 22),true);
-        if(e.isCancelled()) return;
-
         Location pLoc = p.getLocation();
         pLoc.setPitch(0);
         Location eyeLoc = p.getEyeLocation().clone();
@@ -188,12 +229,12 @@ public class Bash extends ItemAbility {
         new BukkitRunnable() {
             byte frame = 0;
             @Override public void run() {
-                if(!p.isOnline() || !Util.hasAbility(Bukkit.getPlayer(p.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())){
+                if(!Util.hasAbility(p.getInventory().getItemInMainHand(), e.getKey())){
                     this.cancel();
                     return;
                 }
                 if(this.frame >= multipliers.length){
-                    basEM(p,power,hitLoc);
+                    basEM(p, power, e.getRange(), hitLoc);
                     this.cancel();
                     return;
                 }

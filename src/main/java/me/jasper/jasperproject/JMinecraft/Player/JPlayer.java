@@ -1,6 +1,7 @@
 package me.jasper.jasperproject.JMinecraft.Player;
 
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import io.papermc.paper.registry.RegistryAccess;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorEquipEvent;
@@ -10,6 +11,11 @@ import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import net.kyori.adventure.text.Component;
+import net.minecraft.core.Holder;
+import net.minecraft.core.IRegistry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
@@ -43,7 +49,14 @@ public class JPlayer implements Listener {
      * @return total damage amount
      */
 
-    public DamageResult attack(@Nullable LivingEntity target, ArmorType type, DamageType damageType, boolean critical){
+//    public static Holder<DamageType> createDamageSource(MinecraftServer server){
+//        ResourceKey<net.minecraft.world.damagesource.DamageType> a = ResourceKey.a(Registries.s, var);
+
+//        RegistryAccess access = server.bd().
+
+//    }
+
+    public DamageResult attack(@Nullable LivingEntity target, ArmorType type, DamageType damageType, boolean critical, float modifier){
         Player bukkitPlayer = getBukkitPlayer();
         Map<Stats, Float> player_stats;
         ItemStack offHand = bukkitPlayer.getInventory().getItemInOffHand();
@@ -72,6 +85,10 @@ public class JPlayer implements Listener {
                                 * (isCritical? (crit_damage/100) + 1 : 1)
                 ));
                 final_damage = (int) (final_damage * (player_stats.get(Stats.MELEE_MODIFIER) + 1));
+                final_damage = (int) ((float) final_damage * modifier);
+                if(target!=null){
+                    target.damage(final_damage, bukkitPlayer);
+                }
                 return DamageResult.builder()
                         .damage(final_damage)
                         .critical(isCritical)

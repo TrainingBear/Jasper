@@ -23,7 +23,7 @@ public class Heavy_Axe extends JItem implements Factory {
         stats.put(Stats.STRENGTH,93f);
         stats.put(Stats.CRIT_DAMAGE,43f);
         stats.put(Stats.CRIT_CHANCE,30f);
-        this.getAbilities().add(new Bash(1,35f));
+        this.getAbilities().add(new Bash(5,0f));
     }
     @Override
     public JItem create() {
@@ -33,7 +33,7 @@ public class Heavy_Axe extends JItem implements Factory {
     @Override
     protected List<Component> createLore() {
         return List.of(
-                Util.deserialize("<!i><dark_gray>")
+                Util.deserialize("<!i>kapak terberat sedunia, lebih berat dari beban anak <dark_gray>")
         );
     }
 }

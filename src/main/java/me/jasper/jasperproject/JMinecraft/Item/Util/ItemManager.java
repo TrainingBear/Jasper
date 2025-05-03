@@ -39,12 +39,15 @@ public final class ItemManager {
     @Getter private static final HashSet<Enchant> enchants = new HashSet<>();
 
     private static void registerItem(Factory... factory){
+        plugin.getLogger().severe("Registering Items...");
         for(Factory fac : factory){
             JItem item = fac.finish();
             items.put(item.getID().toUpperCase(), item);
+            plugin.getLogger().severe(item.getID() +" has been registered");
         }
     }
     private static void registerAbility(ItemAbility... ability){
+        plugin.getLogger().severe("Registering Abilities...");
         for(ItemAbility abilti : ability){
             pluginManager.registerEvents(abilti, plugin);
             abilities.add(abilti);
@@ -52,12 +55,12 @@ public final class ItemManager {
     }
 
     private static void registerEnchant(Enchant enchant){
+        plugin.getLogger().severe("Registering Enchants...");
         pluginManager.registerEvents(enchant, plugin);
         enchants.add(enchant);
     }
 
     public static void registerAll(){
-
         registerAbility(
                 Teleport.getInstance(),
                 Grappling_Hook.getInstance(),

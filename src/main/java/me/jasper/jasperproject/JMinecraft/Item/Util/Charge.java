@@ -16,12 +16,12 @@ import java.util.UUID;
  * <br>
  * <b>Use #getInstance() first when using #charging</b>
  */
-public class Charg {
-    private static Charg instance;
+public class Charge {
+    private static Charge instance;
 
-    public static Charg getInstance() {
+    public static Charge getInstance() {
         if (instance == null) {
-            instance = new Charg();
+            instance = new Charge();
         }
         return instance;
     }
@@ -38,9 +38,8 @@ public class Charg {
      * @param action what actions within holding
      */
     public void charging(Player player,byte maxTimeInSec,ChargAction action) {
-        chargeLogic chargeLogic = charge.get(player.getUniqueId())
-
-        ;if (chargeLogic == null) {
+        chargeLogic chargeLogic = charge.get(player.getUniqueId());
+        if (chargeLogic == null) {
             charge.put(player.getUniqueId(), new chargeLogic(System.currentTimeMillis(), maxTimeInSec,(byte) 1, action));
             charge.get(player.getUniqueId()).startTask(player);
         }
@@ -85,18 +84,18 @@ public class Charg {
                 @Override
                 public void run() {
                     if(!player.isOnline()){
-                        Charg.getCharge().remove(player.getUniqueId());
+                        Charge.getCharge().remove(player.getUniqueId());
                         this.cancel();
                     }
                     if (click < trigger) {
-                        chargeLogic mechanic = Charg.getCharge().remove(player.getUniqueId());
+                        chargeLogic mechanic = Charge.getCharge().remove(player.getUniqueId());
                         if(mechanic != null) mechanic.doTheAction(player,countToMS());
                         this.cancel();
                     }
                     else {
                         click = 0;
                         if(countToMS() >= maxTime) {
-                            chargeLogic mechanic = Charg.getCharge().remove(player.getUniqueId());
+                            chargeLogic mechanic = Charge.getCharge().remove(player.getUniqueId());
                             if(mechanic != null) mechanic.doTheAction(player,countToMS());
                             this.cancel();
                         }

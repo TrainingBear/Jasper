@@ -51,14 +51,14 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
         return cancelled;
     }
 
-    protected <T extends ItemAbility> boolean hasCooldown(T e,boolean sendmessage){
+    protected <T extends ItemAbility> boolean hasCooldown(T e){
         float cooldown = e.getCooldown();
         float current = ItemAbility.this.cooldownMap.get(e.getPlayer().getUniqueId()) != null
                 ? (System.currentTimeMillis() - ItemAbility.this.cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f
                 : cooldown+1;
 
         if(current > cooldown) return false;
-        if(sendmessage) {
+        if(e.isShowCooldown()) {
             if (!isShowCooldown()) return true;
             e.getPlayer().sendMessage(
                     MiniMessage.miniMessage().deserialize("<red><b>COOLDOWN!</b> Please wait " + Util.round((cooldown - current), 1) + " seconds!</red>")

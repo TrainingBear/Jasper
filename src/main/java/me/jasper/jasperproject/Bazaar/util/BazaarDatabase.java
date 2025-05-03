@@ -23,7 +23,7 @@ public abstract class BazaarDatabase {
             connection = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/bazaar",
                     "root",
-                    "mysql12345"
+                    "1234"
             );
             return connection.createStatement().execute(
                     "CREATE TABLE IF NOT EXISTS product(" +
