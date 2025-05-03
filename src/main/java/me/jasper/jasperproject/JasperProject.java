@@ -53,7 +53,7 @@ public final class JasperProject extends JavaPlugin {
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
     @Getter private static Configurator animationConfig;
-    @Getter private static ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+    @Getter private static ProtocolManager protocolManager;
 
     @Override
     public void onEnable() {
@@ -62,6 +62,7 @@ public final class JasperProject extends JavaPlugin {
         animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
 //        animationConfig.load(Animation::loadConfig);
 
+        protocolManager = ProtocolLibrary.getProtocolManager();
         Bazaar.init();
         if(BazaarDatabase.startConnection()){
             this.getLogger().info("Created Bazaar product table!");

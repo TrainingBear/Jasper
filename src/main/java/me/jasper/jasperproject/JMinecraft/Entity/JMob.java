@@ -10,7 +10,6 @@ import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
-import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.level.World;
 import org.bukkit.Bukkit;

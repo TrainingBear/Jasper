@@ -75,7 +75,11 @@ public class JPlayer implements Listener {
                 final_damage = (int) (final_damage * (player_stats.get(Stats.MELEE_MODIFIER) + 1));
                 final_damage = (int) ((float) final_damage * modifier);
                 if(target!=null){
-                    target.damage(final_damage, DamageSource.builder(org.bukkit.damage.DamageType.FALLING_BLOCK).withCausingEntity(bukkitPlayer).build());
+                    target.damage(final_damage, DamageSource.builder(org.bukkit.damage.DamageType.FALLING_BLOCK)
+                            .withCausingEntity(bukkitPlayer)
+                            .withDirectEntity(bukkitPlayer)
+                            .build()
+                    );
                 }
                 return DamageResult.builder()
                         .damage(final_damage)

@@ -31,14 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Bash extends ItemAbility {
     private static Bash instance;
-    @Getter static Map<UUID, Float> kuldawn = new HashMap<>();
     @Getter private static final Map<UUID, Float> powers = new HashMap<>();
-    @Getter private static final Map<UUID, Long> lastClick = new HashMap<>();
-    @Getter private static final Map<UUID, BukkitRunnable> task = new HashMap<>();
     @Getter @Setter private boolean released;
 
 
@@ -87,45 +85,30 @@ public class Bash extends ItemAbility {
             float power = powers.get(uuid);
             e.getPlayer().sendMessage("You have been released the power of "+power);
             bashAnimation(p, power, e);
-            lastClick.remove(uuid);
             applyCooldown(e,  true);
             powers.remove(uuid);
             return;
         }
 
-        lastClick.putIfAbsent(uuid, System.currentTimeMillis());
-        long last = lastClick.put(uuid, System.currentTimeMillis());
-        long current = System.currentTimeMillis();
-        float elapsed = (current - last);
-        if(elapsed <= 100) return;
-        BukkitRunnable bukkitRunnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-
-            }
+        Runnable onRelease = () -> {
+            Bash event = (Bash) e.clone();
+            event.setReleased(true);
+            Bukkit.getPluginManager().callEvent(event);
         };
-        task.putIfAbsent(uuid, bukkitRunnable);
-        bukkitRunnable.runTask(JasperProject.getPlugin());
-        task.get(uuid).cancel();
-        BukkitRunnable task_ = new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bash event = (Bash) e.clone();
-                event.setReleased(true);
-                Bukkit.getPluginManager().callEvent(event);
-            }
-        };
-        powers.put(uuid, powers.getOrDefault(uuid, 0f) + elapsed/1000f);
-        float power = powers.get(uuid);
-        if(power > e.getRange()){
-            task_.runTask(JasperProject.getPlugin());
-            return;
-        }
-        e.getPlayer().sendMessage("Charged "+power);
-        p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
-        task.put(uuid, task_);
-        task_.runTaskLater(JasperProject.getPlugin(), 12L);
 
+        BiConsumer<Long, BukkitRunnable> onTicking = (elapsed, on_release) -> {
+            powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
+            float power = powers.get(uuid);
+            if(power > e.getRange()){
+                on_release.runTask(JasperProject.getPlugin());
+                return;
+            }
+            p.sendMessage("Charged "+power);
+            p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
+        };
+
+        HoldEvent holdEvent = new HoldEvent(p, onTicking, onRelease);
+        Bukkit.getPluginManager().callEvent(holdEvent);
     }
 
     @Override
