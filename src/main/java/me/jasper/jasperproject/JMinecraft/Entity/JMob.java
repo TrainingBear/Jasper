@@ -227,6 +227,7 @@ public class JMob<T extends EntityLiving> implements Listener {
             LivingEntity entity = e.getEntity();
             if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
                 String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
+
                 Bukkit.getEntity(UUID.fromString(s)).remove();
             }
         }
@@ -250,17 +251,18 @@ public class JMob<T extends EntityLiving> implements Listener {
         @EventHandler
         public void onDamage(DamageEvent e){
             if(e.isCancelled()) return;
-            Random random = new Random();
+
             Location location = e.getEntity().getEyeLocation().clone();
             location.add(
-                    random.nextFloat(-1f, 1f),
-                    random.nextFloat(-1f, 1f),
-                    random.nextFloat(-1f, 1f)
+                    e.getEntity().getWidth(),
+                    new Random().nextFloat(-1f, 1f),
+                    e.getEntity().getWidth()
             );
             TextDisplay damage_display = location.getWorld().spawn(location, TextDisplay.class);
             updateDisplay(e.getEntity());
             damage_display.text(e.getResult().getDisplay());
             damage_display.setBillboard(Display.Billboard.CENTER);
+
             Bukkit.getScheduler().runTaskLater(JasperProject.getPlugin(), damage_display::remove, 30L);
         }
 

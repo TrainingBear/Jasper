@@ -68,8 +68,8 @@ public final class JasperProject extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        setupPermissions();
-        setupChat();
+//        setupPermissions();
+//        setupChat();
 
         ItemManager.registerAll();
         ItemManager.runUpdater();

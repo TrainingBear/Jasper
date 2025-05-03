@@ -49,13 +49,13 @@ public class JPlayer implements Listener {
      * @return total damage amount
      */
 
-    public static Holder<DamageType> createDamageSource(MinecraftServer server){
-        ResourceKey<net.minecraft.world.damagesource.DamageType> a = ResourceKey.a(Registries.s, var);
-
-        RegistryAccess access = server.bd().;
-
-        DamageSource
-    }
+//    public static Holder<DamageType> createDamageSource(MinecraftServer server){
+//        ResourceKey<net.minecraft.world.damagesource.DamageType> a = ResourceKey.a(Registries.s, var);
+//
+//        RegistryAccess access = server.bd().;
+//
+//        DamageSource
+//    }
 
     public DamageResult attack(@Nullable LivingEntity target, ArmorType type, DamageType damageType, boolean critical, float modifier){
         Player bukkitPlayer = getBukkitPlayer();
@@ -66,14 +66,14 @@ public class JPlayer implements Listener {
             ItemStack mainHand = bukkitPlayer.getInventory().getItemInMainHand();
             PersistentDataContainerView mainPdc = mainHand.getPersistentDataContainer();
             player_stats = Stats.fromPlayer(bukkitPlayer,
-                    mainPdc.has(JKey.Category) && ItemType.isMelee(mainPdc.get(JKey.Category, PersistentDataType.STRING)) ? mainHand : null
+                    mainPdc.has(JKey.Category) && ItemType.isMelee(mainPdc.get(JKey.Category, PersistentDataType.STRING))
+                            ? mainHand : null
             );
             if(damageType.equals(DamageType.MELEE)){
                 float damage = player_stats.get(Stats.DAMAGE);
                 float strength = player_stats.get(Stats.STRENGTH);
                 float crit_damage = player_stats.get(Stats.CRIT_DAMAGE);
-                boolean isCritical = bukkitPlayer.isSneaking()&&
-                        critical&&
+                boolean isCritical = bukkitPlayer.isSneaking()&& critical&&
                         (
                                 !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) ||
                                         !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) ||

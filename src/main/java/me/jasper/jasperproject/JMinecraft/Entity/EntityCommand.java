@@ -1,7 +1,6 @@
 package me.jasper.jasperproject.JMinecraft.Entity;
 
 import me.jasper.jasperproject.JMinecraft.Entity.Mobs.Zombie;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
