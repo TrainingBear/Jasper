@@ -129,7 +129,7 @@ public class JMob<T extends EntityLiving> implements Listener {
             Bukkit.broadcastMessage(e.getCause().name());
             if((e.getDamager() instanceof Player player)){
                 JPlayer jPlayer = PlayerManager.getJPlayer(player);
-                 if (e.getCause().equals(EntityDamageEvent.DamageCause.CUSTOM)) {
+                 if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
                     result = DamageResult.builder()
                             .damage((int) e.getDamage())
                             .type(DamageType.ABSTRACT)
