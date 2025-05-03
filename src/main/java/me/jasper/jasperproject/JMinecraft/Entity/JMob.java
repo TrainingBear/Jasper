@@ -27,6 +27,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -119,6 +120,25 @@ public class JMob<T extends EntityLiving> implements Listener {
         else if(health >= 1000000) return Util.round((float) health/1000000, 2)+"M ❤ ";//juta
         else if(health >= 1000) return Util.round((float) health/1000, 2)+"k ❤ "; //seribu
         else return health +" ❤ ";
+    }
+
+    /**
+     * spawn some text above the entity display if it has and disappear based on param <b>howLong</b>
+     * @param entitas the entity
+     * @param text the text to display
+     * @param howLong how long the display appear in Ticks
+     */
+    public static void say(LivingEntity entitas, Component text,long howLong){
+        PersistentDataContainer pdc = entitas.getPersistentDataContainer();
+        if(pdc.has(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING)){
+            TextDisplay txtdsply = entitas.getWorld().spawn(entitas.getLocation(), TextDisplay.class);
+            txtdsply.setVisualFire(false);
+            txtdsply.text(text);
+            txtdsply.setBillboard(Display.Billboard.CENTER);
+            Bukkit.getEntity(UUID.fromString(pdc.get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING))).addPassenger(txtdsply);
+
+            Bukkit.getScheduler().runTaskLater(JasperProject.getPlugin(), txtdsply::remove, howLong);
+        }
     }
 
     public static class MobListener implements Listener {
@@ -251,12 +271,13 @@ public class JMob<T extends EntityLiving> implements Listener {
         @EventHandler
         public void onDamage(DamageEvent e){
             if(e.isCancelled()) return;
-
+            Random rdm = new Random();
+            double width = e.getEntity().getWidth();
             Location location = e.getEntity().getEyeLocation().clone();
             location.add(
-                    e.getEntity().getWidth(),
-                    new Random().nextFloat(-1f, 1f),
-                    e.getEntity().getWidth()
+                    rdm.nextDouble(-width, width),
+                    rdm.nextFloat(-1f, 1f),
+                    rdm.nextDouble(-width, width)
             );
             TextDisplay damage_display = location.getWorld().spawn(location, TextDisplay.class);
             updateDisplay(e.getEntity());

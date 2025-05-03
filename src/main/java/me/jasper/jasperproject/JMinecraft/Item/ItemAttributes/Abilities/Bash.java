@@ -79,13 +79,11 @@ public class Bash extends ItemAbility {
 
     @EventHandler
     public void action(Bash e) {
-        if(e.isCancelled()) return;
+        if(e.isCancelled() || hasCooldown(e)) return;
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
-        if(hasCooldown(e)) return;
         if(e.isReleased()) {
             float power = powers.get(uuid);
-            e.getPlayer().sendMessage("You have been released the power of "+power);
             bashAnimation(p, power, e);
             lastClick.remove(uuid);
             applyCooldown(e,  true);
@@ -121,7 +119,7 @@ public class Bash extends ItemAbility {
             task_.runTask(JasperProject.getPlugin());
             return;
         }
-        e.getPlayer().sendMessage("Charged "+power);
+
         p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
         task.put(uuid, task_);
         task_.runTaskLater(JasperProject.getPlugin(), 12L);
