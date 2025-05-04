@@ -56,7 +56,7 @@ public class Bash extends ItemAbility {
     public Bash(int range, float cooldown, Player p) {
         this.setRange(range);
         this.setCooldown(cooldown);
-        this.setPlayer(p);
+        this.player = (p);
     }
 
     @EventHandler
@@ -81,9 +81,7 @@ public class Bash extends ItemAbility {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
         if(hasCooldown(e)) return;
-        HoldEvent holdEvent = new HoldEvent(p,
-                ///     ON TICKING
-                (elapsed, on_release) -> {
+        HoldEvent holdEvent = new HoldEvent(p, (elapsed, on_release) -> {
             powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
             float power = powers.get(uuid);
             if(power > e.getRange()){
@@ -95,7 +93,6 @@ public class Bash extends ItemAbility {
             p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
             return false;
         },
-                ///     ON RELEASE
                 ()->{
             float power = powers.get(uuid);
             e.getPlayer().sendMessage("You have been released the power of "+power);

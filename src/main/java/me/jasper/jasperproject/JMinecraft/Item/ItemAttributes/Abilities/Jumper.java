@@ -46,7 +46,7 @@ public class Jumper extends ItemAbility {
     public Jumper(int blockHigh, float cooldown, Player player){
         this.setRange(blockHigh);
         this.setCooldown(cooldown);
-        this.setPlayer(player);
+        this.player = (player);
     }
     @EventHandler
     public void action(Jumper e){

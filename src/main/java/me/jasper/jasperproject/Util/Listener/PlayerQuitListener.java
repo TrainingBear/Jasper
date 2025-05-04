@@ -17,8 +17,6 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e){
         UUID uuid = e.getPlayer().getUniqueId();
-        for(ItemAbility ability : ItemManager.getAbilities()) ability.getCooldownMap().remove(uuid);
-
         Heal.getHealDuration().remove(uuid);
         Animator.getFirstPos().remove(uuid);
         Animator.getRegions().remove(uuid);

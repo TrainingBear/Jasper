@@ -33,7 +33,7 @@ public class BackStab extends ItemAbility {
     }
     public BackStab(float cooldown, int range, Player player, EquipmentSlot equipmentSlot){
         this.setCooldown(cooldown);
-        this.setPlayer(player);
+        this.player = (player);
         this.setRange(range);
         this.hand = equipmentSlot;
     }

@@ -6,7 +6,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
-import org.bukkit.Bukkit;
 
 @Getter
 public class JZombie extends Zombie {
@@ -21,7 +20,6 @@ public class JZombie extends Zombie {
 
     @Override
     public boolean hurt(DamageSource damagesource, float f) {
-        Bukkit.broadcastMessage("JZombie got hurt, :( "+f);
         return super.hurt(damagesource, f);
     }
 }

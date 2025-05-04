@@ -111,7 +111,7 @@ public class JMob implements Listener {
         if(health >= 1_000_000_000f) return Util.round (health/1_000_000_000 ,1) + "B ❤ "; //milyar/billion
         else if(health >= 1_000_000) return Util.round ( health/1_000_000_000 ,1) +"M ❤ ";//juta
         else if(health >= 1_000) return Util.round ( health/1_000,1)+"k ❤ "; //seribu
-        else if(health < 1_000) return Util.round ( health,1)+"k ❤ "; //seribu
+        else if(health < 1_000) return Util.round ( health,1)+" ❤ ";
         else return health +" ❤ ";
     }
 
