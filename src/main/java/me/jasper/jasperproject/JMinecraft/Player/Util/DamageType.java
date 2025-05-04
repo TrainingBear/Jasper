@@ -10,7 +10,7 @@ public enum DamageType {
     PROJECTILE("➶", NamedTextColor.DARK_RED),/// Arrow, Bullet, Wind, etc
     POISON("💀", NamedTextColor.DARK_GREEN),
     FIRE("🔥", NamedTextColor.GOLD),
-    ABSTRACT("$", NamedTextColor.BLACK);
+    ABSTRACT("$", NamedTextColor.WHITE);
 
     private final String symbol;
     private final NamedTextColor color;

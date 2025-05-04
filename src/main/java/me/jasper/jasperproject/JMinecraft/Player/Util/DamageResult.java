@@ -23,8 +23,8 @@ public abstract class DamageResult {
     @Setter private int defence = 1;
     @Setter private boolean trueDamage;
     @Setter private int true_defence;
-    private float final_damage;
-    private float force = .1f;
+    @Setter private float final_damage;
+    private float force = 0f;
     private Component display;
     private boolean critical;
 
@@ -40,10 +40,13 @@ public abstract class DamageResult {
         return new Builder(a);
     }
 
-    public static DamageResult patch(float final_damage, @Nullable LivingEntity entity, DamageType type){
-        return patch(final_damage, entity, type, false);
+    public static DamageResult patch(float final_damage, @Nullable LivingEntity entity, DamageType type, float multiplier){
+        return patch(final_damage, entity, type, false, multiplier);
     }
-    public static DamageResult patch(float final_damage, @Nullable LivingEntity entity, DamageType type, boolean trueDamage){
+    public static DamageResult patch(float final_damage, @Nullable LivingEntity entity, DamageType type){
+        return patch(final_damage, entity, type, false, 1);
+    }
+    public static DamageResult patch(float final_damage, @Nullable LivingEntity entity, DamageType type, boolean trueDamage, float multiplier){
         float true_defence = entity!=null && entity.getPersistentDataContainer().has(Stats.TRUE_DEFENCE.getKey()) ?
                 entity.getPersistentDataContainer().get(Stats.TRUE_DEFENCE.getKey(), PersistentDataType.FLOAT) :
                 0;
@@ -51,10 +54,12 @@ public abstract class DamageResult {
                 entity.getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT) :
                 0;
         DamageResult result = new DamageResult() {};
-        final_damage-=  true_defence;
-        final_damage =  ( final_damage / ((defence/100f)+1));
-        result.final_damage = final_damage;
-        result.display = Util.deserialize(type.getSymbol()+" "+result.final_damage).color(type.getColor());
+        if(!trueDamage){
+            final_damage-=  true_defence;
+            final_damage =  ( final_damage / ((defence/100f)+1));
+        }
+        result.final_damage = final_damage * multiplier;
+        result.display = Util.deserialize(type.getSymbol()+" "+ (int) result.final_damage).color(type.getColor());
 //        Bukkit.broadcast(result.display.append(Component.text("patched")));
         return result;
     }
@@ -77,15 +82,14 @@ public abstract class DamageResult {
                 if(critical) final_damage += final_damage * (stats.get(Stats.CRIT_DAMAGE)/50);
             }
             if(type.equals(DamageType.PROJECTILE)){
-                critical = critical && (stats.get(Stats.CRIT_CHANCE) >= random.nextInt(100)+1);
+                if(force <=0) force = stats.get(Stats.STRENGTH)/200;
                 final_damage = final_damage * stats.get(Stats.ARROW_MODIFIER);
-                final_damage += final_damage * stats.get(Stats.STRENGTH)/100;
                 if(critical) final_damage += final_damage * (stats.get(Stats.CRIT_DAMAGE)/150);
                 final_damage*=force;
             }
             this.final_damage = final_damage;
             this.display = Util.deserialize(
-                            (type !=null ? type.getSymbol() : "?")+" "+this.final_damage)
+                            (type !=null ? type.getSymbol() : "?")+" "+ (int) this.final_damage)
                     .color(type!=null ? type.getColor() : NamedTextColor.DARK_PURPLE);
 //            Bukkit.broadcast(display.append(Component.text("build" + this.final_damage)));
         }
