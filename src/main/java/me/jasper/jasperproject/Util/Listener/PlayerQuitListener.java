@@ -24,7 +24,6 @@ public class PlayerQuitListener implements Listener {
         Animator.getRegions().remove(uuid);
         Animator.getSecondPost().remove(uuid);
         Warper.getTarget().remove(uuid);
-        Bash.getKuldawn().remove(uuid);
 
         Charge.getCharge().remove(uuid);
     }

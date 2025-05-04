@@ -31,14 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Bash extends ItemAbility {
     private static Bash instance;
-    @Getter static Map<UUID, Float> kuldawn = new HashMap<>();
     @Getter private static final Map<UUID, Float> powers = new HashMap<>();
-    @Getter private static final Map<UUID, Long> lastClick = new HashMap<>();
-    @Getter private static final Map<UUID, BukkitRunnable> task = new HashMap<>();
     @Getter @Setter private boolean released;
 
 
@@ -79,51 +77,37 @@ public class Bash extends ItemAbility {
 
     @EventHandler
     public void action(Bash e) {
-        if(e.isCancelled() || hasCooldown(e)) return;
+        if(e.isCancelled()) return;
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
+        if(hasCooldown(e)) return;
         if(e.isReleased()) {
+            Bukkit.broadcastMessage("Has been released");
             float power = powers.get(uuid);
+            e.getPlayer().sendMessage("You have been released the power of "+power);
             bashAnimation(p, power, e);
-            lastClick.remove(uuid);
             applyCooldown(e,  true);
-            powers.remove(uuid);
+            powers.put(uuid, 0f);
             return;
         }
 
-        lastClick.putIfAbsent(uuid, System.currentTimeMillis());
-        long last = lastClick.put(uuid, System.currentTimeMillis());
-        long current = System.currentTimeMillis();
-        float elapsed = (current - last);
-        if(elapsed <= 100) return;
-        BukkitRunnable bukkitRunnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-
+        HoldEvent holdEvent = new HoldEvent(p, (elapsed, on_release) -> {
+            powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
+            float power = powers.get(uuid);
+            if(power > e.getRange()){
+                powers.put(uuid, (float) e.getRange());
+                on_release.runTask(JasperProject.getPlugin());
+                return true;
             }
-        };
-        task.putIfAbsent(uuid, bukkitRunnable);
-        bukkitRunnable.runTask(JasperProject.getPlugin());
-        task.get(uuid).cancel();
-        BukkitRunnable task_ = new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bash event = (Bash) e.clone();
-                event.setReleased(true);
-                Bukkit.getPluginManager().callEvent(event);
-            }
-        };
-        powers.put(uuid, powers.getOrDefault(uuid, 0f) + elapsed/1000f);
-        float power = powers.get(uuid);
-        if(power > e.getRange()){
-            task_.runTask(JasperProject.getPlugin());
-            return;
-        }
-
-        p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
-        task.put(uuid, task_);
-        task_.runTaskLater(JasperProject.getPlugin(), 12L);
-
+            p.sendMessage("Charged "+power);
+            p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
+            return false;
+        }, ()->{
+            Bash event = (Bash) e.clone();
+            event.setReleased(true);
+            Bukkit.getPluginManager().callEvent(event);
+        });
+        Bukkit.getPluginManager().callEvent(holdEvent);
     }
 
     @Override
@@ -151,7 +135,7 @@ public class Bash extends ItemAbility {
                 ply.setVelocity(ply.getVelocity().add(new Vector(0, power * .075f, 0)));
                 continue;
             }
-            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false, power/max_power);
+            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false);
             final double yDiff = entity.getY() - p.getY();
             if (yDiff <= 2d && yDiff >= -1d) {
                 entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * power + 0.25f, 0)));
