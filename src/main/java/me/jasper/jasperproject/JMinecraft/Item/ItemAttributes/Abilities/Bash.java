@@ -135,7 +135,7 @@ public class Bash extends ItemAbility {
                 ply.setVelocity(ply.getVelocity().add(new Vector(0, power * .075f, 0)));
                 continue;
             }
-            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false);
+            jPlayer.attack(entity, ArmorType.MAIN_HAND, DamageType.MELEE, false, power/max_power);
             final double yDiff = entity.getY() - p.getY();
             if (yDiff <= 2d && yDiff >= -1d) {
                 entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * power + 0.25f, 0)));

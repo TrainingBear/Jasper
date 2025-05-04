@@ -16,7 +16,6 @@ public class Zombie extends EntityZombie {
         this.delegate.setLevel((short) 1).setName("Zombie");
         this.delegate.setSpeed(0.1f).setDefence(10f).setMaxHealth(1000).setDamage(1000);
         delegate.getMob().setMaximumNoDamageTicks(0);
-        delegate.getMob().setFireTicks(20);
     }
 
     public boolean a(DamageSource s, float f){

@@ -166,8 +166,9 @@ public enum Stats {
             float stat = pdc.get(value.getKey(), PersistentDataType.FLOAT);
             stats.put(value, stat + value.getBaseValue());
         }
-        for (Stats stat : mainhand_stats.keySet()) stats.put(stat, stats.computeIfAbsent(stat, k->0f)+mainhand_stats.get(stat));
-        for (Stats stat : offhand_stats.keySet()) stats.put(stat, stats.computeIfAbsent(stat, k->0f)+offhand_stats.get(stat));
+
+        for (Stats stat : mainhand_stats.keySet()) stats.put(stat, stats.getOrDefault(stat, 0f)+ mainhand_stats.get(stat));
+        for (Stats stat : offhand_stats.keySet()) stats.put(stat, stats.getOrDefault(stat, 0f)+ offhand_stats.get(stat));
         return stats;
     }
 

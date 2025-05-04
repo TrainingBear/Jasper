@@ -49,11 +49,10 @@
             <configuration>
                 <outputDirectory>
                     <!--                    Directorynya Jiter-->
-<!--                    C:\Users\user\AppData\Roaming\.feather\player-server\servers\7a1e3607-139e-4341-a6b9-6340739908da\plugins-->
+                    C:\Users\user\AppData\Roaming\.feather\player-server\servers\7a1e3607-139e-4341-a6b9-6340739908da\plugins
                     <!--                    Directorynya iqtod-->
 <!--                    D:\.feather\player-server\servers\87de4fd9-af34-4ce5-9034-be8bede85581\plugins-->
 
-                    D:\.feather\player-server\servers\87de4fd9-af34-4ce5-9034-be8bede85581\plugins
                 </outputDirectory>
             </configuration>
         </plugin>
