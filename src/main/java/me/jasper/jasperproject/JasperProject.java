@@ -95,7 +95,7 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new Listener(), this);
         PM.registerEvents(new JPlayer(), this);
         PM.registerEvents(new JMob.MobListener(), this);
-        PM.registerEvents(new AutoSaveListener(), this);
+//        PM.registerEvents(new AutoSaveListener(), this);
         PM.registerEvents(new JMob.DamageEvent(), this);
         PM.registerEvents(new HoldEvent(), this);
 

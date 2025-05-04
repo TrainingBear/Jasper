@@ -42,6 +42,13 @@ public enum Stats {
     POISON("💀","Posion","<color:#00c20d>", 0),
 
     MINING_SPREAD("☄","Mining Spread","<color:#ffea00>", 0),
+    /* Block info yang bisa dibreak
+       Vanilla
+            Coal:
+            Gold:
+            Iron
+     */
+    BREAK_POWER("\uD83D\uDCA5","Break Power","<color:#38ba3c>",0),
 
     COMBAT_WISDOM("🧠","Combat Wisdom","<color:#00c9b2>", 0),
     MINING_WISDOM("🧠","Mining Wisdom","<color:#00c9b2>", 0),

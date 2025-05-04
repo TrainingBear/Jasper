@@ -7,8 +7,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
+import me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium.*;
 import me.jasper.jasperproject.JMinecraft.Item.Product.Weapons.*;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchant;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
@@ -89,7 +89,13 @@ public final class ItemManager {
                 new Assassin_Dagger(),
                 new Stack_Steels(),
                 new Heavy_Axe(),
-                new Test_Bow()
+                new Test_Bow(),
+
+                new Titanium_Shovel(),
+                new Titanium_Helmet(),
+                new Titanium_Chestplate(),
+                new Titanium_Leggings(),
+                new Titanium_Boots()
         );
 
         registerEnchant(new Sharpness());

@@ -32,9 +32,8 @@ public class HoldEvent extends Event implements Listener, Cancellable {
         if(e.isCancelled()) return;
         UUID uuid = e.getPlayer();
         lastClick.putIfAbsent(uuid, System.currentTimeMillis());
-        long last = lastClick.put(uuid, System.currentTimeMillis());
-        long current = System.currentTimeMillis();
-        long elapsed = (current - last);
+
+        long elapsed = (System.currentTimeMillis() - lastClick.put(uuid, System.currentTimeMillis()));
         if(elapsed <= 100) return;
         BukkitRunnable bukkitRunnable = new BukkitRunnable() {
             @Override
@@ -47,7 +46,6 @@ public class HoldEvent extends Event implements Listener, Cancellable {
         BukkitRunnable task_ = new BukkitRunnable() {
             @Override
             public void run() {
-                Bukkit.broadcastMessage("released");
                 e.getOnRelease().run();
                 lastClick.remove(uuid);
             }

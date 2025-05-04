@@ -82,10 +82,7 @@ public class Bash extends ItemAbility {
         UUID uuid = p.getUniqueId();
         if(hasCooldown(e)) return;
         if(e.isReleased()) {
-            Bukkit.broadcastMessage("Has been released");
-            float power = powers.get(uuid);
-            e.getPlayer().sendMessage("You have been released the power of "+power);
-            bashAnimation(p, power, e);
+            bashAnimation(p, powers.get(uuid), e);
             applyCooldown(e,  true);
             powers.put(uuid, 0f);
             return;
@@ -99,7 +96,6 @@ public class Bash extends ItemAbility {
                 on_release.runTask(JasperProject.getPlugin());
                 return true;
             }
-            p.sendMessage("Charged "+power);
             p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
             return false;
         }, ()->{
@@ -114,9 +110,10 @@ public class Bash extends ItemAbility {
     protected List<Component> createLore() {
         return List.of(
                 Util.deserialize("<!i><gold>Ability: <b><red>Bash <yellow>(HOLD SNEAK RIGHT CLICK)")
-                ,Util.deserialize("<!i><gray>Release a smash on hit and deal")
-                ,Util.deserialize("<!i><gray>10% damage to nearby entities<color:#95945B>HOLD</color> and")
-                ,Util.deserialize("<!i><gray>SHIFT + RIGHT CLICK to store axe power!")
+                ,Util.deserialize("<!i><gray>Smash the ground and creating splash area")
+                ,Util.deserialize("<!i><gray>in circle area that damage and throw")
+                ,Util.deserialize("<!i><gray>living entity inside the area based on")
+                ,Util.deserialize("<!i><gray>how long you are <color:#95945B>HOLD</color>'in")
         );
     }
 

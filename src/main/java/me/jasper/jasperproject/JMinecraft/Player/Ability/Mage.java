@@ -32,8 +32,7 @@ public class Mage extends PlayerAbility {
         private Projectile projectile;
         private ItemStack weapon;
 
-        public SHoot(Player player, IProjectile projectile, ItemStack weapon){
-
+        public Shoot(Player player, IProjectile projectile, ItemStack weapon){
         }
         public Shoot(Player player, Projectile projectile, ItemStack weapon){
             this.weapon = weapon;
@@ -68,7 +67,7 @@ public class Mage extends PlayerAbility {
                 Player player = e.getPlayer();
                 PersistentDataContainer pdc = player.getPersistentDataContainer();
                 if (pdc.has(JKey.Ability) && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(this.key)){
-                    Shoot shoot = new Shoot(player, new EntityWitherSkull(EntityTypes.br, ((CraftWorld) player.getWorld()).getHandle()));
+//                    Shoot shoot = new Shoot(player, new EntityWitherSkull(EntityTypes.br, ((CraftWorld) player.getWorld()).getHandle()));
                 }
             }
         }

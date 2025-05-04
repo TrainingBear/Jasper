@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.JMinecraft.Item.Product.Weapons;
+package me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium;
 
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
