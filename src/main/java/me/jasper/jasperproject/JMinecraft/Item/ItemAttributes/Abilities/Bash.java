@@ -97,7 +97,6 @@ public class Bash extends ItemAbility {
                 ///     ON RELEASE
                 ()->{
             float power = powers.get(uuid);
-            e.getPlayer().sendMessage("You have been released the power of "+power);
             bashAnimation(p, power, e);
             applyCooldown(e,  true);
             powers.put(uuid, 0f);

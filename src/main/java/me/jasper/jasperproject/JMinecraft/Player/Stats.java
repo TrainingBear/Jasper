@@ -44,9 +44,9 @@ public enum Stats {
     MINING_SPREAD("☄","Mining Spread","<color:#ffea00>", 0),
     /* Block info yang bisa dibreak
        Vanilla
-            Coal:
-            Gold:
-            Iron
+            Coal: # Copper: # Gold: # Iron: # Diamond: # Ancient Debris: #
+        Custom
+            Mithril: # Titanium: # Jasper: #
      */
     BREAK_POWER("\uD83D\uDCA5","Break Power","<color:#38ba3c>",0),
 
