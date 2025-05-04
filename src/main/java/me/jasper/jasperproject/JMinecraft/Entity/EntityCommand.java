@@ -1,6 +1,6 @@
 package me.jasper.jasperproject.JMinecraft.Entity;
 
-import me.jasper.jasperproject.JMinecraft.Entity.Mobs.Zombie;
+import me.jasper.jasperproject.JMinecraft.Entity.Mobs.JZombie;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +20,7 @@ public class EntityCommand implements CommandExecutor, TabCompleter {
         Location location = player.getLocation();
         switch (strings[0]){
             case "zombie" -> {
-                me.jasper.jasperproject.JMinecraft.Entity.Mobs.Zombie zombie = new Zombie(((CraftWorld) location.getWorld()).getHandle());
+                JZombie zombie = new JZombie(((CraftWorld) location.getWorld()).getHandle());
                 zombie.getDelegate().spawn(location);
             }
         }

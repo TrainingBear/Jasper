@@ -10,7 +10,6 @@ import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import me.jasper.jasperproject.Util.Logger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.minecraft.core.BlockPosition;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;

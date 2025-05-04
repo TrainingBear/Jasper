@@ -31,23 +31,19 @@ public class HoldEvent extends Event implements Listener, Cancellable {
     public void onHold(HoldEvent e){
         if(e.isCancelled()) return;
         UUID uuid = e.getPlayer();
-        lastClick.putIfAbsent(uuid, System.currentTimeMillis());
-
-        long elapsed = (System.currentTimeMillis() - lastClick.put(uuid, System.currentTimeMillis()));
+        long last = lastClick.getOrDefault(uuid, System.currentTimeMillis());
+        long current = System.currentTimeMillis();
+        long elapsed = (current - last);
         if(elapsed <= 100) return;
-        BukkitRunnable bukkitRunnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-            }
-        };
-        task.putIfAbsent(uuid, bukkitRunnable);
-        bukkitRunnable.runTask(JasperProject.getPlugin());
-        task.get(uuid).cancel();
+        lastClick.put(uuid, current);
+        BukkitRunnable bukkitRunnable = task.get(uuid);
+        if(bukkitRunnable!=null) bukkitRunnable.cancel();
         BukkitRunnable task_ = new BukkitRunnable() {
             @Override
             public void run() {
                 e.getOnRelease().run();
                 lastClick.remove(uuid);
+                this.cancel();
             }
         };
         task.put(uuid, task_);
