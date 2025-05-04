@@ -12,13 +12,10 @@ import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
-import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.level.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_21_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.*;
@@ -34,10 +31,10 @@ import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.UUID;
 
-public class JMob<T extends EntityLiving> implements Listener {
+public class JMob implements Listener {
     @Getter private CraftLivingEntity mob;
 
-    public JMob(EntityLiving entityLiving){
+    public JMob(net.minecraft.world.entity.LivingEntity entityLiving){
         this.mob = (CraftLivingEntity) entityLiving.getBukkitEntity();
         mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_REPLACE_HITREGIS, PersistentDataType.BOOLEAN, true);
     }
