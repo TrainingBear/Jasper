@@ -88,7 +88,8 @@ public final class ItemManager {
                 new Feather_Jumper(),
                 new Assassin_Dagger(),
                 new Stack_Steels(),
-                new Heavy_Axe()
+                new Heavy_Axe(),
+                new Test_Bow()
         );
 
         registerEnchant(new Sharpness());

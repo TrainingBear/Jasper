@@ -50,4 +50,6 @@ public final class JKey {
     public static final NamespacedKey MOBATRIBUTE_NAME = new NamespacedKey(JasperProject.getPlugin(), "MOB-name");
     public static final NamespacedKey MOBATRIBUTE_LEVEL = new NamespacedKey(JasperProject.getPlugin(), "MOB-level");
     public static final NamespacedKey MOBATRIBUTE_REPLACE_HITREGIS = new NamespacedKey(JasperProject.getPlugin(), "MOB-defaultHitRegis");
+    public static final NamespacedKey DAMAGE_ISCRITICAL = new NamespacedKey(JasperProject.getPlugin(), "Damage-isCritical");
+    public static final NamespacedKey DAMAGE = new NamespacedKey(JasperProject.getPlugin(), "Damage");
 }

@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.JMinecraft.Entity;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
@@ -27,7 +28,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -36,15 +36,9 @@ import java.util.UUID;
 
 public class JMob<T extends EntityLiving> implements Listener {
     @Getter private CraftLivingEntity mob;
-    @Getter private TextDisplay display;
 
-    public JMob(EntityLiving entityLiving, World world){
-        CraftWorld world1 = world.getWorld();
+    public JMob(EntityLiving entityLiving){
         this.mob = (CraftLivingEntity) entityLiving.getBukkitEntity();
-        this.display = world1.spawn(world1.getSpawnLocation(), TextDisplay.class);
-        this.display.setVisualFire(false);
-        this.display.setBillboard(Display.Billboard.CENTER);
-        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
         mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_REPLACE_HITREGIS, PersistentDataType.BOOLEAN, true);
     }
 
@@ -86,23 +80,24 @@ public class JMob<T extends EntityLiving> implements Listener {
         String string_uuid = pdc.get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
         TextDisplay display = (TextDisplay) Bukkit.getEntity(UUID.fromString(string_uuid));
         String name = pdc.get(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING);
-        int health = (int) mob.getHealth();
         int level = (int) pdc.get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
-        display.text(Util.deserialize(level +" | "+name+" | "+ health +" ❤ "));
+        display.text(Util.deserialize(level +" | "+name+" | "+ getHealthDisplay(mob.getHealth())));
     }
 
     public static void updateDisplay(LivingEntity entity){
         PersistentDataContainer pdc = entity.getPersistentDataContainer();
-        if(!pdc.has(JKey.MOBATRIBUTE_DISPLAY)) return;
         String string_uuid = pdc.get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
         TextDisplay display = (TextDisplay) Bukkit.getEntity(UUID.fromString(string_uuid));
         String name = pdc.get(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING);
-        int health = (int) entity.getHealth();
         int level = (int) pdc.get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
-        display.text(Util.deserialize(level +" | "+name+" | "+ health +" ❤ "));
+        display.text(Util.deserialize(level +" | "+name+" | "+ getHealthDisplay(entity.getHealth())));
     }
 
     public void spawn(Location location){
+        TextDisplay display= location.getWorld().spawn(location, TextDisplay.class);
+        display.setVisualFire(false);
+        display.setBillboard(Display.Billboard.CENTER);
+        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
         updateDisplay();
         mob.addPassenger(display);
         mob.spawnAt(location);
@@ -115,10 +110,11 @@ public class JMob<T extends EntityLiving> implements Listener {
         entity.setHealth(Math.max(0, entity.getHealth() - damage));
     }
 
-    public String getHealthDisplay(double health){
-        if(health >= 1000000000) return Util.round((float) health/1000000000, 2) + "B ❤ "; //milyar/billion
-        else if(health >= 1000000) return Util.round((float) health/1000000, 2)+"M ❤ ";//juta
-        else if(health >= 1000) return Util.round((float) health/1000, 2)+"k ❤ "; //seribu
+    public static String getHealthDisplay(double health){
+        if(health >= 1_000_000_000f) return Util.round (health/1_000_000_000 ,1) + "B ❤ "; //milyar/billion
+        else if(health >= 1_000_000) return Util.round ( health/1_000_000_000 ,1) +"M ❤ ";//juta
+        else if(health >= 1_000) return Util.round ( health/1_000,1)+"k ❤ "; //seribu
+        else if(health < 1_000) return Util.round ( health,1)+"k ❤ "; //seribu
         else return health +" ❤ ";
     }
 
@@ -128,7 +124,7 @@ public class JMob<T extends EntityLiving> implements Listener {
      * @param text the text to display
      * @param howLong how long the display appear in Ticks
      */
-    public static void say(LivingEntity entitas, Component text,long howLong){
+    public static void say(LivingEntity entitas, Component text, long howLong){
         PersistentDataContainer pdc = entitas.getPersistentDataContainer();
         if(pdc.has(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING)){
             TextDisplay txtdsply = entitas.getWorld().spawn(entitas.getLocation(), TextDisplay.class);
@@ -146,39 +142,46 @@ public class JMob<T extends EntityLiving> implements Listener {
         public void onHurt(EntityDamageByEntityEvent e){
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
             DamageResult result = null;
-            Bukkit.broadcastMessage(e.getCause().name());
             if((e.getDamager() instanceof Player player)){
+                entity.setMaximumNoDamageTicks(0);
                 JPlayer jPlayer = PlayerManager.getJPlayer(player);
-                 if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
-                    result = DamageResult.builder()
-                            .damage((int) e.getDamage())
-                            .type(DamageType.ABSTRACT)
-                            .build();
-                } else {
-                    result = jPlayer.attack(null, ArmorType.MAIN_HAND, DamageType.MELEE, e.isCritical(), 1);
+                if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
+                    result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MELEE, player.getAttackCooldown());
                 }
-                entity.setNoDamageTicks(0);
+                 else {
+                    float attackCooldown = player.getAttackCooldown();
+                    result = jPlayer.attack(null, player.getInventory().getItemInMainHand(), e.isCritical(), attackCooldown);
+                    Bukkit.broadcastMessage("before = "+result.getFinal_damage());
+                    float final_damage = result.getFinal_damage() * attackCooldown;
+                    result.setFinal_damage(final_damage);
+                    Bukkit.broadcastMessage(final_damage +" | after = "+result.getFinal_damage());
+                    result = DamageResult.patch(result.getFinal_damage(), entity, DamageType.MELEE);
+                }
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
-                result = DamageResult.builder()
-                        .type(DamageType.PROJECTILE)
-                        .damage((int) e.getDamage())
-                        .build();
+                if(e.getDamager() instanceof Projectile projectile){
+                    if(projectile.getShooter() instanceof Player player){
+                        if(projectile instanceof Arrow arrow){
+                            entity.setMaximumNoDamageTicks(0);
+                            result = PlayerManager.getJPlayer(player).shoot(null, arrow.getWeapon(),
+                                    arrow.isCritical(), 1F, (float) arrow.getVelocity().length(),
+                                    (float) arrow.getDamage());
+                        } else {
+                            PersistentDataContainer pdc = projectile.getPersistentDataContainer();
+                        }
+                    }
+                }
             }
-            if(result==null) result = DamageResult.builder()
-                    .type(DamageType.MAGIC)
-                    .damage((int) e.getDamage())
-                    .build();
-
-            float true_defence = entity.getPersistentDataContainer().has(Stats.TRUE_DEFENCE.getKey()) ?
-                    entity.getPersistentDataContainer().get(Stats.TRUE_DEFENCE.getKey(), PersistentDataType.FLOAT) :
-                    0;
-            float defence = entity.getPersistentDataContainer().has(Stats.DEFENCE.getKey()) ?
-                    entity.getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT) :
-                    0;
-            result.setDefence((int) defence);
-            result.setTrue_defence((int) true_defence);
-            result.recalculate();
+            if(result==null) {
+                Bukkit.broadcastMessage("Invoked null");
+                if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
+                    result = DamageResult.patch((float) e.getDamage(), entity, DamageType.PROJECTILE);
+                } else if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
+                    result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MELEE);
+                } else{
+                    result = DamageResult.patch((float) e.getDamage(), entity, DamageType.ABSTRACT);
+                }
+            }
             e.setDamage(result.getFinal_damage());
             DamageEvent damageEvent = new DamageEvent(result, entity);
             if(e.isCancelled()) damageEvent.setCancelled(true);
@@ -187,55 +190,31 @@ public class JMob<T extends EntityLiving> implements Listener {
 
         @EventHandler
         public void onHurtByNonEntity(EntityDamageEvent e){
-            if((e.getDamageSource().getCausingEntity() instanceof Player)) return;
+            if(e.getDamageSource().getCausingEntity() != null) return;
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
             DamageResult result = null;
             AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            float max_health = maxHealthAttribute !=null ? (float) maxHealthAttribute.getBaseValue() : 100;
             if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
-                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
-                result = DamageResult.builder()
-                        .type(DamageType.FIRE)
-                        .damage((int) (max_health/25))
-                        .build();
+                result = DamageResult.patch(max_health/25f, entity, DamageType.FIRE);
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE)){
-                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
-                result = DamageResult.builder()
-                        .type(DamageType.FIRE)
-                        .damage((int) (max_health/10))
-                        .build();
+                entity.setFireTicks(100);
+                entity.setMaximumNoDamageTicks(10);
+                result = DamageResult.patch(max_health/10f, entity, DamageType.FIRE);
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.LAVA)){
-                double max_health = maxHealthAttribute !=null ? maxHealthAttribute.getBaseValue() : 100;
-                result = DamageResult.builder()
-                        .type(DamageType.FIRE)
-                        .damage((int) (max_health/5))
-                        .build();
+                entity.setFireTicks(100);
+                entity.setMaximumNoDamageTicks(10);
+                result = DamageResult.patch(max_health/5f, entity, DamageType.FIRE);
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
-                double max_health = maxHealthAttribute.getBaseValue();
                 float fallDistance = Math.min(entity.getFallDistance(), 100);
                 int damage = (int) (max_health * (fallDistance/100));
-                result = DamageResult.builder()
-                        .type(DamageType.ABSTRACT)
-                        .damage(damage)
-                        .trueDamage(true)
-                        .build();
+                result = DamageResult.patch(damage, entity, DamageType.ABSTRACT, true, 1f);
             }
-            if(result==null) result = DamageResult.builder()
-                    .type(DamageType.MAGIC)
-                    .damage((int) e.getDamage())
-                    .build();
+            if(result==null) result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MAGIC);
 
-            float true_defence = entity.getPersistentDataContainer().has(Stats.TRUE_DEFENCE.getKey()) ?
-                    entity.getPersistentDataContainer().get(Stats.TRUE_DEFENCE.getKey(), PersistentDataType.FLOAT) :
-                    0;
-            float defence = entity.getPersistentDataContainer().has(Stats.DEFENCE.getKey()) ?
-                    entity.getPersistentDataContainer().get(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT) :
-                    0;
-            result.setDefence((int) defence);
-            result.setTrue_defence((int) true_defence);
-            result.recalculate();
             e.setDamage(result.getFinal_damage());
             DamageEvent damageEvent = new DamageEvent(result, entity);
             if(e.isCancelled()) damageEvent.setCancelled(true);
@@ -245,6 +224,16 @@ public class JMob<T extends EntityLiving> implements Listener {
         @EventHandler
         public void onDeath(EntityDeathEvent e){
             LivingEntity entity = e.getEntity();
+            if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
+                String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
+
+                Bukkit.getEntity(UUID.fromString(s)).remove();
+            }
+        }
+
+        @EventHandler
+        public void onDespawn(EntityRemoveFromWorldEvent e){
+            if(!(e.getEntity() instanceof LivingEntity entity)) return;
             if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
                 String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
 

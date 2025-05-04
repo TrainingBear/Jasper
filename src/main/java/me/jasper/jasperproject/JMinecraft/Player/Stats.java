@@ -148,7 +148,7 @@ public enum Stats {
     }
 
     public static Map<Stats, Float> fromPlayer(Player player){
-        return fromPlayer(player, player.getInventory().getItemInMainHand(), player.getInventory().getItemInOffHand());
+        return fromPlayer(player, null, null);
     }
     public static Map<Stats, Float> fromPlayer(Player player, ItemStack item){
         return fromPlayer(player, item, null);
@@ -156,19 +156,55 @@ public enum Stats {
     public static Map<Stats, Float> fromPlayer(Player player, @Nullable ItemStack mainHand, @Nullable ItemStack offHand){
         putIfAbsent(player);
         Map<Stats, Float> stats = new HashMap<>();
-        Map<Stats, Float> mainhand_stats = fromItem(mainHand);
-        Map<Stats, Float> offhand_stats = fromItem(offHand);
-        PersistentDataContainer pdc = player.getPersistentDataContainer();
-        if(!pdc.has(JKey.Stats)) putIfAbsent(player);
-        pdc = pdc.get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
-        for (Stats value : Stats.values()) {
-            if(value.getBaseValue() == -1) continue;
-            float stat = pdc.get(value.getKey(), PersistentDataType.FLOAT);
-            stats.put(value, stat + value.getBaseValue());
+        for (Stats stat : Stats.values()) {
+            float p_stat = player.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                    .get(stat.getKey(), PersistentDataType.FLOAT);
+            float main = mainHand !=null && mainHand.hasItemMeta() && mainHand.getPersistentDataContainer().has(JKey.Stats) &&
+                    mainHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER).has(stat.getKey()) ?
+                    mainHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                            .get(stat.getKey(), PersistentDataType.FLOAT) : 0;
+            float off = offHand !=null &&offHand.hasItemMeta() && offHand.getPersistentDataContainer().has(JKey.Stats) &&
+                    offHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER).has(stat.getKey()) ?
+                    offHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                            .get(stat.getKey(), PersistentDataType.FLOAT) : 0;
+            stats.put(stat, p_stat+main+off+stat.getBaseValue());
         }
-        for (Stats stat : mainhand_stats.keySet()) stats.put(stat, stats.computeIfAbsent(stat, k->0f)+mainhand_stats.get(stat));
-        for (Stats stat : offhand_stats.keySet()) stats.put(stat, stats.computeIfAbsent(stat, k->0f)+offhand_stats.get(stat));
         return stats;
+    }
+
+    public static Map<Stats, Float> getCombatStats(Player player){
+        return getCombatStats(player, null, null);
+    }
+    public static Map<Stats, Float> getCombatStats(Player player, @Nullable ItemStack weapon){
+        return getCombatStats(player, weapon, null);
+    }
+    public static Map<Stats, Float> getCombatStats(@Nullable Player player, @Nullable ItemStack mainHand, @Nullable ItemStack offHand){
+        if (player!=null) putIfAbsent(player);
+        Set<Stats> combat = Set.of(
+                Stats.DAMAGE, Stats.CRIT_DAMAGE, Stats.CRIT_CHANCE, Stats.SWING_RANGE,
+                Stats.DEFENCE, Stats.TRUE_DEFENCE, Stats.STRENGTH, Stats.ARROW_MODIFIER,
+                Stats.MELEE_MODIFIER, Stats.MAGIC_MODIFIER, Stats.MANA, Stats.DOUBLE_ATTACK
+        );
+        Map<Stats, Float> player_stats = new HashMap<>();
+        for (Stats stat : combat) {
+            float p_stat = player!=null ? player.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                    .get(stat.getKey(), PersistentDataType.FLOAT) : 0f;
+            float main = mainHand !=null && mainHand.hasItemMeta() && mainHand.getPersistentDataContainer().has(JKey.Stats) &&
+                    mainHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER).has(stat.getKey()) ?
+                    mainHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                            .get(stat.getKey(), PersistentDataType.FLOAT) : 0;
+            float off = offHand !=null && offHand.hasItemMeta() && offHand.getPersistentDataContainer().has(JKey.Stats) &&
+                    offHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER).has(stat.getKey()) ?
+                    offHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                            .get(stat.getKey(), PersistentDataType.FLOAT) : 0;
+            player_stats.put(stat, p_stat+main+off+stat.getBaseValue());
+        }
+        return player_stats;
+    }
+
+    public static boolean roll(float critical_chance){
+        Random random = new Random();
+        return random.nextInt((int) critical_chance) <= critical_chance;
     }
 
     public static List<Component> toLore(Map<Stats, Float> stats){

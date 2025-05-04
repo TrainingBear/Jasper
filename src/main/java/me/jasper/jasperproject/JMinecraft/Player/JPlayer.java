@@ -1,6 +1,5 @@
 package me.jasper.jasperproject.JMinecraft.Player;
 
-import io.papermc.paper.persistence.PersistentDataContainerView;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorEquipEvent;
@@ -9,7 +8,6 @@ import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Arrow;
@@ -20,9 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -44,50 +42,38 @@ public class JPlayer implements Listener {
      * @return total damage amount
      */
 
-    public DamageResult attack(@Nullable LivingEntity target, ArmorType type, DamageType damageType, boolean critical, float modifier){
+
+
+    public DamageResult shoot(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier, float force, float arrow_damage){
         Player bukkitPlayer = getBukkitPlayer();
         Map<Stats, Float> player_stats;
-        ItemStack offHand = bukkitPlayer.getInventory().getItemInOffHand();
-
-        if(type.equals(ArmorType.MAIN_HAND)){
-            ItemStack mainHand = bukkitPlayer.getInventory().getItemInMainHand();
-            PersistentDataContainer mainPdc = mainHand.getItemMeta().getPersistentDataContainer();
-            player_stats = Stats.fromPlayer(bukkitPlayer,
-                    mainPdc.has(JKey.Category) && ItemType.isMelee(mainPdc.get(JKey.Category, PersistentDataType.STRING)) ? mainHand : null
-            );
-            if(damageType.equals(DamageType.MELEE)){
-                float damage = player_stats.get(Stats.DAMAGE);
-                float strength = player_stats.get(Stats.STRENGTH);
-                float crit_damage = player_stats.get(Stats.CRIT_DAMAGE);
-                boolean isCritical = bukkitPlayer.isSneaking()&&
-                        critical&&
-                        (
-                                !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) ||
-                                        !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) ||
-                                        !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON) ||
-                                        !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) ||
-                                        !bukkitPlayer.isFrozen()
-                        );
-                int final_damage = (int) (damage * (
-                        ((strength/100)+1)
-                                * (isCritical? (crit_damage/100) + 1 : 1)
-                ));
-                final_damage = (int) (final_damage * (player_stats.get(Stats.MELEE_MODIFIER) + 1));
-                final_damage = (int) ((float) final_damage * modifier);
-                if(target!=null){
-                    target.damage(final_damage, DamageSource.builder(org.bukkit.damage.DamageType.FALLING_BLOCK).withCausingEntity(bukkitPlayer).build());
-                }
-                return DamageResult.builder()
-                        .damage(final_damage)
-                        .critical(isCritical)
-                        .type(DamageType.MELEE)
-                        .build();
-            }
-            if(damageType.equals(DamageType.MAGIC)){
-                float mana = mainPdc.get(Stats.MANA.getKey(), PersistentDataType.FLOAT);
-            }
-        }
-        return DamageResult.builder().build();
+        boolean valid = weapon.hasItemMeta() && weapon.getItemMeta().getPersistentDataContainer().has(JKey.Category) && ItemType.isMelee(weapon.getItemMeta().getPersistentDataContainer().get(JKey.Category, PersistentDataType.STRING));
+        player_stats = Stats.getCombatStats(bukkitPlayer, valid ? weapon : null);
+        player_stats.put(Stats.DAMAGE, arrow_damage);
+        DamageResult result = DamageResult.builder(player_stats)
+                .critical(critical)
+                .type(DamageType.PROJECTILE)
+                .force(force)
+                .build();
+        result.setFinal_damage(result.getFinal_damage()*modifier);
+        if(target!=null)target.damage(result.getFinal_damage(), DamageSource.builder(org.bukkit.damage.DamageType.FALLING_STALACTITE) .withCausingEntity(bukkitPlayer) .withDirectEntity(bukkitPlayer) .build() );
+        return result;
+    }
+    public DamageResult attack(@Nullable LivingEntity target, ItemStack weapon, boolean critical){
+        return attack(target, weapon, critical, 1f);
+    }
+    public DamageResult attack(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier){
+        Player bukkitPlayer = getBukkitPlayer();
+        Map<Stats, Float> player_stats;
+        boolean valid = weapon.hasItemMeta() && weapon.getItemMeta().getPersistentDataContainer().has(JKey.Category) && ItemType.isMelee(weapon.getItemMeta().getPersistentDataContainer().get(JKey.Category, PersistentDataType.STRING));
+        player_stats = Stats.getCombatStats(bukkitPlayer, valid ? weapon : null);
+        boolean isCritical = bukkitPlayer.isSneaking()&& critical&& ( !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) || !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) || !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON) || !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) || !bukkitPlayer.isFrozen());
+        DamageResult result = DamageResult.builder(player_stats)
+                .critical(isCritical)
+                .type(DamageType.MELEE)
+                .build();
+        if(target!=null)target.damage(result.getFinal_damage()*modifier, DamageSource.builder(org.bukkit.damage.DamageType.FALLING_BLOCK) .withCausingEntity(bukkitPlayer) .withDirectEntity(bukkitPlayer) .build() );
+        return result;
     }
 
     public Player getBukkitPlayer(){
@@ -99,7 +85,6 @@ public class JPlayer implements Listener {
     }
 
     public @Nullable ItemStack getLastItems(ArmorType type){ return lastItems.get(type); }
-    public float getStat(Stats stats){ return Stats.fromPlayer(getBukkitPlayer()).get(stats); }
 
     @EventHandler
     public void onEquip(ArmorEquipEvent e){
@@ -116,29 +101,21 @@ public class JPlayer implements Listener {
     @EventHandler
     public void onShoot(EntityShootBowEvent e){
         if(!(e.getEntity() instanceof Player bukkitPlayer)) return;
-
-        Map<Stats, Float> player_stats = Stats.fromPlayer(bukkitPlayer, e.getBow());
-
-        float damage = player_stats.get(Stats.DAMAGE);
-        float strength = player_stats.get(Stats.STRENGTH);
-        float crit_damage = player_stats.get(Stats.CRIT_DAMAGE);
-        float chance = player_stats.get(Stats.CRIT_CHANCE);
-
-        boolean crit = (chance >= new Random().nextInt(100)+1) && (
-                !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) ||
-                        !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) ||
-                        !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON) ||
-                        !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) ||
-                        !bukkitPlayer.isFrozen());
-
-        int final_damage = (int) (damage * (
-                ((strength/100)+1)
-                        * (crit? (crit_damage/100) + 1 : 1)
-        ));
-        bukkitPlayer.sendMessage(Component.text("You are shooting with power of " + e.getForce()));
-        final_damage = (int) (final_damage * (player_stats.get(Stats.ARROW_MODIFIER) + 1) * e.getForce());
+        Map<Stats, Float> player_stats = Stats.getCombatStats(bukkitPlayer, e.getBow());
+        boolean critical = !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) ||
+                !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) ||
+                !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON) ||
+                !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) ||
+                !bukkitPlayer.isFrozen();
+        DamageResult result = DamageResult.builder(player_stats)
+                .type(DamageType.PROJECTILE)
+                .build();
         if(e.getProjectile() instanceof Arrow arrow){
-            arrow.setDamage(final_damage);
+            boolean crit = player_stats.get(Stats.CRIT_CHANCE) >= new Random().nextInt(100) + 1;
+            arrow.setCritical(critical && crit);
+            arrow.setDamage(player_stats.get(Stats.DAMAGE));
+            Vector velocity = arrow.getVelocity().multiply(Math.max(1, result.getForce()));
+            arrow.setVelocity(velocity);
         }
     }
 }
