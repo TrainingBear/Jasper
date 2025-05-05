@@ -13,13 +13,25 @@ import java.util.UUID;
 
 /**
  * Util that useful for holding mechanic
+ * <hr>
+ * How to use: Bukkit.getPluginManager().callEvent(new {@link Charge}(player,byte maxtime, ChargeAction));
+ * @Override the {@link ChargAction}
  */
 public class Charge extends Event implements Listener, Cancellable {
-    private static final HandlerList HANDLER_LIST = new HandlerList(); public Charge() { }
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+    public Charge() { }
 
-    public static HandlerList getHandlerList() {return HANDLER_LIST;}@Override public @NotNull HandlerList getHandlers() {return HANDLER_LIST;}
+    @Override public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
+    }
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
     private boolean cancelled;
     @Getter private static Map<UUID, chargeLogic> charge = new HashMap<>();
+    @Getter private static Map<UUID, Long> antiSPAM = new HashMap<>(); // bisa aja guna/kaga
+    @Getter private static Map<UUID, BukkitRunnable> cancelTask = new HashMap<>();
+    @Getter private Player player;
 
     /** Use this method when something iterate useful for logic that uses hold mechanic
      * <hr>
@@ -31,14 +43,46 @@ public class Charge extends Event implements Listener, Cancellable {
      * @param action what actions within holding
      */
     public Charge(Player p,int maxTimeInSec, ChargAction action){
-        charge.putIfAbsent(p.getUniqueId(), new Charge.chargeLogic((byte) maxTimeInSec, action));
+        this.player = p;
+        charge.putIfAbsent(p.getUniqueId(), new chargeLogic((byte) maxTimeInSec, action));
+        antiSPAM.putIfAbsent(p.getUniqueId(), System.currentTimeMillis()-(CLICK_GAP+1));
     }
+    private final short CLICK_GAP = 240;
     @EventHandler
-    public void run(){
+    public void run(Charge e){
+        if(System.currentTimeMillis() - antiSPAM.get(e.getPlayer().getUniqueId()) <= CLICK_GAP) {
+            removeMap(e.getPlayer().getUniqueId());
+            return;
+        }
 
+        UUID uuid = e.getPlayer().getUniqueId();
+        chargeLogic logic = charge.get(uuid);
+        float elapsed = (System.currentTimeMillis() - logic.start) / 1000f;
+        BukkitRunnable runnable = cancelTask.get(uuid);
+        if(runnable != null) runnable.cancel();
+
+        BukkitRunnable task = new BukkitRunnable(){
+            @Override
+            public void run() {
+                logic.action.doAction(e.getPlayer(),elapsed);
+                removeMap(uuid);
+                this.cancel();
+            }
+        };
+        cancelTask.put(uuid, task);
+        if(elapsed >= logic.maxTime){
+            logic.action.doAction(e.getPlayer(),elapsed);
+            removeMap(uuid);
+            return;
+        }
+        logic.action.whileHold(e.getPlayer(),elapsed);
+        cancelTask.get(uuid).runTaskLater(JasperProject.getPlugin(), 12);
     }
-
-
+    public static void removeMap(UUID uuid){
+        cancelTask.remove(uuid);
+        antiSPAM.remove(uuid);
+        charge.remove(uuid);
+    }
 
     @Override
     public boolean isCancelled() {
@@ -50,13 +94,18 @@ public class Charge extends Event implements Listener, Cancellable {
         cancelled = b;
     }
 
+    /** contain methodL:
+     * {@link #doAction(Player, float)} action when released
+     * {@link #whileHold(Player, float)} action when hold
+     */
     public interface ChargAction {
-        /** Action when charging released
+        /**
+         * Action when charging released
          *
          * @param player Player that trigger
-         * @param power The duration in second of the hold
+         * @param power  The duration in second of the hold
          */
-        boolean doAction(Player player, float power);
+        void doAction(Player player, float power);
 
         /** Action when charging,
          * <hr>
@@ -76,27 +125,5 @@ public class Charge extends Event implements Listener, Cancellable {
             this.maxTime = maxTime;
             this.action = action;
         }
-
-        public void startTask(Player player) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-
-                }
-            }.runTaskLater(JasperProject.getPlugin(), 12);
-        }
-
-        public float countToMS() {
-            return ((System.currentTimeMillis() - start) / 1000f);
-        }
-
-        public void doTheAction(Player p , float count){
-            if(this.action != null) this.action.doAction(p,count);
-        }
-
-    }
-    @EventHandler
-    public void Charge(Charge e){
-
     }
 }

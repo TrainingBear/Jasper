@@ -4,11 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
 import lombok.Getter;
-import me.jasper.jasperproject.Animation.PaperAnimationCommand;
 import me.jasper.jasperproject.Bazaar.Bazaar;
-import me.jasper.jasperproject.Bazaar.BazaarCommand;
 import me.jasper.jasperproject.Bazaar.util.Listener;
 import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
