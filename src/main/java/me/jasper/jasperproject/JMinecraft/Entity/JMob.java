@@ -111,7 +111,7 @@ public class JMob implements Listener {
         if(health >= 1_000_000_000f) return Util.round (health/1_000_000_000 ,1) + "B ❤ "; //milyar/billion
         else if(health >= 1_000_000) return Util.round ( health/1_000_000_000 ,1) +"M ❤ ";//juta
         else if(health >= 1_000) return Util.round ( health/1_000,1)+"k ❤ "; //seribu
-        else if(health < 1_000) return Util.round ( health,1)+"k ❤ "; //seribu
+        else if(health < 1_000) return Util.round ( health,1)+" ❤ ";
         else return health +" ❤ ";
     }
 
@@ -165,12 +165,13 @@ public class JMob implements Listener {
                                     (float) arrow.getDamage());
                         } else {
                             PersistentDataContainer pdc = projectile.getPersistentDataContainer();
+                            int damage = pdc.get(JKey.DAMAGE, PersistentDataType.INTEGER);
+                            result = DamageResult.patch(damage, entity, DamageType.MAGIC);
                         }
                     }
                 }
             }
             if(result==null) {
-                Bukkit.broadcastMessage("Invoked null");
                 if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
                     result = DamageResult.patch((float) e.getDamage(), entity, DamageType.PROJECTILE);
                 } else if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {

@@ -59,7 +59,7 @@ public class Heal extends ItemAbility {
     public Heal(int range, float cooldown, Player player){
         this.setRange(range);
         this.setCooldown(cooldown);
-        this.setPlayer(player);
+        this.player = (player);
     }
     @EventHandler
     public void action(Heal e){

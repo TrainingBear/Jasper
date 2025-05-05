@@ -38,7 +38,7 @@ public class Teleport extends ItemAbility{
     public Teleport(int range, float cooldown, Player player){
         this.setRange(range);
         this.setCooldown(cooldown);
-        this.setPlayer(player);
+        this.player = (player);
     }
 
 

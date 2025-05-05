@@ -37,7 +37,7 @@ public class Burst_Arrow extends ItemAbility {
     }
     public Burst_Arrow(int count, float cooldown, Player p, Arrow ar,float force){
         this.setCooldown(cooldown);
-        this.setPlayer(p);
+        this.player = (p);
         this.setRange(count);
         this.arrow = ar;
         this.force = force;

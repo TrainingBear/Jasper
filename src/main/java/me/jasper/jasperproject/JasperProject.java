@@ -16,8 +16,10 @@ import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
+import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
+import me.jasper.jasperproject.JMinecraft.Player.PlayerBukkitCommand;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
@@ -100,6 +102,8 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new JMob.DamageEvent(), this);
         PM.registerEvents(new HoldEvent(), this);
         PM.registerEvents(new Charge(),this);
+        PM.registerEvents(new Mage(), this);
+        PM.registerEvents(new Mage.Shoot(), this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
@@ -111,6 +115,8 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("jmob").setExecutor(new EntityCommand());
         this.getCommand("jitem").setExecutor(new JasperItemCommand());
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
+        this.getCommand("jplayer").setExecutor(new PlayerBukkitCommand());
+        this.getCommand("jplayer").setTabCompleter(new PlayerBukkitCommand());
 
         protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.ENTITY_STATUS) {
             @Override

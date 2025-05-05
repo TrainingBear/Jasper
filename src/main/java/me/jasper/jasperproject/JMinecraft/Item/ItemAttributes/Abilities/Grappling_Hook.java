@@ -35,7 +35,7 @@ public class Grappling_Hook extends ItemAbility {
 
     public Grappling_Hook(float cooldown, PlayerFishEvent fish){
         setCooldown(cooldown);
-        setPlayer(fish.getPlayer());
+        player = (fish.getPlayer());
         this.fish = fish;
     }
 

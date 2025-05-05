@@ -1,13 +1,14 @@
 package me.jasper.jasperproject.JMinecraft.Player.Ability;
 
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
-import net.kyori.adventure.text.Component;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.JasperEvent;
+import org.bukkit.persistence.PersistentDataAdapterContext;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+public abstract class PlayerAbility extends JasperEvent {
 
-public abstract class PlayerAbility extends ItemAbility {
-    @Override
-    protected List<Component> createLore() {
-        return List.of();
-    }
+//    public PersistentDataContainer toPDC(@NotNull PersistentDataAdapterContext context){
+//        return stats;
+//    }
+
 }

@@ -2,13 +2,18 @@ package me.jasper.jasperproject.JMinecraft.Player;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
+import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorEquipEvent;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
@@ -18,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -107,6 +113,20 @@ public class JPlayer implements Listener {
                 !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON) ||
                 !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) ||
                 !bukkitPlayer.isFrozen();
+        PersistentDataContainer pdc = bukkitPlayer.getPersistentDataContainer();
+        if (pdc.has(JKey.Ability)
+                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key)
+                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key)){
+            Level nmsWorld = ((CraftWorld) bukkitPlayer.getWorld()).getHandle();
+            Mage.Shoot shoot = new Mage.Shoot(bukkitPlayer,
+                    new WitherSkull(EntityType.WITHER_SKULL, nmsWorld),
+                    player_stats
+            );
+            shoot.setCritical(critical);
+            Bukkit.getPluginManager().callEvent(shoot);
+            e.getProjectile().remove();
+            return;
+        }
         DamageResult result = DamageResult.builder(player_stats)
                 .type(DamageType.PROJECTILE)
                 .build();

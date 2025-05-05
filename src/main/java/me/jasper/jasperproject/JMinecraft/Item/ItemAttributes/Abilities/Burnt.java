@@ -29,7 +29,7 @@ public class Burnt extends ItemAbility {
     }
     public Burnt(float cooldown, Player p,Location loc){
         this.setCooldown(cooldown);
-        this.setPlayer(p);
+        this.player = (p);
         loc.setYaw(this.getPlayer().getYaw());
         this.locat = loc;
     }

@@ -38,7 +38,7 @@ public class Warper extends ItemAbility{
     public Warper(int WarpRange, float cooldown, PlayerInteractEvent e){
         setRange(WarpRange);
         setCooldown(cooldown);
-        setPlayer(e.getPlayer());
+        player = (e.getPlayer());
         this.ActionPlayer = e.getAction();
     }
 
@@ -104,7 +104,8 @@ public class Warper extends ItemAbility{
                 Util.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE,1,0.5f);
                 return;
             }
-            
+
+            if(hasCooldown(e)) return;
             Player player = e.getPlayer();
             UUID ID = player.getUniqueId();
             Location targetToTP = new Location(player.getWorld(), target.get(ID)[0]+.5f,target.get(ID)[1]+.01f,target.get(ID)[2]+.5f)
@@ -114,14 +115,11 @@ public class Warper extends ItemAbility{
             int range = e.getRange();
             if (distanceTP < e.getRange()+.1f) applyCooldown(e,true);
             else{
-//                if(hasCooldown(e)) return;
                 player.sendMessage(MiniMessage.miniMessage().deserialize("<red><b>TOO FAR! </b>You're <color:#fa3b2d>" + (distanceTP > 1000
                         ? Util.round((distanceTP-range) / 1000f, 1)+"k" : Util.round((distanceTP-range), 1)) + "</color> blocks away from limit!</red>"));
                 Util.playPSound(e.getPlayer(), Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1, 0.5f);
                 return;
             }
-
-            if(e.isCancelled()) return;
 
             float trail = (float) Math.min(distanceTP, 6.0); // parameter ke 2 bisa di ubah jarak maxnya
             int steps = (int) Math.max(trail, 1);
@@ -148,7 +146,6 @@ public class Warper extends ItemAbility{
                     ,new Particle.DustOptions(Color.fromRGB(60,60,60),2f), false);
 
             Util.teleportEntity(player,targetToTP,false);//TELEPOOOOOOOOOOOOOOOOORTTTTT================   <---   biar jelas codeny ad dstu
-            e.setCancelled(true);
 
             player.getWorld().spawnParticle(
                     Particle.WITCH,player.getLocation().add(0,.5f,0), 100
