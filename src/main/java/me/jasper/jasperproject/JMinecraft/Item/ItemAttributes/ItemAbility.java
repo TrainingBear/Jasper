@@ -19,9 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public abstract class ItemAbility extends Event implements Cancellable, Listener, Cloneable, Cooldown {
+public abstract class ItemAbility extends JasperEvent implements Cloneable, Cooldown {
     @Getter public final NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), this.getClass().getSimpleName());;
-    private static final HandlerList HANDLER_LIST = new HandlerList();public static HandlerList getHandlerList() {return HANDLER_LIST;}@Override public @NotNull HandlerList getHandlers() {return HANDLER_LIST;}
 
     protected boolean cancelled = false;
     @Setter @Getter protected int range;
@@ -117,7 +116,7 @@ public abstract class ItemAbility extends Event implements Cancellable, Listener
 
     @Override
     public boolean isVisible() {
-        return visible;
+        return this.visible;
     }
 
     @Override

@@ -24,29 +24,29 @@ public class PlayerBukkitCommand implements CommandExecutor, TabCompleter {
                 if (strings[1].equals("Mage")) {
                     PersistentDataContainer mage_holder = player.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
                     PersistentDataContainer ability_holder = player.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
-                    ability_holder.set(new Mage.Shoot().getKey(),PersistentDataType.TAG_CONTAINER , new Mage.Shoot().toPDC(ability_holder.getAdapterContext()));
-                    mage_holder.set(new Mage().getKey(), PersistentDataType.TAG_CONTAINER, ability_holder);
+                    ability_holder.set(Mage.Shoot.key,PersistentDataType.BOOLEAN , true);
+                    mage_holder.set(Mage.key, PersistentDataType.TAG_CONTAINER, ability_holder);
                     player.getPersistentDataContainer().set(JKey.Ability, PersistentDataType.TAG_CONTAINER,
                             mage_holder
                     );
                     player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
-                    player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(mage.getKey()));
-                    player.sendMessage("you has Shoot ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(mage.getKey(), PersistentDataType.TAG_CONTAINER).has(new Mage.Shoot().getKey()));
+                    player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
+                    player.sendMessage("you has Shoot ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key));
                 }
             }
             case "remove" -> {
                 if (strings[1].equals("Mage")) {
                     PersistentDataContainer pdc = player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER);
-                    pdc.remove(mage.getKey());
+                    pdc.remove(Mage.key);
                     player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
-                    player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(mage.getKey()));
+                    player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
                 }
             }
             case "repair" -> {
                 player.getPersistentDataContainer().remove(JKey.Ability);
                 player.getPersistentDataContainer().remove(JKey.Stats);
                 player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
-                player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(mage.getKey()));
+                player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(mage.key));
             }
         }
         return true;

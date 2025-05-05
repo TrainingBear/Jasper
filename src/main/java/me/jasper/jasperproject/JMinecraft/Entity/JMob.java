@@ -165,12 +165,13 @@ public class JMob implements Listener {
                                     (float) arrow.getDamage());
                         } else {
                             PersistentDataContainer pdc = projectile.getPersistentDataContainer();
+                            int damage = pdc.get(JKey.DAMAGE, PersistentDataType.INTEGER);
+                            result = DamageResult.patch(damage, entity, DamageType.MAGIC);
                         }
                     }
                 }
             }
             if(result==null) {
-                Bukkit.broadcastMessage("Invoked null");
                 if(e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)){
                     result = DamageResult.patch((float) e.getDamage(), entity, DamageType.PROJECTILE);
                 } else if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {

@@ -115,8 +115,8 @@ public class JPlayer implements Listener {
                 !bukkitPlayer.isFrozen();
         PersistentDataContainer pdc = bukkitPlayer.getPersistentDataContainer();
         if (pdc.has(JKey.Ability)
-                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(new Mage().getKey())
-                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(new Mage().getKey(), PersistentDataType.TAG_CONTAINER).has(new Mage.Shoot().getKey())){
+                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key)
+                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key)){
             Level nmsWorld = ((CraftWorld) bukkitPlayer.getWorld()).getHandle();
             Mage.Shoot shoot = new Mage.Shoot(bukkitPlayer,
                     new WitherSkull(EntityType.WITHER_SKULL, nmsWorld),
@@ -124,6 +124,8 @@ public class JPlayer implements Listener {
             );
             shoot.setCritical(critical);
             Bukkit.getPluginManager().callEvent(shoot);
+            e.getProjectile().remove();
+            return;
         }
         DamageResult result = DamageResult.builder(player_stats)
                 .type(DamageType.PROJECTILE)

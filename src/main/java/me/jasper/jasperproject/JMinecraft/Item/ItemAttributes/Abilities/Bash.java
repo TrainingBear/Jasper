@@ -78,9 +78,9 @@ public class Bash extends ItemAbility {
     @EventHandler
     public void action(Bash e) {
         if(e.isCancelled()) return;
+        if(hasCooldown(e)) return;
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
-        if(hasCooldown(e)) return;
         HoldEvent holdEvent = new HoldEvent(p, (elapsed, on_release) -> {
             powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
             float power = powers.get(uuid);

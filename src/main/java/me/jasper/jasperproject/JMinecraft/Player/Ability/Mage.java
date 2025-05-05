@@ -6,9 +6,11 @@ import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
 import me.jasper.jasperproject.JMinecraft.Player.Stats;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
+import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.EventHandler;
@@ -20,10 +22,12 @@ import org.bukkit.util.Vector;
 
 import java.util.Map;
 
-public class Mage extends PlayerAbility implements Listener {
+public class Mage extends PlayerAbility {
+    public final static NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), "Mage");
     @Getter
     public static class Shoot extends Mage implements Listener {
-        private org.bukkit.entity.Projectile projectile;
+        public final static NamespacedKey key = new NamespacedKey(JasperProject.getPlugin(), "Mage-Shoot");
+        @Setter private org.bukkit.entity.Projectile projectile;
         private Map<Stats, Float> player_stats;
         @Setter private boolean critical;
 
@@ -42,9 +46,8 @@ public class Mage extends PlayerAbility implements Listener {
         public void onShoot(Shoot e){
             org.bukkit.entity.Projectile projectile = e.getProjectile();
             if(!(projectile.getShooter() instanceof org.bukkit.entity.Player shooter)) return;
-            Vector velocity = projectile.getVelocity();
-            velocity.subtract(shooter.getEyeLocation().getDirection()).multiply((player_stats.getOrDefault(Stats.ATTACK_SPEED, 0f)/100));
-            DamageResult result = DamageResult.builder(player_stats)
+            Vector velocity = shooter.getEyeLocation().getDirection().multiply(1.5f+(e.getPlayer_stats().getOrDefault(Stats.ATTACK_SPEED, 0.1f)/100));
+            DamageResult result = DamageResult.builder(e.getPlayer_stats())
                     .type(DamageType.MAGIC)
                     .critical(e.isCritical())
                     .build();
@@ -69,5 +72,4 @@ public class Mage extends PlayerAbility implements Listener {
                 }
             }
         }
-
 }
