@@ -16,6 +16,7 @@ import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
+import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
@@ -98,6 +99,7 @@ public final class JasperProject extends JavaPlugin {
 //        PM.registerEvents(new AutoSaveListener(), this);
         PM.registerEvents(new JMob.DamageEvent(), this);
         PM.registerEvents(new HoldEvent(), this);
+        PM.registerEvents(new Charge(),this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang

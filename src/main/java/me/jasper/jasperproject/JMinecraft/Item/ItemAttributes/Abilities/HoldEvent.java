@@ -12,14 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class HoldEvent extends Event implements Listener, Cancellable {
-    private static final HandlerList HANDLER_LIST = new HandlerList();
-    public HoldEvent() { }
-    public static HandlerList getHandlerList() {
-        return HANDLER_LIST;
-    }
-    @Override public @NotNull HandlerList getHandlers() {
-        return HANDLER_LIST;
-    }
+    private static final HandlerList HANDLER_LIST = new HandlerList(); public HoldEvent() { } public static HandlerList getHandlerList() {return HANDLER_LIST;}@Override public @NotNull HandlerList getHandlers() {return HANDLER_LIST;}
     @Getter private static final Map<UUID, Long> lastClick = new HashMap<>();
     @Getter private static final Map<UUID, BukkitRunnable> task = new HashMap<>();
     @Getter private UUID player;
@@ -37,24 +30,19 @@ public class HoldEvent extends Event implements Listener, Cancellable {
     public void onHold(HoldEvent e){
         if(e.isCancelled()) return;
         UUID uuid = e.getPlayer();
-        lastClick.putIfAbsent(uuid, System.currentTimeMillis());
-        long last = lastClick.get(uuid);
+        long last = lastClick.getOrDefault(uuid, System.currentTimeMillis());
         long current = System.currentTimeMillis();
         long elapsed = (current - last);
         if(elapsed <= 100) return;
-        BukkitRunnable bukkitRunnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-            }
-        };
-        task.putIfAbsent(uuid, bukkitRunnable);
-        bukkitRunnable.runTask(JasperProject.getPlugin());
-        task.get(uuid).cancel();
+        lastClick.put(uuid, current);
+        BukkitRunnable bukkitRunnable = task.get(uuid);
+        if(bukkitRunnable!=null) bukkitRunnable.cancel();
         BukkitRunnable task_ = new BukkitRunnable() {
             @Override
             public void run() {
                 e.getOnRelease().run();
                 lastClick.remove(uuid);
+                this.cancel();
             }
         };
         task.put(uuid, task_);

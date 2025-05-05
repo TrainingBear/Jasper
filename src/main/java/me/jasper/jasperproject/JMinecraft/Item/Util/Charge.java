@@ -3,7 +3,9 @@ package me.jasper.jasperproject.JMinecraft.Item.Util;
 import lombok.Getter;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.entity.Player;
+import org.bukkit.event.*;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,40 +13,41 @@ import java.util.UUID;
 
 /**
  * Util that useful for holding mechanic
- * <br>
- * {@link #charging(Player player,byte maxTimeInSec,ChargAction action)} method to use
- * <br>
- * <b>Use #getInstance() first when using #charging</b>
  */
-public class Charge {
-    private static Charge instance;
+public class Charge extends Event implements Listener, Cancellable {
+    private static final HandlerList HANDLER_LIST = new HandlerList(); public Charge() { }
 
-    public static Charge getInstance() {
-        if (instance == null) {
-            instance = new Charge();
-        }
-        return instance;
-    }
-
+    public static HandlerList getHandlerList() {return HANDLER_LIST;}@Override public @NotNull HandlerList getHandlers() {return HANDLER_LIST;}
+    private boolean cancelled;
     @Getter private static Map<UUID, chargeLogic> charge = new HashMap<>();
 
     /** Use this method when something iterate useful for logic that uses hold mechanic
      * <hr>
      *  since Bukkit API/listener doesn't provide to check player is currently holding or not.
      *  Instead, when player hold it trigger in a frequency
-     * @param player Player who holding
+     * @param p Player who holding
      * @param maxTimeInSec Max duration of player allow to hold <b>Disclaimer: when the hold duration exceed
      *                     the maxTime, will immediately run the action, still charging when it still triggers/calls</b>
      * @param action what actions within holding
      */
-    public void charging(Player player,byte maxTimeInSec,ChargAction action) {
-        chargeLogic chargeLogic = charge.get(player.getUniqueId());
-        if (chargeLogic == null) {
-            charge.put(player.getUniqueId(), new chargeLogic(System.currentTimeMillis(), maxTimeInSec,(byte) 1, action));
-            charge.get(player.getUniqueId()).startTask(player);
-        }
-        else chargeLogic.addClick();
+    public Charge(Player p,int maxTimeInSec, ChargAction action){
+        charge.putIfAbsent(p.getUniqueId(), new Charge.chargeLogic((byte) maxTimeInSec, action));
+    }
+    @EventHandler
+    public void run(){
 
+    }
+
+
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean b) {
+        cancelled = b;
     }
 
     public interface ChargAction {
@@ -53,7 +56,7 @@ public class Charge {
          * @param player Player that trigger
          * @param power The duration in second of the hold
          */
-        void doAction(Player player, float power);
+        boolean doAction(Player player, float power);
 
         /** Action when charging,
          * <hr>
@@ -61,61 +64,39 @@ public class Charge {
          * @param p The player who holding
          * @param power The duration in second current holding
          */
-        default void whileCharg(Player p,float power){}
+        default void whileHold(Player p, float power){}
     }
 
     private static class chargeLogic {
-        private final long start;
+        private final long start = System.currentTimeMillis();
         private final byte maxTime;
-        private byte click;
         private final ChargAction action;
-        private final byte trigger;
 
-        chargeLogic(long timeStart,byte maxTime ,byte trigger, ChargAction action) {
+        chargeLogic(byte maxTime, ChargAction action) {
             this.maxTime = maxTime;
-            this.start = timeStart;
-            this.trigger = trigger;
             this.action = action;
-            this.click = 0;
         }
 
         public void startTask(Player player) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if(!player.isOnline()){
-                        Charge.getCharge().remove(player.getUniqueId());
-                        this.cancel();
-                    }
-                    if (click < trigger) {
-                        chargeLogic mechanic = Charge.getCharge().remove(player.getUniqueId());
-                        if(mechanic != null) mechanic.doTheAction(player,countToMS());
-                        this.cancel();
-                    }
-                    else {
-                        click = 0;
-                        if(countToMS() >= maxTime) {
-                            chargeLogic mechanic = Charge.getCharge().remove(player.getUniqueId());
-                            if(mechanic != null) mechanic.doTheAction(player,countToMS());
-                            this.cancel();
-                        }
-                        if(action != null) action.whileCharg(player,countToMS());
-                    }
 
                 }
-            }.runTaskTimer(JasperProject.getPlugin(), 6, 6);
+            }.runTaskLater(JasperProject.getPlugin(), 12);
         }
 
         public float countToMS() {
             return ((System.currentTimeMillis() - start) / 1000f);
         }
 
-        public void addClick() {
-            this.click += 1;
-        }
         public void doTheAction(Player p , float count){
             if(this.action != null) this.action.doAction(p,count);
         }
+
+    }
+    @EventHandler
+    public void Charge(Charge e){
 
     }
 }

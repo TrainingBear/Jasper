@@ -78,7 +78,17 @@ public class Bash extends ItemAbility {
     @EventHandler
     public void action(Bash e) {
         if(e.isCancelled()) return;
-        Player p = e.getPlayer();
+        Bukkit.getPluginManager().callEvent(new Charge(e.getPlayer(), e.getRange(), new Charge.ChargAction() {
+            @Override
+            public boolean doAction(Player player, float power) {
+                return false;
+            }
+            @Override
+            public void whileHold(Player p, float power){
+
+            }
+        }));
+        /*Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
         if(hasCooldown(e)) return;
         HoldEvent holdEvent = new HoldEvent(p,
@@ -102,6 +112,7 @@ public class Bash extends ItemAbility {
             powers.put(uuid, 0f);
         });
         Bukkit.getPluginManager().callEvent(holdEvent);
+         */
     }
 
     @Override
