@@ -1,5 +1,6 @@
 package me.jasper.jasperproject.JMinecraft.Player;
 
+import me.jasper.jasperproject.JMinecraft.Player.Ability.Assassin;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.Util.JKey;
 import org.bukkit.command.Command;
@@ -33,6 +34,18 @@ public class PlayerBukkitCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
                     player.sendMessage("you has Shoot ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key));
                 }
+                if (strings[1].equals("Assassin")) {
+                    PersistentDataContainer mage_holder = player.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
+                    PersistentDataContainer ability_holder = player.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
+                    ability_holder.set(Assassin.Stab.key,PersistentDataType.BOOLEAN , true);
+                    mage_holder.set(Assassin.key, PersistentDataType.TAG_CONTAINER, ability_holder);
+                    player.getPersistentDataContainer().set(JKey.Ability, PersistentDataType.TAG_CONTAINER,
+                            mage_holder
+                    );
+                    player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
+                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
+                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key));
+                }
             }
             case "remove" -> {
                 if (strings[1].equals("Mage")) {
@@ -40,6 +53,12 @@ public class PlayerBukkitCommand implements CommandExecutor, TabCompleter {
                     pdc.remove(Mage.key);
                     player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
                     player.sendMessage("you has Mage ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
+                }
+                if (strings[1].equals("Assassin")) {
+                    PersistentDataContainer pdc = player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER);
+                    pdc.remove(Assassin.key);
+                    player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
+                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
                 }
             }
             case "repair" -> {
@@ -55,7 +74,7 @@ public class PlayerBukkitCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(strings.length==2){
-            return List.of("Mage");
+            return List.of("Mage", "Assassin");
         }
         return List.of("add", "remove", "repair");
     }

@@ -8,14 +8,21 @@ import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -30,12 +37,12 @@ public class Burst_Arrow extends ItemAbility {
     }
     public Burst_Arrow(){}
 
-    public Burst_Arrow(float cooldown,int count){
+    public Burst_Arrow(float cooldown, int count){
         this.setCooldown(cooldown);
         this.setRange(count);
 
     }
-    public Burst_Arrow(int count, float cooldown, Player p, Arrow ar,float force){
+    public Burst_Arrow(int count, float cooldown, Player p, @Nullable Arrow ar,float force){
         this.setCooldown(cooldown);
         this.player = (p);
         this.setRange(count);
@@ -44,52 +51,81 @@ public class Burst_Arrow extends ItemAbility {
     }
     @EventHandler
     public void BurstListener(Burst_Arrow e){
-        applyCooldown(e,false);
-        if(e.isCancelled()) {
-            e.getPlayer().sendActionBar(Util.deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
+        if(e.isCancelled()) return;
+        Player player = e.getPlayer();
+        if(hasCooldown(e)) {
+            player.sendActionBar(Util.deserialize("<red><b>COOLDOWN!</b> "+getCdLeft(e,0)+" seconds!"));
             return;
         }
 
         byte time = (byte) (30/e.getRange()); //1.5 second duration
         new BukkitRunnable() {
             private byte total=0;
-            final Player pleryer = e.getPlayer();
             @Override public void run() {
-                if(!this.pleryer.isOnline()
-                        ||!Util.hasAbility(Bukkit.getPlayer(this.pleryer.getUniqueId()).getInventory().getItemInMainHand(), e.getKey())
+                if(!player.isOnline()
+                        ||!Util.hasAbility(player.getInventory().getItemInMainHand(), e.getKey())
                         ||this.total >= e.getRange()-1) cancel();
-                Arrow panah = this.pleryer.launchProjectile(Arrow.class);
-                this.pleryer.getWorld().playSound(this.pleryer.getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
-                panah.getPersistentDataContainer().set(JKey.removeWhenHit, PersistentDataType.BOOLEAN, true);
-                panah.setVelocity(this.pleryer.getLocation().getDirection().multiply(e.getForce()));
-                panah.setCritical(true);
-                panah.setFireTicks(e.getArrow().getFireTicks());
-                panah.setShooter(this.pleryer);
-                panah.setTicksLived(200);
-                panah.setPickupStatus(AbstractArrow.PickupStatus.CREATIVE_ONLY);
-//                panah.setDamage();
+
+                ItemStack arrow = getArrow(player);
+                if(arrow==null) {
+                    player.sendMessage("out of arrow!");
+                    this.cancel();
+                    return;
+                }
+                EntityShootBowEvent shootEvent = new EntityShootBowEvent(player, player.getActiveItem(), arrow, e.getArrow(), e.getForce());
+                Bukkit.getPluginManager().callEvent(shootEvent);
+//                Arrow panah = this.pleryer.launchProjectile(Arrow.class);
+//                this.pleryer.getWorld().playSound(this.pleryer.getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
+//                panah.getPersistentDataContainer().set(JKey.removeWhenHit, PersistentDataType.BOOLEAN, true);
+//                panah.setVelocity(this.pleryer.getLocation().getDirection().multiply(e.getForce()));
+//                panah.setCritical(true);
+//                panah.setFireTicks(e.getArrow().getFireTicks());
+//                panah.setShooter(this.pleryer);
+//                panah.setTicksLived(200);
+//                panah.setPickupStatus(AbstractArrow.PickupStatus.CREATIVE_ONLY);
                 this.total++;
             }
         }.runTaskTimer(JasperProject.getPlugin(),time,time);
-
+//        applyCooldown(e);
     }
 
     @EventHandler
-    public void onShoot(EntityShootBowEvent e){
-        if(!Util.hasAbility(e.getBow(), this.getKey())) return;
-        if(!(e.getProjectile() instanceof Arrow ar)) return;
-        if(!(e.getEntity() instanceof Player pl)) return;
-        if(!ar.isCritical()) return;
+    public void onShoot(PlayerInteractEvent e){
+        ItemStack activeItem = e.getPlayer().getActiveItem();
+        if(!Util.hasAbility(activeItem, this.getKey())) return;
 
-
-        PersistentDataContainer itemData = Util.getAbilityComp(e.getBow(), this.getKey());
+        PersistentDataContainer itemData = Util.getAbilityComp(activeItem, this.getKey());
         Bukkit.getPluginManager().callEvent(
             new Burst_Arrow(
                     itemData.get(JKey.key_range, PersistentDataType.INTEGER),
                     itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),
-                    pl, ar, e.getForce()
+                    e.getPlayer(), null, 3f
             )
         );
+    }
+
+    private @Nullable ItemStack getArrow(@NotNull Player player){
+        PlayerInventory inventory = player.getInventory();
+        ItemStack offHand = inventory.getItemInOffHand();
+        if(isArrow(offHand)) return offHand;
+        ItemStack mainHand = inventory.getItemInMainHand();
+        if(isArrow(mainHand)) return mainHand;
+
+        for (@Nullable ItemStack item : inventory.getContents()) {
+            if(item==null) continue;
+            Bukkit.broadcastMessage(item.getType().name());
+            if(isArrow(item)){
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private boolean isArrow(ItemStack itemStack){
+        return
+        itemStack.getType().equals(Material.ARROW)||
+        itemStack.getType().equals(Material.SPECTRAL_ARROW) ||
+        itemStack.getType().equals(Material.TIPPED_ARROW);
     }
 
     @Override
