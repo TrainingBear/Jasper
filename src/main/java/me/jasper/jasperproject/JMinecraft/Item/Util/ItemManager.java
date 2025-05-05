@@ -7,8 +7,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
+import me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium.*;
 import me.jasper.jasperproject.JMinecraft.Item.Product.Weapons.*;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchant;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchants.Sharpness;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
@@ -25,9 +25,7 @@ import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public final class ItemManager {
@@ -39,15 +37,17 @@ public final class ItemManager {
     @Getter private static final HashSet<Enchant> enchants = new HashSet<>();
 
     private static void registerItem(Factory... factory){
-        plugin.getLogger().severe("Registering Items...");
+        plugin.getLogger().info("Registering Items...");
+        List<String> itemList = new ArrayList<>();
         for(Factory fac : factory){
             JItem item = fac.finish();
             items.put(item.getID().toUpperCase(), item);
-            plugin.getLogger().severe(item.getID() +" has been registered");
+            itemList.add(item.getID());
         }
+        plugin.getLogger().info("Registered: "+String.join(", ",itemList));
     }
     private static void registerAbility(ItemAbility... ability){
-        plugin.getLogger().severe("Registering Abilities...");
+        plugin.getLogger().info("Registering Abilities...");
         for(ItemAbility abilti : ability){
             pluginManager.registerEvents(abilti, plugin);
             abilities.add(abilti);
@@ -89,7 +89,13 @@ public final class ItemManager {
                 new Assassin_Dagger(),
                 new Stack_Steels(),
                 new Heavy_Axe(),
-                new Test_Bow()
+                new Test_Bow(),
+
+                new Titanium_Shovel(),
+                new Titanium_Helmet(),
+                new Titanium_Chestplate(),
+                new Titanium_Leggings(),
+                new Titanium_Boots()
         );
 
         registerEnchant(new Sharpness());

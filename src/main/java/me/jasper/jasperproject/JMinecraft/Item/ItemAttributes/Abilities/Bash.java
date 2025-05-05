@@ -5,10 +5,8 @@ import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
-import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
-import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -22,17 +20,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class Bash extends ItemAbility {
     private static Bash instance;
@@ -56,7 +50,7 @@ public class Bash extends ItemAbility {
     public Bash(int range, float cooldown, Player p) {
         this.setRange(range);
         this.setCooldown(cooldown);
-        this.player = (p);
+        this.player= p;
     }
 
     @EventHandler
@@ -78,10 +72,25 @@ public class Bash extends ItemAbility {
     @EventHandler
     public void action(Bash e) {
         if(e.isCancelled()) return;
-        if(hasCooldown(e)) return;
+        Bukkit.getPluginManager().callEvent(new Charge(e.getPlayer(), e.getRange(), new Charge.ChargAction() {
+            @Override
+            public void doAction(Player player, float power) {
+                player.sendMessage("CHARGED "+ power);
+                bashAnimation(player,Math.min(5f,power), e);
+            }
+            @Override
+            public void whileHold(Player p, float power){
+                p.sendActionBar(Util.deserialize("POWER "+ power));
+                Util.playPSound(p,Sound.ENTITY_FISHING_BOBBER_RETRIEVE,1,power * .4f);
+            }
+        }));
+        /* codenya sikentod
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
-        HoldEvent holdEvent = new HoldEvent(p, (elapsed, on_release) -> {
+        if(hasCooldown(e)) return;
+        HoldEvent holdEvent = new HoldEvent(p,
+                ///     ON TICKING
+                (elapsed, on_release) -> {
             powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
             float power = powers.get(uuid);
             if(power > e.getRange()){
@@ -89,27 +98,28 @@ public class Bash extends ItemAbility {
                 on_release.runTask(JasperProject.getPlugin());
                 return true;
             }
-            p.sendMessage("Charged "+power);
             p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
             return false;
         },
+                ///     ON RELEASE
                 ()->{
             float power = powers.get(uuid);
-            e.getPlayer().sendMessage("You have been released the power of "+power);
             bashAnimation(p, power, e);
             applyCooldown(e,  true);
             powers.put(uuid, 0f);
         });
         Bukkit.getPluginManager().callEvent(holdEvent);
+         */
     }
 
     @Override
     protected List<Component> createLore() {
         return List.of(
                 Util.deserialize("<!i><gold>Ability: <b><red>Bash <yellow>(HOLD SNEAK RIGHT CLICK)")
-                ,Util.deserialize("<!i><gray>Release a smash on hit and deal")
-                ,Util.deserialize("<!i><gray>10% damage to nearby entities<color:#95945B>HOLD</color> and")
-                ,Util.deserialize("<!i><gray>SHIFT + RIGHT CLICK to store axe power!")
+                ,Util.deserialize("<!i><gray>Smash the ground and creating splash area")
+                ,Util.deserialize("<!i><gray>in circle area that damage and throw")
+                ,Util.deserialize("<!i><gray>living entity inside the area based on")
+                ,Util.deserialize("<!i><gray>how long you are <color:#95945B>HOLD</color>'in")
         );
     }
 
@@ -119,6 +129,7 @@ public class Bash extends ItemAbility {
                 1.5f, 2, 3,
                 4, 4.5f, 4.8f
         };
+
         final float range = p.isSwimming() ? layout[(int) Math.min(5f, power)] * .5f : layout[(int) Math.min(5f, power)];
         final BlockData blok = hitLoc.clone().add(0, -1, 0).getBlock().getBlockData();
         JPlayer jPlayer = PlayerManager.getJPlayer(p);
@@ -128,10 +139,10 @@ public class Bash extends ItemAbility {
                 ply.setVelocity(ply.getVelocity().add(new Vector(0, power * .075f, 0)));
                 continue;
             }
-            jPlayer.attack(entity, p.getInventory().getItemInMainHand(), false, power/max_power);
+            jPlayer.attack(entity, p.getInventory().getItemInMainHand(), false, range/max_power);
             final double yDiff = entity.getY() - p.getY();
             if (yDiff <= 2d && yDiff >= -1d) {
-                entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * power + 0.25f, 0)));
+                entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * range + 0.25f, 0)));
 
                 new BukkitRunnable(){
                     @Override public void run() {
