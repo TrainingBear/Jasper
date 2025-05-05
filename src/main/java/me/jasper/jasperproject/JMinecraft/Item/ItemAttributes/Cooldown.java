@@ -49,6 +49,9 @@ public interface Cooldown {
                 ? Util.round(e.getCooldown() - ((System.currentTimeMillis() - cooldownMap.get(e.getPlayer().getUniqueId()) ) / 1000.0f),1)
                 : defaultIfNull;
     }
+    default  <T extends Cooldown> void applyCooldown(T e) {
+        applyCooldown(e, e.isVisible());
+    }
     default  <T extends Cooldown> void applyCooldown(T e,boolean showCD) {
         float cooldown = e.getCooldown();
         if (cooldown <= 0) return;

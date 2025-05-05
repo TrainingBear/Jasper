@@ -202,6 +202,26 @@ public enum Stats {
         return player_stats;
     }
 
+    public static float getStats(Player player, Stats stat){
+        return getStats(player, null, null, stat);
+    }
+    public static float getStats(Player player, @Nullable ItemStack mainHand, Stats stat){
+        return getStats(player, mainHand, null, stat);
+    }
+    public static float getStats(Player player, @Nullable ItemStack mainHand, @Nullable ItemStack offHand, Stats stat){
+        float p_stat = player!=null ? player.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                .get(stat.getKey(), PersistentDataType.FLOAT) : 0f;
+        float main = mainHand !=null && mainHand.hasItemMeta() && mainHand.getPersistentDataContainer().has(JKey.Stats) &&
+                mainHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER).has(stat.getKey()) ?
+                mainHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                        .get(stat.getKey(), PersistentDataType.FLOAT) : 0;
+        float off = offHand !=null && offHand.hasItemMeta() && offHand.getPersistentDataContainer().has(JKey.Stats) &&
+                offHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER).has(stat.getKey()) ?
+                offHand.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER)
+                        .get(stat.getKey(), PersistentDataType.FLOAT) : 0;
+        return p_stat+main+off+stat.getBaseValue();
+    }
+
     public static boolean roll(float critical_chance){
         Random random = new Random();
         return random.nextInt((int) critical_chance) <= critical_chance;
