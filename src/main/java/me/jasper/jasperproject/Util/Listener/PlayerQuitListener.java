@@ -1,9 +1,6 @@
 package me.jasper.jasperproject.Util.Listener;
 
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Animator;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Bash;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Heal;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Warper;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
@@ -22,7 +19,10 @@ public class PlayerQuitListener implements Listener {
         Animator.getRegions().remove(uuid);
         Animator.getSecondPost().remove(uuid);
         Warper.getTarget().remove(uuid);
+        Bash.getPowers().remove(uuid);
 
-        Charge.getCharge().remove(uuid);
+        Charge.removeMap(uuid);
+        HoldEvent.getTask().remove(uuid);
+        HoldEvent.getLastClick().remove(uuid);
     }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.val;
 import me.jasper.jasperproject.Bazaar.Component.Product;
 import me.jasper.jasperproject.JasperProject;
+import org.bukkit.Bukkit;
 import org.bukkit.util.io.BukkitObjectInputStream;
 
 import javax.annotation.Nullable;
@@ -35,6 +36,10 @@ public abstract class BazaarDatabase {
                             "  UNIQUE KEY name (name)" +
                             ")");
         } catch (SQLException e) {
+            if(e.getMessage().startsWith("Access denied")){
+                Bukkit.getLogger().warning(e.getMessage());
+                return false;
+            }
             e.printStackTrace();
             return false;
         }

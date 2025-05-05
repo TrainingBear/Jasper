@@ -4,11 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
 import lombok.Getter;
-import me.jasper.jasperproject.Animation.PaperAnimationCommand;
 import me.jasper.jasperproject.Bazaar.Bazaar;
-import me.jasper.jasperproject.Bazaar.BazaarCommand;
 import me.jasper.jasperproject.Bazaar.util.Listener;
 import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
@@ -17,6 +14,7 @@ import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
+import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerBukkitCommand;
 import me.jasper.jasperproject.Util.Commands.CommandManager;
@@ -97,9 +95,10 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new Listener(), this);
         PM.registerEvents(new JPlayer(), this);
         PM.registerEvents(new JMob.MobListener(), this);
-        PM.registerEvents(new AutoSaveListener(), this);
+//        PM.registerEvents(new AutoSaveListener(), this);
         PM.registerEvents(new JMob.DamageEvent(), this);
         PM.registerEvents(new HoldEvent(), this);
+        PM.registerEvents(new Charge(),this);
         PM.registerEvents(new Mage(), this);
         PM.registerEvents(new Mage.Shoot(), this);
 
