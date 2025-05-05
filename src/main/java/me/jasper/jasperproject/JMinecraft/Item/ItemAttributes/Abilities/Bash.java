@@ -74,42 +74,16 @@ public class Bash extends ItemAbility {
         if(e.isCancelled()) return;
         Bukkit.getPluginManager().callEvent(new Charge(e.getPlayer(), e.getRange(), new Charge.ChargAction() {
             @Override
-            public void doAction(Player player, float power) {
+            public void onRelease(Player player, float power) {
                 player.sendMessage("CHARGED "+ power);
                 bashAnimation(player,Math.min(5f,power), e);
             }
             @Override
-            public void whileHold(Player p, float power){
+            public void onTicking(Player p, float power){
                 p.sendActionBar(Util.deserialize("POWER "+ power));
                 Util.playPSound(p,Sound.ENTITY_FISHING_BOBBER_RETRIEVE,1,power * .4f);
             }
         }));
-        /* codenya sikentod
-        Player p = e.getPlayer();
-        UUID uuid = p.getUniqueId();
-        if(hasCooldown(e)) return;
-        HoldEvent holdEvent = new HoldEvent(p,
-                ///     ON TICKING
-                (elapsed, on_release) -> {
-            powers.put(uuid, powers.getOrDefault(uuid, 0f) + (float) elapsed/1000f);
-            float power = powers.get(uuid);
-            if(power > e.getRange()){
-                powers.put(uuid, (float) e.getRange());
-                on_release.runTask(JasperProject.getPlugin());
-                return true;
-            }
-            p.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.PLAYERS, 1f, Math.min(2f, power * .4f));
-            return false;
-        },
-                ///     ON RELEASE
-                ()->{
-            float power = powers.get(uuid);
-            bashAnimation(p, power, e);
-            applyCooldown(e,  true);
-            powers.put(uuid, 0f);
-        });
-        Bukkit.getPluginManager().callEvent(holdEvent);
-         */
     }
 
     @Override

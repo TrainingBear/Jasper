@@ -29,6 +29,15 @@ public class Charge extends JasperEvent {
     @Getter private static Map<UUID, BukkitRunnable> tasks = new HashMap<>();
     @Getter private UUID player;
 
+    public static void clear(Player player){
+        clear(player.getUniqueId());
+    }
+    public static void clear(UUID uuid){
+        charge.remove(uuid);
+        lastClick.remove(uuid);
+        tasks.remove(uuid);
+    }
+
     /** Use this method when something iterate useful for logic that uses hold mechanic
      * <hr>
      *  since Bukkit API/listener doesn't provide to check player is currently holding or not.

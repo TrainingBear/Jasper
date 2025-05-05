@@ -21,7 +21,7 @@ public class PlayerQuitListener implements Listener {
         Warper.getTarget().remove(uuid);
         Bash.getPowers().remove(uuid);
 
-        Charge.removeMap(uuid);
+        Charge.clear(uuid);
         HoldEvent.getTask().remove(uuid);
         HoldEvent.getLastClick().remove(uuid);
     }
