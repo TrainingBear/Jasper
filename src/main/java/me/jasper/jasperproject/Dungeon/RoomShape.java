@@ -1,4 +1,7 @@
 package me.jasper.jasperproject.Dungeon;
+
+import java.awt.*;
+
 public enum RoomShape {
     L_SHAPE (new int[][][] {
             // L

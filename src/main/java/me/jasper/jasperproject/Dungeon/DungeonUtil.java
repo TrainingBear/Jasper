@@ -1,7 +1,5 @@
 package me.jasper.jasperproject.Dungeon;
 
-import com.fastasyncworldedit.bukkit.FaweBukkit;
-import com.fastasyncworldedit.core.Fawe;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
@@ -17,6 +15,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
@@ -29,52 +28,51 @@ public abstract class DungeonUtil {
 
     /**
      * BFS function to find the shortest path
+     * @return true if found
      * */
-    boolean findPath(Point start, Point fairy, Point end, Room[][] grid, Room pathSchem,Room pathSchem2, Map<Point, Point> parentMap, Stack<Point> history, boolean debug) {
-            int rows = grid.length;
-            int cols = grid[0].length;
-            boolean[][] visited = new boolean[rows][cols];
-            int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-            Queue<Point> queue = new LinkedList<>();
+    boolean findPath(DungeonHandler handler) {
+        Room[][] grid = handler.getGrid();
+        Point start = handler.getEntrance();
+        Point fairy = handler.getFairy();
+        Point end = handler.getBloodRoom();
+        Map<Point, Point> roomMap = handler.getRoomMap();
 
-            queue.add(start);
-            visited[start.x][start.y] = true;
-            boolean foundFairy = false;
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        Queue<Point> queue = new LinkedList<>();
 
-            while (!queue.isEmpty()) {
-                Point current = queue.poll();
-
-                // Check if fairy is reached
-                if (current.equals(fairy) && !foundFairy) {
-                    for (boolean[] visit : visited) Arrays.fill(visit,false);
-                    visited = recoverVisited(parentMap, fairy, start, visited);
-                    queue.clear();
-                    current = fairy;
-                    foundFairy = true;
-                }
-                // if fairy found & end found
-                if (current.equals(end) && foundFairy) {
-                    reconstructPath(parentMap, start, fairy, end, grid, pathSchem, pathSchem2, history);
-                    return true;
-                }
-
-                // Explore neighbors
-                for (int[] direction : directions) {
-                    int newX = current.x + direction[0];
-                    int newY = current.y + direction[1];
-                    Point neighbor = new Point(newX, newY);
-                    if (isValid(neighbor, rows, cols, visited, grid)) {
-                        queue.add(neighbor);
-                        visited[newX][newY] = true;
-                        parentMap.put(neighbor, current);
-                    }
+        queue.add(start);
+        visited[start.x][start.y] = true;
+        boolean foundFairy = false;
+        while (!queue.isEmpty()) {
+            Point current = queue.poll();
+            /// Check if fairy is reached
+            if (current.equals(fairy) && !foundFairy) {
+                for (boolean[] visit : visited) Arrays.fill(visit,false);
+                visited = recoverVisited(roomMap, end, start, visited);
+                queue.clear();
+                current = fairy;
+                foundFairy = true;
+            }
+            if (current.equals(end) && foundFairy) {
+                reconstructPath(handler);
+                return true;
+            }
+            // Explore neighbors
+            for (int[] direction : directions) {
+                int newX = current.x + direction[0];
+                int newY = current.y + direction[1];
+                Point neighbor = new Point(newX, newY);
+                if (isValid(neighbor, grid.length, grid[0].length, visited, grid)) {
+                    queue.add(neighbor);
+                    visited[newX][newY] = true;
+                    roomMap.put(neighbor, current);
                 }
             }
-            if(debug){
-                Bukkit.broadcastMessage("Target not found");
-            }
-            return false;
         }
+        if(handler.isDebug_mode()) Bukkit.broadcastMessage("Target not found");
+        return false;
+    }
     boolean[][] recoverVisited(Map<Point, Point> parrentMap, Point end, Point start, boolean[][] visited){
         Point step = end;
         visited[step.x][step.y] = true;
@@ -88,33 +86,41 @@ public abstract class DungeonUtil {
         return (p.x >= 0 && p.x < rows && p.y >= 0 && p.y < cols) &&
                 !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].ID == 3 || grid[p.x][p.y].ID == 2);
     }
-    private void reconstructPath(Map<Point, Point> parentMap, Point start,Point fairy, Point end, Room[][] grid, Room pathid, Room pathid2, Stack<Point> history) {
+    private void reconstructPath(DungeonHandler handler) {
+        Point end = handler.getBloodRoom();
+        Point start = handler.getEntrance();
+        Point fairy = handler.getFairy();
+        Room[][] grid = handler.getGrid();
+        Map<Point, Point> parentMap = handler.getRoomMap();
+
         Point step = end;
         grid[end.x][end.y].setRotation(wichDirection(end, parentMap.get(end)));
         Point key = end;
-        Room room = pathid;
+        Room room = CreatedRoom.path1;
         while (!step.equals(start)) {
             step = parentMap.get(key);
-
             if(step.equals(start)){
                 grid[step.x][step.y].setRotation(wichDirection(step, key));
-
             }
 
             if(!step.equals(start) && !step.equals(fairy)){
                 grid[step.x][step.y] = room;
-                grid[step.x][step.y].setLoc(new Point(step.x * 32, step.y * 32));
-                history.add(new Point(step.x, step.y));
+                grid[step.x][step.y].setLoc((Point) step.clone());
+                handler.getHistory().add((Point) step.clone());
             }
             key = step;
             if(key.equals(fairy)){
-                room = pathid2;
+                room = CreatedRoom.path2;
             }
         }
     }
 
-    void buildDoor(Map<Point, Point> parentMap, Point start, Point end, Room[][] grid) {
-        Point step = end;
+    void buildDoor(DungeonHandler handler) {
+        Map<Point, Point> parentMap = handler.getDoorMap();
+        Point start = handler.getEntrance();
+        Room[][] grid = handler.getGrid();
+
+        Point step = handler.getBloodRoom();
         Room d1, d2;
         Point pre_step, transition;
         int rotation;
@@ -137,9 +143,11 @@ public abstract class DungeonUtil {
             }
         }
     }
-    void buildEmtyDoor(Map<Point, Point> parentMapOri, Point end, Room[][] grid) {
+    void buildEmtyDoor(Point end, DungeonHandler handler) {
+        Room[][] grid = handler.getGrid();
+        Map<Point, Point> parentMapOri = handler.getRoomMap();
         Point step = end;
-        Room d1, d2;
+        Room room1, room2;
         Point pre_step, transition;
         int rotation;
         Map<Point, Point> parentMap = new HashMap<>(Map.copyOf(parentMapOri));
@@ -149,18 +157,13 @@ public abstract class DungeonUtil {
         }
         while (!parentMap.isEmpty()) {
             pre_step = step;
-            d1 = grid[pre_step.x][pre_step.y];
-
+            room1 = grid[pre_step.x][pre_step.y];
             step = parentMap.remove(step);
-            if(step == null){
-                return;
-            }
-            d2 = grid[step.x][step.y];
-
+            if(step == null) return;
+            room2 = grid[step.x][step.y];
             transition = new Point(-(pre_step.x - step.x)*16, -(pre_step.y - step.y)*16);
             rotation = transition.x==0? 0 : 90;
-
-            if(!Objects.equals(d1, d2)){
+            if(!Objects.equals(room1, room2)){
                 this.loadAndPasteSchematic("door",
                     BlockVector3.at((pre_step.x*32)+ transition.x,
                             70,(pre_step.y*32)+ transition.y),rotation, false);
@@ -185,81 +188,66 @@ public abstract class DungeonUtil {
      * Finding Random direction and define the shape,
      *  also fill the grid after path found.
      */
-    void random_dir(Rooms avaibleRooms, Generator G, Queue<Point> endpoint, Map<Point,Point> parrentMap, boolean ignoreLimit) {
+    void fill(DungeonHandler handler, boolean ignoreLimit) {
+        Stack<Point> history = handler.getHistory();
+        Room[][] grid = handler.getGrid();
+        Queue<Point> edge = handler.getEdge();
+        Map<Point, Point> roomMap = handler.getRoomMap();
+
         int[][] directions;
         int dir;
-        while(!G.history.isEmpty()){
-            Point current = getValidStartPos(G.grid,G.history);
+        while(!history.isEmpty()){
+            Point current = getValidStartPos(grid, history);
+            if(current==null) return;
+            directions = getDirection(current, grid);
+            do dir = handler.getRandom().nextInt(directions.length);
+            while (directions[dir]==null && (directions[0]!=null || directions[1]!=null || directions[2]!=null || directions[3]!=null));
 
-
-            directions = getDir(G.grid,current);
-            do{
-                dir = G.random.nextInt(directions.length);
-            }while (directions[dir]==null && (directions[0]!=null || directions[1]!=null || directions[2]!=null || directions[3]!=null));
-
-            if(directions[dir]==null){
-                break;
-            }
+            if(directions[dir]==null) return;
 
             int dx = current.x + directions[dir][0];
             int dy = current.y + directions[dir][1];
             Point neighbor = new Point(dx,dy);
-            if(isValid(G.grid,neighbor)){
-                boolean defined = defineRoom(avaibleRooms, G, dx, dy,null, false, ignoreLimit);
+            if(isValid(grid, neighbor)){
+                boolean defined = defineRoom(handler, neighbor, true, null);
                 if(!defined){
                     Bukkit.broadcastMessage(ChatColor.RED+"ran out of shape!");
                     break;
                 }
-
-                endpoint.add(new Point(dx,dy));
-                G.grid[current.x][current.y].addConection(current, neighbor);
-                G.grid[neighbor.x][neighbor.y].addConection(neighbor, current);
-                parrentMap.put(neighbor, current);
-            }if(!hasDir(neighbor.x, neighbor.y, G.grid)){
-                neighbor = getValidStartPos(G.grid, G.history);
-                if(neighbor!=null){
-                    G.history.add(neighbor);
-                }
+                edge.add(new Point(dx,dy));
+                grid[current.x][current.y].addConection(current, neighbor);
+                grid[dx][dy].addConection(neighbor, current);
+                roomMap.put(neighbor, current);
             }
-
-
         }
     }
-    private Point getValidStartPos(Room[][] grid, Stack<Point> historyori) {
+    private Point getValidStartPos(Room[][] grid, Stack<Point> history) {
         Point point;
-        int x,y;
-        Stack<Point> history = new Stack<>();
-        history = historyori;
         while (!history.isEmpty()){
             point = history.pop();
-            x = point.x;
-            y = point.y;
-            if(hasDir(x,y,grid)){
+            if(hasDir(point, grid)){
+                history.add(point);
                 return point;
             }
         }
         return null;
     }
-    private boolean hasDir(int i, int j, Room[][] grid){
+    private boolean hasDir(Point point, Room[][] grid){
+        int i = point.x, j = point.x;
         return  ((i+1 < grid.length) &&  grid[i+1][j] == null) ||
                 ((i-1 >= 0) &&  grid[i-1][j] == null) ||
                 ((j+1 < grid[i].length) &&  grid[i][j+1] == null) ||
                 ((j-1 >= 0) &&  grid[i][j-1] == null);
     }
-    private int[][] getDir(Room[][] grid,Point point){
+    private int[][] getDirection(Point point, Room[][] grid){
         int[][] directions = {{1,0},{-1,0},{0,1},{0,-1}};
         int i = point.x;
         int j = point.y;
-        boolean bawah,atas,kanan,kiri;
-        bawah = (i+1 < grid.length) &&  grid[i+1][j]==null;
-        atas = (i-1 >= 0) &&  grid[i-1][j]==null;
-        kanan = (j+1 < grid[i].length) &&  grid[i][j+1]==null;
-        kiri = (j-1 >= 0) &&  grid[i][j-1]==null;
         int[][] l = new int[4][];
-        if(bawah) { l[0] =directions[0]; }
-        if(atas) { l[1] = directions[1];}
-        if(kanan) { l[2] = directions[2];}
-        if(kiri) { l[3] = directions[3];}
+        if((i+1 < grid.length) &&  grid[i+1][j]==null) { l[0] =directions[0]; }
+        if((i-1 >= 0) &&  grid[i-1][j]==null) { l[1] = directions[1];}
+        if((j+1 < grid[i].length) &&  grid[i][j+1]==null) { l[2] = directions[2];}
+        if((j-1 >= 0) &&  grid[i][j-1]==null) { l[3] = directions[3];}
         return l;
     }
     private boolean isValid(Room[][] grid,Point n){
@@ -315,177 +303,78 @@ public abstract class DungeonUtil {
     /**
      * Define point of x & y to random shape,
      * with the possible of direction of the point.
-     * @param i is the x.
-     * @param j is the y.
-     * @param g is the Generator.java.
      * */
-    boolean defineRoom(Rooms avaibleRooms, Generator g , int i, int j, Room room, boolean debug, boolean ignoreLimit) {
-
+    boolean defineRoom(DungeonHandler handler, Point point, boolean ignoreLimit, @Nullable Room exception) {
         LinkedList<RoomShape> pick = new LinkedList<>(List.of(RoomShape.values()));
-        pick.removeLast();
-        Collections.shuffle(pick, g.random);
+        pick.remove(RoomShape.ONE);
+        Collections.shuffle(pick, handler.getRandom());
         pick.addLast(RoomShape.ONE);
-
-
         while (!pick.isEmpty()){
-            RoomShape shapes = pick.pop();
-            if(isFit(avaibleRooms, g , i, j, shapes, room, debug)){
-              return true;
+            RoomShape shape = pick.pop();
+            if(isFit(handler, point, shape, exception)){
+                return true;
             }
         }
         return false;
     }
-    private boolean isFit(Rooms avaibleRooms,Generator G, int i, int j, RoomShape shapes,  Room room, boolean debug) {
-        HashMap<RoomType, LinkedList<Room>> avb = new HashMap(Map.of(
-                RoomType.TWO_X_ONE, avaibleRooms.TWO,
-                RoomType.THREE_X_ONE, avaibleRooms.THREE,
-                RoomType.FOUR_X_ONE, avaibleRooms.FOUR,
-                RoomType.BOX, avaibleRooms.BOX,
-                RoomType.L_SHAPE, avaibleRooms.L,
-                RoomType.SINGLE, avaibleRooms.SINGLE
-        ));
+
+    boolean isFit(DungeonHandler handler, Point point, RoomShape shapes, Room exception) {
+        int i = point.x, j = point.y;
+        Room[][] grid = handler.getGrid();
+        Stack<Point> history = handler.getHistory();
+
         Point pastepoint = new Point(i*32, j*32);
-        int x = 0, y = 0, dx, dy;
-        int lx, ly;
+        int x, y, dx, dy, lx, ly;
         boolean valid = true;
         int rotation = 1;
-
-        if(G.CURRENT_LIMIT.get(shapes.type) >= G.MAX_LIMIT.get(shapes.type)){
-            if(debug){
-                Bukkit.broadcastMessage("REACHED MAX_LIMIT");
-            }
-            return false;
-        }
         for (int k = 0; k < shapes.shape.length; k++) {
             valid = true;
             for (int l = 0; l < shapes.shape[k].length; l++) {
-                    x = i + shapes.shape[k][l][0];
-                    y = j + shapes.shape[k][l][1];
-                    if (!isValid(G.grid, x, y, room)) {
-                        valid = false;
-                        break;
-                    }
-            }
-            if(valid) {
-                G.CURRENT_LIMIT.put(shapes.type,G.CURRENT_LIMIT.get(shapes.type)+1);
-                Room validRoom = avb.get(shapes.type).peek().clone();
-                validRoom.setName(validRoom.name+"_"+k);
-                validRoom.setFoundIndexation(new Point(i, j));
-
-                int[][][] copyOfShape = shapes.copyOfShape;
-//                if(room != null){
-//                    validRoom.setLogo(room.logo);
-//                }
-                for (int l = 0; l < shapes.shape[k].length; l++) {
-                    if(validRoom.type == RoomType.BOX){
-                        int m = l == 0? l: l-1;
-                        x = i + copyOfShape[k][m][0];
-                        y = j + copyOfShape[k][m][1];
-                    }else {
-                        x = i + copyOfShape[k][l][0];
-                        y = j + copyOfShape[k][l][1];
-                    }
-
-                    lx = i + shapes.shape[k][l][0];
-                    ly = j + shapes.shape[k][l][1];
-
-                    dx = -(i-x)*16;
-                    dy = -(j-y)*16;
-
-                    pastepoint.translate(dx,dy);
-                    if(debug){
-                        Bukkit.broadcastMessage(" -translated to "+dx+", "+dy);
-                    }
-
-                    G.grid[lx][ly] = validRoom;
-                    G.history.add(new Point(lx,ly));
-
-                    validRoom.body.add(new Point(lx,ly));
+                x = i + shapes.shape[k][l][0];
+                y = j + shapes.shape[k][l][1];
+                if (!isValid(x, y, grid, exception)) {
+                    valid = false;
+                    break;
                 }
-                validRoom.setLoc(pastepoint);
-                validRoom.setRotation((rotation+2)*90);
-                return valid;
             }
+
             rotation++;
-        }
+            if(!valid) continue;
+            Room validRoom = handler.getRooms().get(shapes.type).peek().clone();
+            validRoom.setName(validRoom.name+"_"+k);
+            validRoom.setFoundIndexation(new Point(i, j));
 
-        return valid;
-    }
-
-    protected boolean isFit(Rooms avaibleRooms,Generator G, int i, int j, RoomShape shapes,  Room room, boolean debug, boolean ignoreLimit, int rot) {
-        Random random = new Random(354657233254L);
-        HashMap<RoomType, LinkedList<Room>> avb = new HashMap(Map.of(
-                RoomType.TWO_X_ONE, avaibleRooms.TWO,
-                RoomType.THREE_X_ONE, avaibleRooms.THREE,
-                RoomType.FOUR_X_ONE, avaibleRooms.FOUR,
-                RoomType.BOX, avaibleRooms.BOX,
-                RoomType.L_SHAPE, avaibleRooms.L,
-                RoomType.SINGLE, avaibleRooms.SINGLE
-        ));
-        Point pastepoint = new Point(i*32, j*32);
-        int x = 0, y = 0, dx, dy;
-        int lx, ly;
-        boolean valid = true;
-        int rotation = rot;
-
-        if(G.CURRENT_LIMIT.get(shapes.type) >= G.MAX_LIMIT.get(shapes.type) && !ignoreLimit){
-            if(debug){
-                Bukkit.broadcastMessage("REACHED MAX_LIMIT");
-            }
-            return false;
-        }
-        for (int k = 0; k < shapes.shape.length; k++) {
-            valid = true;
+            int[][][] copyOfShape = shapes.copyOfShape;
             for (int l = 0; l < shapes.shape[k].length; l++) {
-                    x = i + shapes.shape[k][l][0];
-                    y = j + shapes.shape[k][l][1];
-                    if (!isValid(G.grid, x, y, room)) {
-                        valid = false;
-                        break;
-                    }
-            }
-            if(valid) {
-                G.CURRENT_LIMIT.put(shapes.type,G.CURRENT_LIMIT.get(shapes.type)+1);
-                Room validRoom = avb.get(shapes.type).peek().clone();
-                validRoom.setName(validRoom.name+"_"+k+"_"+random.nextInt(100));
-                validRoom.setFoundIndexation(new Point(i, j));
-
-                if(debug){
-                    Bukkit.broadcastMessage(validRoom.name+" Shape Found at "+i+", "+j+" with rot of "+k);
-                }
-                int[][][] copyOfShape = shapes.copyOfShape;
-                if(room != null){
-                    validRoom.setLogo(room.logo);
-                }
-                for (int l = 0; l < shapes.shape[k].length; l++) {
+                if(validRoom.type == RoomType.BOX){
+                    int m = l == 0? l: l-1;
+                    x = i + copyOfShape[k][m][0];
+                    y = j + copyOfShape[k][m][1];
+                }else {
                     x = i + copyOfShape[k][l][0];
                     y = j + copyOfShape[k][l][1];
-
-                    lx = i + shapes.shape[k][l][0];
-                    ly = j + shapes.shape[k][l][1];
-
-                    dx = -(i-x)*16;
-                    dy = -(j-y)*16;
-
-                    pastepoint.translate(dx,dy);
-                    if(debug){
-                        Bukkit.broadcastMessage(" -translated to "+dx+", "+dy);
-                    }
-
-                    G.grid[lx][ly] = validRoom;
-                    validRoom.body.add(new Point(lx,ly));
                 }
-                validRoom.setLoc(pastepoint);
-                validRoom.setRotation((rotation+2)*90);
-                return valid;
+                lx = i + shapes.shape[k][l][0];
+                ly = j + shapes.shape[k][l][1];
+
+                dx = -(i-x)*16;
+                dy = -(j-y)*16;
+
+                pastepoint.translate(dx,dy);
+                if(handler.isDebug_mode()) Bukkit.broadcastMessage(" -translated to "+dx+", "+dy);
+                grid[lx][ly] = validRoom;
+                history.add(new Point(lx,ly));
+                validRoom.body.add(new Point(lx,ly));
             }
-            rotation++;
+            validRoom.setLoc(pastepoint);
+            validRoom.setRotation((rotation+2)*90);
+            return valid;
         }
 
         return valid;
     }
-    boolean isValid(Room[][] grid, int x, int y, Room room){
-            if(room == null){
+    boolean isValid(int x, int y, Room[][] grid, @Nullable Room room){
+        if(room == null){
                 return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == null;
             }
         return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length &&
