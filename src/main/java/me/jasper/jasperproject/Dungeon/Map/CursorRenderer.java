@@ -1,7 +1,5 @@
-package me.jasper.jasperproject.Dungeon;
+package me.jasper.jasperproject.Dungeon.Map;
 
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.map.*;

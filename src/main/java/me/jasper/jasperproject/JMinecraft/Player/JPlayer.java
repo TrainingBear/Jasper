@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -100,7 +101,7 @@ public class JPlayer implements Listener {
     }
 
     @EventHandler
-    public void onSwapHotbar(InventoryDragEvent e){
+    public void onSwapHotbar(PlayerItemHeldEvent e){
         JasperProject.getPlugin().getServer().broadcastMessage("Player is swapping");
     }
 

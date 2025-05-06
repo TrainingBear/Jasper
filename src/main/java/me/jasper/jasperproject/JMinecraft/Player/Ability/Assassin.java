@@ -95,7 +95,8 @@ public class Assassin extends PlayerAbility {
                 Map<Stats, Float> combatStats = Stats.getCombatStats(player, item);
                 DamageResult result = DamageResult.builder(combatStats).build();
                 Entity targetEntity = player.getTargetEntity((int) (float) combatStats.get(Stats.SWING_RANGE));
-                if(!(targetEntity instanceof LivingEntity livingEntity))return;
+                if(!(targetEntity instanceof LivingEntity livingEntity)) return;
+                player.sendMessage(targetEntity.teamDisplayName());
                 float attackCooldown = player.getAttackCooldown();
                 livingEntity.damage(result.getFinal_damage()*attackCooldown, DamageSource.builder(DamageType.FALLING_BLOCK).build());
             }

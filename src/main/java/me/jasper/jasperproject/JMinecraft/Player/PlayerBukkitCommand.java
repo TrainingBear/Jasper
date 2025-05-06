@@ -43,8 +43,8 @@ public class PlayerBukkitCommand implements CommandExecutor, TabCompleter {
                             mage_holder
                     );
                     player.sendMessage("you has ability? "+player.getPersistentDataContainer().has(JKey.Ability));
-                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key));
-                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key));
+                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Assassin.key));
+                    player.sendMessage("you has Assassin ability? "+player.getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Assassin.key, PersistentDataType.TAG_CONTAINER).has(Assassin.Stab.key));
                 }
             }
             case "remove" -> {

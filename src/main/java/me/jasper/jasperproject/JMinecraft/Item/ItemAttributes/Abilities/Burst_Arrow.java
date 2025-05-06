@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
+import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -74,15 +75,6 @@ public class Burst_Arrow extends ItemAbility {
                 }
                 EntityShootBowEvent shootEvent = new EntityShootBowEvent(player, player.getActiveItem(), arrow, e.getArrow(), e.getForce());
                 Bukkit.getPluginManager().callEvent(shootEvent);
-//                Arrow panah = this.pleryer.launchProjectile(Arrow.class);
-//                this.pleryer.getWorld().playSound(this.pleryer.getLocation(), Sound.ENTITY_ARROW_SHOOT,SoundCategory.PLAYERS,1f,1.125f);
-//                panah.getPersistentDataContainer().set(JKey.removeWhenHit, PersistentDataType.BOOLEAN, true);
-//                panah.setVelocity(this.pleryer.getLocation().getDirection().multiply(e.getForce()));
-//                panah.setCritical(true);
-//                panah.setFireTicks(e.getArrow().getFireTicks());
-//                panah.setShooter(this.pleryer);
-//                panah.setTicksLived(200);
-//                panah.setPickupStatus(AbstractArrow.PickupStatus.CREATIVE_ONLY);
                 this.total++;
             }
         }.runTaskTimer(JasperProject.getPlugin(),time,time);
@@ -91,6 +83,7 @@ public class Burst_Arrow extends ItemAbility {
 
     @EventHandler
     public void onShoot(PlayerInteractEvent e){
+        if(!TRIGGER.Interact.SNEAK_LEFT_CLICK(e)) return;
         ItemStack activeItem = e.getPlayer().getActiveItem();
         if(!Util.hasAbility(activeItem, this.getKey())) return;
 

@@ -1,18 +1,18 @@
-package me.jasper.jasperproject.Dungeon;
+package me.jasper.jasperproject.Dungeon.Map;
 
-import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
+import me.jasper.jasperproject.Dungeon.Generator;
+import me.jasper.jasperproject.Dungeon.Room;
+import me.jasper.jasperproject.Dungeon.RoomType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 

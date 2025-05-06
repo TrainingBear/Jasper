@@ -18,6 +18,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_21_R1.persistence.CraftPersistentDataContainer;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -100,11 +101,10 @@ public class JMob implements Listener {
         mob.spawnAt(location);
     }
 
-    public static void hurt(LivingEntity entity, @Nullable Entity damager, int damage){
-        if (damager!=null) entity.setVelocity(damager.getLocation().toVector());
+    public static void hurt(LivingEntity entity, int damage){
         entity.playHurtAnimation(1f);
         entity.getLocation().getWorld().playSound(entity.getLocation(), entity.getHurtSound(), 10f, 1f);
-        entity.setHealth(Math.max(0, entity.getHealth() - damage));
+        entity.damage(damage, DamageSource.builder(org.bukkit.damage.DamageType.BAD_RESPAWN_POINT).build());
     }
 
     public static String getHealthDisplay(double health){
@@ -194,28 +194,31 @@ public class JMob implements Listener {
             AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             float max_health = maxHealthAttribute !=null ? (float) maxHealthAttribute.getBaseValue() : 100;
             if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
-                result = DamageResult.patch(max_health/25f, entity, DamageType.FIRE);
+                hurt(entity, (int) (max_health/25f));
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE)){
-                entity.setFireTicks(100);
+
                 entity.setMaximumNoDamageTicks(10);
-                result = DamageResult.patch(max_health/10f, entity, DamageType.FIRE);
+                hurt(entity, (int) (max_health/10f));
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.LAVA)){
-                entity.setFireTicks(100);
                 entity.setMaximumNoDamageTicks(10);
-                result = DamageResult.patch(max_health/5f, entity, DamageType.FIRE);
+                hurt(entity, (int) (max_health/5f));
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
                 float fallDistance = Math.min(entity.getFallDistance(), 100);
                 int damage = (int) (max_health * (fallDistance/100));
-                result = DamageResult.patch(damage, entity, DamageType.ABSTRACT, true, 1f);
+                hurt(entity, damage);
+            } else if (e.getDamageSource().getDamageType().equals(org.bukkit.damage.DamageType.BAD_RESPAWN_POINT)) {
+                result = DamageResult.patch((float) e.getDamage(), entity, DamageType.ABSTRACT, true, 1f);
             }
-            if(result==null) result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MAGIC);
-
+            if(result==null){
+                hurt(entity, (int) e.getDamage());
+                result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MAGIC);
+            }
+            e.setCancelled(true);
             e.setDamage(result.getFinal_damage());
             DamageEvent damageEvent = new DamageEvent(result, entity);
-            if(e.isCancelled()) damageEvent.setCancelled(true);
             Bukkit.getPluginManager().callEvent(damageEvent);
         }
 
