@@ -47,17 +47,12 @@ public class GeneratorCommandExecutor implements CommandExecutor, TabCompleter {
             if(!(Integer.parseInt(strings[1])>11) || !(Integer.parseInt(strings[2])>11)){
                 byte panjang = Byte.parseByte(strings[1]);
                 byte l = Byte.parseByte(strings[2]);
-//                char[][] size = Generate.getLayoutSize(panjang,l);
-//                new Generate(plugin).(p, (int) panjang,(int)l);
                 return true;
             }p.sendMessage("udah gabisa lebih dari 10 tolol bego");
         }if(strings[0].equalsIgnoreCase("generatespecialroomonlybutwithbaselayout")){
             if(!(Integer.parseInt(strings[1])>11) || !(Integer.parseInt(strings[2])>11)){
                 byte panjang = Byte.parseByte(strings[1]);
                 byte l = Byte.parseByte(strings[2]);
-//                char[][] size = Generate.getLayoutSize(panjang,l);
-//                new Generate(plugin).generatelayout(p,size);
-//                new Generate(plugin).generateSpecialRoom(p, (int) panjang,(int)l);
                 return true;
             }p.sendMessage("udah gabisa lebih dari 10 tolol bego");
         }if(strings[0].equalsIgnoreCase("generateroom")){
@@ -66,8 +61,6 @@ public class GeneratorCommandExecutor implements CommandExecutor, TabCompleter {
             if(!(Integer.parseInt(strings[1])>11) || !(Integer.parseInt(strings[2])>11)){
                 byte panjang = Byte.parseByte(strings[1]);
                 byte l = Byte.parseByte(strings[2]);
-//                char[][] size = Generate.getLayoutSize(panjang,l);
-//                new Generate(plugin).generateRoom(p, panjang,l);
                 return true;
             }p.sendMessage("udah gabisa lebih dari 10 tolol bego");
         }

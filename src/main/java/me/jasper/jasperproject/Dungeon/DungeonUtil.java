@@ -13,6 +13,8 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.Nullable;
@@ -46,16 +48,19 @@ public abstract class DungeonUtil {
         boolean foundFairy = false;
         while (!queue.isEmpty()) {
             Point current = queue.poll();
+            if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("current ("+current.x+", "+current.y+") -> "+(handler.getGrid(current) == null? "null" : handler.getGrid(current).getName())).color(NamedTextColor.YELLOW));
             /// Check if fairy is reached
             if (current.equals(fairy) && !foundFairy) {
                 for (boolean[] visit : visited) Arrays.fill(visit,false);
-                visited = recoverVisited(roomMap, end, start, visited);
+                visited = recoverVisited(roomMap, current, start, visited);
                 queue.clear();
                 current = fairy;
                 foundFairy = true;
+                if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Fairy has been found!").color(NamedTextColor.GREEN));
             }
             if (current.equals(end) && foundFairy) {
                 reconstructPath(handler);
+                if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Blood finished!").color(NamedTextColor.GREEN));
                 return true;
             }
             // Explore neighbors
@@ -70,7 +75,12 @@ public abstract class DungeonUtil {
                 }
             }
         }
-        if(handler.isDebug_mode()) Bukkit.broadcastMessage("Target not found");
+        if(handler.isDebug_mode()) {
+            Bukkit.broadcast(Util.deserialize("Target not found").color(NamedTextColor.RED));
+            Bukkit.broadcast(Util.deserialize(start.toString()).color(NamedTextColor.RED));
+            Bukkit.broadcast(Util.deserialize(fairy.toString()).color(NamedTextColor.RED));
+            Bukkit.broadcast(Util.deserialize(end.toString()).color(NamedTextColor.RED));
+        }
         return false;
     }
     boolean[][] recoverVisited(Map<Point, Point> parrentMap, Point end, Point start, boolean[][] visited){
@@ -78,13 +88,14 @@ public abstract class DungeonUtil {
         visited[step.x][step.y] = true;
         do{
             step = parrentMap.get(step);
+            if(step==null) return visited;
             visited[step.x][step.y] = true;
         }while (!step.equals(start));
         return visited;
     }
     private boolean isValid(Point p, int rows, int cols, boolean[][] visited, Room[][] grid) {
         return (p.x >= 0 && p.x < rows && p.y >= 0 && p.y < cols) &&
-                !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].ID == 3 || grid[p.x][p.y].ID == 2);
+                !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].getID() == 3 || grid[p.x][p.y].getID() == 2);
     }
     private void reconstructPath(DungeonHandler handler) {
         Point end = handler.getBloodRoom();
@@ -129,6 +140,7 @@ public abstract class DungeonUtil {
             d1 = grid[pre_step.x][pre_step.y];
 
             step = parentMap.get(step);
+            if(step==null) return;
             d2 = grid[step.x][step.y];
 
             transition = new Point(-(pre_step.x - step.x)*16, -(pre_step.y - step.y)*16);
@@ -152,7 +164,7 @@ public abstract class DungeonUtil {
         int rotation;
         Map<Point, Point> parentMap = new HashMap<>(Map.copyOf(parentMapOri));
 
-        if(grid[end.x][end.y].ID==0){
+        if(grid[end.x][end.y].getID()==0){
             grid[end.x][end.y].setRotation(wichDirection(end, parentMap.get(end)));
         }
         while (!parentMap.isEmpty()) {
@@ -305,12 +317,12 @@ public abstract class DungeonUtil {
      * with the possible of direction of the point.
      * */
     boolean defineRoom(DungeonHandler handler, Point point, boolean ignoreLimit, @Nullable Room exception) {
-        LinkedList<RoomShape> pick = new LinkedList<>(List.of(RoomShape.values()));
-        pick.remove(RoomShape.ONE);
+        LinkedList<Shape> pick = new LinkedList<>(List.of(Shape.values()));
+        pick.remove(Shape.ONE);
         Collections.shuffle(pick, handler.getRandom());
-        pick.addLast(RoomShape.ONE);
+        pick.addLast(Shape.ONE);
         while (!pick.isEmpty()){
-            RoomShape shape = pick.pop();
+            Shape shape = pick.pop();
             if(isFit(handler, point, shape, exception)){
                 return true;
             }
@@ -318,15 +330,15 @@ public abstract class DungeonUtil {
         return false;
     }
 
-    boolean isFit(DungeonHandler handler, Point point, RoomShape shapes, Room exception) {
+    boolean isFit(DungeonHandler handler, Point point, Shape shapes, @Nullable Room exception) {
         int i = point.x, j = point.y;
         Room[][] grid = handler.getGrid();
         Stack<Point> history = handler.getHistory();
 
-        Point pastepoint = new Point(i*32, j*32);
+        Point translate = new Point();
         int x, y, dx, dy, lx, ly;
         boolean valid = true;
-        int rotation = 1;
+        int rotation = 0;
         for (int k = 0; k < shapes.shape.length; k++) {
             valid = true;
             for (int l = 0; l < shapes.shape[k].length; l++) {
@@ -341,12 +353,12 @@ public abstract class DungeonUtil {
             rotation++;
             if(!valid) continue;
             Room validRoom = handler.getRooms().get(shapes.type).peek().clone();
-            validRoom.setName(validRoom.name+"_"+k);
+            validRoom.setName(validRoom.getName()+"_"+k);
             validRoom.setFoundIndexation(new Point(i, j));
 
             int[][][] copyOfShape = shapes.copyOfShape;
             for (int l = 0; l < shapes.shape[k].length; l++) {
-                if(validRoom.type == RoomType.BOX){
+                if(validRoom.getType() == RoomType.BOX){
                     int m = l == 0? l: l-1;
                     x = i + copyOfShape[k][m][0];
                     y = j + copyOfShape[k][m][1];
@@ -360,13 +372,14 @@ public abstract class DungeonUtil {
                 dx = -(i-x)*16;
                 dy = -(j-y)*16;
 
-                pastepoint.translate(dx,dy);
+                translate = new Point(dx, dy);
                 if(handler.isDebug_mode()) Bukkit.broadcastMessage(" -translated to "+dx+", "+dy);
                 grid[lx][ly] = validRoom;
                 history.add(new Point(lx,ly));
-                validRoom.body.add(new Point(lx,ly));
+                validRoom.getBody().add(new Point(lx,ly));
             }
-            validRoom.setLoc(pastepoint);
+            validRoom.setLoc(point);
+            validRoom.setLocTranslate(translate);
             validRoom.setRotation((rotation+2)*90);
             return valid;
         }

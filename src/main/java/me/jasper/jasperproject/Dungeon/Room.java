@@ -1,7 +1,11 @@
 package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import lombok.Getter;
 import lombok.Setter;
+import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -9,21 +13,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+@Getter
 public class Room extends DungeonUtil implements Cloneable{
-
-    @Setter String name;
-    @Setter RoomType type;
-    @Setter int ID;
-    @Setter String schema_name;
-    @Setter Point loc = new Point(0,0);
-    @Setter int rotation = 0;
-    boolean isLoaded = false;
-    @Setter char logo = 'N';
-    List<Point> body = new ArrayList<>();
-    @Setter Point foundIndexation = new Point(0,0);
+    @Setter private String name;
+    @Setter private RoomType type;
+    @Setter private int ID;
+    @Setter private String schema_name;
+    @Setter private Point loc = new Point(0,0);
+    @Setter private Point locTranslate = new Point(0,0);
+    @Setter private int rotation = 0;
+    @Setter private boolean isLoaded = false;
+    @Setter private char logo = 'N';
+    private List<Point> body = new ArrayList<>();
+    @Setter private Point foundIndexation = new Point(0,0);
 
     /**The Point, Point is refer to the grid[][] location. not the actual*/
-    HashMap<Point, HashSet<Point>> conected_room = new HashMap<>();
+    private final HashMap<Point, HashSet<Point>> conected_room = new HashMap<>();
 
     Room(String name, RoomType type, int ID, String schema_name, Point loc, List<Point> body){
         this.name = name;
@@ -59,7 +64,10 @@ public class Room extends DungeonUtil implements Cloneable{
         if(isLoaded){
             return;
         }
-        this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(loc.x, 70, loc.y), this.rotation, true);
+        int x = (loc.x * 32) + locTranslate.x;
+        int z = (loc.y * 32) + locTranslate.y;
+        this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(x, 70, z), this.rotation, true);
+        Bukkit.broadcast(Util.deserialize(name +" loaded at = "+x +", "+70+", "+z).color(NamedTextColor.GOLD));
         isLoaded = true;
     }
 

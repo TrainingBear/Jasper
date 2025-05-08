@@ -1,6 +1,7 @@
 package me.jasper.jasperproject.Dungeon.Map;
 
 import lombok.Getter;
+import me.jasper.jasperproject.Dungeon.DungeonHandler;
 import me.jasper.jasperproject.Dungeon.Generator;
 import me.jasper.jasperproject.Dungeon.Room;
 import me.jasper.jasperproject.Dungeon.RoomType;
@@ -17,7 +18,7 @@ import java.util.*;
 import java.util.List;
 
 public class DungeonMapRenderer extends MapRenderer {
-    Generator g;
+    private final DungeonHandler handler;
     private final int GAP = 5;
     private final int MARGIN = 5;
     private int MARGINX = MARGIN;
@@ -28,10 +29,10 @@ public class DungeonMapRenderer extends MapRenderer {
     private final int[] DOOR_SIZE;
     @Getter private final double FINAL_CELL_SIZE;
 
-    DungeonMapRenderer(Generator generator){
-        this.g = generator;
-        int GRID_PANJANG = generator.p;
-        int GRID_LEBAR = generator.l;
+    public DungeonMapRenderer(Generator generator){
+        this.handler = generator.getHandler();
+        int GRID_PANJANG = generator.getP();
+        int GRID_LEBAR = generator.getL();
         PRE_SIZE = ((double) 128 /Math.max(GRID_PANJANG , GRID_LEBAR));
         CELL_SIZE = (PRE_SIZE-(double) MARGIN*PRE_SIZE / (48-MARGIN));
         rooms = getRooms(generator);
@@ -56,20 +57,21 @@ public class DungeonMapRenderer extends MapRenderer {
 //            }
 //        }
 
-        buildDoor(mapCanvas, g.parrentMap,
-                new Point(g.x3, g.y3), true);
-        for (Point endpoint : g.endpoint){
-            buildDoor(mapCanvas, g.parentMap2,
+        buildDoor(mapCanvas, handler.getRoomMap(),
+                handler.getBloodRoom(), true);
+
+        for (Point endpoint : handler.getEdge()){
+            buildDoor(mapCanvas, handler.getDoorMap(),
                     endpoint, false);
         }
 
 
         for (Room room : rooms) {
             if(room==null) continue;
-            if(room.type == RoomType.L_SHAPE){
-                List<Point> L = sort(room.body);
+            if(room.getType() == RoomType.L_SHAPE){
+                List<Point> L = sort(room.getBody());
 
-                Color color = room.type.color;
+                Color color = room.getType().color;
 
                 drawRoom(mapCanvas,
                         Math.min(L.get(0).x, L.get(2).x), Math.min(L.get(0).y, L.get(2).y),
@@ -85,7 +87,7 @@ public class DungeonMapRenderer extends MapRenderer {
 
             int minX = Integer.MAX_VALUE,minY = Integer.MAX_VALUE,
                     maxX = Integer.MIN_VALUE,maxY = Integer.MIN_VALUE;
-            for (Point point : room.body){
+            for (Point point : room.getBody()){
                 minX = Math.min(point.x, minX);
                 minY = Math.min(point.y, minY);
                 maxX = Math.max(point.x, maxX);
@@ -93,7 +95,7 @@ public class DungeonMapRenderer extends MapRenderer {
             }
 
 
-            Color color = room.type.color;
+            Color color = room.getType().color;
             drawRoom(mapCanvas, minX, minY, color,
                         maxX, maxY, false);
         }
@@ -123,16 +125,17 @@ public class DungeonMapRenderer extends MapRenderer {
         Point pre_step, transition;
         boolean rotation;
         Map<Point, Point> parentMap = new HashMap<>(Map.copyOf(parentMapOri));
+        Room[][] grid = handler.getGrid();
 
         while (!parentMap.isEmpty()) {
             pre_step = step;
-            d1 = g.grid[pre_step.x][pre_step.y];
+            d1 = handler.getGrid(pre_step);
 
             step = parentMap.remove(step);
             if(step == null){
                 return;
             }
-            d2 = g.grid[step.x][step.y];
+            d2 = handler.getGrid(step);
 
             transition = new Point((int) (-(pre_step.x - step.x)*CELL_SIZE/2), (int) (-(pre_step.y - step.y)*CELL_SIZE/2));
             rotation = transition.x != 0;
@@ -141,7 +144,7 @@ public class DungeonMapRenderer extends MapRenderer {
                 drawDoor(canvas,
                         (int) (pre_step.x*(CELL_SIZE)+(CELL_SIZE/2)+transition.x),
                         (int) (pre_step.y*(CELL_SIZE)+(CELL_SIZE/2)+transition.y),
-                        locked? new Color(54, 11, 11) : g.grid[pre_step.x][pre_step.y].type.color, rotation);
+                        locked? new Color(54, 11, 11) : handler.getGrid(pre_step).getType().color, rotation);
             }
         }
     }
@@ -170,10 +173,11 @@ public class DungeonMapRenderer extends MapRenderer {
 
     private ArrayList<Room> getRooms(Generator generator){
         ArrayList<Room> rooms = new ArrayList<>();
-        for (int i = 0; i < generator.grid.length; i++) {
-            for (int j = 0; j < generator.grid[0].length; j++) {
-                if(!rooms.contains(generator.grid[i][j])){
-                    rooms.add(generator.grid[i][j]);
+        Room[][] grid = handler.getGrid();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if(!rooms.contains(grid[i][j])){
+                    rooms.add(grid[i][j]);
                 }
             }
         }

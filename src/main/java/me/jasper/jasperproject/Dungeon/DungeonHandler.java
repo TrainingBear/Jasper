@@ -2,8 +2,8 @@ package me.jasper.jasperproject.Dungeon;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.jasper.jasperproject.Dungeon.Rooms.Rooms;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
 
@@ -20,9 +20,12 @@ public final class DungeonHandler {
     @Setter private Point fairy;
     @Setter private Point bloodRoom;
 
-    public final Map<RoomType, LinkedList<Room>> rooms = new HashMap<>();
+    public Map<RoomType, LinkedList<Room>> rooms = new HashMap<>();
     public LinkedList<Room> get(RoomType type){
         return this.rooms.get(type);
+    }
+    public void addRoom(Map<RoomType, LinkedList<Room>> room){
+        this.rooms = room;
     }
     public void addRoom(RoomType type, Room room){
         this.rooms.computeIfAbsent(type, k-> new LinkedList<>()).add(room);
@@ -34,5 +37,9 @@ public final class DungeonHandler {
     public DungeonHandler(int p, int l, long seed){
         this.grid = new Room[p][l];
         this.random = new Random(seed);
+    }
+
+    public @Nullable Room getGrid(Point point){
+        return this.grid[point.x][point.y];
     }
 }

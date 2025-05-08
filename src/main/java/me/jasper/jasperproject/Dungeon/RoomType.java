@@ -21,8 +21,10 @@ public enum RoomType {
     SINGLE(new Color(135, 65, 7)),
     TEST;
 
-    Color color;
-    RoomType(){}
+    public final Color color;
+    RoomType(){
+        this.color = new Color(255, 255, 255);
+    }
     RoomType(Color color){
         this.color = color;
     }

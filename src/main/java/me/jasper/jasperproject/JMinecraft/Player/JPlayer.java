@@ -102,7 +102,6 @@ public class JPlayer implements Listener {
 
     @EventHandler
     public void onSwapHotbar(PlayerItemHeldEvent e){
-        JasperProject.getPlugin().getServer().broadcastMessage("Player is swapping");
     }
 
     @EventHandler

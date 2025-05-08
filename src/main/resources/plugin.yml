@@ -4,6 +4,8 @@ main: me.jasper.jasperproject.JasperProject
 api-version: '1.20'
 depend: [NBTAPI]
 commands:
+  dungeon:
+    description : a
   jplayer:
     description: abc
   debug:
@@ -102,8 +104,7 @@ commands:
   summondisplayi:
     description: summon a custom display item
     usage: /summondisplayi <material> <id> <height> <width>
-  dungeon:
-    description: a
+
   loadschem:
     description: a
   Analog:

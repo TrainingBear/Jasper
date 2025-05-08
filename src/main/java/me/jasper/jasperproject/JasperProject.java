@@ -9,6 +9,7 @@ import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.util.Listener;
 import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
+import me.jasper.jasperproject.Dungeon.DebugCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
@@ -81,6 +82,8 @@ public final class JasperProject extends JavaPlugin {
         ItemManager.runUpdater();
 
         this.getCommand("debug").setExecutor(new Debug());
+        this.getCommand("dungeon").setExecutor(new DebugCommand());
+        this.getCommand("dungeon").setTabCompleter(new DebugCommand());
 
 //        CommandManager.getInstance()
 //                .register(new PaperAnimationCommand())
@@ -105,8 +108,6 @@ public final class JasperProject extends JavaPlugin {
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
         /// jadi jangan register command disini
-        this.getCommand("dungeon").setTabCompleter(new GeneratorCommandExecutor(this));
-        this.getCommand("dungeon").setExecutor(new GeneratorCommandExecutor(this));
         this.getCommand("test").setExecutor(new ExecuteCommand(this));
         this.getCommand("Analog").setExecutor(new ClockConfigurationForCommands(this));
         this.getCommand("jmob").setExecutor(new EntityCommand());
