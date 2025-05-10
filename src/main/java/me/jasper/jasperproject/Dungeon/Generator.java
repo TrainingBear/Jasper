@@ -98,7 +98,7 @@ public class Generator extends DungeonUtil{
         for (Point end : handler.getEdge()){
             buildEmtyDoor(end, handler);
         }
-        TookTimer.run("Repatch special room", this::placePTMR);
+        TookTimer.run("Rematch special room", this::placePTMR);
         render();
     }
 
@@ -173,7 +173,6 @@ public class Generator extends DungeonUtil{
         history.addFirst(fairy);
     }
 
-
     /// this store the edge and the index of the edge (Point, Index)
     List<Point> possiblePoint = new ArrayList<>();
     private void placePTMR(){
@@ -204,7 +203,7 @@ public class Generator extends DungeonUtil{
                  if(grid[i][j].getType() .equals(RoomType.SINGLE ) && grid[i][j].getConected_room().values().stream().mapToInt(HashSet::size).sum() == 1) {
                      grid[i][j].replace(avaibleRooms.pop(), false);
                  }
-         }
+             }
 
         /// Broke the room into pieces. | L -> 2x1 | BOX -> L | 4x1... -> 3x1...
         if(!avaibleRooms.isEmpty()){

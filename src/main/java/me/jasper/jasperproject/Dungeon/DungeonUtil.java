@@ -325,17 +325,18 @@ public abstract class DungeonUtil {
             logo = grid[x][y].getLogo();
         }
         Room valid_room;
-        LinkedList<Room> special_room = handler.getRooms().get(RoomType.SPECIAL);
-        if(handler.isMainInitialized() && !special_room.isEmpty() && shapes.getType().equals(RoomType.SINGLE)){
-            valid_room = special_room.pop();
-            if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Found "+valid_room.getName()+" at "+x+", "+y));
-            valid_room.setRotation(shapes.getRotation().get(anchor));
-            valid_room.setLoc(new Point(x, y));
-            valid_room.setLocTranslate(shapes.getPastePoint(anchor));
-            grid[x][y] = valid_room;
-            if(logo!='`') valid_room.setLogo(logo);
-            return true;
-        } else valid_room = handler.getRooms().get(shapes.getType()).getFirst().clone();
+//        LinkedList<Room> special_room = handler.getRooms().get(RoomType.SPECIAL);
+//        if(!handler.isMainInitialized() && !special_room.isEmpty() && shapes.getType().equals(RoomType.SINGLE)){
+//            valid_room = special_room.pop();
+//            if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Found Special room "+valid_room.getName()+" at "+x+", "+y));
+//            valid_room.setRotation(shapes.getRotation().get(anchor));
+//            valid_room.setLoc(new Point(x, y));
+//            valid_room.setLocTranslate(shapes.getPastePoint(anchor));
+//            grid[x][y] = valid_room;
+//            if(logo!='`') valid_room.setLogo(logo);
+//            return true;
+//        } else
+            valid_room = handler.getRooms().get(shapes.getType()).getFirst().clone();
         if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Found "+valid_room.getName()+" at "+x+", "+y));
         valid_room.setRotation(shapes.getRotation().get(anchor));
         valid_room.setLoc(new Point(x, y));
