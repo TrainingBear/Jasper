@@ -6,7 +6,9 @@ import lombok.Setter;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +63,16 @@ public class Room extends DungeonUtil implements Cloneable{
     }
 
     void loadScheme(){
+        loadScheme(null);
+    }
+    void loadScheme(@Nullable Point location){
         if(isLoaded){
+            return;
+        }
+        if(location!=null){
+            this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(location.x, 70, location.y), this.rotation, true);
+            Bukkit.broadcast(Util.deserialize(name +" loaded at = "+location.x +", "+70+", "+location.y).color(NamedTextColor.GOLD));
+            isLoaded = true;
             return;
         }
         int x = (loc.x * 32) + locTranslate.x;

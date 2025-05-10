@@ -1,6 +1,8 @@
 package me.jasper.jasperproject.Dungeon;
 
 import lombok.Getter;
+import me.jasper.jasperproject.Dungeon.Shapes.*;
+import me.jasper.jasperproject.Dungeon.Shapes.Shape;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -231,11 +233,11 @@ public class Generator extends DungeonUtil{
             for (Point body : possiblePoint){
                 if(avaibleRooms.isEmpty()) return;
                 Shape shape = switch (grid[body.x][body.y].getType()){
-                    case L_SHAPE -> Shape.TWO_X_ONE;
-                    case BOX -> Shape.L_SHAPE;
-                    case FOUR_X_ONE -> Shape.THREE_X_ONE;
-                    case THREE_X_ONE -> Shape.TWO_X_ONE;
-                    case TWO_X_ONE -> Shape.ONE;
+                    case L_SHAPE -> new L_BY_L();
+                    case BOX -> new BOX_BY_BOX();
+                    case FOUR_X_ONE -> new THREE_BY_THREE();
+                    case THREE_X_ONE -> new TOW_BY_TWO();
+                    case TWO_X_ONE -> new ONE_BY_ONE();
                     case PUZZLE -> null;
                     case START -> null;
                     case MID -> null;

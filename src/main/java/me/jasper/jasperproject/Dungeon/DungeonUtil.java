@@ -13,6 +13,8 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import me.jasper.jasperproject.Dungeon.Shapes.*;
+import me.jasper.jasperproject.Dungeon.Shapes.Shape;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -317,10 +319,12 @@ public abstract class DungeonUtil {
      * with the possible of direction of the point.
      * */
     boolean defineRoom(DungeonHandler handler, Point point, boolean ignoreLimit, @Nullable Room exception) {
-        LinkedList<Shape> pick = new LinkedList<>(List.of(Shape.values()));
-        pick.remove(Shape.ONE);
+        LinkedList<Shape> pick = new LinkedList<>(List.of(
+                new BOX_BY_BOX(), new L_BY_L(), new FOUR_BY_FOUR(),
+                new THREE_BY_THREE(), new TOW_BY_TWO()
+        ));
         Collections.shuffle(pick, handler.getRandom());
-        pick.addLast(Shape.ONE);
+        pick.addLast(new ONE_BY_ONE());
         while (!pick.isEmpty()){
             Shape shape = pick.pop();
             if(isFit(handler, point, shape, exception)){
@@ -330,61 +334,31 @@ public abstract class DungeonUtil {
         return false;
     }
 
-    boolean isFit(DungeonHandler handler, Point point, Shape shapes, @Nullable Room exception) {
-        int i = point.x, j = point.y;
+    boolean isFit(DungeonHandler handler, Point point, me.jasper.jasperproject.Dungeon.Shapes.Shape shapes, @Nullable Room exception) {
+        int x = point.x, y = point.y;
         Room[][] grid = handler.getGrid();
         Stack<Point> history = handler.getHistory();
 
-        Point translate = new Point();
-        int x, y, dx, dy, lx, ly;
-        boolean valid = true;
-        int rotation = 0;
-        for (int k = 0; k < shapes.shape.length; k++) {
-            valid = true;
-            for (int l = 0; l < shapes.shape[k].length; l++) {
-                x = i + shapes.shape[k][l][0];
-                y = j + shapes.shape[k][l][1];
-                if (!isValid(x, y, grid, exception)) {
-                    valid = false;
-                    break;
+        byte[][][] shape = shapes.getShape();
+        for (int i = 0; i < shape.length; i++) {
+            int rotation = 4;
+            boolean valid = true;
+            for (int rot = 0; rot < rotation; rot++) {
+                shapes.rotate(i);
+                for (byte[] bytes : shape[i]) {
+                    if(!isValid(x+bytes[0], y+bytes[1], grid, exception)){
+                        valid = false;
+                        break;
+                    }
                 }
             }
-
-            rotation++;
-            if(!valid) continue;
-            Room validRoom = handler.getRooms().get(shapes.type).peek().clone();
-            validRoom.setName(validRoom.getName()+"_"+k);
-            validRoom.setFoundIndexation(new Point(i, j));
-
-            int[][][] copyOfShape = shapes.copyOfShape;
-            for (int l = 0; l < shapes.shape[k].length; l++) {
-                if(validRoom.getType() == RoomType.BOX){
-                    int m = l == 0? l: l-1;
-                    x = i + copyOfShape[k][m][0];
-                    y = j + copyOfShape[k][m][1];
-                }else {
-                    x = i + copyOfShape[k][l][0];
-                    y = j + copyOfShape[k][l][1];
-                }
-                lx = i + shapes.shape[k][l][0];
-                ly = j + shapes.shape[k][l][1];
-
-                dx = -(i-x)*16;
-                dy = -(j-y)*16;
-
-                translate = new Point(dx, dy);
-                if(handler.isDebug_mode()) Bukkit.broadcastMessage(" -translated to "+dx+", "+dy);
-                grid[lx][ly] = validRoom;
-                history.add(new Point(lx,ly));
-                validRoom.getBody().add(new Point(lx,ly));
+            if(!valid) return false;
+            Room valid_room = handler.getRooms().get(shapes.getType()).getFirst().clone();
+            for (byte[] bytes : shape[i]) {
+                grid[x+bytes[0]][y+bytes[1]] = valid_room;
             }
-            validRoom.setLoc(point);
-            validRoom.setLocTranslate(translate);
-            validRoom.setRotation((rotation+2)*90);
-            return valid;
         }
-
-        return valid;
+        return true;
     }
     boolean isValid(int x, int y, Room[][] grid, @Nullable Room room){
         if(room == null){

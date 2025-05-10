@@ -1,6 +1,6 @@
 package me.jasper.jasperproject.Dungeon;
 
-public enum Shape {
+public enum ShapeA {
     L_SHAPE (new int[][][] {
             // L
             {{0, 0}, {1, 0}, {1, 1}},//0
@@ -137,7 +137,7 @@ public enum Shape {
     public final int[][][] copyOfShape;
     public final RoomType type;
 
-    Shape(int[][][] shape, RoomType type, int[][][] copyOfShape) {
+    ShapeA(int[][][] shape, RoomType type, int[][][] copyOfShape) {
         this.shape = shape;
         this.type = type;
         this.copyOfShape = copyOfShape;
