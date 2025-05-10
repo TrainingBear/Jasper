@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Getter
 public class TOW_BY_TWO implements Shape {
-    private final RoomType type = RoomType.FOUR_X_ONE;
+    private final RoomType type = RoomType.TWO_X_ONE;
     private Map<Integer, Integer> rotation = new HashMap<>();
     private final byte[/*anchor n*/][][/*x, y*/] shape = {
             {//anchor 1

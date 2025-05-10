@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Getter
 public class L_BY_L implements Shape {
-    private final RoomType type = RoomType.FOUR_X_ONE;
+    private final RoomType type = RoomType.L_SHAPE;
     private Map<Integer, Integer> rotation = new HashMap<>();
     private final byte[/*anchor n*/][][/*x, y*/] shape = {
             {//anchor 1
@@ -18,12 +18,12 @@ public class L_BY_L implements Shape {
             },
             {//anchor 2
                     {-1, 0},
-                    {0, 0},
                     {-1, 1},
+                    {0, 0},
             },
             {//anchor 3
-                    {1, 0},
-                    {-1, -1},
+                    {-1, 0},
+                    {1, -1},
                     {0, 0},
             },
     };

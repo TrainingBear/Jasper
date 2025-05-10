@@ -1,17 +1,19 @@
 package me.jasper.jasperproject.Dungeon;
 
+import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import me.jasper.jasperproject.Dungeon.Shapes.*;
 import me.jasper.jasperproject.Dungeon.Shapes.Shape;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.TookTimer;
 import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -34,11 +36,9 @@ public class Generator extends DungeonUtil{
         this.p = p; this.l = l; this.seed=seed;
         this.handler = new DungeonHandler(p, l, seed);
     }
-
     public Generator() {
         this.handler = new DungeonHandler(p, l, seed);
     }
-
     //    //room limit
 //    Map<RoomType,Integer> CURRENT_LIMIT = new HashMap<>(Map.of(
 //            RoomType.TWO_X_ONE, 0,
@@ -62,14 +62,10 @@ public class Generator extends DungeonUtil{
 //            RoomType.SINGLE, 10,
 //            RoomType.SPECIAL, 3
 //    ));
-    /*
-    * THIS IS THE MAIN METHOD
-    * */
+    /// THE MAIN METHOD
     public void generate(){
-        Map<RoomType, LinkedList<Room>> rooms = handler.getRooms();
         handler.addRoom(RoomType.SPECIAL, CreatedRoom.TRAP.clone());
         handler.addRoom(RoomType.SPECIAL, CreatedRoom.PUZZLE1.clone());
-
         handler.addRoom(RoomType.SINGLE, CreatedRoom.SINGLE.clone());
         handler.addRoom(RoomType.TWO_X_ONE, CreatedRoom.TWO.clone());
         handler.addRoom(RoomType.THREE_X_ONE, CreatedRoom.THREE.clone());
@@ -79,49 +75,34 @@ public class Generator extends DungeonUtil{
 
         Map<Point, Point> roomMap = handler.getRoomMap();
         handler.setDebug_mode(true);
-        TextComponent message = new TextComponent("Dungeon Seed [" +ChatColor.GREEN+ seed +ChatColor.WHITE+"]");
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(seed)));
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to copy the seeds!")));
-        Bukkit.spigot().broadcast(message);
-
-        long startTime = System.nanoTime();
-        handler.setDebug_mode(false);
-        placeMainDungeon();
-
-        //Parsing current path into the actual shaped rooms
-
-        for (Point point : roomMap.keySet()) {
-            Room room = handler.getGrid(point);
-            if(room == null || room.getType() != RoomType.TEST) continue;
-            if (room.getName().equals(CreatedRoom.path2.getName())) {
-                this.defineRoom(handler, point, true, CreatedRoom.path2);
-                continue;
+        Bukkit.broadcast(Util.deserialize("Dungeon seed [<v>]", Placeholder.component("v", Component.text(seed).color(NamedTextColor.GREEN))).color(NamedTextColor.WHITE).hoverEvent(HoverEvent.showText(Component.text("Click to copy!"))).clickEvent(ClickEvent.copyToClipboard(String.valueOf(seed))));
+        TookTimer.run("Initializing main", ()->{
+            handler.setDebug_mode(false);
+            placeMainDungeon();
+            for (Point point : roomMap.keySet()) {/// parsing the current path to actual rooms
+                Room room = handler.getGrid(point);
+                if(room == null || room.getType() != RoomType.TEST) continue;
+                if (room.getName().equals(CreatedRoom.path2.getName())) {
+                    this.defineRoom(handler, point, true, CreatedRoom.path2);
+                    continue;
+                }
+                this.defineRoom(handler, point, true, CreatedRoom.path1);
             }
-            this.defineRoom(handler, point, true, CreatedRoom.path1);
-        }
-
+            handler.setMainInitialized(true);
+        });
         handler.setDebug_mode(true);
-        //Fill Dungeon room
-        fill(handler, true);
-        long endTime = System.nanoTime();
-        String time = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
-        Bukkit.broadcastMessage(ChatColor.GREEN+"Initializing main took "+time +" ms");
-
-        buildDoor(handler);
+        buildDoor();
+        TookTimer.run("Fill room",()->{
+            fill(handler, true);/// fill the empty space
+        });
         for (Point end : handler.getEdge()){
             buildEmtyDoor(end, handler);
         }
-
-        startTime = System.nanoTime();
-        placePTMR();
+        TookTimer.run("Repatch special room", this::placePTMR);
         render();
-        endTime = System.nanoTime();
-        String time2 = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
-
-        Bukkit.broadcastMessage(ChatColor.GREEN+"Rendering dungeon took "+time2+" ms");
     }
 
-    //Place START, MID, END & Generate its path
+    /// Place START, MID, END & Generate its path
     private void placeMainDungeon(){
         double distance1,distance2,distance3;
         int x, y, x2, y2, x3, y3;
@@ -193,7 +174,7 @@ public class Generator extends DungeonUtil{
     }
 
 
-    //this store the edge and the index of the edge (Point, Index)
+    /// this store the edge and the index of the edge (Point, Index)
     List<Point> possiblePoint = new ArrayList<>();
     private void placePTMR(){
         Room[][] grid = handler.getGrid();
@@ -205,53 +186,34 @@ public class Generator extends DungeonUtil{
              for (int j = 0; j < grid[0].length; j++){
                  if(avaibleRooms == null || avaibleRooms.isEmpty()) return;
                  Point point = new Point(i, j);
-                    if(grid[i][j] == null){
-                        Point neighbor = getNeighbor(point, null,false);
-                        if (neighbor != null) {
-                            grid[i][j] = avaibleRooms.pop();
-                            grid[i][j].setLoc(point);
-                            grid[i][j].addBody(point);
+                 if(grid[i][j] == null){
+                     Point neighbor = getNeighbor(point, null,false);
+                     if (neighbor != null) {
+                         grid[i][j] = avaibleRooms.pop();
+                         grid[i][j].setLoc(point);
+                         grid[i][j].addBody(point);
 
-                            doors.put(point, neighbor);
-                            endpoint.add(point);
-                            buildEmtyDoor(point, handler);
-                        }
-                        continue;
-                    }
+                         doors.put(point, neighbor);
+                         endpoint.add(point);
+                         buildEmtyDoor(point, handler);
+                         Bukkit.broadcast(Component.text(grid[i][j].getName()+" -> "+grid[neighbor.x][neighbor.y].getName()).color(NamedTextColor.GOLD));
+                     }
+                     continue;
+                 }
 
-                    if(grid[i][j].getType() == RoomType.SINGLE && grid[i][j].getConected_room().values().stream().mapToInt(HashSet::size).sum() == 1) {
-                        if(avaibleRooms.isEmpty()) return;
-                        grid[i][j].replace(avaibleRooms.pop(), false);
-                    }
+                 if(grid[i][j].getType() .equals(RoomType.SINGLE ) && grid[i][j].getConected_room().values().stream().mapToInt(HashSet::size).sum() == 1) {
+                     grid[i][j].replace(avaibleRooms.pop(), false);
+                 }
          }
 
-        /**
-         * Broke the room into pieces. | L -> 2x1 | BOX -> L | 4x1... -> 3x1...
-         * */
+        /// Broke the room into pieces. | L -> 2x1 | BOX -> L | 4x1... -> 3x1...
         if(!avaibleRooms.isEmpty()){
             loadPossiblePoint();
             for (Point body : possiblePoint){
                 if(avaibleRooms.isEmpty()) return;
-                Shape shape = switch (grid[body.x][body.y].getType()){
-                    case L_SHAPE -> new L_BY_L();
-                    case BOX -> new BOX_BY_BOX();
-                    case FOUR_X_ONE -> new THREE_BY_THREE();
-                    case THREE_X_ONE -> new TOW_BY_TWO();
-                    case TWO_X_ONE -> new ONE_BY_ONE();
-                    case PUZZLE -> null;
-                    case START -> null;
-                    case MID -> null;
-                    case END -> null;
-                    case TRAP -> null;
-                    case MINI_BOSS -> null;
-                    case END2 -> null;
-                    case SPECIAL -> null;
-                    case SINGLE -> null;
-                    case TEST -> null;
-                };
+                Shape shape = getShape(body, grid);
                 endpoint.add(body);
                 Point point = doors.get(body);
-                grid[body.x][body.y].replace(new Room("TES",RoomType.L_SHAPE,6669,"null",null, null), true);
                 grid[body.x][body.y] = avaibleRooms.pop();
                 grid[body.x][body.y].addBody(body);
                 grid[body.x][body.y].setLoc(body);
@@ -260,10 +222,20 @@ public class Generator extends DungeonUtil{
 
                 grid[body.x][body.y].addConection(body,point);
                 grid[point.x][point.y].addConection(point,body);
-
+                Bukkit.broadcast(Component.text(grid[body.x][body.y].getName()+" -> "+grid[point.x][point.y].getName()).color(NamedTextColor.GOLD));
                 buildEmtyDoor(body, handler);
             }
         }
+    }
+
+    private static Shape getShape(@NotNull Point body, @NotNull Room[][] grid) {
+        Shape shape = null;
+        if (grid[body.x][body.y].getType().equals(RoomType.L_SHAPE)) shape = new TOW_BY_TWO();
+        if (grid[body.x][body.y].getType().equals(RoomType.BOX)) shape = new L_BY_L();
+        if (grid[body.x][body.y].getType().equals(RoomType.FOUR_X_ONE)) shape = new THREE_BY_THREE();
+        if (grid[body.x][body.y].getType().equals(RoomType.THREE_X_ONE)) shape = new TOW_BY_TWO();
+        if (grid[body.x][body.y].getType().equals(RoomType.TWO_X_ONE)) shape = new ONE_BY_ONE();
+        return shape;
     }
 
     int[][] dir = {{0,1}, {0,-1}, {1,0}, {-1,0}};
@@ -271,7 +243,7 @@ public class Generator extends DungeonUtil{
 
     HashSet<Point> neighborlist = new HashSet<>();
     private @Nullable Point getNeighbor(Point point, @Nullable Room room, boolean isBox){
-        List<Point> conected_point_counter = new ArrayList<>();
+        List<Point> connected_point_counter = new ArrayList<>();
         Room[][] grid = handler.getGrid();
         int dx, dy ;
         if(neighborlist.contains(point)) return null;
@@ -283,13 +255,16 @@ public class Generator extends DungeonUtil{
 
                 boolean right = dx >= 0 && dx < grid.length;
                 boolean left = dy >= 0 && dy < grid[0].length;
-                if(right && left &&
-                        grid[dx][dy] != null && (grid[dx][dy].getType() == RoomType.L_SHAPE ||
-                        grid[dx][dy].getType() == RoomType.TWO_X_ONE ||
-                        grid[dx][dy].getType() == RoomType.SINGLE ||
-                        grid[dx][dy].getType() == RoomType.THREE_X_ONE ||
-                        grid[dx][dy].getType() == RoomType.FOUR_X_ONE || grid[dx][dy].getType() == RoomType.BOX)){
-                    return new Point(dx,dy);
+                if(right && left && grid[dx][dy] != null) {
+                    Room room_ = grid[dx][dy];
+                    RoomType type = room_.getType();
+
+                    if (type.equals(RoomType.L_SHAPE) ||
+                    type.equals(RoomType.SINGLE) ||
+                    type.equals(RoomType.TWO_X_ONE) ||
+                    type.equals(RoomType.THREE_X_ONE) ||
+                    type.equals(RoomType.FOUR_X_ONE) ||
+                    type.equals(RoomType.BOX)) return new Point(dx, dy);
                 }
             }
             return null;
@@ -325,10 +300,10 @@ public class Generator extends DungeonUtil{
              boolean right = dx >= 0 && dx < grid.length;
              boolean left = dy >= 0 && dy < grid[0].length;
              if(right && left && Objects.equals(grid[dx][dy], room)){
-                 conected_point_counter.add(new Point(dx, dy));
+                 connected_point_counter.add(new Point(dx, dy));
              }
          }
-        return conected_point_counter.size() == 1 ? conected_point_counter.getLast() : null;
+        return connected_point_counter.size() == 1 ? connected_point_counter.getLast() : null;
 
     }
 
@@ -338,7 +313,7 @@ public class Generator extends DungeonUtil{
         for (int i = 0; i < grid.length; i++)
             for (int j = 0; j < grid[0].length; j++){
                 if(grid[i][j] == null) continue;
-                if(grid[i][j].getType() == RoomType.START || grid[i][j].getType() == RoomType.MID || grid[i][j].getType() == RoomType.END || grid[i][j].getName() == "PATH" || grid[i][j].getType() == RoomType.SINGLE) continue;
+                if(grid[i][j].getType() == RoomType.START || grid[i][j].getType() == RoomType.MID || grid[i][j].getType() == RoomType.END || grid[i][j].getName().equals("PATH" ) || grid[i][j].getType() == RoomType.SINGLE) continue;
                 Point current = new Point(i, j);
                 Point neighbor;
 
@@ -359,7 +334,38 @@ public class Generator extends DungeonUtil{
                     doors.put(current,neighbor);
                 }
             }
+    }
 
+    void buildDoor() {
+        Map<Point, Point> parentMap = handler.getRoomMap();
+        Point start = handler.getEntrance();
+        Room[][] grid = handler.getGrid();
+
+        Point step = handler.getBloodRoom();
+        Room d1, d2;
+        Point pre_step, transition;
+        int rotation;
+        while (!step.equals(start)) {
+            pre_step = step;
+            d1 = grid[pre_step.x][pre_step.y];
+
+            step = parentMap.get(step);
+            if(step==null) return;
+            d2 = grid[step.x][step.y];
+
+            transition = new Point(-(pre_step.x - step.x)*16, -(pre_step.y - step.y)*16);
+            rotation = transition.x==0? 0 : 90;
+
+//            if(handler.isDebug_mode())Bukkit.broadcast(Util.deserialize(d1.getName()+" == "+d2.getName()).color(NamedTextColor.YELLOW));
+            if(!d1.equals(d2)){
+//                if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Placed door beetween "+d1.getName()+" "+d2.getName()).color(NamedTextColor.YELLOW));
+                grid[pre_step.x][pre_step.y].addConection(pre_step,step);
+                grid[step.x][step.y].addConection(step,pre_step);
+                this.loadAndPasteSchematic("lockeddoor",
+                        BlockVector3.at((pre_step.x*32)+transition.x,
+                                70,(pre_step.y*32)+ transition.y),rotation, false);
+            }
+        }
     }
 
     //This gona render the dungeon to the actual shape

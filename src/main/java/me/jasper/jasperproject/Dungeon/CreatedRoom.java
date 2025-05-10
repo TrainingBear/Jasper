@@ -4,8 +4,8 @@ public class CreatedRoom {
     public final static Room entrance = new Room("Entrance", RoomType.START,1,"entrance", 'E');
     public final static Room fairy = new Room("Fairy",RoomType.MID,2,"fairy", 'F');
     public final static Room blood = new Room("Blood Room",RoomType.END,3,"blood", 'B');
-    public final static Room path1 = new Room("PATH",RoomType.TEST,4,"path1",'1');
-    public final static Room path2 = new Room("PATH2",RoomType.TEST,5,"path2", '1');
+    public final static Room path1 = new Room("PATH",RoomType.TEST,4,"path1",'p');
+    public final static Room path2 = new Room("PATH2",RoomType.TEST,5,"path2", 'P');
     public static final Room L = new Room("L room",RoomType.L_SHAPE,8,"Lshape", 'L');
     public static final Room BOX = new Room("2x2 room",RoomType.BOX,8,"2x2", '#');
     public final static Room SINGLE = new Room("SINGLE",RoomType.SINGLE,0,"null", '1');

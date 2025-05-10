@@ -9,6 +9,7 @@ import java.util.*;
 
 @Getter
 public final class DungeonHandler {
+    @Setter private boolean mainInitialized = false;
     @Setter private boolean debug_mode;
     private final Random random;
     private final Room[][] grid;

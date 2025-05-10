@@ -71,14 +71,12 @@ public class Room extends DungeonUtil implements Cloneable{
         }
         if(location!=null){
             this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(location.x, 70, location.y), this.rotation, true);
-            Bukkit.broadcast(Util.deserialize(name +" loaded at = "+location.x +", "+70+", "+location.y).color(NamedTextColor.GOLD));
             isLoaded = true;
             return;
         }
         int x = (loc.x * 32) + locTranslate.x;
         int z = (loc.y * 32) + locTranslate.y;
         this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(x, 70, z), this.rotation, true);
-        Bukkit.broadcast(Util.deserialize(name +" loaded at = "+x +", "+70+", "+z).color(NamedTextColor.GOLD));
         isLoaded = true;
     }
 
