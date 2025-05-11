@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public abstract class DungeonUtil {
 
@@ -100,6 +101,9 @@ public abstract class DungeonUtil {
                 !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].getID() == 3 || grid[p.x][p.y].getID() == 2);
     }
     private void reconstructPath(DungeonHandler handler) {
+        reconstructPath(handler,null);
+    }
+    public void reconstructPath(DungeonHandler handler, @Nullable BiConsumer<Point, Room> consumer) {
         Point end = handler.getBloodRoom();
         Point start = handler.getEntrance();
         Point fairy = handler.getFairy();
@@ -108,19 +112,23 @@ public abstract class DungeonUtil {
         Map<Point, Point> parentMap = handler.getRoomMap();
 
         Point step = end;
-        grid[end.x][end.y].setRotation(wichDirection(end, parentMap.get(end)));
+        grid[end.x][end.y].setRotation(whichDirection(end, parentMap.get(end)));
         Point key = end;
         Room room = CreatedRoom.path1;
         while (!step.equals(start)) {
             step = parentMap.get(key);
-            if(step.equals(start)){
-                grid[step.x][step.y].setRotation(wichDirection(step, key));
-            }
 
             if(!step.equals(start) && !step.equals(fairy)){
-                grid[step.x][step.y] = room;
-                grid[step.x][step.y].setLoc((Point) step.clone());
-                history.push((Point) step.clone());
+                if(consumer!=null){
+                    consumer.accept(step, room);
+                }else {
+                    grid[step.x][step.y] = room;
+                    grid[step.x][step.y].setLoc((Point) step.clone());
+                    history.push((Point) step.clone());
+                }
+            }
+            if(step.equals(start)){
+                grid[step.x][step.y].setRotation(whichDirection(step, key));
             }
             key = step;
             if(key.equals(fairy)){
@@ -134,7 +142,7 @@ public abstract class DungeonUtil {
         Room[][] grid = handler.getGrid();
         Map<Point, Point> doors = handler.getDoorMap();
         if(grid[end.x][end.y].getID()==0){
-            grid[end.x][end.y].setRotation(wichDirection(end, doors.get(end)));
+            grid[end.x][end.y].setRotation(whichDirection(end, doors.get(end)));
         }
         Room room1 = grid[end.x][end.y];
         Point nd = doors.remove(end); if(nd == null) return;
@@ -151,13 +159,13 @@ public abstract class DungeonUtil {
      * @param currentRoom Current Object.
      * @param neighbor Object yang akan di hadap.
      * */
-    private int wichDirection(Point currentRoom, Point neighbor){
+    protected int whichDirection(Point currentRoom, Point neighbor){
         int dx,dy;
         dx = neighbor.x - currentRoom.x;
         dy = neighbor.y - currentRoom.y;
-        if(dy==-1) return -90;
+        if(dy==-1) return 90;
         if(dx==1) return 180;
-        if(dy==1) return 90;
+        if(dy==1) return -90;
         return 0;
     }
 
@@ -255,7 +263,7 @@ public abstract class DungeonUtil {
             //rotating
             ClipboardHolder holder = new ClipboardHolder(clipboard);
             AffineTransform transform = new AffineTransform();
-            transform = transform.rotateY(rotationDegrees);
+            transform = transform.rotateY(-rotationDegrees);
             holder.setTransform(holder.getTransform().combine(transform));
 
             try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
@@ -306,7 +314,6 @@ public abstract class DungeonUtil {
             valid = true;
             for (int rot = 1; rot < 5; rot++) { /// rotate every anchor
                 shapes.rotate(i);
-                if(shapes.getType().equals(RoomType.L_SHAPE) && rot%2==1) continue;
                 valid = true;
                 for (byte[] bytes : shape[i]) { /// re-check if valid
                     if (!isValid(x + bytes[0], y + bytes[1], grid, exception)) {
@@ -324,19 +331,7 @@ public abstract class DungeonUtil {
         if (grid[x][y] != null) {
             logo = grid[x][y].getLogo();
         }
-        Room valid_room;
-//        LinkedList<Room> special_room = handler.getRooms().get(RoomType.SPECIAL);
-//        if(!handler.isMainInitialized() && !special_room.isEmpty() && shapes.getType().equals(RoomType.SINGLE)){
-//            valid_room = special_room.pop();
-//            if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Found Special room "+valid_room.getName()+" at "+x+", "+y));
-//            valid_room.setRotation(shapes.getRotation().get(anchor));
-//            valid_room.setLoc(new Point(x, y));
-//            valid_room.setLocTranslate(shapes.getPastePoint(anchor));
-//            grid[x][y] = valid_room;
-//            if(logo!='`') valid_room.setLogo(logo);
-//            return true;
-//        } else
-            valid_room = handler.getRooms().get(shapes.getType()).getFirst().clone();
+        Room valid_room = handler.getRooms().get(shapes.getType()).getFirst().clone();;
         if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Found "+valid_room.getName()+" at "+x+", "+y));
         valid_room.setRotation(shapes.getRotation().get(anchor));
         valid_room.setLoc(new Point(x, y));

@@ -60,7 +60,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 clone.setLoc(new Point(1, 1));
                 clone.setLocTranslate(pastePoint);
                 clone.setRotation(rot);
-                clone.loadScheme();
+                clone.loadScheme(true);
             }
             case "setType" -> {
                 switch (strings[1]){

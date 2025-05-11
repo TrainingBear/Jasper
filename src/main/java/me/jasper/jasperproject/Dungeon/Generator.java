@@ -40,19 +40,7 @@ public class Generator extends DungeonUtil{
         this.handler = new DungeonHandler(p, l, seed);
     }
     //    //room limit
-//    Map<RoomType,Integer> CURRENT_LIMIT = new HashMap<>(Map.of(
-//            RoomType.TWO_X_ONE, 0,
-//            RoomType.THREE_X_ONE, 0,
-//            RoomType.FOUR_X_ONE, 0,
-//            RoomType.BOX, 0,
-//            RoomType.L_SHAPE, 0,
-//            RoomType.SINGLE, 0,
-//            RoomType.PUZZLE, 0,
-//            RoomType.TRAP, 0,
-//            RoomType.MINI_BOSS, 0
-//
-//    ));
-//
+
 //    HashMap<RoomType,Integer> MAX_LIMIT = new HashMap<>(Map.of(
 //            RoomType.TWO_X_ONE, 2,
 //            RoomType.THREE_X_ONE, 1,
@@ -73,24 +61,13 @@ public class Generator extends DungeonUtil{
         handler.addRoom(RoomType.L_SHAPE, CreatedRoom.L.clone());
         handler.addRoom(RoomType.BOX, CreatedRoom.BOX.clone());
 
-        Map<Point, Point> roomMap = handler.getRoomMap();
-        handler.setDebug_mode(true);
+        handler.setDebug_mode(false);
         Bukkit.broadcast(Util.deserialize("Dungeon seed [<v>]", Placeholder.component("v", Component.text(seed).color(NamedTextColor.GREEN))).color(NamedTextColor.WHITE).hoverEvent(HoverEvent.showText(Component.text("Click to copy!"))).clickEvent(ClickEvent.copyToClipboard(String.valueOf(seed))));
         TookTimer.run("Initializing main", ()->{
-            handler.setDebug_mode(false);
             placeMainDungeon();
-            for (Point point : roomMap.keySet()) {/// parsing the current path to actual rooms
-                Room room = handler.getGrid(point);
-                if(room == null || room.getType() != RoomType.TEST) continue;
-                if (room.getName().equals(CreatedRoom.path2.getName())) {
-                    this.defineRoom(handler, point, true, CreatedRoom.path2);
-                    continue;
-                }
-                this.defineRoom(handler, point, true, CreatedRoom.path1);
-            }
+            reconstructPath(handler, (p, r) -> this.defineRoom(handler, p, true, r));
             handler.setMainInitialized(true);
         });
-        handler.setDebug_mode(true);
         buildDoor();
         TookTimer.run("Fill room",()->{
             fill(handler, true);/// fill the empty space
@@ -341,6 +318,7 @@ public class Generator extends DungeonUtil{
         Room[][] grid = handler.getGrid();
 
         Point step = handler.getBloodRoom();
+        grid[step.x][step.y].setRotation(whichDirection(step, parentMap.get(step)));
         Room d1, d2;
         Point pre_step, transition;
         int rotation;
@@ -355,9 +333,7 @@ public class Generator extends DungeonUtil{
             transition = new Point(-(pre_step.x - step.x)*16, -(pre_step.y - step.y)*16);
             rotation = transition.x==0? 0 : 90;
 
-//            if(handler.isDebug_mode())Bukkit.broadcast(Util.deserialize(d1.getName()+" == "+d2.getName()).color(NamedTextColor.YELLOW));
             if(!d1.equals(d2)){
-//                if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize("Placed door beetween "+d1.getName()+" "+d2.getName()).color(NamedTextColor.YELLOW));
                 grid[pre_step.x][pre_step.y].addConection(pre_step,step);
                 grid[step.x][step.y].addConection(step,pre_step);
                 this.loadAndPasteSchematic("lockeddoor",

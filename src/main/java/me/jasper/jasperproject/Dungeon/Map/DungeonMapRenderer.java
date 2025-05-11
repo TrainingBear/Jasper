@@ -43,41 +43,24 @@ public class DungeonMapRenderer extends MapRenderer {
 
     }
 
-
     boolean rendered = false;
-
     @Override
     public void render(@NotNull MapView mapView, @NotNull MapCanvas mapCanvas, @NotNull Player player) {
 
         if(rendered) return;
 
-//        for (int i = 0; i < 128; i++) {
-//            for (int j = 0; j < 128; j++) {
-//                mapCanvas.setPixelColor(i, j, new Color(255, 255, 255));
-//            }
-//        }
-
         buildDoor(mapCanvas, handler.getRoomMap(),
                 handler.getBloodRoom(), true);
 
-        for (Point endpoint : handler.getEdge()){
-            buildDoor(mapCanvas, handler.getDoorMap(),
-                    endpoint, false);
-        }
-
-
         for (Room room : rooms) {
             if(room==null) continue;
-            if(room.getType() == RoomType.L_SHAPE){
+            if(room.getType().equals(RoomType.L_SHAPE)){
                 List<Point> L = sort(room.getBody());
-
                 Color color = room.getType().color;
-
                 drawRoom(mapCanvas,
                         Math.min(L.get(0).x, L.get(2).x), Math.min(L.get(0).y, L.get(2).y),
                          color,
                         Math.max(L.get(0).x, L.get(2).x), Math.max(L.get(0).y, L.get(2).y),false);
-
                 drawRoom(mapCanvas,
                         Math.min(L.get(1).x, L.get(2).x), Math.min(L.get(1).y, L.get(2).y),
                          color,
@@ -93,14 +76,10 @@ public class DungeonMapRenderer extends MapRenderer {
                 maxX = Math.max(point.x, maxX);
                 maxY = Math.max(point.y, maxY);
             }
-
-
             Color color = room.getType().color;
             drawRoom(mapCanvas, minX, minY, color,
                         maxX, maxY, false);
         }
-
-
         rendered = true;
     }
 
@@ -165,10 +144,6 @@ public class DungeonMapRenderer extends MapRenderer {
             }
         }
         if(rot) rotate();
-//        canvas.setPixelColor(
-//                start,
-//                start2,
-//                Color.WHITE);
     }
 
     private ArrayList<Room> getRooms(Generator generator){

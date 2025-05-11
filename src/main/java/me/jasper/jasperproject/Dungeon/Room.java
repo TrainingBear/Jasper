@@ -4,6 +4,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.Util.Util;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -62,21 +63,26 @@ public class Room extends DungeonUtil implements Cloneable{
         return new Room(this.name,this.type,this.ID,this.schema_name,this.logo);
     }
 
-    void loadScheme(){
-        loadScheme(null);
+    void loadScheme(boolean debug){
+        loadScheme(null, debug);
     }
-    void loadScheme(@Nullable Point location){
+    void loadScheme(){
+        loadScheme(null, false);
+    }
+    void loadScheme(@Nullable Point location, boolean debug){
         if(isLoaded){
             return;
         }
         if(location!=null){
             this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(location.x, 70, location.y), this.rotation, true);
             isLoaded = true;
+            if(debug) Bukkit.broadcast(Component.text("Loaded "+this.getName()+" with rotation of "+this.rotation).color(NamedTextColor.YELLOW));
             return;
         }
         int x = (loc.x * 32) + locTranslate.x;
         int z = (loc.y * 32) + locTranslate.y;
         this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(x, 70, z), this.rotation, true);
+        if(debug) Bukkit.broadcast(Component.text("Loaded "+this.getName()+" with rotation of "+this.rotation).color(NamedTextColor.YELLOW));
         isLoaded = true;
     }
 
