@@ -1,18 +1,17 @@
-package me.jasper.jasperproject.JMinecraft.Item.Util;
+package me.jasper.jasperproject.JMinecraft.Item.Util
 
-import me.jasper.jasperproject.JMinecraft.Item.JItem;
+import me.jasper.jasperproject.JMinecraft.Item.JItem
+import java.io.ObjectStreamClass
+import java.io.Serializable
 
-import java.io.ObjectStreamClass;
-import java.io.Serializable;
+interface Factory : Serializable {
+    fun create(): JItem
 
-public interface Factory extends Serializable {
-    JItem create();
-
-    default JItem finish(){
-        JItem product = create();
-        long serialVersionUID = ObjectStreamClass.lookup(this.getClass()).getSerialVersionUID();
-        product.setVersion(serialVersionUID);
-        product.update();
-        return product;
+    fun finish(): JItem {
+        val product = create()
+        val serialVersionUID = ObjectStreamClass.lookup(this.javaClass).serialVersionUID
+        product.version = serialVersionUID
+        product.update()
+        return product
     }
 }

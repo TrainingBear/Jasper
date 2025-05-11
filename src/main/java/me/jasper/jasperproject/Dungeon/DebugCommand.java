@@ -2,6 +2,10 @@ package me.jasper.jasperproject.Dungeon;
 
 import me.jasper.jasperproject.Dungeon.Shapes.*;
 import me.jasper.jasperproject.Dungeon.Shapes.Shape;
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
+import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,7 +13,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R3.map.RenderData;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,15 +54,9 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 Integer i = four.getRotation().get(anchor);
                 player.sendMessage("Rotated to "+ i);
             }
-            case "anchor" -> {
-                this.anchor = Integer.parseInt(strings[1]);
-            }
-            case "setLocation" -> {
-                this.location = player.getLocation();
-            }
-            case "setRoom" -> {
-                player.sendMessage(room.getName());
-            }
+            case "anchor" -> this.anchor = Integer.parseInt(strings[1]);
+            case "setLocation" -> this.location = player.getLocation();
+            case "setRoom" -> player.sendMessage(room.getName());
             case "paste" -> {
                 Room clone = room.clone();
                 Point pastePoint = four.getPastePoint(anchor);
@@ -91,6 +94,27 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 }
                 player.sendMessage(strings[1]+" -> "+this.room.getName());
             }
+            case "map" -> {
+                ItemStack item = new ItemStack(Material.FILLED_MAP);
+                item.editMeta(e->{
+                    ((MapMeta) e).setMapView(Bukkit.getMap(1));
+                });
+                player.getInventory().setItemInMainHand(item);
+                RenderData data = new RenderData();
+                for (byte i = 0; i < 127; i++) {
+                    for (byte j = 0; j < 127; j++) {
+                        data.buffer[i*127+j] = (byte) ((i+j)%127);
+                    }
+                }
+                ClientboundMapItemDataPacket packet = new ClientboundMapItemDataPacket(
+                        new MapId(1),
+                        MapView.Scale.NORMAL.getValue(),
+                        false,
+                        null,
+                        new MapItemSavedData.MapPatch(0, 0, 128, 128, data.buffer)
+                );
+                ((CraftPlayer) player).getHandle().connection.send(packet);
+            }
         }
         return true;
     }
@@ -100,6 +124,6 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
         if(strings.length == 2 && strings[0].equals("setType")){
             return List.of("FOUR", "THREE", "TWO", "ONE", "L", "BOX");
         }
-        return List.of("rotate", "anchor", "setLocation", "setRoom", "paste", "setType");
+        return List.of("rotate", "anchor", "setLocation", "setRoom", "paste", "setType", "map");
     }
 }

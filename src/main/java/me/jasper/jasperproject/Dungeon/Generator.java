@@ -2,6 +2,7 @@ package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
+import me.jasper.jasperproject.Dungeon.Map.DungeonMap;
 import me.jasper.jasperproject.Dungeon.Shapes.*;
 import me.jasper.jasperproject.Dungeon.Shapes.Shape;
 import me.jasper.jasperproject.JasperProject;
@@ -28,16 +29,20 @@ public class Generator extends DungeonUtil{
     int MAX_RECUR_TRIES = 1000;
     int OCCUR = 0;
     private final DungeonHandler handler;
+    private final DungeonMap map;
     public Generator(int p, int l){
         this.p = p; this.l = l;
         this.handler = new DungeonHandler(p, l, this.seed);
+        this.map = new DungeonMap(this);
     }
     public Generator(int p, int l, long seed){
         this.p = p; this.l = l; this.seed=seed;
         this.handler = new DungeonHandler(p, l, seed);
+        this.map = new DungeonMap(this);
     }
     public Generator() {
         this.handler = new DungeonHandler(p, l, seed);
+        this.map = new DungeonMap(this);
     }
     //    //room limit
 
@@ -77,6 +82,7 @@ public class Generator extends DungeonUtil{
         }
         TookTimer.run("Rematch special room", this::placePTMR);
         render();
+        map.loadRoom();
     }
 
     /// Place START, MID, END & Generate its path
@@ -105,8 +111,10 @@ public class Generator extends DungeonUtil{
         handler.setBloodRoom(end);
         grid[x][y] = CreatedRoom.entrance.clone();
         grid[x][y].setLoc(start);
+        grid[x][y].addBody(start);
         grid[x3][y3] = CreatedRoom.blood.clone();
         grid[x3][y3].setLoc(end);
+        grid[x3][y3].addBody(end);
 
         boolean found;
         int prevx,prevy;
@@ -146,6 +154,7 @@ public class Generator extends DungeonUtil{
         Point fairy = new Point(x2, y2);
         handler.setFairy(fairy);
         grid[x2][y2].setLoc(fairy);
+        grid[x2][y2].addBody(fairy);
         history.remove(fairy);
         history.addFirst(fairy);
     }

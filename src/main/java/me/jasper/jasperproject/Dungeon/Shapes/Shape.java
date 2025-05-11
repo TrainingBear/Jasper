@@ -3,6 +3,7 @@ package me.jasper.jasperproject.Dungeon.Shapes;
 import me.jasper.jasperproject.Dungeon.RoomType;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 
 public interface Shape {
@@ -38,5 +39,13 @@ public interface Shape {
             p[0] = (byte) -p[1];
             p[1] = temp;
         }
+    }
+    static List<Point> rotate(List<Point> points, int degree){
+        for (int i = 0; i < (Math.min(degree, 360) / 90); i++) {
+            for (Point point : points) {
+                point.move(point.y, point.x);
+            }
+        }
+        return points;
     }
 }

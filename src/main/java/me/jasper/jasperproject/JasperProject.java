@@ -11,14 +11,12 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.DebugCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
-import me.jasper.jasperproject.Dungeon.GeneratorCommandExecutor;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerBukkitCommand;
-import me.jasper.jasperproject.Util.Commands.CommandManager;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.Jam.*;
@@ -27,7 +25,6 @@ import me.jasper.jasperproject.JMinecraft.Item.JasperItemCommand;
 import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
 
 import me.jasper.jasperproject.Util.Debug;
-import me.jasper.jasperproject.Util.Listener.AutoSaveListener;
 import me.jasper.jasperproject.Util.Listener.Joinmsg;
 import me.jasper.jasperproject.Util.Listener.PlayerQuitListener;
 import me.jasper.jasperproject.Util.Listener.PlotMenuListener;
@@ -43,7 +40,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.List;
 
 
 public final class JasperProject extends JavaPlugin {

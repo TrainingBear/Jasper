@@ -339,7 +339,9 @@ public abstract class DungeonUtil {
         if(logo!='`') valid_room.setLogo(logo);
         for (byte[] bytes : shape[anchor]) {
             grid[x + bytes[0]][y + bytes[1]] = valid_room;
-            history.add(new Point(x + bytes[0], y + bytes[1]));
+            Point p = new Point(x + bytes[0], y + bytes[1]);
+            history.add(p);
+            valid_room.addBody(p);
         }
         return true;
     }

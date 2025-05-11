@@ -1,6 +1,5 @@
 package me.jasper.jasperproject.Util.ContainerMenu;
 
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public interface Content {

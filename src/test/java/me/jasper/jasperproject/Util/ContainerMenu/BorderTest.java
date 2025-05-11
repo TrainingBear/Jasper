@@ -1,9 +1,6 @@
 package me.jasper.jasperproject.Util.ContainerMenu;
 
-import org.bukkit.Material;
 import org.junit.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BorderTest {
     @Test

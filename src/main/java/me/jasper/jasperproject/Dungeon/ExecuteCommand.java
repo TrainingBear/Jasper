@@ -1,11 +1,8 @@
 package me.jasper.jasperproject.Dungeon;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import me.jasper.jasperproject.Dungeon.Map.CursorRenderer;
-import me.jasper.jasperproject.Dungeon.Map.DungeonMapRenderer;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -46,37 +43,19 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor, TabC
             room = new Generator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]),Long.parseLong(strings[2]));
             room.generate();
         }
-        long startTime = System.nanoTime();
-
-        DungeonMapRenderer renderer = new DungeonMapRenderer(room);
-        MapView mapView = Bukkit.createMap(player.getWorld());
-        mapView.getRenderers().clear();
-        mapView.setScale(MapView.Scale.NORMAL);
+        MapView mapView = Bukkit.getMap(1);
         mapView.setCenterX(((room.getP() * 32)/2)-16);
         mapView.setCenterZ(((room.getL() * 32)/2)-16);
-
-        mapView.addRenderer(renderer);
-        mapView.addRenderer(new CursorRenderer(renderer));
+        mapView.getRenderers().clear();
         mapView.setTrackingPosition(false);
         mapView.setUnlimitedTracking(false);
         mapView.setLocked(true);
-
-        player.sendMap(mapView);
-
-
         ItemStack dungeonmap = new ItemStack(Material.FILLED_MAP);
-        MapMeta mapmeta = (MapMeta) dungeonmap.getItemMeta();
-        mapmeta.setMapId(0);
-        mapmeta.setMapView(mapView);
-        dungeonmap.setItemMeta(mapmeta);
-
-        player.getInventory().addItem(dungeonmap);
-
-        long endTime = System.nanoTime();
-        String time2 = String.format("%.2f", (endTime - startTime) / 1_000_000.0);
-
-        Bukkit.broadcastMessage(ChatColor.GOLD+"Dungeon map generated in "+time2);
-
+        dungeonmap.editMeta(e->{
+            ((MapMeta) e).setMapView(mapView);
+        });
+        player.getInventory().setItem(8, dungeonmap);
+        room.getMap().setViewer(player);
         return false;
     }
 

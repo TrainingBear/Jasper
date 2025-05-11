@@ -1,31 +1,33 @@
 package me.jasper.jasperproject.Dungeon;
 
-import java.awt.*;
+import lombok.Getter;
 
+@Getter
 public enum RoomType {
-    L_SHAPE(new Color(125, 36, 4)),
-    BOX(new Color(145, 29, 0)),
-    FOUR_X_ONE(new Color(145, 29, 0)),
-    THREE_X_ONE(new Color(145, 49, 5)),
-    TWO_X_ONE(new Color(110, 52, 4)),
+    L_SHAPE(34, 2),
+    BOX(34, 3),
+    FOUR_X_ONE(34, 3),
+    THREE_X_ONE(34, 2),
+    TWO_X_ONE(34, 1),
+    SINGLE(34, 0),
 
-    PUZZLE(new Color(140, 11, 191)),
-    START(new Color(7, 173, 21)),
-    MID(new Color(255, 105, 180)),
-    END(new Color(240, 7, 7)),
-    TRAP(new Color(255, 126, 0)),
-    MINI_BOSS(new Color(233, 237, 7)),
-    END2(Color.BLACK),
+    PUZZLE(24, 2),
+    START(27, 2),
+    MID(5, 3),
+    END(4, 3),
+    TRAP(15, 2),
+    MINI_BOSS(4, 0),
+    END2(51, 2),
 
-    SPECIAL,
-    SINGLE(new Color(135, 65, 7)),
-    TEST;
+    SPECIAL(24),
+    TEST(30);
 
-    public final Color color;
-    RoomType(){
-        this.color = new Color(255, 255, 255);
+    private byte color = 0;
+    RoomType(int id){
+        this.color = (byte) ((id*4)+2);
     }
-    RoomType(Color color){
-        this.color = color;
+    RoomType(int id, int shade){
+        if(id>100 || shade > 3) return;
+        this.color = (byte) ((id*4)+shade);
     }
 }

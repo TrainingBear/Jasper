@@ -1,32 +1,29 @@
-package me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium;
+package me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium
 
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JMinecraft.Item.JItem;
-import me.jasper.jasperproject.JMinecraft.Item.Util.Factory;
-import me.jasper.jasperproject.JMinecraft.Player.Stats;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity
+import me.jasper.jasperproject.JMinecraft.Item.JItem
+import me.jasper.jasperproject.JMinecraft.Item.Util.Factory
+import me.jasper.jasperproject.JMinecraft.Player.Stats
+import net.kyori.adventure.text.Component
+import org.bukkit.Material
 
-import java.util.List;
-import java.util.Map;
-
-public class Titanium_Leggings extends JItem implements Factory {
-    public Titanium_Leggings(){
-        super("Titanium Leggings", Material.IRON_LEGGINGS, Rarity.UNCOMMON, ItemType.HELMET, "TITANIUM_LEGGINGS");
-        Map<Stats, Float> stats = this.getStats();
-        stats.put(Stats.DEFENCE, 9f);
-        stats.put(Stats.HEALTH, 8f);
-        stats.put(Stats.MINING_FORTUNE, 4f);
-        stats.put(Stats.DURABILITY, 580f);// melebihi diamond
-    }
-    @Override
-    public JItem create(){
-        return this;
+class Titanium_Leggings :
+    JItem("Titanium Leggings", Material.IRON_LEGGINGS, Rarity.UNCOMMON, ItemType.HELMET, "TITANIUM_LEGGINGS"),
+    Factory {
+    init {
+        val stats = this.stats
+        stats[Stats.DEFENCE] = 9f
+        stats[Stats.HEALTH] = 8f
+        stats[Stats.MINING_FORTUNE] = 4f
+        stats[Stats.DURABILITY] = 580f // melebihi diamond
     }
 
-    @Override
-    protected List<Component> createLore() {
-        return List.of();
+    override fun create(): JItem {
+        return this
+    }
+
+    override fun createLore(): List<Component> {
+        return listOf()
     }
 }

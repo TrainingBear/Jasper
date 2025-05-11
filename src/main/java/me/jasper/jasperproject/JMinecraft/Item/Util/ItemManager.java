@@ -76,7 +76,7 @@ public final class ItemManager {
 
         registerItem(
                 new Blender(),
-                new End_Gateway(),
+                new EndGateway(),
                 new Warp_Gateway(),
                 new GraplingHook(),
                 new TestItem(),
@@ -85,8 +85,8 @@ public final class ItemManager {
                 new Healing_Wand(),
                 new Healing_Staff(),
                 new Titanium_Pickaxe(),
-                new Feather_Jumper(),
-                new Assassin_Dagger(),
+                new FeatherJumper(),
+                new AssassinDagger(),
                 new Stack_Steels(),
                 new Heavy_Axe(),
                 new Test_Bow(),

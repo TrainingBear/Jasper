@@ -1,36 +1,31 @@
-package me.jasper.jasperproject.JMinecraft.Item.Product.Weapons;
+package me.jasper.jasperproject.JMinecraft.Item.Product.Weapons
 
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Burst_Arrow;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JMinecraft.Player.Stats;
-import me.jasper.jasperproject.JMinecraft.Item.JItem;
-import me.jasper.jasperproject.JMinecraft.Item.Util.Factory;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Burst_Arrow
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity
+import me.jasper.jasperproject.JMinecraft.Item.JItem
+import me.jasper.jasperproject.JMinecraft.Item.Util.Factory
+import me.jasper.jasperproject.JMinecraft.Player.Stats
+import net.kyori.adventure.text.Component
+import org.bukkit.Material
 
-import java.util.List;
-import java.util.Map;
-
-public class Burst_Bow extends JItem implements Factory {
-    public Burst_Bow(){
-        super("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW,  "BURST_BOW");
-        Map<Stats, Float> stats = this.getStats();
-        stats.put(Stats.DAMAGE, 40f);
-        stats.put(Stats.STRENGTH, 20f);
-        stats.put(Stats.ATTACK_SPEED, 10f);
-        stats.put(Stats.CRIT_DAMAGE, 40f);
-        stats.put(Stats.CRIT_CHANCE, 5f);
-        this.getAbilities().add(new Burst_Arrow(25,5));
+class Burst_Bow : JItem("Burst Bow", Material.BOW, Rarity.RARE, ItemType.BOW, "BURST_BOW"),
+    Factory {
+    init {
+        val stats = this.stats
+        stats[Stats.DAMAGE] = 40f
+        stats[Stats.STRENGTH] = 20f
+        stats[Stats.ATTACK_SPEED] = 10f
+        stats[Stats.CRIT_DAMAGE] = 40f
+        stats[Stats.CRIT_CHANCE] = 5f
+        abilities.add(Burst_Arrow(25f, 5))
     }
 
-    @Override
-    public JItem create() {
-        return this;
+    override fun create(): JItem {
+        return this
     }
 
-    @Override
-    protected List<Component> createLore() {
-        return List.of();
+    override fun createLore(): List<Component> {
+        return listOf()
     }
 }

@@ -1,31 +1,28 @@
-package me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium;
+package me.jasper.jasperproject.JMinecraft.Item.Product.Series.Titanium
 
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity;
-import me.jasper.jasperproject.JMinecraft.Item.JItem;
-import me.jasper.jasperproject.JMinecraft.Item.Util.Factory;
-import me.jasper.jasperproject.JMinecraft.Player.Stats;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Rarity
+import me.jasper.jasperproject.JMinecraft.Item.JItem
+import me.jasper.jasperproject.JMinecraft.Item.Util.Factory
+import me.jasper.jasperproject.JMinecraft.Player.Stats
+import net.kyori.adventure.text.Component
+import org.bukkit.Material
 
-import java.util.List;
-import java.util.Map;
-
-public class Titanium_Shovel extends JItem implements Factory {
-    public Titanium_Shovel() {
-        super("Titanium Shovel", Material.IRON_SHOVEL, Rarity.UNCOMMON, ItemType.SHOVEL,"TITANIUM_SHOVEL");
-        Map<Stats, Float> stats = this.getStats();
-        stats.put(Stats.MINING_SPEED,45f);
-        stats.put(Stats.DAMAGE,6f);
-        stats.put(Stats.DURABILITY, 1930f);// melebihi diamond shovel
-    }
-    @Override
-    public JItem create(){
-        return this;
+class Titanium_Shovel :
+    JItem("Titanium Shovel", Material.IRON_SHOVEL, Rarity.UNCOMMON, ItemType.SHOVEL, "TITANIUM_SHOVEL"),
+    Factory {
+    init {
+        val stats = this.stats
+        stats[Stats.MINING_SPEED] = 45f
+        stats[Stats.DAMAGE] = 6f
+        stats[Stats.DURABILITY] = 1930f // melebihi diamond shovel
     }
 
-    @Override
-    protected List<Component> createLore() {
-        return List.of();
+    override fun create(): JItem {
+        return this
+    }
+
+    override fun createLore(): List<Component> {
+        return listOf()
     }
 }

@@ -1,6 +1,5 @@
 package me.jasper.jasperproject.JMinecraft.Item.ItemAttributes;
 
-import lombok.Getter;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;

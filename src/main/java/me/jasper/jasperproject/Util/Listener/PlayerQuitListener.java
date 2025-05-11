@@ -1,9 +1,7 @@
 package me.jasper.jasperproject.Util.Listener;
 
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.*;
-import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
-import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;

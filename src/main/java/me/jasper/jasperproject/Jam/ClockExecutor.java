@@ -1,12 +1,7 @@
 package me.jasper.jasperproject.Jam;
 
 import me.jasper.jasperproject.JasperProject;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Objects;
-import java.util.UUID;
 
 public class ClockExecutor extends BukkitRunnable {
     static JasperProject plugin;
