@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;

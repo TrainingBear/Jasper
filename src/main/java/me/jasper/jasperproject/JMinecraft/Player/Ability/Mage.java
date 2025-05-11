@@ -11,7 +11,7 @@ import me.jasper.jasperproject.Util.JKey;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

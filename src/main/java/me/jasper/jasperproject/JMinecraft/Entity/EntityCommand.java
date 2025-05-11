@@ -6,7 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

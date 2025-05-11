@@ -79,7 +79,7 @@ public class Heal extends ItemAbility {
                 }
                 this.player.setHealth(Math.min(
                         this.player.getHealth()+this.range
-                        , this.player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
+                        , this.player.getAttribute(Attribute.MAX_HEALTH).getValue()
                 ));
                 this.player.sendActionBar(MiniMessage.miniMessage().deserialize("<green>Heal "+"▍".repeat(duration)));
                 this.player.getWorld().spawnParticle(

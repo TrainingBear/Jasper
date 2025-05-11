@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JMinecraft.Entity.Mobs;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Zombie;
@@ -19,7 +20,7 @@ public class JZombie extends Zombie {
     }
 
     @Override
-    public boolean hurt(DamageSource damagesource, float f) {
-        return super.hurt(damagesource, f);
+    public boolean hurtServer(ServerLevel level, DamageSource damagesource, float f) {
+        return super.hurtServer(level, damagesource, f);
     }
 }

@@ -2,7 +2,6 @@ package me.jasper.jasperproject.JMinecraft.Entity;
 
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import lombok.Getter;
-import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
 import me.jasper.jasperproject.JMinecraft.Player.Stats;
@@ -16,8 +15,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_21_R1.persistence.CraftPersistentDataContainer;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_21_R3.persistence.CraftPersistentDataContainer;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.UUID;
+
 
 public class JMob implements Listener {
     @Getter private CraftLivingEntity mob;
@@ -53,13 +53,13 @@ public class JMob implements Listener {
     public JMob setMaxHealth(float d){
         short level = mob.getPersistentDataContainer().get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
         int v = (int) (d + (d*((float) level /10)));
-        mob.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(v);
+        mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(v);
         mob.setHealth(v);
         return this;
     }
     public JMob setSpeed(float d){
         if(d>0.5f) return this;
-        AttributeInstance attribute = mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        AttributeInstance attribute = mob.getAttribute(Attribute.MOVEMENT_SPEED);
         if(attribute!=null)attribute.setBaseValue(d);
         return this;
     }
@@ -68,7 +68,7 @@ public class JMob implements Listener {
         return this;
     }
     public JMob setDamage(int damage){
-        AttributeInstance attribute = mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+        AttributeInstance attribute = mob.getAttribute(Attribute.ATTACK_DAMAGE);
         if(attribute!=null) attribute.setBaseValue(damage);
         return this;
     }
@@ -191,7 +191,7 @@ public class JMob implements Listener {
             if(e.getDamageSource().getCausingEntity() != null) return;
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
             DamageResult result = null;
-            AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.MAX_HEALTH);
             float max_health = maxHealthAttribute !=null ? (float) maxHealthAttribute.getBaseValue() : 100;
             if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
                 hurt(entity, (int) (max_health/25f));
