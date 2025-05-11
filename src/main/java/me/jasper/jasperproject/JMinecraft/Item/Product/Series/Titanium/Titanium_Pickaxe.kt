@@ -12,7 +12,6 @@ class Titanium_Pickaxe :
     JItem("Titanium Pickaxe", Material.IRON_PICKAXE, Rarity.UNCOMMON, ItemType.PICKAXE, "TITANIUM_PICKAXE"),
     Factory {
     init {
-        this.version = version
         val stats = this.stats
         stats[Stats.MINING_SPEED] = 60f
         stats[Stats.MINING_FORTUNE] = 13f

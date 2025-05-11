@@ -20,7 +20,6 @@ class EndGateway : JItem("End Gateway", Material.GOLDEN_SHOVEL, Rarity.EPIC, Ite
         stats[Stats.MANA] = 50f
         stats[Stats.SPEED] = 10f
         stats[Stats.ATTACK_SPEED] = 5f
-        this.version = version
         enchants.addAll(listOf(Sharpness()))
         abilities.add(Teleport(10, 0.2f))
     }

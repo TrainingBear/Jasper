@@ -12,7 +12,6 @@ import org.bukkit.Material
 class Healing_Wand : JItem("Healing Wand", Material.BREEZE_ROD, Rarity.RARE, ItemType.WAND, "HEALING_WAND"),
     Factory {
     init {
-        this.version = version
         this.setMaxStack(1)
         stats[Stats.HEALTH] = 50f
         stats[Stats.MANA] = 35f

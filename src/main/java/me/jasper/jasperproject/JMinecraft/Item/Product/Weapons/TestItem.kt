@@ -23,7 +23,7 @@ class TestItem : JItem("Test Items", Material.NETHERITE_AXE, Rarity.MYTHIC, Item
 
         abilities.add(Teleport(12.toShort().toInt(), 0f))
         enchants.add(Sharpness())
-        this.setUpgradeable(true)
+        setUpgradeable(true)
     }
 
     override fun create(): JItem {

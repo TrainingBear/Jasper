@@ -12,7 +12,7 @@ import org.bukkit.Material
 class GraplingHook : JItem("Grappling Hook", Material.FISHING_ROD, Rarity.COMMON, ItemType.ROD, "GRAPPLING_HOOK"),
     Factory {
     init {
-        this.setUpgradeable(false)
+        setUpgradeable(false)
         abilities.add(Grappling_Hook(1.5f))
         enchants.add(Sharpness())
     }

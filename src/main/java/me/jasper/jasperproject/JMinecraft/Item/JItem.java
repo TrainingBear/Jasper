@@ -28,7 +28,7 @@ public abstract class JItem implements Cloneable{
     @Setter @Getter private String ID; // <---------- 2
     @Setter private String item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
-    @Setter private boolean upgradeable = true; // <---------- 5
+    private boolean upgradeable = true; // <---------- 5
     @Setter private boolean unlimitedUpgradeable = false; // <---------- 6
     private boolean upgraded = false; // <---------- 7
     @Getter private byte upgradesOccur; // <---------- 8
@@ -37,9 +37,9 @@ public abstract class JItem implements Cloneable{
     @Getter @Setter private Rarity rarity; // <---------- 10
     final private ItemType type; // <---------- 11
 
-    @Getter private Map<Stats, Float> stats;
-    @Getter private List<Enchant> enchants;
-    @Getter private List<ItemAbility> abilities;
+    @Getter protected Map<Stats, Float> stats;
+    @Getter protected List<Enchant> enchants;
+    @Getter protected List<ItemAbility> abilities;
 
     private List<Component> lore = new ArrayList<>();
 
@@ -162,6 +162,10 @@ public abstract class JItem implements Cloneable{
         lore.addAll(createLore());
         lore.addAll(rarity.getDescription(upgraded, type));
         item.editMeta(meta-> meta.lore(lore));
+    }
+
+    public void setUpgradeable(boolean b){
+        this.upgradeable = b;
     }
 
     @Override

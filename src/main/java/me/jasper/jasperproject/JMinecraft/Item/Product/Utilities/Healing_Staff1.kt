@@ -12,7 +12,6 @@ import org.bukkit.Material
 class Healing_Staff : JItem("Healing Staff", Material.BREEZE_ROD, Rarity.EPIC, ItemType.STAFF, "HEALING_STAFF"),
     Factory {
     init {
-        this.version = version
         this.setMaxStack(1)
         val stats = this.stats
         stats[Stats.HEALTH] = 75f
