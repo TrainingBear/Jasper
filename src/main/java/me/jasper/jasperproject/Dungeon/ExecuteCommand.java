@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ExecuteCommand extends DungeonUtil implements CommandExecutor, TabCompleter {
+public class ExecuteCommand implements CommandExecutor, TabCompleter {
     JasperProject plugin;
     public ExecuteCommand(JasperProject plugin){
         this.plugin = plugin;
@@ -31,16 +31,16 @@ public class ExecuteCommand extends DungeonUtil implements CommandExecutor, TabC
         }
 
         this.loadAndPasteSchematic("clear",BlockVector3.at(48,70,48),0, false);
-        Generator room = new Generator();
+        DungeonGenerator room = new DungeonGenerator(){};
         if(strings.length == 0){
-            room = new Generator();
+            room = new DungeonGenerator();
             room.generate();
         }if(strings.length == 2){
-            room = new Generator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]));
+            room = new DungeonGenerator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]));
             room.generate();
         }
         if(strings.length == 3){
-            room = new Generator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]),Long.parseLong(strings[2]));
+            room = new DungeonGenerator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]),Long.parseLong(strings[2]));
             room.generate();
         }
         MapView mapView = Bukkit.getMap(1);

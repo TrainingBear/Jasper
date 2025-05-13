@@ -17,11 +17,30 @@ public final class DungeonHandler {
     private final Map<Point, Point> doorMap = new HashMap<>();
     private final Queue<Point> edge = new LinkedList<>();
     private final Stack<Point> history = new Stack<>();
-    @Setter private Point entrance;
-    @Setter private Point fairy;
-    @Setter private Point bloodRoom;
+    private Point entrance;
+    private Point fairy;
+    private Point bloodRoom;
 
-    public Map<RoomType, LinkedList<Room>> rooms = new HashMap<>();
+    public void setFairy(Point point){
+        grid[point.x][point.y] = CreatedRoom.fairy.clone();
+        this.fairy = point;
+        grid[point.x][point.y].setLoc(point);
+        grid[point.x][point.y].addBody(point);
+    }
+    public void setBloodRoom(Point point){
+        grid[point.x][point.y] = CreatedRoom.blood.clone();
+        this.bloodRoom = point;
+        grid[point.x][point.y].setLoc(point);
+        grid[point.x][point.y].addBody(point);
+    }
+    public void setEntrance(Point point){
+        grid[point.x][point.y] = CreatedRoom.entrance.clone();
+        this.entrance = point;
+        grid[point.x][point.y].setLoc(point);
+        grid[point.x][point.y].addBody(point);
+    }
+
+    @Setter private Map<RoomType, LinkedList<Room>> rooms = new HashMap<>();
     public LinkedList<Room> get(RoomType type){
         return this.rooms.get(type);
     }
@@ -42,5 +61,13 @@ public final class DungeonHandler {
 
     public @Nullable Room getGrid(Point point){
         return this.grid[point.x][point.y];
+    }
+
+    public Set<Room> getRoom(){
+        Set<Room> room = new HashSet<>();
+        for (Room[] rooms1 : grid) {
+            room.addAll(Arrays.asList(rooms1));
+        }
+        return room;
     }
 }

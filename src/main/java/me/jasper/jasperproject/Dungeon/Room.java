@@ -57,8 +57,22 @@ public class Room extends DungeonUtil implements Cloneable{
         this.body = replace_body? room.body : this.body;
     }
 
-     protected Room clone(){
-        return new Room(this.name,this.type,this.ID,this.schema_name,this.logo);
+     public Room clone(){
+         try {
+             Room room = (Room) super.clone();
+             List<Point> body = new ArrayList<>();
+             for (Point point : this.getBody()) {
+                 body.add((Point) point.clone());
+             }
+             room.body = body;
+             room.loc = ((Point) this.loc.clone());
+             room.locTranslate = ((Point) this.locTranslate.clone());
+             room.type = this.type;
+             room.foundIndexation = this.foundIndexation;
+             return room;
+         } catch (CloneNotSupportedException e) {
+             throw new RuntimeException(e);
+         }
     }
 
     void loadScheme(boolean debug){

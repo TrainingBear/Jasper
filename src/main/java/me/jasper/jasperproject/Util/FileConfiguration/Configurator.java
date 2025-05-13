@@ -21,7 +21,7 @@ public final class Configurator {
     private static Configurator instance;
 
     @Getter private final Set<String> file = new HashSet<>();
-//    private final Map<String, File> file = new HashMap<>();
+//    private final Floors<String, File> file = new HashMap<>();
     @Getter private final List<Configurator > compounds = new ArrayList<>();
     @Getter public final File parent;
     private final Plugin plugin = JasperProject.getPlugin();

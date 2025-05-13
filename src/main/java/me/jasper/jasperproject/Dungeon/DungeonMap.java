@@ -1,10 +1,6 @@
-package me.jasper.jasperproject.Dungeon.Map;
+package me.jasper.jasperproject.Dungeon;
 
 import lombok.Getter;
-import me.jasper.jasperproject.Dungeon.DungeonHandler;
-import me.jasper.jasperproject.Dungeon.Generator;
-import me.jasper.jasperproject.Dungeon.Room;
-import me.jasper.jasperproject.Dungeon.RoomType;
 import me.jasper.jasperproject.JasperProject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -43,11 +39,12 @@ public class DungeonMap {
     private final RenderData data = new RenderData();
     private Set<Room> uniqueRoom = new HashSet<>();
     @Getter private static Map<UUID, BukkitTask> maps = new HashMap<>();
+    @Getter private Map<Point, Point> reflected_room_map = new HashMap<>();
 
-    public DungeonMap(Generator generator){
-        this.handler = generator.getHandler();
-        this.GRID_PANJANG = generator.getP();
-        this.GRID_LEBAR = generator.getL();
+    public DungeonMap(DungeonGenerator dungeonGenerator){
+        this.handler = dungeonGenerator.getHandler();
+        GRID_PANJANG = dungeonGenerator.getP();
+        GRID_LEBAR = dungeonGenerator.getL();
         this.PRE_SIZE = ((double) 128 /Math.max(GRID_PANJANG , GRID_LEBAR));
         this.CELL_SIZE = (PRE_SIZE-(double) MARGIN*PRE_SIZE / (48-MARGIN));
         this.DOOR_SIZE = new int[]{(int) (-PRE_SIZE/4.5), -6};
@@ -77,33 +74,26 @@ public class DungeonMap {
         for (Point point : handler.getEdge()) buildEmptyDoor(point);
         for (Room room : uniqueRoom) {
             if(room==null) continue;
-//            List<Point> body = Shape.rotate(List.copyOf(room.getBody()), 180);
-            List<Point> body = List.copyOf(room.getBody());
-            refactor(body);
+            List<Point> body = room.getBody();
             if(room.getType().equals(RoomType.L_SHAPE)){
                 List<Point> L = sort(body);
                 byte color = room.getType().getColor();
-                int min = Math.min(L.get(0).x, L.get(2).x);
-                int min1 = Math.min(L.get(0).y, L.get(2).y);
-                int max = Math.max(L.get(0).x, L.get(2).x);
-                int max1 = Math.max(L.get(0).y, L.get(2).y);
-                drawRoom(
-                        min, min1,
-                        color,
-                        max1, max,false);
-                int min2 = Math.min(L.get(1).x, L.get(2).x);
-                int min3 = Math.min(L.get(1).y, L.get(2).y);
-                int max2 = Math.max(L.get(1).x, L.get(2).x);
-                int max3 = Math.max(L.get(1).y, L.get(2).y);
-                drawRoom(
-                        -min2, -min3,
-                        color,
-                        -max2, -max3,false);
+                int minx = Math.min(L.get(0).x, L.get(2).x);
+                int miny = Math.min(L.get(0).y, L.get(2).y);
+                int maxx = Math.max(L.get(0).x, L.get(2).x);
+                int maxy = Math.max(L.get(0).y, L.get(2).y);
+//                Bukkit.broadcastMessage("Drawing "+minx+", "+miny+" -> "+maxx+", "+maxy);
+                drawRoom( minx, miny, color, maxx, maxy,true);
+                minx = Math.min(L.get(1).x, L.get(2).x);
+                miny = Math.min(L.get(1).y, L.get(2).y);
+                maxx = Math.max(L.get(1).x, L.get(2).x);
+                maxy = Math.max(L.get(1).y, L.get(2).y);
+//                Bukkit.broadcastMessage("Drawing "+minx+", "+miny+" -> "+maxx+", "+maxy);
+                drawRoom( minx, miny, color, maxx, maxy,true);
                 continue;
             }
             int minX = Integer.MAX_VALUE,minY = Integer.MAX_VALUE,
                     maxX = Integer.MIN_VALUE,maxY = Integer.MIN_VALUE;
-
             for (Point point : body){
                 minX = Math.min(point.x, minX);
                 minY = Math.min(point.y, minY);
@@ -111,8 +101,8 @@ public class DungeonMap {
                 maxY = Math.max(point.y, maxY);
             }
             byte color = room.getType().getColor();
-            drawRoom(-minX, -minY, color,
-                        -maxX, -maxY, false);
+            drawRoom(minX, minY, color,
+                        maxX, maxY, false);
         }
         ClientboundMapItemDataPacket packet = new ClientboundMapItemDataPacket(
                 new MapId(1),
@@ -157,20 +147,19 @@ public class DungeonMap {
         if (debug) Bukkit.broadcast(Component.text("    Drew from "+startX+", "+startY+" to "+endX+", "+endY).color(NamedTextColor.GRAY));
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
-                data.buffer[x*128+y] = color;
+                data.buffer[y*128+x] = color;
             }
         }
     }
     void buildEmptyDoor(Point end) {
         Map<Point, Point> doors = handler.getDoorMap();
-        Point nd = doors.remove(end); if(nd == null) return;
-        Point transition = new Point(-(nd.x - end.x)*16, -(nd.y - end.y)*16);
-        boolean rotation = transition.x!=0;
+        Point nd = doors.get(end); if(nd == null) return;
+        Point transition = new Point((int) (-(end.x - nd.x)*CELL_SIZE/2), (int) (-(end.y - nd.y)*CELL_SIZE/2));
+        boolean rotation = transition.x != 0;
         drawDoor(
                 (int) (end.x*(CELL_SIZE)+(CELL_SIZE/2)+transition.x), (int) (end.y*(CELL_SIZE)+(CELL_SIZE/2)+transition.y),
                 handler.getGrid(end).getType().getColor(), rotation
         );
-        Bukkit.broadcast(Component.text("Door has been drawn!"));
     }
     private void buildDoor() {
         Point step = handler.getBloodRoom();
@@ -207,7 +196,7 @@ public class DungeonMap {
         for (   int x = Math.min(start,end);  x <= Math.max(start,end); x++) {
             for(int y = Math.min(start2,end2);  y <= Math.max(start2,end2); y++) {
 //                if(data.buffer[x*127+y] null) continue;
-                data.buffer[x*128+y] = color;
+                data.buffer[y*128+x] = color;
             }
         }
         if(rot) rotate();
@@ -216,19 +205,24 @@ public class DungeonMap {
     public void loadRoom(){
         Set<Room> rooms = new HashSet<>();
         Room[][] grid = handler.getGrid();
-        for (Room[] value : grid) rooms.addAll(Arrays.asList(value).subList(0, grid[0].length));
-        this.uniqueRoom = rooms;
-    }
-    private List<Point> sort(List<Point> body){
-        int[][] dirs = {{1,0},{0,1},{-1,0},{0,-1},};
-        LinkedList<Point> sorted = new LinkedList<>();
-        for(Point point : body){
-            int counter = 0;
-            for(int[] dir : dirs){
-                if(body.contains(new Point(point.x-dir[0], point.y-dir[1]))){
-                    counter++;
+        for (Room[] value : grid) {
+            for (Room room : value) {
+                if(room==null) continue;
+                if(!rooms.contains(room)){
+                    rooms.add(room.clone());
                 }
             }
+        }
+        this.uniqueRoom = rooms;
+    }
+
+    private List<Point> sort(List<Point> body){
+        int[][] dirs = {{1,0},{0,1},{-1,0},{0,-1},};
+        List<Point> sorted = new LinkedList<>();
+        for(Point point : body){
+            int counter = 0;
+            for(int[] dir : dirs)
+                if(body.contains(new Point(point.x-dir[0], point.y-dir[1]))) counter++;
             if(counter>=2){
                 sorted.addLast(point);
                 continue;
@@ -237,14 +231,23 @@ public class DungeonMap {
         }
         return sorted;
     }
+
     private void rotate(){
         DOOR_SIZE[0] = DOOR_SIZE[0]+DOOR_SIZE[1];
         DOOR_SIZE[1] = DOOR_SIZE[0]-DOOR_SIZE[1];
         DOOR_SIZE[0] = DOOR_SIZE[0]-DOOR_SIZE[1];
     }
-    private void refactor(List<Point> body){
-        for (Point point : body) {
-            point.move(-point.x, -point.y);
+    private void reflect(){
+        for (Room room : uniqueRoom) {
+            Bukkit.broadcastMessage(room.getName()+" has "+room.getBody().size());
+            for (Point point : room.getBody()) {
+                point.move(point.y, point.x);
+            }
+        }
+        this.reflected_room_map = Map.copyOf(handler.getRoomMap());
+        for (Map.Entry<Point, Point> entry : reflected_room_map.entrySet()) {
+            reflected_room_map.put(new Point(entry.getKey().y, entry.getKey().x),
+                    new Point(entry.getValue().y, entry.getValue().x));
         }
     }
 }

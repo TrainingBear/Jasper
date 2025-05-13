@@ -1,6 +1,7 @@
 package me.jasper.jasperproject.JMinecraft.Player;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorEquipEvent;
@@ -35,6 +36,7 @@ import java.util.UUID;
 
 @Getter
 public class JPlayer implements Listener {
+    @Setter private String lastInstance;
     Map<ArmorType, ItemStack> lastItems = new HashMap<>(ArmorType.values().length);
     private UUID UUID;
 
@@ -42,12 +44,6 @@ public class JPlayer implements Listener {
     public JPlayer(Player player){
         this.UUID = player.getUniqueId();
     }
-
-    /**
-     * @return total damage amount
-     */
-
-
 
     public DamageResult shoot(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier, float force, float arrow_damage){
         Player bukkitPlayer = getBukkitPlayer();
