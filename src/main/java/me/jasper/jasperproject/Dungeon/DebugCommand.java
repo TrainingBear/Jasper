@@ -1,8 +1,17 @@
 package me.jasper.jasperproject.Dungeon;
 
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.Region;
+import me.jasper.jasperproject.Dungeon.Floors.FloorONE;
 import me.jasper.jasperproject.Dungeon.Shapes.*;
 import me.jasper.jasperproject.Dungeon.Shapes.Shape;
+import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Animator;
+import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
+import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
+import net.minecraft.world.level.levelgen.structure.structures.RuinedPortalStructure;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
@@ -13,6 +22,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R3.map.RenderData;
 import org.bukkit.entity.Player;
@@ -23,6 +33,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.sql.Struct;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -115,6 +129,46 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 );
                 ((CraftPlayer) player).getHandle().connection.send(packet);
             }
+            case "start" -> {
+                if(strings[1].equals("FLOOR_ONE")){
+                    FloorONE floorONE = new FloorONE(JPlayer.getJPlayer(player).createGroup());
+                    floorONE.enter();
+
+                    //if ready
+                    floorONE.start();
+                }
+            }
+            case "leave" -> {
+                Dungeon dungeon = Dungeon.instance.get(JPlayer.getJPlayer(player).getLastInstance());
+                dungeon.exit(player);
+            }
+            case "setup" -> {
+                Configurator config = JasperProject.getDungeonConfig();
+                if(strings[1].equals("save")){
+                    if(strings.length<4) return false;
+                    String type = strings[2];
+                    String name = strings[3];
+                    Region vector = Animator.getRegions().get(player.getUniqueId());
+                    BlockVector3 block = vector.getMaximumPoint();
+                    Location location = new Location(player.getWorld(), block.x(), 70, block.z());
+                    Structure.save(player, location, new File(config.getParent(), "//rooms//"+name+"//.schem"));
+                    config.create("rooms-map");
+                    config.edit("rooms-map", (e)->{
+                        if(!e.contains(type)) e.set(type, new ArrayList<>());
+                        List<String> list = e.getStringList(type);
+                        list.add(name+".schem");
+                    });
+                }
+                if(strings[1].equals("load")){
+                    String name = strings[2];
+                    Structure.render(new File(config.getParent(), "//rooms//"+name+".schem"), player.getLocation());
+                }
+                if(strings[1].equals("delete")){
+                    String name = strings[2];
+                    File file = new File(config.getParent(), "//rooms//" + name + ".schem");
+                    return file.delete();
+                }
+            }
         }
         return true;
     }
@@ -124,6 +178,25 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
         if(strings.length == 2 && strings[0].equals("setType")){
             return List.of("FOUR", "THREE", "TWO", "ONE", "L", "BOX");
         }
-        return List.of("rotate", "anchor", "setLocation", "setRoom", "paste", "setType", "map");
+        if(strings.length==2&&strings[0].equals("start")){
+            return List.of("FLOOR_ONE", "FLOOR_TWO__SOON");
+        }
+        if(strings.length==2&&strings[0].equals("setup")){
+            return List.of("save", "load", "delete", "list");
+        }
+        if(strings.length==3 && (strings[1].equals("load") || strings[1].equals("delete"))){
+            List<String> complete = new ArrayList<>();
+            Configurator config = JasperProject.getDungeonConfig();
+            FileConfiguration config_ = config.getConfig("rooms-map");
+            for (RoomType value : RoomType.values()) {
+                if(!config_.contains(value.name())) config_.set(value.name(), new ArrayList<>());
+                List<String> list = config_.getStringList(value.name());
+                complete.addAll(list);
+            }
+        }
+        if(strings.length==3&&strings[0].equals("setup")){
+            return RoomType.autocomplete;
+        }
+        return List.of("rotate", "anchor", "setLocation", "setRoom", "paste", "setType", "map", "start", "leave","setup");
     }
 }

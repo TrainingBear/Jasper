@@ -3,7 +3,6 @@ package me.jasper.jasperproject.JMinecraft.Entity;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
-import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
 import me.jasper.jasperproject.JMinecraft.Player.Stats;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
@@ -140,7 +139,7 @@ public class JMob implements Listener {
             DamageResult result = null;
             if((e.getDamager() instanceof Player player)){
                 entity.setMaximumNoDamageTicks(0);
-                JPlayer jPlayer = PlayerManager.getJPlayer(player);
+                JPlayer jPlayer = JPlayer.getJPlayer(player);
                 if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
                     result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MELEE, player.getAttackCooldown());
                 }
@@ -159,7 +158,7 @@ public class JMob implements Listener {
                     if(projectile.getShooter() instanceof Player player){
                         if(projectile instanceof Arrow arrow){
                             entity.setMaximumNoDamageTicks(0);
-                            result = PlayerManager.getJPlayer(player).shoot(null, arrow.getWeapon(),
+                            result = JPlayer.getJPlayer(player).shoot(null, arrow.getWeapon(),
                                     arrow.isCritical(), 1F, (float) arrow.getVelocity().length(),
                                     (float) arrow.getDamage());
                         } else {

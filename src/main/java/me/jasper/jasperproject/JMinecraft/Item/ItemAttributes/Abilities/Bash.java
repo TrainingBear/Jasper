@@ -6,7 +6,6 @@ import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
-import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -106,7 +105,7 @@ public class Bash extends ItemAbility {
 
         final float range = p.isSwimming() ? layout[(int) Math.min(5f, power)] * .5f : layout[(int) Math.min(5f, power)];
         final BlockData blok = hitLoc.clone().add(0, -1, 0).getBlock().getBlockData();
-        JPlayer jPlayer = PlayerManager.getJPlayer(p);
+        JPlayer jPlayer = JPlayer.getJPlayer(p);
 
         for (LivingEntity entity : p.getLocation().getNearbyLivingEntities(range)) {
             if (entity instanceof Player ply) {

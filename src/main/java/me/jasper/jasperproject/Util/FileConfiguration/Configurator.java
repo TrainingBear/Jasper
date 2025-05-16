@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public final class Configurator {
 
     @Getter private final Set<String> file = new HashSet<>();
 //    private final Floors<String, File> file = new HashMap<>();
-    @Getter private final List<Configurator > compounds = new ArrayList<>();
+    @Getter private final Map<String, Configurator > compounds = new HashMap<>();
     @Getter public final File parent;
     private final Plugin plugin = JasperProject.getPlugin();
     @Getter@Setter private Configurator parentCompound;
@@ -37,6 +38,9 @@ public final class Configurator {
     @Deprecated
     private Configurator(){
         parent = this.plugin.getDataFolder();
+    }
+    public Configurator(String name){
+        this(new File(JasperProject.getPlugin().getDataFolder(), "//"+name));
     }
     public Configurator(File parent){
         this.parent = parent;
@@ -56,19 +60,25 @@ public final class Configurator {
      *                 after .yml file loaded or before if the file is directory/folder.
      */
     public void load(Consumer<File> consumer){
-        File[] files = parent.listFiles();
-        for (File file : files) {
-            if(file.getName().endsWith(".yml")) {
-                String name = file.getName();
-                this.file.add(name);
-                Bukkit.getLogger().info("[JasperProject] [Configurator] loaded "+name);
-                if(consumer!=null) consumer.accept(file);
+        try {
+            File[] files = parent.listFiles();
+            if(files==null) return;
+            for (File file : files) {
+                if(file.getName().endsWith(".yml")) {
+                    String name = file.getName();
+                    this.file.add(name);
+                    Bukkit.getLogger().info("[JasperProject] [Configurator] loaded "+name);
+                    if(consumer!=null) consumer.accept(file);
+                }
+                if(file.isDirectory()){
+                    Configurator compound = new Configurator(file);
+                    compound.load(consumer);
+                    this.compounds.put(file.getName(), compound);
+                    compound.setParentCompound(this);
+                }
             }
-            if(file.isDirectory()){
-                Configurator compound = new Configurator(file);
-                compound.load(consumer);
-                this.compounds.add(compound);
-            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -78,22 +88,22 @@ public final class Configurator {
      * @return return the created file Configurator
      * @throws JasperConfiguratorException Exception
      */
-    public Configurator create(String name) throws JasperConfiguratorException{
+    public File create(String name) {
         File file = new File(parent,name+".yml");
 
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().info("[Jasper] Failed creating ("+file.getName()+")");
+                plugin.getLogger().info("Failed creating ("+file.getName()+")");
             }finally {
-                plugin.getLogger().info("[Jasper] Successful creating ("+file.getName()+") "+file.getAbsolutePath());
+                plugin.getLogger().info("Successful creating ("+file.getName()+") "+file.getAbsolutePath());
                 this.file.add(name+".yml");
             }
-            return this;
+            return file;
         }
 
-        throw new JasperConfiguratorException("This file already exist!");
+        return file;
     }
 
     public void edit(String name, Consumer<FileConfiguration> editor) {
@@ -118,43 +128,39 @@ public final class Configurator {
         if(!file.exists()){
             Configurator compound = new Configurator(file);
             compound.setParentCompound(this);
-            compounds.add(compound);
+            compounds.put(name, compound);
             file.mkdir();
             return compound;
         }
         return getCompound(name);
     }
 
-    public boolean removeCompound(String name){
-        Configurator compound = getCompound(name);
-        return this.compounds.remove(compound);
+    public void removeCompound(String name){
+        this.compounds.remove(name);
     }
 
     public @Nullable Configurator getCompound(String name){
-        for (Configurator compound : this.compounds) {
-            if(compound.getParent().getName().equals(name)) return compound;
-        }
-        return null;
+        return compounds.get(name);
     }
 
-    public @Nullable File getFile(String name) {
-        name += ".yml";
-        for (String file : this.file) {
-            if (file.equals(name)) {
-                File value = new File(parent, name);
-                try{
-                    if(value.createNewFile()){
-                        Bukkit.getLogger().warning("[JasperProject] [Configurator] created new files! "+name);
-                    }
-                }catch (IOException e){
-                    e.printStackTrace();
-                    Bukkit.getLogger().warning("[JasperProject] [Configurator] something went wrong when creating "+name);
-                }
-
-                return value;
-            }
-        }
-        return null;
+    public @NotNull File getFile(String name) {
+//        name += ".yml";
+//        for (String file : this.file) {
+//            if (file.equals(name)) {
+//                File value = new File(parent, name);
+//                try{
+//                    if(value.createNewFile()){
+//                        Bukkit.getLogger().warning("[Configurator] created new files! "+name);
+//                    }
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                    Bukkit.getLogger().warning("[Configurator] something went wrong when creating "+name);
+//                }
+//
+//                return value;
+//            }
+//        }
+        return create(name);
     }
     public @Nullable FileConfiguration getConfig(String name){
         File config = getFile(name);

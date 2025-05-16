@@ -2,6 +2,9 @@ package me.jasper.jasperproject.Dungeon;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public enum RoomType {
     L_SHAPE(34, 2),
@@ -23,6 +26,13 @@ public enum RoomType {
     TEST(30);
 
     private byte color = 0;
+    public static final List<String> autocomplete;
+    static {
+        autocomplete = new ArrayList<>();
+        for (RoomType value : RoomType.values()) {
+            autocomplete.add(value.name());
+        }
+    }
     RoomType(int id){
         this.color = (byte) ((id*4)+2);
     }

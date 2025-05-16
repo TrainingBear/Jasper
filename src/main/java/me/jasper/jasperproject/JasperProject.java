@@ -51,13 +51,15 @@ public final class JasperProject extends JavaPlugin {
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
     @Getter private static Configurator animationConfig;
+    @Getter private static Configurator dungeonConfig ;
     @Getter private static ProtocolManager protocolManager;
 
     @Override
     public void onEnable() {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
-        animationConfig = new Configurator(new File(plugin.getDataFolder(), "\\Animations"));
+        animationConfig = new Configurator(new File("Animations"));
+        dungeonConfig = new Configurator("Dungeon");dungeonConfig.load();
 //        animationConfig.load(Animation::loadConfig);
 
         protocolManager = ProtocolLibrary.getProtocolManager();

@@ -1,8 +1,12 @@
 package me.jasper.jasperproject.Dungeon.Floors;
 
 import me.jasper.jasperproject.Dungeon.*;
+import me.jasper.jasperproject.JMinecraft.Player.PlayerGroup;
 
-public class FloorONE extends DungeonGenerator{
+public class FloorONE extends Dungeon{
+    public FloorONE(PlayerGroup group) {
+        super(group, 3, 3);
+    }
     @Override
     public void initialize(DungeonHandler handler) {
         handler.addRoom(RoomType.SPECIAL, CreatedRoom.TRAP.clone());

@@ -111,7 +111,7 @@ public enum Stats {
 
     public static void apply(Player player, ItemStack item, ArmorType type){
        apply(player, fromItem(item), type);
-       JPlayer jPlayer = PlayerManager.getJPlayer(player);
+       JPlayer jPlayer = JPlayer.getJPlayer(player);
        jPlayer.setLastItems(type, item);
     }
     public static void apply(Player player, Map<Stats, Float> stats, ArmorType type){
@@ -119,7 +119,7 @@ public enum Stats {
         PersistentDataContainer pdc = player.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
 
         ///     CLEAR LAST STATS EFFECT
-        JPlayer jPlayer = PlayerManager.getJPlayer(player);
+        JPlayer jPlayer = JPlayer.getJPlayer(player);
         ItemStack lastItems = jPlayer.getLastItems(type);
         if(lastItems!=null){
             Map<Stats, Float> lastItemStats = fromItem(lastItems);

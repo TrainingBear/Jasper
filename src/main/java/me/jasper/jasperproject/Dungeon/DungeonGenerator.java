@@ -57,18 +57,18 @@ public abstract class DungeonGenerator {
         this.p = p; this.l = l;
         this.handler = new DungeonHandler(p, l, this.seed);
         this.map = new DungeonMap(this);
-        this.instance_key = "instance-"+atom.getAndIncrement();
+        this.instance_key = "dungeon_instance-"+atom.getAndIncrement();
     }
     public DungeonGenerator(int p, int l, long seed){
         this.p = p; this.l = l; this.seed=seed;
         this.handler = new DungeonHandler(p, l, seed);
         this.map = new DungeonMap(this);
-        this.instance_key = "instance-"+atom.getAndIncrement();
+        this.instance_key = "dungeon_instance-"+atom.getAndIncrement();
     }
     public DungeonGenerator() {
         this.handler = new DungeonHandler(p, l, seed);
         this.map = new DungeonMap(this);
-        this.instance_key = "instance-"+atom.getAndIncrement();
+        this.instance_key = "dungeon_instance-"+atom.getAndIncrement();
     }
 
     /// THE MAIN METHOD
@@ -98,7 +98,7 @@ public abstract class DungeonGenerator {
         WorldCreator worldCreator = new WorldCreator(instance_key, namespacedKey);
         worldCreator.generator(new ChunkGenerator() {
         });
-        World world = Bukkit.createWorld(worldCreator);
+        Bukkit.createWorld(worldCreator);
         DungeonGenerator.instances.add(instance_key);
     }
 
@@ -108,6 +108,7 @@ public abstract class DungeonGenerator {
         boolean unloaded = Bukkit.unloadWorld(world, false);
         if(unloaded){
             instances.remove(instance_key);
+            Bukkit.broadcast(Component.text(instance_key+" has been deleted!").color(NamedTextColor.GREEN));
             return world.getWorldFolder().delete();
         }
         return false;
@@ -121,7 +122,6 @@ public abstract class DungeonGenerator {
         Random random = handler.getRandom();
         Room[][] grid = handler.getGrid();
         Map<Point, Point> roomMap = handler.getRoomMap();
-        Stack<Point> history = handler.getHistory();
         Point start;
         Point end;
         Point mid;
@@ -203,7 +203,7 @@ public abstract class DungeonGenerator {
                      continue;
                  }
 
-                 if(grid[i][j].getType() .equals(RoomType.SINGLE ) && grid[i][j].getConected_room().values().stream().mapToInt(HashSet::size).sum() == 1) {
+                 if(grid[i][j].getType() .equals(RoomType.SINGLE ) && grid[i][j].getConnected_room().values().stream().mapToInt(HashSet::size).sum() == 1) {
                      grid[i][j].replace(avaibleRooms.pop(), false);
                  }
              }
@@ -319,7 +319,7 @@ public abstract class DungeonGenerator {
                 Point current = new Point(i, j);
                 Point neighbor;
 
-                if(grid[i][j].getConected_room().containsKey(current)) continue;
+                if(grid[i][j].getConnected_room().containsKey(current)) continue;
                 boolean isBox = grid[i][j].getType().equals(RoomType.BOX);
                 if(isBox){
                     neighbor = getNeighbor(current, grid[i][j], true);
@@ -376,7 +376,7 @@ public abstract class DungeonGenerator {
                 StringBuilder stringBuilder = new StringBuilder();
                 for (Room room : rooms) {
                     try{
-                        room.loadScheme();
+                        room.loadScheme(instance_key);
                         stringBuilder.append(room.getLogo()).append(", ");
                     }catch (NullPointerException e){
                         stringBuilder.append(0).append(", ");
@@ -578,25 +578,20 @@ public abstract class DungeonGenerator {
         return null;
     }
 
-    private int @org.jetbrains.annotations.Nullable [] @org.jetbrains.annotations.Nullable [] getDirection(Point point, Room[][] grid){
+    private int[][] getDirection(Point point, Room[][] grid){
         int[][] directions = {{1,0},{-1,0},{0,1},{0,-1}};
-        int i = point.x;
-        int j = point.y;
         int[][] l = new int[4][];
-        boolean valid = false;
-        if((i+1 < grid[0].length) && grid[j][i+1]==null) {
-            l[0] =directions[0];
-            valid=true;
+        int i=0;
+        for (int[] ints : directions) {
+            int dx = point.x + ints[0];
+            int dy = point.y + ints[1];
+            if((((dx < grid.length) && dx >= 0) && ((dy < grid[0].length) && dy >= 0))
+            && grid[dx][dy]==null)
+                l[++i] = ints;
         }
-        if((i-1 >= 0) && grid[j][j-1]==null) {
-            l[1] = directions[1];
-            valid=true;
-        }
-        if((j+1 < grid.length) && grid[j+1][i]==null) { l[2] = directions[2];valid=true;}
-        if((j-1 >= 0) && grid[j-1][i]==null) { l[3] = directions[3];valid=true;}
-        if(!valid) return null;
         return l;
     }
+
     private boolean isValid(Point n, Room[][] grid){
         return ( n.x >= 0 && n.x < grid.length) &&
                 (n.y >= 0 && n.y < grid[0].length) && grid[n.x][n.y] == null;
@@ -625,7 +620,6 @@ public abstract class DungeonGenerator {
             AffineTransform transform = new AffineTransform();
             transform = transform.rotateY(-rotationDegrees);
             holder.setTransform(holder.getTransform().combine(transform));
-
             try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(BukkitAdapter.adapt(Bukkit.getWorld(this.instance_key)))
                     .build()) {
@@ -633,12 +627,10 @@ public abstract class DungeonGenerator {
                         .to(location)
                         .ignoreAirBlocks(ignoreAir)
                         .build();
-
                 Operations.complete(operation);
-//                Bukkit.broadcastMessage("Schematic "+fileName+" pasted with a " + rotationDegrees + "° rotation! at: "+location.toString());
             }
         } catch (IOException | WorldEditException e) {
-            Bukkit.broadcastMessage("Failed to load or paste schematic: " + e.getMessage());
+            if (handler.isDebug_mode()) Bukkit.broadcast(Component.text("Failed to load or paste schematic: " + e.getMessage()));
             e.printStackTrace();
         }
     }

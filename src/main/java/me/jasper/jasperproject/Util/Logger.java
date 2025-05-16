@@ -30,7 +30,7 @@ public class Logger {
         audience = Audience.audience(audiences);
     }
 
-    public void infoactionbar(String message, TagResolver... placeholder){
+    public void infoActionbar(String message, TagResolver... placeholder){
         Component component = MiniMessage.miniMessage().deserialize(message, placeholder);
         if(audience!=null)audience.sendActionBar(component);
     }

@@ -200,7 +200,8 @@ public abstract class Animation {
             return Command.SINGLE_SUCCESS;
         }
         Configurator animation = JasperProject.getAnimationConfig()
-                .newCompound(animation_name).create(animation_name);
+                .newCompound(animation_name);
+        animation.create(animation_name);
         animation.edit(animation_name, e -> {
             e.set("owner", player.getName());
             e.set("isRunning", false);

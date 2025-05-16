@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerGroup;
-import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.TookTimer;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,18 +23,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Getter
 public abstract class Dungeon extends DungeonGenerator {
-    private final static Map<String, Dungeon> instance = new HashMap<>();
+    public final static Map<String, Dungeon> instance = new HashMap<>();
     private final PlayerGroup group;
     @Setter private int deathCount = 0;
     private long start_time;
@@ -43,24 +42,33 @@ public abstract class Dungeon extends DungeonGenerator {
     private BukkitTask tick;
     private final Map<UUID, PlayerGrave> deathPlayers = new HashMap<>();
     private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-    public Dungeon(PlayerGroup group){
+    private final Objective objective = scoreboard.registerNewObjective("dungeon", Criteria.DUMMY, Component.text("<b>Dungeon -FloorN").color(NamedTextColor.GOLD));
+    public Dungeon(PlayerGroup group, int p, int l){
+        super(p, l);
         this.group = group;
         instance.put(instance_key, this);
     }
-
     public void enter(){
-        generate();
+        TookTimer.run("generate dungeon", () -> generate());
         Point entrance = getHandler().getEntrance();
         Location entrance_location = new Location(Bukkit.getWorld(instance_key), entrance.x * 32, 74, entrance.y * 32);
-        Objective objective = scoreboard.registerNewObjective("dungeon", "dummy", Component.text("<bold>Dungeon -FloorN").color(NamedTextColor.GOLD));
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         int score = 15;
-        objective.getScore(ChatColor.GRAY+"discovered "+(current_score/max_score)*100+" %").setScore(--score);
-        objective.getScore(ChatColor.GRAY+"timer: N/A").setScore(--score);
+
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.getScore(ChatColor.GRAY.toString()).setScore(--score);
+        scoreboard.registerNewTeam("discover").addEntry(ChatColor.GRAY.toString());
+        objective.getScore(String.valueOf(ChatColor.RESET)).setScore(--score);
+        scoreboard.registerNewTeam("timer").addEntry(ChatColor.RESET.toString());;
         for (JPlayer member : group.getMembers()) {
+            DungeonMap.sendMap(member.getBukkitPlayer());
+            Bukkit.broadcast(member.getBukkitPlayer().displayName().append(Component.text("enter FLOOR_N!").color(NamedTextColor.GREEN)));
             Player bukkitPlayer = member.getBukkitPlayer();
+            getMap().renderCanvas(bukkitPlayer);
             bukkitPlayer.teleport(entrance_location);
-            objective.getScore(bukkitPlayer.getName()+": "+bukkitPlayer.getHealth()).setScore(--score);
+            objective.getScore("§"+--score).setScore(score);
+            scoreboard.registerNewTeam(bukkitPlayer.getName()).addEntry("§"+--score);
+            member.setLastInstance(instance_key);
+            bukkitPlayer.setScoreboard(scoreboard);
         }
     }
 
@@ -69,20 +77,32 @@ public abstract class Dungeon extends DungeonGenerator {
         for (Room room : getHandler().getRoom()) {
 //            dungeon_score+=
         }
+
         tick = new BukkitRunnable() {
             @Override
             public void run() {
-                Objective obj = scoreboard.getObjective("dungeon");
-                obj.getScore(ChatColor.GRAY+ Util.timer(System.currentTimeMillis()-start_time)).setScore(14);
+                List<Player> players = Bukkit.getWorld(instance_key).getPlayers();
+                if(players.isEmpty()) close();
+                getMap().renderCursor(players);
+                Team team = scoreboard.getTeam("timer");
+                team.prefix(Component.text("time elapsed ").color(NamedTextColor.GREEN).append(Component.text(Util.timer(System.currentTimeMillis()-start_time)).color(NamedTextColor.GRAY)));
+                team = scoreboard.getTeam("discover");
+                team.prefix(Component.text("discovered "+(current_score/100)*100+"%"));
+                for (Player player : players) {
+                    team = scoreboard.getTeam(player.getName());
+                    team.prefix(player.displayName().append(Component.text(player.getHealth()+" ❤ ").color(NamedTextColor.RED)));
+                }
+                Bukkit.broadcast(Component.text(instance_key+" is ticking..").color(NamedTextColor.GRAY));
             }
         }.runTaskTimer(JasperProject.getPlugin(), 20, 20);
     }
 
     public void close(){
         Location spawn = Bukkit.getWorld("spawn").getSpawnLocation();
-        for (JPlayer member : group.getMembers()) {
-            member.getBukkitPlayer().teleport(spawn);
+        for (Player member : Bukkit.getWorld(instance_key).getPlayers()) {
+            member.teleport(spawn);
         }
+        Bukkit.broadcast(Component.text("closed "+instance_key).color(NamedTextColor.RED));
         closeWorld();
         instance.remove(instance_key);
         tick.cancel();
@@ -141,13 +161,13 @@ public abstract class Dungeon extends DungeonGenerator {
         public void onPlayerDisconnect(PlayerQuitEvent e){
             String name = e.getPlayer().getWorld().getName();
             if(Dungeon.instance.containsKey(name)){
-                PlayerManager.getJPlayer(e.getPlayer()).setLastInstance(name);
+                JPlayer.getJPlayer(e.getPlayer()).setLastInstance(name);
             }
         }
 
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent e){
-            JPlayer jPlayer = PlayerManager.getJPlayer(e.getPlayer());
+            JPlayer jPlayer = JPlayer.getJPlayer(e.getPlayer());
             String instance = jPlayer.getLastInstance();
             if (Dungeon.instance.containsKey(instance)) {
                 Dungeon dungeon = Dungeon.instance.get(instance);

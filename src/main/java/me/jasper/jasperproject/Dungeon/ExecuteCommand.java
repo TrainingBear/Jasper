@@ -30,17 +30,25 @@ public class ExecuteCommand implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        this.loadAndPasteSchematic("clear",BlockVector3.at(48,70,48),0, false);
-        DungeonGenerator room = new DungeonGenerator(){};
+        DungeonGenerator room = new DungeonGenerator() {
+            @Override
+            public void initialize(DungeonHandler handler) {
+                handler.addRoom(RoomType.SPECIAL, CreatedRoom.TRAP.clone());
+                handler.addRoom(RoomType.SPECIAL, CreatedRoom.PUZZLE1.clone());
+                handler.addRoom(RoomType.SINGLE, CreatedRoom.SINGLE.clone());
+                handler.addRoom(RoomType.TWO_X_ONE, CreatedRoom.TWO.clone());
+                handler.addRoom(RoomType.THREE_X_ONE, CreatedRoom.THREE.clone());
+                handler.addRoom(RoomType.FOUR_X_ONE, CreatedRoom.FOUR.clone());
+                handler.addRoom(RoomType.L_SHAPE, CreatedRoom.L.clone());
+                handler.addRoom(RoomType.BOX, CreatedRoom.BOX.clone());
+            }
+        };
         if(strings.length == 0){
-            room = new DungeonGenerator();
             room.generate();
         }if(strings.length == 2){
-            room = new DungeonGenerator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]));
             room.generate();
         }
         if(strings.length == 3){
-            room = new DungeonGenerator(Integer.parseInt(strings[1]), Integer.parseInt(strings[0]),Long.parseLong(strings[2]));
             room.generate();
         }
         MapView mapView = Bukkit.getMap(1);

@@ -2,6 +2,7 @@ package me.jasper.jasperproject.Dungeon;
 
 import lombok.Getter;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
@@ -10,11 +11,14 @@ import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_21_R3.map.CraftMapCursor;
 import org.bukkit.craftbukkit.v1_21_R3.map.RenderData;
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCursor;
 import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -45,8 +49,8 @@ public class DungeonMap {
         this.handler = dungeonGenerator.getHandler();
         GRID_PANJANG = dungeonGenerator.getP();
         GRID_LEBAR = dungeonGenerator.getL();
-        this.PRE_SIZE = ((double) 128 /Math.max(GRID_PANJANG , GRID_LEBAR));
-        this.CELL_SIZE = (PRE_SIZE-(double) MARGIN*PRE_SIZE / (48-MARGIN));
+        this.PRE_SIZE = ((double) 128 / Math.max(GRID_PANJANG , GRID_LEBAR));
+        this.CELL_SIZE = (PRE_SIZE - (double) MARGIN * PRE_SIZE / (48-MARGIN));
         this.DOOR_SIZE = new int[]{(int) (-PRE_SIZE/4.5), -6};
         this.FINAL_CELL_SIZE = CELL_SIZE-GAP;
         this.MARGINX = GRID_LEBAR > GRID_PANJANG? (int) (MARGIN + CELL_SIZE / 2) : MARGIN;
@@ -60,7 +64,7 @@ public class DungeonMap {
         BukkitTask runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                renderCursor(player);
+                renderCursor(List.of(player));
             }
         }.runTaskTimerAsynchronously(JasperProject.getPlugin(), 10, 10);
         maps.put(player.getUniqueId(), runnable);
@@ -69,7 +73,7 @@ public class DungeonMap {
         BukkitTask task = maps.remove(player.getUniqueId());
         if(task!=null)task.cancel();
     }
-    private void renderCanvas(Player... players) {
+    public void renderCanvas(Player... players) {
         buildDoor();
         for (Point point : handler.getEdge()) buildEmptyDoor(point);
         for (Room room : uniqueRoom) {
@@ -113,12 +117,17 @@ public class DungeonMap {
         );
         for(Player player : players) ((CraftPlayer) player).getHandle().connection.send(packet);
     }
-    void renderCursor(Player... players){
+    void renderCursor(Collection<Player> players){
         Collection<MapDecoration> icons = new ArrayList<>();
         for(Player player : players){
             Location loc = player.getLocation();
-            byte x = (byte) (((loc.getX() - (((GRID_PANJANG * 32)/2)-16)) * ((getFINAL_CELL_SIZE() * 1.75)) / getFINAL_CELL_SIZE()));
-            byte y = (byte) (((loc.getZ() - (((GRID_LEBAR * 32)/2)-16)) * ((getFINAL_CELL_SIZE() * 1.75)) / getFINAL_CELL_SIZE()));
+//            byte x = (byte) (((loc.getX() - (((GRID_PANJANG * 33)/2)-16)) * ((getFINAL_CELL_SIZE() * 1.75)) / getFINAL_CELL_SIZE()));
+//            byte y = (byte) (((loc.getZ() - (((GRID_LEBAR * 33)/2)-16)) * ((getFINAL_CELL_SIZE() * 1.75)) / getFINAL_CELL_SIZE()));
+            float perbandingan = (float) (CELL_SIZE*2/32);
+            Logger log = new Logger(player);
+            byte x = (byte) ((loc.getBlockX()*perbandingan) -128+ CELL_SIZE + GAP + MARGINX*2);
+            byte y = (byte) ((loc.getBlockZ()*perbandingan) -128+ CELL_SIZE + GAP + MARGINY*2);
+            log.infoActionbar("<green>"+x+", "+y+" perbandingan: "+perbandingan+" | CELL_SIZE: "+CELL_SIZE);
             MapCursor cursor = new MapCursor(x, y, (byte) (loc.getYaw() < 0 ? 16 + (loc.getYaw() / 22.5) : loc.getYaw() / 22),
                     MapCursor.Type.PLAYER, true);
             icons.add(new MapDecoration(
@@ -187,8 +196,8 @@ public class DungeonMap {
     private void drawDoor(int startX, int startY, byte color, boolean rot){
         if(rot) rotate();
 
-        int start = rot? startX+MARGINX+GAP : (int) (startX + MARGINX + GAP + Math.floor((double) (MARGIN * PRE_SIZE) / (128 - MARGIN)));
-        int start2 = rot? (int) (startY + MARGINY + GAP + Math.floor((double) (MARGIN * PRE_SIZE) / (128 - MARGIN))) : startY+MARGINY+GAP;
+        int start = rot? startX+MARGINX+GAP : (int) (startX + MARGINX + GAP + Math.floor((MARGIN * PRE_SIZE) / (128 - MARGIN)));
+        int start2 = rot? (int) (startY + MARGINY + GAP + Math.floor((MARGIN * PRE_SIZE) / (128 - MARGIN))) : startY+MARGINY+GAP;
 
         int end = start+DOOR_SIZE[0];
         int end2 = start2+DOOR_SIZE[1];
@@ -248,6 +257,19 @@ public class DungeonMap {
         for (Map.Entry<Point, Point> entry : reflected_room_map.entrySet()) {
             reflected_room_map.put(new Point(entry.getKey().y, entry.getKey().x),
                     new Point(entry.getValue().y, entry.getValue().x));
+        }
+    }
+    private final static ItemStack map;
+    static {
+        MapView mapview = Bukkit.getMap(1);
+        map = new ItemStack(Material.FILLED_MAP);
+        map.editMeta(e->{
+            ((MapMeta) e).setMapView(mapview);
+        });
+    }
+    public static void sendMap(Player... players){
+        for (Player player : players) {
+            player.getInventory().setItem(8, map);
         }
     }
 }

@@ -10,6 +10,7 @@ import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BlockState;
 import lombok.val;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperProject;
@@ -18,6 +19,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.structure.UsageMode;
 import org.bukkit.craftbukkit.v1_21_R3.block.CraftStructureBlock;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
@@ -33,18 +35,14 @@ public final class Structure {
     private static final Map<UUID, Location> PLACED_BOX = new HashMap<>();
 
     public synchronized static boolean save(Player player, File save_to){
+        return save(player, player.getLocation(), save_to);
+    }
+    public synchronized static boolean save(Player player, Location l, File save_to){
         Map<UUID, Region> map = Animator.getRegions();
         if(!map.containsKey(player.getUniqueId())) return false;
 
-        Location l = player.getLocation();
         Region region = map.get(player.getUniqueId());
-
-        player.sendMessage("saved region with length of "+region.getLength());
-
         BlockVector3 to = BlockVector3.at(l.x(), l.y(), l.z());
-        for (BlockVector3 block : region) {
-            player.sendMessage("Saving -> " +block.toString());
-        }
         return write(player, region, to, save_to);
     }
 
@@ -82,11 +80,6 @@ public final class Structure {
                     ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(session , region, clipboard, region.getMinimumPoint());
                     Operations.complete(forwardExtentCopy);
                     clipboardWriter.write(clipboard);
-
-                    for (BlockVector3 block : region) {
-                        player.sendMessage("Saved ->" + block.toString());
-                    }
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -98,26 +91,31 @@ public final class Structure {
     public static void render(File file, Location location){
         render(file, location, null);
     }
-    public static void render(File file, Location location, @Nullable Collection<Player> players)throws StructureException {
+    public static void render(File file, Location location, @Nullable Collection<Player> players) throws StructureException {
         org.bukkit.World bukkitWorld = location.getWorld();
         BlockVector3 pasteLocation = BlockVector3.at(-location.getX(), -location.getY(), -location.getZ());
-
         Logger log = new Logger(players);
         long clip_last = System.currentTimeMillis();
         try (Clipboard clipboard = getClip(file)) {
             long clip_took = System.currentTimeMillis()-clip_last;
             long last = System.currentTimeMillis();
+            World world = location.getWorld();
             for (BlockVector3 pos : clipboard.getRegion()) {
                 val baseBlock = clipboard.getFullBlock(pos);
                 Location world_pos = BukkitAdapter.adapt(bukkitWorld, pos.subtract(clipboard.getOrigin().add(pasteLocation)));
 
-                for (Player player : players!=null? players : Bukkit.getOnlinePlayers()) {
+                if(players==null){
+                    if(world!=null){
+                        world_pos.getBlock().setBlockData(BukkitAdapter.adapt(baseBlock));
+                    }
+                }
+                else for (Player player : players) {
                     if(player==null) continue;
                     player.sendBlockChange(world_pos, BukkitAdapter.adapt(baseBlock));
                 }
             }
             long timetook = System.currentTimeMillis()-last;
-            log.infoactionbar("<red><b><frame></b></red> <dark_red>-></dark_red> <light_purple>Clipboard:</light_purple> <dark_green><green><v1>ms </green></dark_green>| <gold>render:</gold> <dark_green><green><v2>ms</green></dark_green>",
+            log.infoActionbar("<red><b><frame></b></red> <dark_red>-></dark_red> <light_purple>Clipboard:</light_purple> <dark_green><green><v1>ms </green></dark_green>| <gold>render:</gold> <dark_green><green><v2>ms</green></dark_green>",
                     Placeholder.unparsed("v1", String.valueOf(clip_took)),
                     Placeholder.unparsed("v2", String.valueOf(timetook)),
                     Placeholder.unparsed("frame", file.getName())
