@@ -19,6 +19,7 @@ public enum ItemType {
     // kayak material di craft jadi ingredient, ingredient bisa di craft lg jd bahan ingredient/matang
     MATERIAL, //bahan mentah, sementah-mentahnya :moyai:
     ITEM,
+    TOOL,
     HELMET,
     GOOGLES,
     CHESTPLATE,

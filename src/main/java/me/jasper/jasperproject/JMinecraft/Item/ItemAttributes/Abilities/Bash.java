@@ -74,12 +74,10 @@ public class Bash extends ItemAbility {
         Bukkit.getPluginManager().callEvent(new Charge(e.getPlayer(), e.getRange(), new Charge.ChargAction() {
             @Override
             public void onRelease(Player player, float power) {
-                player.sendMessage("CHARGED "+ power);
                 bashAnimation(player,Math.min(5f,power), e);
             }
             @Override
             public void onTicking(Player p, float power){
-                p.sendActionBar(Util.deserialize("POWER "+ power));
                 Util.playPSound(p,Sound.ENTITY_FISHING_BOBBER_RETRIEVE,1,power * .4f);
             }
         }));

@@ -71,7 +71,8 @@ public final class ItemManager {
                 Jumper.getInstance(),
                 BackStab.getInstance(),
                 Burnt.getInstance(),
-                Bash.getInstance()
+                Bash.getInstance(),
+                Plower.getInstance()
         );
 
         registerItem(
@@ -95,7 +96,11 @@ public final class ItemManager {
                 new Titanium_Helmet(),
                 new Titanium_Chestplate(),
                 new Titanium_Leggings(),
-                new Titanium_Boots()
+                new Titanium_Boots(),
+
+                new Farmer_Hoe(),
+                new Farmer_Scythe(),
+                new Advanced_Hoe()
         );
 
         registerEnchant(new Sharpness());
