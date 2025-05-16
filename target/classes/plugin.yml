@@ -1,0 +1,118 @@
+name: JasperProject
+version: '1.0-SNAPSHOT'
+main: me.jasper.jasperproject.JasperProject
+api-version: '1.20'
+depend: [NBTAPI]
+commands:
+  dungeon:
+    description : a
+  jplayer:
+    description: abc
+  debug:
+    description: test;
+  p:
+    description: Lu bisa ngomong apa saja bebas
+    usage: /p blablabla blabla blabl
+    aliases: [bicara]
+  say:
+    description: Bilang sesuatu sebagai argumen
+    usage: /<commands> aaaa, ya begitulah
+    aliases: [bilang, ngomong]
+  die:
+    description: Membunuhmu seketika
+    usage: /<commands>
+    aliases: [mati,bunuhdiri]
+  sapa:
+    description: berguna untuk menyapa seseorang
+    usage: /sapa <target>
+  sp1:
+    description: Untuk mengatur spawn point ketika join server / ketika respawn
+    usage: /sp1
+    aliases:
+      - jsawnpoint
+  s1:
+    description: Untuk teleport ke titik spawn point yang telah diatur (/sp1 untuk mengatur)
+    usage: /s1
+    aliases:
+      - jspawn
+  r1:
+    description: Untuk mereset setpoint mu
+    usage: /r1
+    aliases:
+      - jr1
+  jasper:
+    description: Gimme a item
+    usage: /gimme <no argument>
+    aliases:
+      - berikan
+  plot:
+    description: Manage your plots
+    usage: /plot
+    aliases:
+      - plot1111
+  terbang:
+    description: flyy
+    usage: /terbang
+    aliases:
+      - fly
+  ngilang:
+    description: cara menjadi setan
+    usage: /ngilang
+    aliases:
+      - vanish
+  testpart:
+    description: partikel
+    usage: /testpart
+    aliases:
+      - testpartikel
+  testsound:
+    description: asdasdsad
+    usage: /testsound
+    aliases:
+      - partikel
+  launchpad:
+    description: Test
+    usage: /launchpad
+    aliases:
+      - vv
+  reload:
+    description: Reloading
+    usage: /reload
+  playerfinder:
+    description: tendang
+    usage: /tendang
+    aliases:
+      - pf
+  setspeed:
+    description: speed tes
+    usage: /setspeed
+  setday:
+    description: set a day
+    usage: /setday
+  setyear:
+    description: set a year
+    usage: /setyear
+  checkday:
+    description: check a day
+    usage: /checkday
+  setmonth:
+    description: set a month
+    usage: /setmonth
+  sethour:
+    description: set a hour
+    usage: /sethour
+  summondisplayi:
+    description: summon a custom display item
+    usage: /summondisplayi <material> <id> <height> <width>
+
+  loadschem:
+    description: a
+  Analog:
+    description: Konfigurasi Jam analog di spawn (Hanya admin)
+  test:
+    description: test
+  jmob:
+    description: justMob
+  jitem:
+    description: justItem
+
