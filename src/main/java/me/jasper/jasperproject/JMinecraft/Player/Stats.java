@@ -50,12 +50,14 @@ public enum Stats {
     BREAK_POWER("\uD83D\uDCA5","Break Power","<color:#38ba3c>",0),
 
     COMBAT_WISDOM("🧠","Combat Wisdom","<color:#00c9b2>", 0),
+    FARMING_WISDOM("🧠","Farming Wisdom","<color:#00c9b2>", 0),
     MINING_WISDOM("🧠","Mining Wisdom","<color:#00c9b2>", 0),
     FORAGING_WISDOM("🧠","Foraging Wisdom","<color:#00c9b2>", 0),
     FISHING_WISDOM("🧠","Fishing Wisdom","<color:#00c9b2>", 0),
     ENCHANTING_WISDOM("🧠","Enchanting Wisdom","<color:#00c9b2>", 0),
 
     COMBAT_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
+    FARMING_FORTUNE("🍀","Farming Fortune","<color:#ff9500>", 0),
     MINING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
     FORAGING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
     FISHING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
