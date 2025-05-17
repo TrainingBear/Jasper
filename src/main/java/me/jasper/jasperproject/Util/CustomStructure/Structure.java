@@ -10,7 +10,6 @@ import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.block.BlockState;
 import lombok.val;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperProject;
@@ -20,6 +19,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.structure.UsageMode;
 import org.bukkit.craftbukkit.v1_21_R3.block.CraftStructureBlock;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 public final class Structure {
     private static final Map<UUID, Location> PLACED_BOX = new HashMap<>();
@@ -60,7 +63,7 @@ public final class Structure {
             player.sendMessage(e.getMessage()+e.getCause());
             return false;
         }
-
+        save_to.mkdirs();
         File file = new File(save_to, "\\"+name+".schem");
         for (BlockVector3 block : region) {
             player.sendMessage("Saving -> " +block.toString());
@@ -88,10 +91,13 @@ public final class Structure {
         return true;
     }
 
-    public static void render(File file, Location location){
-        render(file, location, null);
+    public static void render(File file, Location location, Consumer<BlockState> consumer){
+        render(file, location, null, consumer);
     }
-    public static void render(File file, Location location, @Nullable Collection<Player> players) throws StructureException {
+    public static void render(File file, Location location){
+        render(file, location, null, null);
+    }
+    public static void render(File file, Location location, @Nullable Collection<Player> players, @Nullable Consumer<BlockState> consumer) throws StructureException {
         org.bukkit.World bukkitWorld = location.getWorld();
         BlockVector3 pasteLocation = BlockVector3.at(-location.getX(), -location.getY(), -location.getZ());
         Logger log = new Logger(players);
@@ -104,14 +110,17 @@ public final class Structure {
                 val baseBlock = clipboard.getFullBlock(pos);
                 Location world_pos = BukkitAdapter.adapt(bukkitWorld, pos.subtract(clipboard.getOrigin().add(pasteLocation)));
 
+                BlockData adapt = BukkitAdapter.adapt(baseBlock);
                 if(players==null){
                     if(world!=null){
-                        world_pos.getBlock().setBlockData(BukkitAdapter.adapt(baseBlock));
+                        Block block = world_pos.getBlock();
+                        block.setBlockData(adapt, false);
+                        if(consumer!=null) consumer.accept(block.getState());
                     }
                 }
                 else for (Player player : players) {
                     if(player==null) continue;
-                    player.sendBlockChange(world_pos, BukkitAdapter.adapt(baseBlock));
+                    player.sendBlockChange(world_pos, adapt);
                 }
             }
             long timetook = System.currentTimeMillis()-last;

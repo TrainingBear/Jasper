@@ -15,9 +15,18 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import lombok.Getter;
 import lombok.Setter;
+import me.jasper.jasperproject.Dungeon.Loot.SecretChest;
+import me.jasper.jasperproject.Dungeon.Loot.TIER_ONE_CHEST;
+import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -28,12 +37,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class Room implements Cloneable{
     @Setter private String name;
     @Setter private RoomType type;
-    private int ID;
     private String schema_name;
     @Setter private Point loc = new Point(0,0);
     @Setter private Point locTranslate = new Point(0,0);
@@ -42,30 +51,35 @@ public class Room implements Cloneable{
     @Setter private char logo = 'N';
     private List<Point> body = new ArrayList<>();
     private final HashMap<Point, HashSet<Point>> connected_room = new HashMap<>();
-    private final List<Secret> secrets = new ArrayList<>();
+    private int max_score = 0;
+    private int score = 0;
 
-    Room(String name, RoomType type, int ID, String schema_name, Point loc, List<Point> body){
+    public Room(String name, RoomType type, String schem){
         this.name = name;
         this.type = type;
-        this.ID = ID;
+        this.schema_name = schem;
+    }
+
+    Room(String name, RoomType type, String schema_name, Point loc, List<Point> body){
+        this.name = name;
+        this.type = type;
         this.schema_name = schema_name;
         this.loc = loc;
         this.body = body;
     }
 
-    public Room(String name, RoomType type, int ID, String schema_name, char logo){
+    @Deprecated
+    public Room(String name, RoomType type, int id, String schema_name, char logo){
         this.name = name;
         this.type = type;
-        this.ID = ID;
         this.schema_name = schema_name;
         this.logo = logo;
     }
 
-    //This replace the room identification but location
+    ///This replace the room identification but location
     void replace(Room room, boolean replace_body){
         this.name = room.name;
         this.type = room.type;
-        this.ID = room.ID;
         this.schema_name = room.schema_name;
         this.logo = room.logo;
         this.body = replace_body? room.body : this.body;
@@ -106,7 +120,16 @@ public class Room implements Cloneable{
         }
         int x = (loc.x * 32) + locTranslate.x;
         int z = (loc.y * 32) + locTranslate.y;
-        this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(x, 70, z), this.rotation, true, instance_key);
+        Configurator config = JasperProject.getDungeonConfig();
+        File rooms = config.getCompound("rooms").getParent();
+        Location location1 = new Location(Bukkit.getWorld(instance_key), x, 70, z);
+        Structure.render(new File(rooms, "//" + schema_name), location1, bs -> {
+            if(bs instanceof Chest chest){
+                max_score+=2;
+                chest.getPersistentDataContainer().set(TIER_ONE_CHEST.INSTANCE.key, PersistentDataType.BOOLEAN, true);
+                chest.update();
+            }
+        });
         if(debug) Bukkit.broadcast(Component.text("Loaded "+this.getName()+" with rotation of "+this.rotation).color(NamedTextColor.YELLOW));
         isLoaded = true;
     }
@@ -118,6 +141,16 @@ public class Room implements Cloneable{
     void addBody(Point point){
         this.body.add(point);
     }
+
+    public boolean isSingleDoor(){
+        return this.type.equals(RoomType.TRAP) ||
+        this.type.equals(RoomType.PUZZLE) ||
+        this.type.equals(RoomType.START) ||
+        this.type.equals(RoomType.END) ||
+        this.type.equals(RoomType.END2) ||
+        this.type.equals(RoomType.MINI_BOSS);
+    }
+
     private void loadAndPasteSchematic(String fileName, BlockVector3 location, int rotationDegrees, boolean ignoreAir, String instance_key) {
         File file = new File("C:\\Users\\user\\AppData\\Roaming\\.feather\\player-server\\servers\\7a1e3607-139e-4341-a6b9-6340739908da\\plugins\\WorldEdit\\schematics\\" + fileName + ".schem");
 

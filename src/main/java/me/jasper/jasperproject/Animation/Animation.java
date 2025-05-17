@@ -154,7 +154,7 @@ public abstract class Animation {
         for (String schem : schems) {
             File schema = Arrays.stream(files).filter(f -> !f.getName().equals("region") && f.getName().contains(schem)).findFirst().orElse(null);
             if (schema==null) continue;
-            Runnable task = () -> Structure.render(schema, pasteloc, audiences);
+            Runnable task = () -> Structure.render(schema, pasteloc, audiences, null);
             schemPasterTasks.add(task);
         }
         class temp{

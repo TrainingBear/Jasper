@@ -2,6 +2,14 @@ package me.jasper.jasperproject.Dungeon.Floors;
 
 import me.jasper.jasperproject.Dungeon.*;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerGroup;
+import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FloorONE extends Dungeon{
     public FloorONE(PlayerGroup group) {
@@ -9,13 +17,17 @@ public class FloorONE extends Dungeon{
     }
     @Override
     public void initialize(DungeonHandler handler) {
-        handler.addRoom(RoomType.SPECIAL, CreatedRoom.TRAP.clone());
-        handler.addRoom(RoomType.SPECIAL, CreatedRoom.PUZZLE1.clone());
-        handler.addRoom(RoomType.SINGLE, CreatedRoom.SINGLE.clone());
-        handler.addRoom(RoomType.TWO_X_ONE, CreatedRoom.TWO.clone());
-        handler.addRoom(RoomType.THREE_X_ONE, CreatedRoom.THREE.clone());
-        handler.addRoom(RoomType.FOUR_X_ONE, CreatedRoom.FOUR.clone());
-        handler.addRoom(RoomType.L_SHAPE, CreatedRoom.L.clone());
-        handler.addRoom(RoomType.BOX, CreatedRoom.BOX.clone());
+        Configurator config = JasperProject.getDungeonConfig();
+        Configurator compound = config.getCompound("FLOOR_ONE");
+        FileConfiguration floorOne = compound.getConfig("FLOOR_ONE");
+        Map<RoomType, List<String>> rooms = new HashMap<>();
+        for (RoomType value : RoomType.values()) {
+            if(floorOne.contains(value.name())){
+                rooms.computeIfAbsent(value, k -> new ArrayList<>()).addAll(floorOne.getStringList(value.name()));
+                for (String s : floorOne.getStringList(value.name())) {
+                    handler.addRoom(value, new Room(s, value, s+".schem"));
+                }
+            }
+        }
     }
 }

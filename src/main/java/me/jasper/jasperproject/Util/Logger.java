@@ -32,7 +32,7 @@ public class Logger {
 
     public void infoActionbar(String message, TagResolver... placeholder){
         Component component = MiniMessage.miniMessage().deserialize(message, placeholder);
-        if(audience!=null)audience.sendActionBar(component);
+        if(audience!=null) audience.sendActionBar(component);
     }
 
     public void infoSound(Sound sound) {

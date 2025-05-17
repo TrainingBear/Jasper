@@ -53,6 +53,7 @@ public abstract class DungeonGenerator {
     int OCCUR = 0;
     private final DungeonHandler handler;
     private final DungeonMap map;
+
     public DungeonGenerator(int p, int l){
         this.p = p; this.l = l;
         this.handler = new DungeonHandler(p, l, this.seed);
@@ -86,7 +87,7 @@ public abstract class DungeonGenerator {
             fill(handler, true);/// fill the empty space
         });
         for (Point end : handler.getEdge()){
-            buildEmtyDoor(end, handler);
+            buildEmptyDoor(end, handler);
         }
         TookTimer.run("Rematch special room", this::placePTMR);
         render();
@@ -198,7 +199,7 @@ public abstract class DungeonGenerator {
 
                          doors.put(point, neighbor);
                          endpoint.add(point);
-                         buildEmtyDoor(point, handler);
+                         buildEmptyDoor(point, handler);
                      }
                      continue;
                  }
@@ -225,7 +226,7 @@ public abstract class DungeonGenerator {
                 grid[body.x][body.y].addConection(body,point);
                 grid[point.x][point.y].addConection(point,body);
                 Bukkit.broadcast(Component.text(grid[body.x][body.y].getName()+" -> "+grid[point.x][point.y].getName()).color(NamedTextColor.GOLD));
-                buildEmtyDoor(body, handler);
+                buildEmptyDoor(body, handler);
             }
         }
     }
@@ -453,7 +454,7 @@ public abstract class DungeonGenerator {
     }
     private boolean isValid(Point p, int rows, int cols, boolean[][] visited, Room[][] grid) {
         return (p.x >= 0 && p.x < rows && p.y >= 0 && p.y < cols) &&
-                !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].getID() == 3 || grid[p.x][p.y].getID() == 2);
+                !visited[p.x][p.y] && (grid[p.x][p.y] == null || grid[p.x][p.y].getType().equals(RoomType.MID) || grid[p.x][p.y].getType().equals(RoomType.END));
     }
     private void reconstructPath(DungeonHandler handler) {
         reconstructPath(handler,null);
@@ -493,10 +494,10 @@ public abstract class DungeonGenerator {
     }
 
 
-    void buildEmtyDoor(Point end, DungeonHandler handler) {
+    void buildEmptyDoor(Point end, DungeonHandler handler) {
         Room[][] grid = handler.getGrid();
         Map<Point, Point> doors = handler.getDoorMap();
-        if(grid[end.x][end.y].getID()==0){
+        if(grid[end.x][end.y].isSingleDoor()){
             grid[end.x][end.y].setRotation(whichDirection(end, doors.get(end)));
         }
         Room room1 = grid[end.x][end.y];

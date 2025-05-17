@@ -88,9 +88,11 @@ public final class Configurator {
      * @return return the created file Configurator
      * @throws JasperConfiguratorException Exception
      */
+    public File newConfig(String name) {
+        return create(name);
+    }
     public File create(String name) {
         File file = new File(parent,name+".yml");
-
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -102,7 +104,6 @@ public final class Configurator {
             }
             return file;
         }
-
         return file;
     }
 
@@ -126,10 +127,10 @@ public final class Configurator {
         if(name.contains("\\")) return null;
         File file = new File(parent, "\\"+name);
         if(!file.exists()){
+            file.mkdir();
             Configurator compound = new Configurator(file);
             compound.setParentCompound(this);
             compounds.put(name, compound);
-            file.mkdir();
             return compound;
         }
         return getCompound(name);
@@ -160,19 +161,12 @@ public final class Configurator {
 //                return value;
 //            }
 //        }
-        return create(name);
+
+        return new File(parent,name+".yml");
     }
     public @Nullable FileConfiguration getConfig(String name){
         File config = getFile(name);
-        if(config==null) {
-//            System.out.println("return 1");
-            Bukkit.getLogger().warning("[JasperProject] [Configurator] Something wrong when getting "+name+" FileConfiguration class");
-            return null;
-        }
-        for (String file : file) {
-//            System.out.println("Checking "+file+". is "+file+" equal "+name+".yml: "+file.equals(name));
-            if (file.equals(name+".yml")) return YamlConfiguration.loadConfiguration(config);
-        }
+        if (config.getName().endsWith(".yml")) return YamlConfiguration.loadConfiguration(config);
         return null;
     }
 

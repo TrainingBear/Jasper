@@ -9,10 +9,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Loot {
     private long total_weight;
-    public final Map<String, Long> loot = new HashMap<>();
+    public Map<String, Long> loot = new HashMap<>();
     public void addLoot(String loot, long weight){
         total_weight+=weight;
         this.loot.put(loot, weight);
+    }
+    public void setLoot(Map<String, Long> loot_pair){
+        this.loot = loot_pair;
+        total_weight = 0;
+        for (long value : loot_pair.values()) {
+            total_weight+=value;
+        }
     }
 
     /// @return return a products with amount
@@ -22,7 +29,7 @@ public class Loot {
     public Map<String, Integer> roll(float multiplier){
         Map<String, Integer> loots = new HashMap<>();
         for (String s : loot.keySet()) {
-            long weight = (long) (loots.get(s)+(loots.get(s)*multiplier));
+            long weight = (long) (this.loot.get(s)+(this.loot.get(s)*multiplier));
             if(weight>total_weight){
                 long count = weight / total_weight;
                 loots.put(s, (int) (loots.getOrDefault(s, 0)+ count));

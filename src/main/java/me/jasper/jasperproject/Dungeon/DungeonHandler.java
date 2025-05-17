@@ -22,19 +22,25 @@ public final class DungeonHandler {
     private Point bloodRoom;
 
     public void setFairy(Point point){
-        grid[point.x][point.y] = CreatedRoom.fairy.clone();
+        LinkedList<Room> rooms1 = rooms.get(RoomType.MID);
+        Collections.shuffle(rooms1, random);
+        grid[point.x][point.y] = rooms1.getFirst();
         this.fairy = point;
         grid[point.x][point.y].setLoc(point);
         grid[point.x][point.y].addBody(point);
     }
     public void setBloodRoom(Point point){
-        grid[point.x][point.y] = CreatedRoom.blood.clone();
+        LinkedList<Room> rooms1 = rooms.get(RoomType.END);
+        Collections.shuffle(rooms1, random);
+        grid[point.x][point.y] = rooms1.getFirst();
         this.bloodRoom = point;
         grid[point.x][point.y].setLoc(point);
         grid[point.x][point.y].addBody(point);
     }
     public void setEntrance(Point point){
-        grid[point.x][point.y] = CreatedRoom.entrance.clone();
+        LinkedList<Room> rooms1 = rooms.get(RoomType.START);
+        Collections.shuffle(rooms1, random);
+        grid[point.x][point.y] = rooms1.getFirst();
         this.entrance = point;
         grid[point.x][point.y].setLoc(point);
         grid[point.x][point.y].addBody(point);

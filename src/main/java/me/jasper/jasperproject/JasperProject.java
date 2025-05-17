@@ -11,6 +11,8 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.DebugCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
+import me.jasper.jasperproject.Dungeon.Loot.TIER_ONE_CHEST;
+import me.jasper.jasperproject.JMinecraft.Block.LootableChest;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
@@ -102,6 +104,7 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new Charge(),this);
         PM.registerEvents(new Mage(), this);
         PM.registerEvents(new Mage.Shoot(), this);
+        PM.registerEvents(TIER_ONE_CHEST.INSTANCE, this);
 
         /// Ini command register di pindah di Bootstrap soon,
         /// Biar lebih modern. tapi cuman support paper doang
