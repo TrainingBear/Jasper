@@ -59,9 +59,8 @@ public final class JasperProject extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
-        animationConfig = new Configurator(new File("Animations"));
+        animationConfig = new Configurator("Animations");//animationConfig.load(Animation::loadConfig);
         dungeonConfig = new Configurator("Dungeon");dungeonConfig.load();
-//        animationConfig.load(Animation::loadConfig);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
         Bazaar.init();
