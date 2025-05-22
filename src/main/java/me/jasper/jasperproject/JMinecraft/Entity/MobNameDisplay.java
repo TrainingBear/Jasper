@@ -25,7 +25,7 @@ public class MobNameDisplay extends Display.TextDisplay {
     public void spawn(Location location, CreatureSpawnEvent.SpawnReason rason){
         this.setPos(location.x(), location.y(), location.z());
         ((CraftWorld) location.getWorld()).getHandle().addFreshEntity(this, rason);
-        Bukkit.broadcastMessage("spawned at "+this.position())
+        Bukkit.broadcastMessage("spawned at "+this.position().toString());
     }
 
     @Override
