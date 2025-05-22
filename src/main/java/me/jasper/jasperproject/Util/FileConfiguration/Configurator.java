@@ -43,6 +43,7 @@ public final class Configurator {
     }
     public Configurator(File parent){
         this.parent = parent;
+        parent.mkdirs();
     }
 
 
@@ -92,6 +93,7 @@ public final class Configurator {
     }
     public File create(String name) {
         File file = new File(parent,name+".yml");
+        parent.mkdirs();
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -126,7 +128,7 @@ public final class Configurator {
         if(name.contains("\\")) return null;
         File file = new File(parent, "\\"+name);
         if(!file.exists()){
-            file.mkdir();
+            file.mkdirs();
             Configurator compound = new Configurator(file);
             compound.setParentCompound(this);
             compounds.put(name, compound);

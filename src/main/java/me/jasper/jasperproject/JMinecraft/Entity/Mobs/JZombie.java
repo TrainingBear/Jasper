@@ -63,7 +63,7 @@ public class JZombie extends Zombie {
                 if (world instanceof ServerLevel) {
                     ServerLevel worldserver = (ServerLevel)world;
                     float lava_damage = ((int) (this.getMaxHealth()/5f));
-                    if (super.hurtServer(worldserver, super.damageSources().lava().directBlock(this.level(), this.lastLavaContact), lava_damage)
+                    if (super.hurtServer(worldserver, super.damageSources().lava(), lava_damage)
                             && this.shouldPlayLavaHurtSound() && !this.isSilent()) {
                         Bukkit.broadcast(Component.text(lava_damage));
                         worldserver.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_BURN, this.getSoundSource(), 0.4F, 2.0F + this.random.nextFloat() * 0.4F);

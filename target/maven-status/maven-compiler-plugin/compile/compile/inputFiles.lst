@@ -36,6 +36,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Util\TRIGGER
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\DispenserArmorListener.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\GemstoneAttribute.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\JMob.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobNameDisplay.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\JasperItemCommand.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\util\BazaarDatabase.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\L_BY_L.java
@@ -148,6 +149,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\FileConfiguration\Test.
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\ONE_BY_ONE.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\ExecuteCommand.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\JasperEvent.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\DamageDisplay.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\CustomStructure\Structure.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Jam\ClockUtility.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Test_Bow.java
