@@ -21,6 +21,7 @@ import me.jasper.jasperproject.JMinecraft.Player.PlayerBukkitCommand;
 import me.jasper.jasperproject.Util.ContainerMenu.ContentListener;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import me.jasper.jasperproject.Jam.*;
+import me.jasper.jasperproject.Jam2.ClockExecutod;
 import me.jasper.jasperproject.JMinecraft.Entity.EntityCommand;
 import me.jasper.jasperproject.JMinecraft.Item.JasperItemCommand;
 import me.jasper.jasperproject.JMinecraft.Item.Util.ItemManager;
@@ -53,6 +54,7 @@ public final class JasperProject extends JavaPlugin {
     @Getter private static PluginManager PM;
     @Getter private static Configurator animationConfig;
     @Getter private static Configurator dungeonConfig ;
+    @Getter private static Configurator clockConfig;
     @Getter private static ProtocolManager protocolManager;
 
     @Override
@@ -115,6 +117,9 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
         this.getCommand("jplayer").setExecutor(new PlayerBukkitCommand());
         this.getCommand("jplayer").setTabCompleter(new PlayerBukkitCommand());
+
+        this.getCommand("jam").setExecutor(new ClockExecutod());
+        this.getCommand("jam").setTabCompleter(new ClockExecutod());
 
         protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.ENTITY_STATUS) {
             @Override
