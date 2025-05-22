@@ -6,7 +6,6 @@ import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
 import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
-import me.jasper.jasperproject.JMinecraft.Player.PlayerManager;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
@@ -75,12 +74,10 @@ public class Bash extends ItemAbility {
         Bukkit.getPluginManager().callEvent(new Charge(e.getPlayer(), e.getRange(), new Charge.ChargAction() {
             @Override
             public void onRelease(Player player, float power) {
-                player.sendMessage("CHARGED "+ power);
                 bashAnimation(player,Math.min(5f,power), e);
             }
             @Override
             public void onTicking(Player p, float power){
-                p.sendActionBar(Util.deserialize("POWER "+ power));
                 Util.playPSound(p,Sound.ENTITY_FISHING_BOBBER_RETRIEVE,1,power * .4f);
             }
         }));
@@ -106,7 +103,7 @@ public class Bash extends ItemAbility {
 
         final float range = p.isSwimming() ? layout[(int) Math.min(5f, power)] * .5f : layout[(int) Math.min(5f, power)];
         final BlockData blok = hitLoc.clone().add(0, -1, 0).getBlock().getBlockData();
-        JPlayer jPlayer = PlayerManager.getJPlayer(p);
+        JPlayer jPlayer = JPlayer.getJPlayer(p);
 
         for (LivingEntity entity : p.getLocation().getNearbyLivingEntities(range)) {
             if (entity instanceof Player ply) {

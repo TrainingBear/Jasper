@@ -109,4 +109,14 @@ public final class Util {
         return item.getItemMeta().getPersistentDataContainer().get(JKey.Ability, PersistentDataType.TAG_CONTAINER)
                 .get(ItemAbility, PersistentDataType.TAG_CONTAINER);
     }
+
+    public static String timer(long time_milisecond){
+        long second = time_milisecond / 1000;
+        long minute = second / 60;
+        second = second - (minute)*60;
+        long hour = minute / 60;
+        minute = minute - (hour)*60;
+        return hour > 0? hour+":"+minute+":"+second :
+                minute > 0? minute+":"+second : String.valueOf(second);
+    }
 }

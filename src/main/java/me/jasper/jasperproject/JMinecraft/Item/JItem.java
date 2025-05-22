@@ -2,6 +2,7 @@ package me.jasper.jasperproject.JMinecraft.Item;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.jasper.jasperproject.Dungeon.RoomType;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Enchant;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemAbility;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
@@ -15,6 +16,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -25,7 +27,7 @@ import java.util.*;
 
 public abstract class JItem implements Cloneable{
     @Getter @Setter private long Version; // <---------- 1
-    @Setter @Getter private String ID; // <---------- 2
+    @Getter public final String ID; // <---------- 2
     @Setter private String item_name; // <---------- 3
     @Getter @Setter private String defaultItem_name; // <---------- 4
     private boolean upgradeable = true; // <---------- 5
@@ -50,13 +52,13 @@ public abstract class JItem implements Cloneable{
      * @param type use ItemType.enum for item Type category
      * @param ID THIS IS FINAL ID, DONT CHANGE THIS ID! OR ITEM CANT BE UPDATED
      * */
-
     public JItem(String name, Material material, Rarity rarity, ItemType type, String ID){
         this(false, true, false,
                 (byte) 0, name, name, material, rarity, rarity,
                 type, 0L, ID, new ArrayList<>(),
                 new HashMap<>(), new ArrayList<>());
     }
+
     public JItem(boolean upgraded, boolean upgrade, boolean UPGRADE,
                  byte occur, String name, String defaultName, Material material,
                  @NotNull Rarity rarity, Rarity baseRarity, @NotNull ItemType type,
@@ -77,7 +79,6 @@ public abstract class JItem implements Cloneable{
         this.type = type;
         this.ID = ID;
         this.Version = itemVersion;
-
     }
 
     protected abstract List<Component> createLore();
@@ -208,7 +209,7 @@ public abstract class JItem implements Cloneable{
                 stats, enchants) {
             @Override
             protected List<Component> createLore() {
-                return ItemManager.getItems().get(ID.toUpperCase()).getLore();
+                return ItemManager.getJItem(ID.toUpperCase()).getLore();
             }
         };
         convertedItem.update();

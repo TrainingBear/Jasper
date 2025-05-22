@@ -1,4 +1,4 @@
-package me.jasper.jasperproject.Dungeon.Map;
+package me.jasper.jasperproject.Dungeon.Floors;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

@@ -50,12 +50,14 @@ public enum Stats {
     BREAK_POWER("\uD83D\uDCA5","Break Power","<color:#38ba3c>",0),
 
     COMBAT_WISDOM("🧠","Combat Wisdom","<color:#00c9b2>", 0),
+    FARMING_WISDOM("🧠","Farming Wisdom","<color:#00c9b2>", 0),
     MINING_WISDOM("🧠","Mining Wisdom","<color:#00c9b2>", 0),
     FORAGING_WISDOM("🧠","Foraging Wisdom","<color:#00c9b2>", 0),
     FISHING_WISDOM("🧠","Fishing Wisdom","<color:#00c9b2>", 0),
     ENCHANTING_WISDOM("🧠","Enchanting Wisdom","<color:#00c9b2>", 0),
 
     COMBAT_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
+    FARMING_FORTUNE("🍀","Farming Fortune","<color:#ff9500>", 0),
     MINING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
     FORAGING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
     FISHING_FORTUNE("🍀","Combat Fortune","<color:#ff9500>", 0),
@@ -111,7 +113,7 @@ public enum Stats {
 
     public static void apply(Player player, ItemStack item, ArmorType type){
        apply(player, fromItem(item), type);
-       JPlayer jPlayer = PlayerManager.getJPlayer(player);
+       JPlayer jPlayer = JPlayer.getJPlayer(player);
        jPlayer.setLastItems(type, item);
     }
     public static void apply(Player player, Map<Stats, Float> stats, ArmorType type){
@@ -119,7 +121,7 @@ public enum Stats {
         PersistentDataContainer pdc = player.getPersistentDataContainer().get(JKey.Stats, PersistentDataType.TAG_CONTAINER);
 
         ///     CLEAR LAST STATS EFFECT
-        JPlayer jPlayer = PlayerManager.getJPlayer(player);
+        JPlayer jPlayer = JPlayer.getJPlayer(player);
         ItemStack lastItems = jPlayer.getLastItems(type);
         if(lastItems!=null){
             Map<Stats, Float> lastItemStats = fromItem(lastItems);

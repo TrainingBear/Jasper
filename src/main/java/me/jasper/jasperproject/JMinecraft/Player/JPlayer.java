@@ -1,6 +1,7 @@
 package me.jasper.jasperproject.JMinecraft.Player;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorEquipEvent;
@@ -28,26 +29,42 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class JPlayer implements Listener {
+    @Getter private static final Map<UUID, JPlayer> onlinePlayers = new HashMap<>();
     Map<ArmorType, ItemStack> lastItems = new HashMap<>(ArmorType.values().length);
+    @Setter private String lastInstance;
     private UUID UUID;
 
     public JPlayer(){ }
+
     public JPlayer(Player player){
         this.UUID = player.getUniqueId();
     }
 
-    /**
-     * @return total damage amount
-     */
+    public static JPlayer register(Player player){
+        if(!onlinePlayers.containsKey(player.getUniqueId())){
+            onlinePlayers.put(player.getUniqueId(), new JPlayer(player));
+        }
+        return onlinePlayers.get(player.getUniqueId());
+    }
+    public static JPlayer unregister(Player player){
+        return onlinePlayers.remove(player.getUniqueId());
+    }
+    public static JPlayer getJPlayer(Player player){
+        return register(player);
+    }
+    public static Player getBukkitPlayer(JPlayer player){
+        return Bukkit.getPlayer(player.getUUID());
+    }
 
-
+    public PlayerGroup createGroup(JPlayer... member){
+        PlayerGroup playerGroup = new PlayerGroup(this);
+        playerGroup.addMember(List.of(member));
+        return playerGroup;
+    }
 
     public DamageResult shoot(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier, float force, float arrow_damage){
         Player bukkitPlayer = getBukkitPlayer();
@@ -84,6 +101,7 @@ public class JPlayer implements Listener {
     public Player getBukkitPlayer(){
         return Bukkit.getPlayer(this.UUID);
     }
+
 
     public void setLastItems(ArmorType type, ItemStack item){
         lastItems.put(type, item);

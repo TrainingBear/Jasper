@@ -18,6 +18,7 @@ import me.jasper.jasperproject.JMinecraft.Item.Product.Utilities.*;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.JKey;
 import org.bukkit.Bukkit;
+import org.bukkit.block.EndGateway;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -35,6 +36,13 @@ public final class ItemManager {
     @Getter private static final HashSet<ItemAbility> abilities = new HashSet<>();
     @Getter private static final HashMap<String, JItem> items = new HashMap<>();
     @Getter private static final HashSet<Enchant> enchants = new HashSet<>();
+
+    public static JItem getJItem(String key){
+        return items.get(key);
+    }
+    public static ItemStack getItem(String key){
+        return getJItem(key).getItem().clone();
+    }
 
     private static void registerItem(Factory... factory){
         plugin.getLogger().info("Registering Items...");
@@ -71,12 +79,13 @@ public final class ItemManager {
                 Jumper.getInstance(),
                 BackStab.getInstance(),
                 Burnt.getInstance(),
-                Bash.getInstance()
+                Bash.getInstance(),
+                Plower.getInstance()
         );
 
         registerItem(
-                new Blender(),
-                new EndGateway(),
+                new Blender(),//"ANIMATE"
+                new End_Gateway(),
                 new Warp_Gateway(),
                 new GraplingHook(),
                 new TestItem(),
@@ -85,8 +94,8 @@ public final class ItemManager {
                 new Healing_Wand(),
                 new Healing_Staff(),
                 new Titanium_Pickaxe(),
-                new FeatherJumper(),
-                new AssassinDagger(),
+                new Feather_Jumper(),
+                new Assassin_Dagger(),
                 new Stack_Steels(),
                 new Heavy_Axe(),
                 new Test_Bow(),
@@ -95,7 +104,11 @@ public final class ItemManager {
                 new Titanium_Helmet(),
                 new Titanium_Chestplate(),
                 new Titanium_Leggings(),
-                new Titanium_Boots()
+                new Titanium_Boots(),
+
+                new Farmer_Hoe(),
+                new Farmer_Scythe(),
+                new Advanced_Hoe()
         );
 
         registerEnchant(new Sharpness());

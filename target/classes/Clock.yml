@@ -1,0 +1,15 @@
+Clock:
+  Location:
+    ==: org.bukkit.Location
+    world: spawn2
+    x: -3693.5680491149383
+    y: 80.42471803725596
+    z: 1643.6064819114943
+    pitch: -90.0
+    yaw: 0.0
+  jarum:
+    UUID_model: !!java.util.UUID '8fdfd1c6-eb78-4b6a-ad11-750f6ce0108f'
+    UUID_armorstand: !!java.util.UUID '77e476de-a727-4cfe-a2ce-f64f908c7cfa'
+  jam: 0
+  menit: 0
+  isDay: false
