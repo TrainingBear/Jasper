@@ -55,6 +55,7 @@ me\jasper\jasperproject\JMinecraft\Item\Util\TRIGGER.class
 me\jasper\jasperproject\JMinecraft\Item\JasperItemCommand.class
 me\jasper\jasperproject\Util\Listener\PlayerQuitListener.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Bash$1.class
+me\jasper\jasperproject\JMinecraft\Entity\DamageDisplay.class
 me\jasper\jasperproject\JasperBootstrap.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Test_Bow.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\TestItem.class
@@ -158,6 +159,7 @@ me\jasper\jasperproject\Util\EntityFinder.class
 me\jasper\jasperproject\JMinecraft\Player\Util\DamageResult$1.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Plower.class
 me\jasper\jasperproject\Util\SummonCustomEntity.class
+me\jasper\jasperproject\JMinecraft\Entity\MobNameDisplay.class
 me\jasper\jasperproject\Dungeon\Secret$Type.class
 me\jasper\jasperproject\Bazaar\util\BazaarDatabase.class
 me\jasper\jasperproject\JMinecraft\Entity\JMob.class

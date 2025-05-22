@@ -18,9 +18,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftTextDisplay;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -42,7 +45,6 @@ public class JMob implements Listener {
         this.mob = (CraftLivingEntity) entityLiving.getBukkitEntity();
     }
 
-    public JMob setMaxHealth(float d){ return modifyBaseAttribute(Attributes.MAX_HEALTH, d); }
     public JMob setArmor(float defence){ return modifyBaseAttribute(Attributes.ARMOR, defence); }
     public JMob setArmorToughness(float toughness){ return modifyBaseAttribute(Attributes.ARMOR_TOUGHNESS, toughness); }
     public JMob addBaseAttribute(Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute, double value){ return modifyBaseAttribute(attribute, ((CraftLivingEntity) this.mob).getHandle().getAttribute(attribute).getBaseValue()+value); }
@@ -55,6 +57,11 @@ public class JMob implements Listener {
     public JMob setMovementSpeed(float d){
         if(d>0.5f) return this;
         return modifyBaseAttribute(Attributes.MOVEMENT_SPEED, d);
+    }
+    public JMob setMaxHealth(float d){
+        JMob mob = modifyBaseAttribute(Attributes.MAX_HEALTH, d);
+        this.mob.setHealth(d);
+        return mob;
     }
 
     private void updateDisplay(){
@@ -72,16 +79,19 @@ public class JMob implements Listener {
     }
 
     public void spawn(Location location){
-        TextDisplay display = location.getWorld().spawn(location, TextDisplay.class);
+        MobNameDisplay dis = new MobNameDisplay(location.getWorld());
+        dis.spawn(location);
+
+        TextDisplay display = ((CraftTextDisplay) dis.getBukkitEntity());
         display.setVisualFire(false);
         display.setBillboard(Display.Billboard.CENTER);
         PersistentDataContainer pdc = mob.getPersistentDataContainer();
         pdc.set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
         pdc.set(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING, name);
         pdc.set(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT, level);
-        updateDisplay();
         mob.addPassenger(display);
         mob.spawnAt(location);
+        updateDisplay();
     }
 
     public static String getHealthDisplay(double health){
@@ -202,12 +212,12 @@ public class JMob implements Listener {
 
         @EventHandler
         public void onDeath(EntityDeathEvent e){
-            LivingEntity entity = e.getEntity();
-            if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
-                String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
-
-                Bukkit.getEntity(UUID.fromString(s)).remove();
-            }
+//            LivingEntity entity = e.getEntity();
+//            if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
+//                String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
+//
+//                Bukkit.getEntity(UUID.fromString(s)).remove();
+//            }
         }
 
         @EventHandler
@@ -249,12 +259,14 @@ public class JMob implements Listener {
                     rdm.nextFloat(-1f, 1f),
                     rdm.nextDouble(-width, width)
             );
-            TextDisplay damage_display = location.getWorld().spawn(location, TextDisplay.class);
-            updateDisplay(e.getEntity());
+            DamageDisplay damageDisplay = new DamageDisplay(location.getWorld());
+            damageDisplay.spawn(location);
+
+            TextDisplay damage_display = ((CraftTextDisplay) damageDisplay.getBukkitEntity());
             damage_display.text(e.getResult().getDisplay());
             damage_display.setBillboard(Display.Billboard.CENTER);
 
-            Bukkit.getScheduler().runTaskLater(JasperProject.getPlugin(), damage_display::remove, 30L);
+            updateDisplay(e.getEntity());
         }
 
         @Override
