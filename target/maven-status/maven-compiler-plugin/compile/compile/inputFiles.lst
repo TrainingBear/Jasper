@@ -10,6 +10,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\Commands\JasperCommand.
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\ContainerMenu\Border.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Animation\PaperAnimationCommand.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Warp_Gateway.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\BukkitAdapter.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\EntityFinder.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\THREE_BY_THREE.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\ItemStats.java
@@ -135,6 +136,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\util\ProductManager.j
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Loot\SecretChest.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\Component\Order.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\BazaarCommand.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\CustomStructure\ForwardExtentPacket.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Cooldown.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\BOX_BY_BOX.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\Listener\PlayerQuitListener.java

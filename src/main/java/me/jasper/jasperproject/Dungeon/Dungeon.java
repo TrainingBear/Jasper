@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerGroup;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.Logger;
 import me.jasper.jasperproject.Util.TookTimer;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
@@ -42,7 +43,7 @@ public abstract class Dungeon extends DungeonGenerator {
     private BukkitTask tick;
     private final Map<UUID, PlayerGrave> deathPlayers = new HashMap<>();
     private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-    private final Objective objective = scoreboard.registerNewObjective("dungeon", Criteria.DUMMY, Component.text("<b>Dungeon -FloorN").color(NamedTextColor.GOLD));
+    private final Objective objective = scoreboard.registerNewObjective("dungeon", Criteria.DUMMY, Util.deserialize("<b>Dungeon -FloorN").color(NamedTextColor.GOLD));
     public Dungeon(PlayerGroup group, int p, int l){
         super(p, l);
         this.group = group;
@@ -92,7 +93,8 @@ public abstract class Dungeon extends DungeonGenerator {
                     team = scoreboard.getTeam(player.getName());
                     team.prefix(player.displayName().append(Component.text(player.getHealth()+" ❤ ").color(NamedTextColor.RED)));
                 }
-                Bukkit.broadcast(Component.text(instance_key+" is ticking..").color(NamedTextColor.GRAY));
+                Logger logger = new Logger(players);
+                logger.infoActionbar(Component.text(instance_key+" is ticking..").color(NamedTextColor.GRAY));
             }
         }.runTaskTimer(JasperProject.getPlugin(), 20, 20);
     }
@@ -101,6 +103,7 @@ public abstract class Dungeon extends DungeonGenerator {
         Location spawn = Bukkit.getWorld("spawn").getSpawnLocation();
         for (Player member : Bukkit.getWorld(instance_key).getPlayers()) {
             member.teleport(spawn);
+            getMap().delete(member);
         }
         Bukkit.broadcast(Component.text("closed "+instance_key).color(NamedTextColor.RED));
         closeWorld();
@@ -113,6 +116,7 @@ public abstract class Dungeon extends DungeonGenerator {
         deathPlayers.put(player.getUniqueId(), null);
         if (deathPlayers.size()>=group.getMembers().size()) close();
         Location spawn = Bukkit.getWorld("spawn").getSpawnLocation();
+        getMap().delete(player);
         player.teleport(spawn);
     }
 

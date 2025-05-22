@@ -2,14 +2,18 @@ package me.jasper.jasperproject.Util.CustomStructure;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.*;
+import com.sk89q.worldedit.extent.transform.BlockTransformExtent;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import lombok.val;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.Animator;
 import me.jasper.jasperproject.JasperProject;
@@ -78,8 +82,9 @@ public final class Structure {
                 try(
                         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
                         ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_V3_SCHEMATIC.getWriter(new FileOutputStream(file));
-                        EditSession session = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(player.getWorld()))){
-                          clipboard.setOrigin(to);
+                        EditSession session = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(player.getWorld()))
+                ){
+                    clipboard.setOrigin(to);
                     ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(session , region, clipboard, region.getMinimumPoint());
                     Operations.complete(forwardExtentCopy);
                     clipboardWriter.write(clipboard);
@@ -135,11 +140,40 @@ public final class Structure {
         }
     }
 
+    public static void renderWFawe(File file, Location location, Consumer<BlockState> filter, int rotationDegrees){
+        renderWFawe(file, location, null, filter, rotationDegrees);
+    }
+    public static void renderWFawe(File file, Location location, List<Player> audiences, Consumer<BlockState> filter, int rotationDegrees){
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+        try ( FileInputStream fis = new FileInputStream(file);
+                ClipboardReader reader = format.getReader(fis);
+                Clipboard clipboard = reader.read();
+                ClipboardHolder holder = new ClipboardHolder(clipboard);
+                EditSession ignored = WorldEdit.getInstance().newEditSessionBuilder()
+                        .world(BukkitAdapter.adapt(location.getWorld()))
+                        .build()
+        ){
+            AffineTransform transform = new AffineTransform();
+            transform = transform.rotateY(-rotationDegrees);
+            BlockTransformExtent blockTransformExtent = new BlockTransformExtent(clipboard, transform);
+            ForwardExtentPacket forwardExtentPacket = new ForwardExtentPacket(blockTransformExtent, audiences, location, filter);
+            ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(
+                    blockTransformExtent,
+                    clipboard.getRegion(),
+                    clipboard.getOrigin(),
+                    forwardExtentPacket,
+                    BukkitAdapter.asBlockVector(location)
+            );
+            forwardExtentCopy.setTransform(transform);
+            Operations.complete(forwardExtentCopy);
+        } catch (IOException | WorldEditException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void createBox(Player player){
         removeBox(player);
         Region region = Animator.getRegions().get(player.getUniqueId());
-
-
         CraftPlayer craftPlayer = (CraftPlayer) player;
 
         BlockVector3 minPoint = region.getMinimumPoint();
@@ -147,8 +181,6 @@ public final class Structure {
         val x = maxPoint.x() - minPoint.x() + 1;
         val y = maxPoint.y() - minPoint.y() + 1;
         val z = maxPoint.z() - minPoint.z() + 1;
-
-
 
         Location structureBlockLocation = new Location(player.getWorld(), minPoint.x(), Math.max(minPoint.y() - 48, -64), minPoint.z());
         craftPlayer.sendBlockChange(structureBlockLocation, Material.STRUCTURE_BLOCK.createBlockData());

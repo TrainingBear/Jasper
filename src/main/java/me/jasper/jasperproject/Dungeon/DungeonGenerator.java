@@ -1,22 +1,10 @@
 package me.jasper.jasperproject.Dungeon;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.transform.AffineTransform;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import lombok.Getter;
 import me.jasper.jasperproject.Dungeon.Shapes.*;
 import me.jasper.jasperproject.Dungeon.Shapes.Shape;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import me.jasper.jasperproject.Util.TookTimer;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
@@ -24,18 +12,13 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.generator.ChunkGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -87,11 +70,17 @@ public abstract class DungeonGenerator {
             fill(handler, true);/// fill the empty space
         });
         for (Point end : handler.getEdge()){
-            buildEmptyDoor(end, handler);
+            buildEmptyDoor(end);
         }
         TookTimer.run("Rematch special room", this::placePTMR);
-        render();
-        map.loadRoom();
+        TookTimer.run("Render Dungeon", () -> {
+            handler.setDebug_mode(true);
+            render();
+            handler.setDebug_mode(false);
+        });
+        TookTimer.run("Render Dungeon Map", () -> {
+            map.loadRoom();
+        });
     }
 
     private void generateWorld(){
@@ -199,7 +188,7 @@ public abstract class DungeonGenerator {
 
                          doors.put(point, neighbor);
                          endpoint.add(point);
-                         buildEmptyDoor(point, handler);
+                         buildEmptyDoor(point);
                      }
                      continue;
                  }
@@ -221,12 +210,12 @@ public abstract class DungeonGenerator {
                 grid[body.x][body.y].addBody(body);
                 grid[body.x][body.y].setLoc(body);
 
-                isFit(handler, point, shape, handler.getGrid(point));
+                isFit(point, shape, handler.getGrid(point));
 
-                grid[body.x][body.y].addConection(body,point);
-                grid[point.x][point.y].addConection(point,body);
+                grid[body.x][body.y].addConnection(body,point);
+                grid[point.x][point.y].addConnection(point,body);
                 Bukkit.broadcast(Component.text(grid[body.x][body.y].getName()+" -> "+grid[point.x][point.y].getName()).color(NamedTextColor.GOLD));
-                buildEmptyDoor(body, handler);
+                buildEmptyDoor(body);
             }
         }
     }
@@ -290,7 +279,7 @@ public abstract class DungeonGenerator {
                 boolean right = dx >= 0 && dx < grid.length;
                 boolean left = dy >= 0 && dy < grid[0].length;
                 if(right && left && Objects.equals(grid[dx][dy], room) && !possiblePoint.contains(new Point(dx, dy))){
-                    room.addConection(new Point(dx, dy), new Point(x, y));
+                    room.addConnection(new Point(dx, dy), new Point(x, y));
                     return new Point(dx, dy);
                 }
             }
@@ -361,29 +350,32 @@ public abstract class DungeonGenerator {
             rotation = transition.x==0? 0 : 90;
 
             if(!d1.equals(d2)){
-                grid[pre_step.x][pre_step.y].addConection(pre_step,step);
-                grid[step.x][step.y].addConection(step,pre_step);
-                this.loadAndPasteSchematic("lockeddoor",
-                        BlockVector3.at((pre_step.x*32)+transition.x,
-                                70,(pre_step.y*32)+ transition.y),rotation, false);
+                grid[pre_step.x][pre_step.y].addConnection(pre_step,step);
+                grid[step.x][step.y].addConnection(step,pre_step);
+                Location location = new Location(Bukkit.getWorld(instance_key), (pre_step.x * 32) + transition.x,
+                        65, (pre_step.y * 32) + transition.y);
+                Room room = handler.getGrid(pre_step);
+                File door = new File(room.getSchema_path()+"//"+room.getName()+"//"+room.getName()+"_door_locked.schem");
+                File sub_door = new File(JasperProject.getDungeonConfig().getParent(), "//locked_door.schem");
+                Structure.renderWFawe(door.exists()? door : sub_door, location, null, rotation);
             }
         }
     }
 
-    //This gona render the dungeon to the actual shape
+    /// This going to render the dungeon to the actual shape
     private void render(){
-        Bukkit.getScheduler().runTaskAsynchronously(JasperProject.getPlugin(), () -> {
+        Bukkit.getScheduler().runTask(JasperProject.getPlugin(), () -> {
             for (Room[] rooms : handler.getGrid()) {
                 StringBuilder stringBuilder = new StringBuilder();
                 for (Room room : rooms) {
                     try{
-                        room.loadScheme(instance_key);
+                        room.loadScheme(handler.isDebug_mode(), instance_key);
                         stringBuilder.append(room.getLogo()).append(", ");
                     }catch (NullPointerException e){
                         stringBuilder.append(0).append(", ");
                     }
                 }
-                if(true||handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize(stringBuilder.toString()).color(NamedTextColor.YELLOW));
+                if(handler.isDebug_mode()) Bukkit.broadcast(Util.deserialize(stringBuilder.toString()).color(NamedTextColor.YELLOW));
             }
         });
     }
@@ -494,7 +486,7 @@ public abstract class DungeonGenerator {
     }
 
 
-    void buildEmptyDoor(Point end, DungeonHandler handler) {
+    void buildEmptyDoor(Point end) {
         Room[][] grid = handler.getGrid();
         Map<Point, Point> doors = handler.getDoorMap();
         if(grid[end.x][end.y].isSingleDoor()){
@@ -506,9 +498,12 @@ public abstract class DungeonGenerator {
         Point transition = new Point(-(nd.x - end.x)*16, -(nd.y - end.y)*16);
         int rotation = transition.x==0? 0 : 90;
         if(!room1.equals(room2)){
-            this.loadAndPasteSchematic("door",
-                    BlockVector3.at((nd.x*32)+ transition.x,
-                            70,(nd.y*32)+ transition.y),rotation, false);
+            Location location = new Location(Bukkit.getWorld(instance_key), (nd.x * 32) + transition.x,
+                    65, (nd.y * 32) + transition.y);
+            Room room = handler.getGrid(end);
+            File door = new File(room.getSchema_path()+"//"+room.getName()+"//"+room.getName()+"_door.schem");
+            File sub_door = new File(JasperProject.getDungeonConfig().getParent(), "//door.schem");
+            Structure.renderWFawe(door.exists()? door : sub_door, location, null, rotation);
         }
     }
     /**
@@ -558,8 +553,8 @@ public abstract class DungeonGenerator {
                     Bukkit.broadcast(Util.deserialize("Defined "+ name +" at "+dx+", "+dy));
                 }
                 edge.add(neighbor);
-                grid[current.x][current.y].addConection(current, neighbor);
-                grid[dx][dy].addConection(neighbor, current);
+                grid[current.x][current.y].addConnection(current, neighbor);
+                grid[dx][dy].addConnection(neighbor, current);
                 roomMap.put(neighbor, current);
                 history.push(current);
             }
@@ -598,44 +593,6 @@ public abstract class DungeonGenerator {
                 (n.y >= 0 && n.y < grid[0].length) && grid[n.x][n.y] == null;
     }
 
-    private void loadAndPasteSchematic(String fileName, BlockVector3 location, int rotationDegrees, boolean ignoreAir) {
-        File file = new File("C:\\Users\\user\\AppData\\Roaming\\.feather\\player-server\\servers\\7a1e3607-139e-4341-a6b9-6340739908da\\plugins\\WorldEdit\\schematics\\" + fileName + ".schem");
-
-        if (!file.exists()) {
-            Bukkit.broadcastMessage(fileName+" file not found.");
-            return;
-        }
-
-        ClipboardFormat format = ClipboardFormats.findByFile(file);
-        if (format == null) {
-            Bukkit.broadcastMessage("Invalid schematic format.");
-            return;
-        }
-
-        try (
-                FileInputStream fis = new FileInputStream(file);
-                ClipboardReader reader = format.getReader(fis)) {
-
-            Clipboard clipboard = reader.read();
-            ClipboardHolder holder = new ClipboardHolder(clipboard);
-            AffineTransform transform = new AffineTransform();
-            transform = transform.rotateY(-rotationDegrees);
-            holder.setTransform(holder.getTransform().combine(transform));
-            try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                    .world(BukkitAdapter.adapt(Bukkit.getWorld(this.instance_key)))
-                    .build()) {
-                Operation operation = holder.createPaste(editSession)
-                        .to(location)
-                        .ignoreAirBlocks(ignoreAir)
-                        .build();
-                Operations.complete(operation);
-            }
-        } catch (IOException | WorldEditException e) {
-            if (handler.isDebug_mode()) Bukkit.broadcast(Component.text("Failed to load or paste schematic: " + e.getMessage()));
-            e.printStackTrace();
-        }
-    }
-
     boolean defineRoom(DungeonHandler handler, Point point, boolean ignoreLimit, @org.jetbrains.annotations.Nullable Room exception) {
         LinkedList<Shape> pick = new LinkedList<>(List.of(
                 new BOX_BY_BOX(), new L_BY_L(), new FOUR_BY_FOUR(),
@@ -645,12 +602,12 @@ public abstract class DungeonGenerator {
         pick.addLast(new ONE_BY_ONE());
         while (!pick.isEmpty()){
             Shape shape = pick.pop();
-            if(isFit(handler, point, shape, exception)) return true;
+            if(isFit(point, shape, exception)) return true;
         }
         return false;
     }
 
-    boolean isFit(DungeonHandler handler, Point point, Shape shapes, @org.jetbrains.annotations.Nullable Room exception) {
+    boolean isFit(Point point, Shape shapes, @org.jetbrains.annotations.Nullable Room exception) {
         int x = point.x, y = point.y;
         Room[][] grid = handler.getGrid();
         Stack<Point> history = handler.getHistory();

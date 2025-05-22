@@ -15,7 +15,6 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import lombok.Getter;
 import lombok.Setter;
-import me.jasper.jasperproject.Dungeon.Loot.SecretChest;
 import me.jasper.jasperproject.Dungeon.Loot.TIER_ONE_CHEST;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
@@ -24,11 +23,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.persistence.PersistentDataType;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,13 +34,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Getter
 public class Room implements Cloneable{
     @Setter private String name;
     @Setter private RoomType type;
-    private String schema_name;
+    private String schema_path;
     @Setter private Point loc = new Point(0,0);
     @Setter private Point locTranslate = new Point(0,0);
     @Setter private int rotation = 0;
@@ -57,13 +53,13 @@ public class Room implements Cloneable{
     public Room(String name, RoomType type, String schem){
         this.name = name;
         this.type = type;
-        this.schema_name = schem;
+        this.schema_path = schem;
     }
 
     Room(String name, RoomType type, String schema_name, Point loc, List<Point> body){
         this.name = name;
         this.type = type;
-        this.schema_name = schema_name;
+        this.schema_path = schema_name;
         this.loc = loc;
         this.body = body;
     }
@@ -72,7 +68,7 @@ public class Room implements Cloneable{
     public Room(String name, RoomType type, int id, String schema_name, char logo){
         this.name = name;
         this.type = type;
-        this.schema_name = schema_name;
+        this.schema_path = schema_name;
         this.logo = logo;
     }
 
@@ -80,7 +76,7 @@ public class Room implements Cloneable{
     void replace(Room room, boolean replace_body){
         this.name = room.name;
         this.type = room.type;
-        this.schema_name = room.schema_name;
+        this.schema_path = room.schema_path;
         this.logo = room.logo;
         this.body = replace_body? room.body : this.body;
     }
@@ -103,38 +99,30 @@ public class Room implements Cloneable{
     }
 
     void loadScheme(boolean debug){
-        loadScheme(null, debug, "test");
+        loadScheme(debug, "test");
     }
+
     void loadScheme(String instance_key){
-        loadScheme(null, false, instance_key);
+        loadScheme(false, instance_key);
     }
-    void loadScheme(@Nullable Point location, boolean debug, String instance_key){
-        if(isLoaded){
-            return;
-        }
-        if(location!=null){
-            this.loadAndPasteSchematic(this.schema_name, BlockVector3.at(location.x, 70, location.y), this.rotation, true, instance_key);
-            isLoaded = true;
-            if(debug) Bukkit.broadcast(Component.text("Loaded "+this.getName()+" with rotation of "+this.rotation).color(NamedTextColor.YELLOW));
-            return;
-        }
+
+    void loadScheme(boolean debug, String instance_key){
+        if(isLoaded) return;
         int x = (loc.x * 32) + locTranslate.x;
         int z = (loc.y * 32) + locTranslate.y;
-        Configurator config = JasperProject.getDungeonConfig();
-        File rooms = config.getCompound("rooms").getParent();
-        Location location1 = new Location(Bukkit.getWorld(instance_key), x, 70, z);
-        Structure.render(new File(rooms, "//" + schema_name), location1, bs -> {
+        Location location1 = new Location(Bukkit.getWorld(instance_key), x, 65, z);
+        Structure.renderWFawe(new File(schema_path), location1, bs -> {
             if(bs instanceof Chest chest){
                 max_score+=2;
                 chest.getPersistentDataContainer().set(TIER_ONE_CHEST.INSTANCE.key, PersistentDataType.BOOLEAN, true);
                 chest.update();
             }
-        });
+        }, this.rotation);
         if(debug) Bukkit.broadcast(Component.text("Loaded "+this.getName()+" with rotation of "+this.rotation).color(NamedTextColor.YELLOW));
         isLoaded = true;
     }
 
-    void addConection(Point current, Point neighbor){
+    void addConnection(Point current, Point neighbor){
         this.connected_room.computeIfAbsent(current, k-> new HashSet<>()).add(neighbor);
     }
 

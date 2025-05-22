@@ -53,6 +53,7 @@ public abstract class LootableChest implements Listener {
                     }
                     e.getPlayer().openInventory(inventory);
                     chest.setType(Material.AIR);
+                    chest.update();
                     onLoot(e);
                     e.setCancelled(true);
                 }

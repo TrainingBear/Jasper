@@ -2,21 +2,23 @@ package me.jasper.jasperproject.JMinecraft.Entity;
 
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import lombok.Getter;
+import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
-import me.jasper.jasperproject.JMinecraft.Player.Stats;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.JasperProject;
+import me.jasper.jasperproject.Util.BukkitAdapter;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_21_R3.persistence.CraftPersistentDataContainer;
-import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -26,83 +28,60 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
 
 public class JMob implements Listener {
-    @Getter private CraftLivingEntity mob;
+    @Getter private final LivingEntity mob;
+    @Setter public String name = "Jasper Entity";
+    @Setter public short level = 1;
 
     public JMob(net.minecraft.world.entity.LivingEntity entityLiving){
         this.mob = (CraftLivingEntity) entityLiving.getBukkitEntity();
-        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_REPLACE_HITREGIS, PersistentDataType.BOOLEAN, true);
     }
 
-    public JMob setLevel(short level){
-        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT, level);
+    public JMob setMaxHealth(float d){ return modifyBaseAttribute(Attributes.MAX_HEALTH, d); }
+    public JMob setArmor(float defence){ return modifyBaseAttribute(Attributes.ARMOR, defence); }
+    public JMob setArmorToughness(float toughness){ return modifyBaseAttribute(Attributes.ARMOR_TOUGHNESS, toughness); }
+    public JMob addBaseAttribute(Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute, double value){ return modifyBaseAttribute(attribute, ((CraftLivingEntity) this.mob).getHandle().getAttribute(attribute).getBaseValue()+value); }
+    public JMob setEntityScale(float scale){ return modifyBaseAttribute(Attributes.SCALE, scale); }
+    public JMob setDamage(int damage){ return modifyBaseAttribute(Attributes.ATTACK_DAMAGE, damage); }
+    public JMob modifyBaseAttribute(Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute, double value){
+        Objects.requireNonNull(((CraftLivingEntity) mob).getHandle().getAttribute(attribute)).setBaseValue(value);
         return this;
     }
-
-    public JMob setName(String name){
-        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING, name);
-        return this;
-    }
-
-    public JMob setMaxHealth(float d){
-        short level = mob.getPersistentDataContainer().get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
-        int v = (int) (d + (d*((float) level /10)));
-        mob.getAttribute(Attribute.MAX_HEALTH).setBaseValue(v);
-        mob.setHealth(v);
-        return this;
-    }
-    public JMob setSpeed(float d){
+    public JMob setMovementSpeed(float d){
         if(d>0.5f) return this;
-        AttributeInstance attribute = mob.getAttribute(Attribute.MOVEMENT_SPEED);
-        if(attribute!=null)attribute.setBaseValue(d);
-        return this;
-    }
-    public JMob setDefence(float defence){
-        mob.getPersistentDataContainer().set(Stats.DEFENCE.getKey(), PersistentDataType.FLOAT, defence);
-        return this;
-    }
-    public JMob setDamage(int damage){
-        AttributeInstance attribute = mob.getAttribute(Attribute.ATTACK_DAMAGE);
-        if(attribute!=null) attribute.setBaseValue(damage);
-        return this;
+        return modifyBaseAttribute(Attributes.MOVEMENT_SPEED, d);
     }
 
     private void updateDisplay(){
-        CraftPersistentDataContainer pdc = mob.getPersistentDataContainer();
-        String string_uuid = pdc.get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
-        TextDisplay display = (TextDisplay) Bukkit.getEntity(UUID.fromString(string_uuid));
-        String name = pdc.get(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING);
-        int level = (int) pdc.get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
-        display.text(Util.deserialize(level +" | "+name+" | "+ getHealthDisplay(mob.getHealth())));
+        updateDisplay(mob);
     }
 
-    public static void updateDisplay(LivingEntity entity){
-        PersistentDataContainer pdc = entity.getPersistentDataContainer();
+    public static void updateDisplay(LivingEntity mob){
+        PersistentDataContainer pdc = mob.getPersistentDataContainer();
+        if(!pdc.has(JKey.MOBATRIBUTE_DISPLAY)) return;
         String string_uuid = pdc.get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
-        TextDisplay display = (TextDisplay) Bukkit.getEntity(UUID.fromString(string_uuid));
         String name = pdc.get(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING);
-        int level = (int) pdc.get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
-        display.text(Util.deserialize(level +" | "+name+" | "+ getHealthDisplay(entity.getHealth())));
+        short level = pdc.get(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT);
+        TextDisplay display = (TextDisplay) Bukkit.getEntity(UUID.fromString(string_uuid));
+        display.text(Util.deserialize(level +" | "+ name+" | "+ getHealthDisplay(mob.getHealth())));
     }
 
     public void spawn(Location location){
-        TextDisplay display= location.getWorld().spawn(location, TextDisplay.class);
+        TextDisplay display = location.getWorld().spawn(location, TextDisplay.class);
         display.setVisualFire(false);
         display.setBillboard(Display.Billboard.CENTER);
-        mob.getPersistentDataContainer().set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
+        PersistentDataContainer pdc = mob.getPersistentDataContainer();
+        pdc.set(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING, display.getUniqueId().toString());
+        pdc.set(JKey.MOBATRIBUTE_NAME, PersistentDataType.STRING, name);
+        pdc.set(JKey.MOBATRIBUTE_LEVEL, PersistentDataType.SHORT, level);
         updateDisplay();
         mob.addPassenger(display);
         mob.spawnAt(location);
-    }
-
-    public static void hurt(LivingEntity entity, int damage){
-        entity.playHurtAnimation(1f);
-        entity.getLocation().getWorld().playSound(entity.getLocation(), entity.getHurtSound(), 10f, 1f);
-        entity.damage(damage, DamageSource.builder(org.bukkit.damage.DamageType.BAD_RESPAWN_POINT).build());
     }
 
     public static String getHealthDisplay(double health){
@@ -132,13 +111,14 @@ public class JMob implements Listener {
         }
     }
 
+
     public static class MobListener implements Listener {
         @EventHandler
         public void onHurt(EntityDamageByEntityEvent e){
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
+
             DamageResult result = null;
             if((e.getDamager() instanceof Player player)){
-                entity.setMaximumNoDamageTicks(0);
                 JPlayer jPlayer = JPlayer.getJPlayer(player);
                 if (e.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
                     result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MELEE, player.getAttackCooldown());
@@ -146,10 +126,8 @@ public class JMob implements Listener {
                  else {
                     float attackCooldown = player.getAttackCooldown();
                     result = jPlayer.attack(null, player.getInventory().getItemInMainHand(), e.isCritical(), attackCooldown);
-                    Bukkit.broadcastMessage("before = "+result.getFinal_damage());
                     float final_damage = result.getFinal_damage() * attackCooldown;
                     result.setFinal_damage(final_damage);
-                    Bukkit.broadcastMessage(final_damage +" | after = "+result.getFinal_damage());
                     result = DamageResult.patch(result.getFinal_damage(), entity, DamageType.MELEE);
                 }
             }
@@ -188,33 +166,35 @@ public class JMob implements Listener {
         public void onHurtByNonEntity(EntityDamageEvent e){
             if(e.getDamageSource().getCausingEntity() != null) return;
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
+            JMob adapt = BukkitAdapter.adapt(entity);
+            if(adapt==null) return;
+
             DamageResult result = null;
             AttributeInstance maxHealthAttribute = entity.getAttribute(Attribute.MAX_HEALTH);
             float max_health = maxHealthAttribute !=null ? (float) maxHealthAttribute.getBaseValue() : 100;
             if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)){
-                hurt(entity, (int) (max_health/25f));
+                e.setDamage((int) (max_health/25f));
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.FIRE)){
-
                 entity.setMaximumNoDamageTicks(10);
-                hurt(entity, (int) (max_health/10f));
+                e.setDamage((int) (max_health/10f));
             }
-            else if(e.getCause().equals(EntityDamageEvent.DamageCause.LAVA)){
+            else if(e.getDamageSource().isIndirect()){
                 entity.setMaximumNoDamageTicks(10);
-                hurt(entity, (int) (max_health/5f));
+                e.setDamage((int) (max_health/5f));
             }
             else if(e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){
                 float fallDistance = Math.min(entity.getFallDistance(), 100);
                 int damage = (int) (max_health * (fallDistance/100));
-                hurt(entity, damage);
+                e.setDamage(damage);
             } else if (e.getDamageSource().getDamageType().equals(org.bukkit.damage.DamageType.BAD_RESPAWN_POINT)) {
                 result = DamageResult.patch((float) e.getDamage(), entity, DamageType.ABSTRACT, true, 1f);
             }
             if(result==null){
-                hurt(entity, (int) e.getDamage());
+                e.setDamage((int) e.getDamage());
                 result = DamageResult.patch((float) e.getDamage(), entity, DamageType.MAGIC);
             }
-            e.setCancelled(true);
+//            e.setCancelled(true);
             e.setDamage(result.getFinal_damage());
             DamageEvent damageEvent = new DamageEvent(result, entity);
             Bukkit.getPluginManager().callEvent(damageEvent);
@@ -235,8 +215,10 @@ public class JMob implements Listener {
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
             if (entity.getPersistentDataContainer().has(JKey.MOBATRIBUTE_DISPLAY)){
                 String s = entity.getPersistentDataContainer().get(JKey.MOBATRIBUTE_DISPLAY, PersistentDataType.STRING);
-
-                Bukkit.getEntity(UUID.fromString(s)).remove();
+                if(s!=null){
+                    Entity entity1 = Bukkit.getEntity(UUID.fromString(s));
+                    if(entity1!=null) entity1.remove();
+                }
             }
         }
     }

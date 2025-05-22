@@ -4,12 +4,8 @@ import me.jasper.jasperproject.Dungeon.*;
 import me.jasper.jasperproject.JMinecraft.Player.PlayerGroup;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FloorONE extends Dungeon{
     public FloorONE(PlayerGroup group) {
@@ -18,14 +14,16 @@ public class FloorONE extends Dungeon{
     @Override
     public void initialize(DungeonHandler handler) {
         Configurator config = JasperProject.getDungeonConfig();
-        Configurator compound = config.getCompound("FLOOR_ONE");
-        FileConfiguration floorOne = compound.getConfig("FLOOR_ONE");
-        Map<RoomType, List<String>> rooms = new HashMap<>();
+        Configurator compound = config.getCompound("TEST");
+        FileConfiguration floorOne = compound.getConfig("TEST");
         for (RoomType value : RoomType.values()) {
             if(floorOne.contains(value.name())){
-                rooms.computeIfAbsent(value, k -> new ArrayList<>()).addAll(floorOne.getStringList(value.name()));
                 for (String s : floorOne.getStringList(value.name())) {
-                    handler.addRoom(value, new Room(s, value, s+".schem"));
+                    String schema_path = config.getParent().getPath() + "//rooms//" + value.name() + "//" + s + ".schem";
+                    if(RoomType.isSpecial(value))
+                        handler.addRoom(RoomType.SPECIAL, new Room(s, value, schema_path));
+                    else handler.addRoom(value, new Room(s, value, schema_path));
+                    Bukkit.broadcastMessage("Initialized "+s+" as "+value.name()+" at "+schema_path);
                 }
             }
         }

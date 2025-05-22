@@ -22,7 +22,6 @@ public final class Configurator {
     private static Configurator instance;
 
     @Getter private final Set<String> file = new HashSet<>();
-//    private final Floors<String, File> file = new HashMap<>();
     @Getter private final Map<String, Configurator > compounds = new HashMap<>();
     @Getter public final File parent;
     private final Plugin plugin = JasperProject.getPlugin();
@@ -123,7 +122,7 @@ public final class Configurator {
      * @param name name cant contain \\
      * @return return the created Compound
      */
-    public @Nullable Configurator newCompound(String name){
+    public @NotNull Configurator newCompound(String name){
         if(name.contains("\\")) return null;
         File file = new File(parent, "\\"+name);
         if(!file.exists()){
@@ -133,7 +132,7 @@ public final class Configurator {
             compounds.put(name, compound);
             return compound;
         }
-        return getCompound(name);
+        return Objects.requireNonNull(getCompound(name));
     }
 
     public void removeCompound(String name){
@@ -165,8 +164,19 @@ public final class Configurator {
         return new File(parent,name+".yml");
     }
     public @Nullable FileConfiguration getConfig(String name){
+        return getConfig(name, false);
+    }
+
+    /**
+     *
+     * @param name name
+     * @param force if force == true : create a new config if it absent;
+     * @return return null if absent, else notnull if force = true
+     */
+    public @NotNull FileConfiguration getConfig(String name, boolean force){
         File config = getFile(name);
         if (config.getName().endsWith(".yml")) return YamlConfiguration.loadConfiguration(config);
+        if(force) return YamlConfiguration.loadConfiguration(newConfig(name));
         return null;
     }
 
@@ -186,30 +196,26 @@ public final class Configurator {
     private void contoh() throws IOException {
 
         ///                     DECLARATION
-
         /// kosong doang, brti confignya ada di folder plugins/JasperProject
-        /// atau lu bisa pake Configurator.getInstance() jadi gaperlu declaration kyk gini:
-        Configurator test1 = new Configurator();
+        /// atau lu bisa pake Configurator.getInstance()
+        /// jadi gaperlu declaration kyk gini:
+        Configurator mainConfig = new Configurator();
 
-        /// ini buat define foldernya
-        /// kalo kek gini brti confignya ada di folder plugins/JasperProject/ContohFolderlu
-        Configurator test2 = new Configurator(
-                new File(JasperProject.getPlugin().getDataFolder().getParent()+"//ContohFolderlu")
-        );
+        /// bakal membuat folder baru di plugins/JasperProject/Config321
+        Configurator config321 = new Configurator("Config321");
 
-        /**                             EDITOR* */
+        ///                     EDITOR
 
-        test2.create("nama-configlu"); /// gini caranya buat config baru; yaya
+        /// gini caranya buat config baru
+        config321.newConfig("yml123");
 
-        test2.edit("nama-configlu", config -> {
+        ///  cara ngedit yml123 yang lu buat
+        config321.edit("yml123", config -> {
             List<String> list = new ArrayList<>();
             config.set("test", list);
-
             List<String> returnedList = config.getStringList("test");
             returnedList.add("new element");
             config.set("test", returnedList);
-
-            
         });
 
         /**                     PERCABANGAN
@@ -218,12 +224,13 @@ public final class Configurator {
          * atau folder baru, cara buat cabang baru gini :
          * */
 
-        Configurator cabang1 = new Configurator(new File(plugin.getDataFolder(), "\\Cabang1"));
-        cabang1.newCompound("Cabang2"); /// entar kebuat cabang2 -> plugin/Cabang1/Cabang2
+        /// entar kebuat cabang2 -> plugin/Config321/Cabang2
+        config321.newCompound("Cabang2");
 
         /// cara edit cabang yang lu buat:
-        final Configurator cabang2 = cabang1.getCompound("Cabang2");
+        final Configurator cabang2 = config321.getCompound("Cabang2");
         cabang2.edit("a", c->{});
+
 
 
         ///             KALO STARTUP HARUS DI REGISTER DI MAIN CLASS! onEnable()!

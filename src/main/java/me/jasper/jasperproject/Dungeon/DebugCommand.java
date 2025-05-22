@@ -14,7 +14,6 @@ import me.jasper.jasperproject.Util.FileConfiguration.Configurator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
-import net.minecraft.world.level.levelgen.structure.structures.RuinedPortalStructure;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
@@ -37,15 +36,13 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.inject.Named;
 import java.awt.*;
 import java.io.File;
-import java.io.FilenameFilter;
-import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class DebugCommand implements CommandExecutor, TabCompleter {
     Location location;
@@ -117,9 +114,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
             }
             case "map" -> {
                 ItemStack item = new ItemStack(Material.FILLED_MAP);
-                item.editMeta(e->{
-                    ((MapMeta) e).setMapView(Bukkit.getMap(1));
-                });
+                item.editMeta(e-> ((MapMeta) e).setMapView(Bukkit.getMap(1)));
                 player.getInventory().setItemInMainHand(item);
                 RenderData data = new RenderData();
                 for (byte i = 0; i < 127; i++) {
@@ -137,7 +132,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 ((CraftPlayer) player).getHandle().connection.send(packet);
             }
             case "start" -> {
-                if(strings[1].equals("FLOOR_ONE")){
+                if(strings[1].equals("TEST")){
                     FloorONE floorONE = new FloorONE(JPlayer.getJPlayer(player).createGroup());
                     floorONE.enter();
 
@@ -160,7 +155,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                     Region vector = Animator.getRegions().get(player.getUniqueId());
                     BlockVector3 max = vector.getMaximumPoint();
                     BlockVector3 min = vector.getMinimumPoint();
-                    Location location = new Location(player.getWorld(), max.x()-((max.x()-min.x())/2)+1, 70, max.z()-((max.z()-min.z())/2)+1);
+                    Location location = new Location(player.getWorld(), max.x()-((double) (max.x() - min.x()) /2)+1, 65, max.z()-((double) (max.z() - min.z()) /2)+1);
                     File saveTo = new File(roomsDirectory, "//"+ name+".schem");
                     if (!saveTo.exists()) Structure.save(player, location, saveTo);
                     config.create("rooms-map");
@@ -175,15 +170,17 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                 if(strings[1].equals("load")){
                     String type = strings[2];
                     String name = strings[3]+".schem";
+                    int rotation = Integer.parseInt(strings[4]);
                     File roomsDirectory = new File(config.getParent(), "//rooms//" + type);
-                    Structure.render(new File(roomsDirectory, "//"+name), player.getLocation(), bs -> {
+                    roomsDirectory.mkdirs();
+                    Structure.renderWFawe(new File(roomsDirectory, "//"+name), player.getLocation(), bs -> {
                         if (bs instanceof Chest chest) {
                             chest.getPersistentDataContainer().set(TIER_ONE_CHEST.INSTANCE.key, PersistentDataType.BOOLEAN, true);
                             Bukkit.broadcastMessage("FOUND A CHEST");
                             chest.update();
                         }
-                    });
-                    player.sendMessage(Component.text("Loaded "+name).color(NamedTextColor.GREEN));
+                    }, rotation);
+                    player.sendMessage(Component.text("Loaded "+name+" with rotation of "+rotation).color(NamedTextColor.GREEN));
                 }
                 if(strings[1].equals("delete")){
                     String type = strings[2];
@@ -208,18 +205,17 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(Component.text("Created "+name+"!").color(NamedTextColor.GREEN));
                 }
                 if(strings[1].equals("edit_group")){
-                    String name = strings[2];
+                    String group_name = strings[2];
+                    Configurator compound = config.getCompound(group_name);
+                    if(compound==null){
+                        player.sendMessage(Component.text("Can't find "+group_name+" group!").color(NamedTextColor.RED));
+                        return false;
+                    }
                     if(strings[3].equals("add_room")) {
                         String schem = strings[4];
-                        Configurator compound = config.getCompound(name);
-                        if(compound==null){
-                            player.sendMessage(Component.text("Can't find "+name+" group!").color(NamedTextColor.RED));
-                            return false;
-                        }
-                        FileConfiguration config1 = compound.getConfig(name);
                         String type = null;
                         for (RoomType value : RoomType.values()) {
-                            List<String> list = config.getConfig("rooms-map").getStringList(value.name());
+                            List<String> list = config.getConfig("rooms-map", true).getStringList(value.name());
                             if (list.contains(schem)) {
                                 type = value.name();
                             }
@@ -228,18 +224,64 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
                             player.sendMessage(Component.text("Can't find a schema named " + schem + ". /dungeon setup save <arg> to create a new rooms!").color(NamedTextColor.RED));
                             return false;
                         }
-                        if (config1 == null) {
-                            player.sendMessage(Component.text("Can't find " + name + " group").color(NamedTextColor.RED));
+                        String finalType = type;
+                        compound.edit(group_name, e -> {
+                            if (!e.contains(finalType)) e.set(finalType, new ArrayList<>());
+                            List<String> list = e.getStringList(finalType);
+                            list.add(schem);
+                            e.set(finalType, list);
+                            player.sendMessage(Component.text("Added "+schem+" to "+group_name+"!").color(NamedTextColor.GREEN));
+                        });
+                    }
+                    if(strings[3].equals("remove_room")){
+                        String schem = strings[4];
+                        String type = null;
+                        for (RoomType value : RoomType.values()) {
+                            List<String> list = config.getConfig("rooms-map", true).getStringList(value.name());
+                            if (list.contains(schem)) {
+                                type = value.name();
+                            }
+                        }
+                        if (type == null) {
+                            player.sendMessage(Component.text("Can't find a schema named " + schem + ". /dungeon setup save <arg> to create a new rooms!").color(NamedTextColor.RED));
                             return false;
                         }
-                        if (!config1.contains(type)) config1.set(type, new ArrayList<>());
                         String finalType = type;
-                        compound.edit(name, e -> {
-                            List<String> list = config1.getStringList(finalType);
-                            list.add(schem);
-                            config1.set(finalType, list);
+                        compound.edit(group_name, e -> {
+                            if (!e.contains(finalType)) e.set(finalType, new ArrayList<>());
+                            List<String> list = e.getStringList(finalType);
+                            list.remove(schem);
+                            e.set(finalType, list);
                         });
-                        player.sendMessage(Component.text("Added "+schem+" to "+name+"!").color(NamedTextColor.GREEN));
+                        player.sendMessage(Component.text("Removed "+schem+" to "+group_name+"!").color(NamedTextColor.GREEN));
+                    }
+                }
+                if(strings[1].equals("edit")){
+                    String name = strings[3];
+                    String type = null;
+                    for (RoomType value : RoomType.values()) {
+                        List<String> list = config.getConfig("rooms-map", true).getStringList(value.name());
+                        if (list.contains(name)) type = value.name();
+                    }
+                    File file = new File(config.getParent(), "//rooms//" + type + "//" + name);
+                    file.mkdirs();
+                    if(strings[2].equals("set_door")){
+                        Region vector = Animator.getRegions().get(player.getUniqueId());
+                        BlockVector3 max = vector.getMaximumPoint();
+                        BlockVector3 min = vector.getMinimumPoint();
+                        Location location = new Location(player.getWorld(), max.x()-((double) (max.x() - min.x()) /2)+1, 70, max.z()-((double) (max.z() - min.z()) /2)+1);
+                        File saveTo = new File(file, "//"+name+"_door.schem");
+                        if(saveTo.exists()) saveTo.delete();
+                        Structure.save(player, location, saveTo);
+                    }
+                    if(strings[2].equals("set_locked_door")){
+                        Region vector = Animator.getRegions().get(player.getUniqueId());
+                        BlockVector3 max = vector.getMaximumPoint();
+                        BlockVector3 min = vector.getMinimumPoint();
+                        Location location = new Location(player.getWorld(), max.x()-((double) (max.x() - min.x()) /2)+1, 70, max.z()-((double) (max.z() - min.z()) /2)+1);
+                        File saveTo = new File(file, "//"+name+"_door_locked.schem");
+                        if(saveTo.exists()) saveTo.delete();
+                        Structure.save(player, location, saveTo);
                     }
                 }
             }
@@ -249,9 +291,6 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(strings.length == 2 && strings[0].equals("setType")){
-            return List.of("FOUR", "THREE", "TWO", "ONE", "L", "BOX");
-        }
         if(strings.length==2&&strings[0].equals("start")){
             List<String> complete = new ArrayList<>();
             for (File file : Arrays.stream(Objects.requireNonNull(JasperProject.getDungeonConfig().getParent().listFiles((f, n) -> f.isDirectory() && !n.endsWith(".yml")))).toList()) {
@@ -259,10 +298,10 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
             }
             return complete.stream().filter(name -> name.startsWith(strings[1])).toList();
         }
-        if(strings.length==5 && strings[3].equals("add_room")){
+        if(strings.length==5 && (strings[3].equals("add_room") || strings[3].equals("delete_room"))){
             List<String> complete = new ArrayList<>();
             Configurator config = JasperProject.getDungeonConfig();
-            FileConfiguration config_ = config.getConfig("rooms-map");
+            FileConfiguration config_ = config.getConfig("rooms-map", true);
             for (RoomType value : RoomType.values()) {
                 if(!config_.contains(value.name())) config_.set(value.name(), new ArrayList<>());
                 List<String> list = config_.getStringList(value.name());
@@ -270,18 +309,20 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
             }
             return complete.stream().filter(type -> type.startsWith(strings[4])).toList();
         }
-        if(strings.length==4 && strings[1].equals("edit_group")){
-            return List.of("add_room");
+        if(strings.length==4 && (strings[1].equals("edit_group"))){
+            return List.of("add_room", "remove_room", "set_size");
         }
-        if(strings.length==3 && strings[1].equals("edit_group")){
+        if(strings.length==3 && (strings[1].equals("edit_group"))){
             Configurator config = JasperProject.getDungeonConfig();
             List<String> complete = new ArrayList<>();
-            for (File file : Objects.requireNonNull(config.getParent().listFiles((f, n) -> f.isDirectory() && !n.equals("rooms")))) {
+            File[] rooms = config.getParent().listFiles(pathname -> pathname.isDirectory() && !pathname.getName().endsWith(".yml"));
+            if(rooms==null) return complete;
+            for (File file : rooms) {
                 complete.add(file.getName());
             }
             return complete;
         }
-        if(strings.length==4 && strings[1].equals("delete")){
+        if(strings.length==4 && (strings[1].equals("delete") || strings[1].equals("load"))){
             List<String> complete = new ArrayList<>();
             FileConfiguration config = JasperProject.getDungeonConfig().getConfig("rooms-map");
             if(config==null) return complete;
@@ -289,16 +330,30 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
             complete.addAll(list);
             return complete.stream().filter(name -> name.startsWith(strings[3])).toList();
         }
+        if(strings.length==4 && strings[1].equals("edit")){
+            List<String> complete = new ArrayList<>();
+            Configurator config = JasperProject.getDungeonConfig();
+            FileConfiguration config_ = config.getConfig("rooms-map", true);
+            for (RoomType value : RoomType.values()) {
+                if(!config_.contains(value.name())) config_.set(value.name(), new ArrayList<>());
+                List<String> list = config_.getStringList(value.name());
+                complete.addAll(list);
+            }
+            return complete.stream().filter(type -> type.startsWith(strings[2])).toList();
+        }
+        if(strings.length==3 && strings[1].equals("edit")){
+           return List.of("set_door", "set_locked_door", "reset_door");
+        }
         if(strings.length==3 && strings[1].equals("create_group")){
             return List.of("<group-name ex: FLOOR_1>");
         }
         if(strings.length==2&&strings[0].equals("setup")){
-            return List.of("save", "load", "delete", "list", "create_group", "edit_group").stream().filter(name -> name.startsWith(strings[1])).toList();
+            return Stream.of("edit", "save", "load", "delete", "list", "create_group", "edit_group").filter(name -> name.startsWith(strings[1])).toList();
         }
         if(strings.length==4 && (strings[0].equals("setup"))){
             List<String> complete = new ArrayList<>();
             Configurator config = JasperProject.getDungeonConfig();
-            FileConfiguration config_ = config.getConfig("rooms-map");
+            FileConfiguration config_ = config.getConfig("rooms-map", true);
             for (RoomType value : RoomType.values()) {
                 if(!config_.contains(value.name())) config_.set(value.name(), new ArrayList<>());
                 List<String> list = config_.getStringList(value.name());
@@ -309,6 +364,7 @@ public class DebugCommand implements CommandExecutor, TabCompleter {
         if(strings.length==3&&strings[0].equals("setup")){
             return RoomType.autocomplete.stream().filter(type -> type.startsWith(strings[2])).toList();
         }
-        return List.of("rotate", "anchor", "setLocation", "setRoom", "paste", "setType", "map", "start", "leave","setup").stream().filter(name -> name.startsWith(strings[0])).toList();
+        if(strings.length==1) return Stream.of("start", "leave", "setup").filter(name -> name.startsWith(strings[0])).toList();
+        return List.of();
     }
 }

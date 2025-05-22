@@ -12,7 +12,6 @@ import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 import me.jasper.jasperproject.Dungeon.DebugCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.Loot.TIER_ONE_CHEST;
-import me.jasper.jasperproject.JMinecraft.Block.LootableChest;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;

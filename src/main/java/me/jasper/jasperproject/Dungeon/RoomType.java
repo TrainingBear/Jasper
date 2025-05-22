@@ -40,4 +40,11 @@ public enum RoomType {
         if(id>100 || shade > 3) return;
         this.color = (byte) ((id*4)+shade);
     }
+
+    public static boolean isSpecial(RoomType type){
+        return type.equals(PUZZLE) ||
+        type.equals(TRAP) ||
+        type.equals(MINI_BOSS) ||
+        type.equals(TEST);
+    }
 }

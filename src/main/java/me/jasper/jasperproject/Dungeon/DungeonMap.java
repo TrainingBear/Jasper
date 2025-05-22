@@ -71,7 +71,7 @@ public class DungeonMap {
     }
     public void delete(Player player){
         BukkitTask task = maps.remove(player.getUniqueId());
-        if(task!=null)task.cancel();
+        if(task!=null) task.cancel();
     }
     public void renderCanvas(Player... players) {
         buildDoor();
@@ -86,14 +86,12 @@ public class DungeonMap {
                 int miny = Math.min(L.get(0).y, L.get(2).y);
                 int maxx = Math.max(L.get(0).x, L.get(2).x);
                 int maxy = Math.max(L.get(0).y, L.get(2).y);
-//                Bukkit.broadcastMessage("Drawing "+minx+", "+miny+" -> "+maxx+", "+maxy);
-                drawRoom( minx, miny, color, maxx, maxy,true);
+                drawRoom( minx, miny, color, maxx, maxy,false);
                 minx = Math.min(L.get(1).x, L.get(2).x);
                 miny = Math.min(L.get(1).y, L.get(2).y);
                 maxx = Math.max(L.get(1).x, L.get(2).x);
                 maxy = Math.max(L.get(1).y, L.get(2).y);
-//                Bukkit.broadcastMessage("Drawing "+minx+", "+miny+" -> "+maxx+", "+maxy);
-                drawRoom( minx, miny, color, maxx, maxy,true);
+                drawRoom( minx, miny, color, maxx, maxy,false);
                 continue;
             }
             int minX = Integer.MAX_VALUE,minY = Integer.MAX_VALUE,
@@ -124,10 +122,8 @@ public class DungeonMap {
 //            byte x = (byte) (((loc.getX() - (((GRID_PANJANG * 33)/2)-16)) * ((getFINAL_CELL_SIZE() * 1.75)) / getFINAL_CELL_SIZE()));
 //            byte y = (byte) (((loc.getZ() - (((GRID_LEBAR * 33)/2)-16)) * ((getFINAL_CELL_SIZE() * 1.75)) / getFINAL_CELL_SIZE()));
             float perbandingan = (float) (CELL_SIZE*2/32);
-            Logger log = new Logger(player);
             byte x = (byte) ((loc.getBlockX()*perbandingan) -128+ CELL_SIZE + GAP + MARGINX*2);
             byte y = (byte) ((loc.getBlockZ()*perbandingan) -128+ CELL_SIZE + GAP + MARGINY*2);
-            log.infoActionbar("<green>"+x+", "+y+" perbandingan: "+perbandingan+" | CELL_SIZE: "+CELL_SIZE);
             MapCursor cursor = new MapCursor(x, y, (byte) (loc.getYaw() < 0 ? 16 + (loc.getYaw() / 22.5) : loc.getYaw() / 22),
                     MapCursor.Type.PLAYER, true);
             icons.add(new MapDecoration(

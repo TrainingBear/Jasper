@@ -26,6 +26,7 @@ me\jasper\jasperproject\JMinecraft\Item\Util\Charge.class
 me\jasper\jasperproject\Dungeon\Floors\FloorONE.class
 me\jasper\jasperproject\Util\Listener\InvenAhhListener.class
 me\jasper\jasperproject\Bazaar\Component\Product.class
+me\jasper\jasperproject\Util\CustomStructure\ForwardExtentPacket.class
 me\jasper\jasperproject\Dungeon\Room.class
 me\jasper\jasperproject\Bazaar\util\Listener.class
 me\jasper\jasperproject\Util\FileConfiguration\Test.class
@@ -39,6 +40,7 @@ me\jasper\jasperproject\JMinecraft\Player\Ability\Assassin$Stab.class
 me\jasper\jasperproject\JMinecraft\Block\JBlock.class
 me\jasper\jasperproject\JMinecraft\Player\MenuContent\StatsDisplay.class
 me\jasper\jasperproject\Bazaar\util\OrderException.class
+me\jasper\jasperproject\Util\BukkitAdapter.class
 me\jasper\jasperproject\Util\SignGUI.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Sword.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Tools\Farmer_Scythe.class
