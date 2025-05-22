@@ -32,6 +32,7 @@ import me.jasper.jasperproject.Util.Listener.PlayerQuitListener;
 import me.jasper.jasperproject.Util.Listener.PlotMenuListener;
 import me.jasper.jasperproject.Util.Listener.ProjectileHit;
 import me.jasper.jasperproject.Util.SignGUI;
+import me.jasper.jasperproject.Util.Commands.CalculatorMath;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -119,6 +120,7 @@ public final class JasperProject extends JavaPlugin {
 
         this.getCommand("jam").setExecutor(new ClockExecutod());
         this.getCommand("jam").setTabCompleter(new ClockExecutod());
+        this.getCommand("calc").setExecutor(new CalculatorMath());
 
         protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.ENTITY_STATUS) {
             @Override
