@@ -136,6 +136,7 @@ public class ClockUtility {
         }
         return model;
     }
+
     void jarumMenit(){
         Location ClockLocation = Clock.get().getLocation("Clock.Location");
         float pitch = 0, yaw = 0, Menit = 0;
@@ -143,7 +144,7 @@ public class ClockUtility {
             pitch = ClockLocation.getPitch() - 90;
             yaw = ClockLocation.getYaw() - 90;
             Menit =  (float) Clock.get().getDouble("Clock.menit");
-        }catch (NullPointerException e){}
+        }catch (NullPointerException ignored){}
 
         float putaran_menit =  6*Menit;
 
@@ -154,7 +155,6 @@ public class ClockUtility {
         Entity model =  Bukkit.getEntity(m);
 
 
-//        plugin.getServer().broadcastMessage(ChatColor.GOLD+"Rotating at Yaw/Pitch : "+yaw+"/"+pitch);
         try {
             Location posArmorStand = ClockLocation.clone();
             posArmorStand.setYaw(yaw);

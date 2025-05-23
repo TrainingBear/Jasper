@@ -1,20 +1,23 @@
 package me.jasper.jasperproject.JMinecraft.Entity.MobPlayer;
 
-import com.mojang.authlib.GameProfile;
-import net.minecraft.core.BlockPos;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 
-public class PlayerEntity extends Player implements EPlayer {
+public class PlayerEntity implements EPlayer {
     public PlayerEntity(World world) {
         this(((CraftWorld) world).getHandle());
     }
-    public PlayerEntity(Level world) {
-        super(world, null, 0f, null);
-
+    public PlayerEntity(String name) {
+        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
+        npc.spawn()
     }
 
     @Override
@@ -31,5 +34,11 @@ public class PlayerEntity extends Player implements EPlayer {
     public void tick() {
         onTick();
         super.tick();
+        this.goalSelector.addGoal(1, new Goal() {
+            @Override
+            public boolean canUse() {
+                return false;
+            }
+        });
     }
 }
