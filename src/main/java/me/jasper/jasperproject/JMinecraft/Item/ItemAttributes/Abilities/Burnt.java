@@ -120,7 +120,7 @@ public class Burnt extends ItemAbility {
         Block diAtas = loc.clone().add(0, 1, 0).getBlock();
         Block diAtas2 = loc.clone().add(0, 2, 0).getBlock();
 
-        if (loc.getBlock().isSolid()) {
+        if (loc.getBlock().getType().isSolid()) {
             if (isEmptyOrFire(diAtas)) {
                 diAtas.setType(Material.FIRE);
                 return diAtas.getType() == Material.FIRE;
@@ -129,17 +129,21 @@ public class Burnt extends ItemAbility {
                 diAtas2.setType(Material.FIRE);
                 return diAtas2.getType() == Material.FIRE;
             }
-        } else if (loc.clone().add(0, -1, 0).getBlock().isSolid() && isEmptyOrFire(diAtas)) {
+        } else if (diAtas.getType().isSolid() && isEmptyOrFire(diAtas2)) {
+            diAtas2.setType(Material.FIRE);
+            return diAtas2.getType() == Material.FIRE;
+        } else if (loc.clone().add(0, -1, 0).getBlock().getType().isSolid() && isEmptyOrFire(loc.getBlock())) {
             loc.getBlock().setType(Material.FIRE);
             return loc.getBlock().getType() == Material.FIRE;
 
-        } else if (diAtas.isSolid() && isEmptyOrFire(diAtas2)) {
+        } else if (diAtas.getType().isSolid() && isEmptyOrFire(diAtas2)) {
             diAtas2.setType(Material.FIRE);
             return diAtas2.getType() == Material.FIRE;
         }
 
         return false;
     }
+
     private boolean isEmptyOrFire(Block block) {
         return block.getType().isEmpty() || block.getType() == Material.FIRE;
     }

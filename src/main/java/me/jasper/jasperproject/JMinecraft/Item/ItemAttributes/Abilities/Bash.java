@@ -27,14 +27,19 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.annotation.Nullable;
+
 public class Bash extends ItemAbility {
     private static Bash instance;
-    @Getter private static final Map<UUID, Float> powers = new HashMap<>();
-    @Getter @Setter private boolean released;
-
+    @Getter
+    private static final Map<UUID, Float> powers = new HashMap<>();
+    @Getter
+    @Setter
+    private boolean released;
 
     public static Bash getInstance() {
-        if (instance == null) instance = new Bash();
+        if (instance == null)
+            instance = new Bash();
         return instance;
     }
 
@@ -49,36 +54,37 @@ public class Bash extends ItemAbility {
     public Bash(int range, float cooldown, Player p) {
         this.setRange(range);
         this.setCooldown(cooldown);
-        this.player= p;
+        this.player = p;
     }
 
     @EventHandler
     public void trigger(PlayerInteractEvent e) {
-        if (!Util.hasAbility(e.getItem(), this.getKey())) return;
+        if (!Util.hasAbility(e.getItem(), this.getKey()))
+            return;
         if (TRIGGER.Interact.SNEAK_RIGHT_CLICK(e)) {
             PersistentDataContainer itemData = Util.getAbilityComp(e.getItem(), this.getKey());
             Bukkit.getPluginManager().callEvent(
                     new Bash(
                             itemData.get(JKey.key_range, PersistentDataType.INTEGER),
                             itemData.get(JKey.key_cooldown, PersistentDataType.FLOAT),
-                            e.getPlayer()
-                    )
-            );
+                            e.getPlayer()));
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void action(Bash e) {
-        if(e.isCancelled()) return;
+        if (e.isCancelled())
+            return;
         Bukkit.getPluginManager().callEvent(new Charge(e.getPlayer(), e.getRange(), new Charge.ChargAction() {
             @Override
-            public void onRelease(Player player, float power) {
-                bashAnimation(player,Math.min(5f,power), e);
+            public void onRelease(@Nullable Player player, float power) {
+                bashAnimation(player, Math.min(5f, power), e);
             }
+
             @Override
-            public void onTicking(Player p, float power){
-                Util.playPSound(p,Sound.ENTITY_FISHING_BOBBER_RETRIEVE,1,power * .4f);
+            public void onTicking(@Nullable Player p, float power) {
+                Util.playPSound(p, Sound.ENTITY_FISHING_BOBBER_RETRIEVE, 1, power * .4f);
             }
         }));
     }
@@ -86,12 +92,11 @@ public class Bash extends ItemAbility {
     @Override
     protected List<Component> createLore() {
         return List.of(
-                Util.deserialize("<!i><gold>Ability: <b><red>Bash <yellow>(HOLD SNEAK RIGHT CLICK)")
-                ,Util.deserialize("<!i><gray>Smash the ground and creating splash area")
-                ,Util.deserialize("<!i><gray>in circle area that damage and throw")
-                ,Util.deserialize("<!i><gray>living entity inside the area based on")
-                ,Util.deserialize("<!i><gray>how long you are <color:#95945B>HOLD</color>'in")
-        );
+                Util.deserialize("<!i><gold>Ability: <b><red>Bash <yellow>(HOLD SNEAK RIGHT CLICK)"),
+                Util.deserialize("<!i><gray>Smash the ground and creating splash area"),
+                Util.deserialize("<!i><gray>in circle area that damage and throw"),
+                Util.deserialize("<!i><gray>living entity inside the area based on"),
+                Util.deserialize("<!i><gray>how long you are <color:#95945B>HOLD</color>'in"));
     }
 
     private void basEM(Player p, float power, float max_power, Location hitLoc) {
@@ -101,7 +106,8 @@ public class Bash extends ItemAbility {
                 4, 4.5f, 4.8f
         };
 
-        final float range = p.isSwimming() ? layout[(int) Math.min(5f, power)] * .5f : layout[(int) Math.min(5f, power)];
+        final float range = p.isSwimming() ? layout[(int) Math.min(5f, power)] * .5f
+                : layout[(int) Math.min(5f, power)];
         final BlockData blok = hitLoc.clone().add(0, -1, 0).getBlock().getBlockData();
         JPlayer jPlayer = JPlayer.getJPlayer(p);
 
@@ -110,40 +116,35 @@ public class Bash extends ItemAbility {
                 ply.setVelocity(ply.getVelocity().add(new Vector(0, power * .075f, 0)));
                 continue;
             }
-            jPlayer.attack(entity, p.getInventory().getItemInMainHand(), false, range/max_power);
+            jPlayer.attack(entity, p.getInventory().getItemInMainHand(), false, range / max_power);
             final double yDiff = entity.getY() - p.getY();
             if (yDiff <= 2d && yDiff >= -1d) {
                 entity.setVelocity(entity.getVelocity().add(new Vector(0, 0.06f * range + 0.25f, 0)));
 
-                new BukkitRunnable(){
-                    @Override public void run() {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
                         entity.getWorld().spawnParticle(
-                                Particle.BLOCK, entity.getLocation()
-                                , 10, entity.getWidth() , 0 ,entity.getWidth(), .8f, blok
-                        );
+                                Particle.BLOCK, entity.getLocation(), 10, entity.getWidth(), 0, entity.getWidth(), .8f,
+                                blok);
 
-                        final double add = ThreadLocalRandom.current().nextDouble(-entity.getWidth(), entity.getWidth()+.0001);
-                        for (byte j = 0; j < 9; j++) entity.getWorld().spawnParticle(
-                                Particle.BLOCK
-                                , entity.getLocation().add(add,add,add)
-                                , 0, 0, 1, 0, 1f,
-                                blok
-                        );
+                        final double add = ThreadLocalRandom.current().nextDouble(-entity.getWidth(),
+                                entity.getWidth() + .0001);
+                        for (byte j = 0; j < 9; j++)
+                            entity.getWorld().spawnParticle(
+                                    Particle.BLOCK, entity.getLocation().add(add, add, add), 0, 0, 1, 0, 1f,
+                                    blok);
                     }
                 }.runTaskAsynchronously(JasperProject.getPlugin());
             }
         }
         float ratio = -0.07f * power + .85f;
         hitLoc.getWorld().playSound(
-                hitLoc,Sound.ITEM_MACE_SMASH_GROUND
-                ,SoundCategory.PLAYERS,ratio,ratio
-                );
+                hitLoc, Sound.ITEM_MACE_SMASH_GROUND, SoundCategory.PLAYERS, ratio, ratio);
 
         float delta = .04f * power + .1f;
         hitLoc.getWorld().spawnParticle(
-                Particle.BLOCK, hitLoc.clone().add(0,.2f,0)
-                , (int) (9 * power + 5), delta , 0 ,delta, .5f, blok
-        );
+                Particle.BLOCK, hitLoc.clone().add(0, .2f, 0), (int) (9 * power + 5), delta, 0, delta, .5f, blok);
 
         short point = (short) (range * 7);
         for (short i = 0; i < point; i++) {
@@ -151,17 +152,18 @@ public class Bash extends ItemAbility {
             Location particLoc = hitLoc.clone().add((Math.cos(angle) * range), .05f, (Math.sin(angle) * range));
             if (!particLoc.clone().add(0, -1, 0).getBlock().isSolid()) {
                 particLoc.add(0, -1, 0);
-                if (!particLoc.clone().add(0, -2, 0).getBlock().isSolid()) particLoc = null;
+                if (!particLoc.clone().add(0, -2, 0).getBlock().isSolid())
+                    particLoc = null;
             } else if (particLoc.getBlock().getType().isSolid()) {
                 particLoc.add(0, 1, 0);
-                if (particLoc.getBlock().getType().isSolid()) particLoc.add(0, 1, 0);
+                if (particLoc.getBlock().getType().isSolid())
+                    particLoc.add(0, 1, 0);
             }
-            if (particLoc != null) for (byte j = 0; j < 5; j++) p.getWorld().spawnParticle(
-                        Particle.BLOCK
-                        , particLoc
-                        , 0, 0, 1, 0, 1f,
-                        blok
-                );
+            if (particLoc != null)
+                for (byte j = 0; j < 5; j++)
+                    p.getWorld().spawnParticle(
+                            Particle.BLOCK, particLoc, 0, 0, 1, 0, 1f,
+                            blok);
         }
     }
 
@@ -171,36 +173,39 @@ public class Bash extends ItemAbility {
         Location eyeLoc = p.getEyeLocation().clone();
         eyeLoc.setPitch(0);
 
+        // LivingEntity entity = Util.getTargetEntity(p, 2 , false);
+        
         Location hitLoc = pLoc.clone().add(pLoc.getDirection().normalize().multiply(.85f));
-        if(!hitLoc.clone().add(0, -1, 0).getBlock().getType().isSolid()) hitLoc.add(0,-1,0);
+        if (!hitLoc.clone().add(0, -1, 0).getBlock().getType().isSolid())
+            hitLoc.add(0, -1, 0);
 
         final float slisih = (float) ((eyeLoc.getY() - hitLoc.getY()) / 5);
-        double[] multipliers = {0.52, 0.66, 0.78, 0.82, 0.87};
+        double[] multipliers = { 0.52, 0.66, 0.78, 0.82, 0.87 };
         final Vector vec = eyeLoc.getDirection().normalize();
 
         p.getWorld().playSound(
-                p.getLocation(),Sound.ENTITY_PLAYER_ATTACK_SWEEP
-                ,SoundCategory.PLAYERS, .42f,.5f
-        );
+                p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, .42f, .5f);
 
         new BukkitRunnable() {
             byte frame = 0;
-            @Override public void run() {
-                if(!Util.hasAbility(p.getInventory().getItemInMainHand(), e.getKey())){
+
+            @Override
+            public void run() {
+                if (!Util.hasAbility(p.getInventory().getItemInMainHand(), e.getKey())) {
                     this.cancel();
                     return;
                 }
-                if(this.frame >= multipliers.length){
+                if (this.frame >= multipliers.length) {
                     basEM(p, power, e.getRange(), hitLoc);
                     this.cancel();
                     return;
                 }
-                p.getWorld().spawnParticle(Particle.CRIT
-                        , eyeLoc.clone().add(vec.clone().multiply(multipliers[this.frame]))
-                                .add(0, -slisih * this.frame, 0)
-                        , 5, 0.05f, 0.05f, 0.05f, 0);
+                p.getWorld().spawnParticle(Particle.CRIT,
+                        eyeLoc.clone().add(vec.clone().multiply(multipliers[this.frame]))
+                                .add(0, -slisih * this.frame, 0),
+                        5, 0.05f, 0.05f, 0.05f, 0);
                 this.frame++;
             }
-        }.runTaskTimer(JasperProject.getPlugin(),0, 0);
+        }.runTaskTimer(JasperProject.getPlugin(), 0, 0);
     }
 }

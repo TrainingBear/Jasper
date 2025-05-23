@@ -139,7 +139,7 @@ public final class Util {
     }
 
     /**
-     * get ItemStack player head with custom skin
+     * get {@link ItemStack} {@link Material#PLAYER_HEAD} head with custom skin
      * 
      * @param skinLink URL of the skin, using {@link String} of
      *                 http://textures.minecraft.net/texture/.....
@@ -171,5 +171,19 @@ public final class Util {
     public static float roundYaw(float yaw, byte amount) {
         float anchor = 360f / amount;
         return (float) (Math.round(yaw / anchor) * anchor);
+    }
+    /**
+     * get target {@link LivingEntity} from range inputed entity sight
+     * 
+     * @param suatuEntitas the entity to get target
+     * @param range the range
+     * @param ignoreBlock ignore block?
+     * @return {@link LivingEntity} target {@link LivingEntity} or null if not found or <b>not</b> a {@link LivingEntity}
+     */
+    public static LivingEntity getTargetEntity(LivingEntity suatuEntitas, int range, boolean ignoreBlock) {
+        if (suatuEntitas.getTargetEntity(range, ignoreBlock) instanceof LivingEntity entity) {
+            return entity;
+        }
+        return null;
     }
 }
