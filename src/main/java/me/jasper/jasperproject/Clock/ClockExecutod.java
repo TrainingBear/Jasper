@@ -1,7 +1,6 @@
-package me.jasper.jasperproject.Jam2;
+package me.jasper.jasperproject.Clock;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -19,18 +18,11 @@ public class ClockExecutod implements CommandExecutor, TabCompleter {
             @NotNull String @NotNull [] args) {
         if (args != null && sender instanceof Player pler) {
             switch (args[0].toLowerCase()) {
-                case "start" -> {
-                    Clock.startClock(pler);
-                }
-                case "move" -> {
-
-                }
-                case "stop" -> {
-
-                }
-                case "remove" -> {
-
-                }
+                case "start" -> Clock.start();
+                case "move" -> Clock.move(pler);
+                case "stop" -> Clock.stop();
+                case "remove" -> Clock.remove();
+                case "setup" -> Clock.setup(pler);
             }
             return true;
         }
@@ -41,12 +33,13 @@ public class ClockExecutod implements CommandExecutor, TabCompleter {
             "start",
             "move",
             "stop",
-            "remove");
+            "remove",
+            "setup");
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
             @NotNull String alias, @NotNull String[] strings) {
-        return list.stream().filter(name -> name.contains(strings[0].toUpperCase())).toList();
+        return list.stream().filter(name -> name.contains(strings[0].toLowerCase())).toList();
     }
 
 }

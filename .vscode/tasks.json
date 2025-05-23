@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Maven Package SkipTest",
+            "label": "Maven clean Package SkipTest",
             "type": "shell",
-            "command": "mvn package -DskipTests",
+            "command": "mvn clean package -DskipTests",
             "group": "build",
             "detail": "Build/Compile the project and make .jar and skip tests",
             "problemMatcher": []
