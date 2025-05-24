@@ -35,6 +35,7 @@ public class Clock {
      * if the clock is already running, it'll do nothing <p><hr>
      * Note : {@link #setup} first before calling this method
      */
+
     public static void start() {
         if (uidArmorStand == null || uidMenit == null || uidJam == null || loc == null) {
             Bukkit.broadcast(Util.deserialize("the variable is null, try remove then setup"));
@@ -92,6 +93,7 @@ public class Clock {
      * Stopping the clock <hr>
      * Note : {@link #start} first before calling this method otherwise it'll do nothing
      */
+
     public static void stop() {
         if (isRunning) {
             task.cancel();
@@ -105,6 +107,7 @@ public class Clock {
      * @param pler the {@link Player} who called this method <p>
      * <hr>Note : {@link #setup} first before calling this method otherwise it'll do nothing</h>
      */
+
     public static void move(Player pler) {
         if (uidArmorStand == null || uidMenit == null || uidJam == null || loc == null) {
             pler.sendMessage("the variable is null, try remove then setup");
