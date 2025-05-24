@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.util.Listener;
+import me.jasper.jasperproject.Clock.ClockExecutod;
 import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
 import me.jasper.jasperproject.Dungeon.DebugCommand;
@@ -32,6 +33,7 @@ import me.jasper.jasperproject.Util.Listener.PlayerQuitListener;
 import me.jasper.jasperproject.Util.Listener.PlotMenuListener;
 import me.jasper.jasperproject.Util.Listener.ProjectileHit;
 import me.jasper.jasperproject.Util.SignGUI;
+import me.jasper.jasperproject.Util.Commands.CalculatorMath;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -54,6 +56,7 @@ public final class JasperProject extends JavaPlugin {
     @Getter private static PluginManager PM;
     @Getter private static Configurator animationConfig;
     @Getter private static Configurator dungeonConfig ;
+    @Getter private static Configurator clockConfig;
     @Getter private static ProtocolManager protocolManager;
 
     @Override
@@ -115,6 +118,10 @@ public final class JasperProject extends JavaPlugin {
         this.getCommand("jitem").setTabCompleter(new JasperItemCommand());
         this.getCommand("jplayer").setExecutor(new PlayerBukkitCommand());
         this.getCommand("jplayer").setTabCompleter(new PlayerBukkitCommand());
+
+        this.getCommand("jam").setExecutor(new ClockExecutod());
+        this.getCommand("jam").setTabCompleter(new ClockExecutod());
+        this.getCommand("calc").setExecutor(new CalculatorMath());
 
         protocolManager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.ENTITY_STATUS) {
             @Override

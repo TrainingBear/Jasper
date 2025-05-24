@@ -115,4 +115,8 @@ commands:
     description: justMob
   jitem:
     description: justItem
+  calc:
+    description: calculator
+  jam:
+    description: clocks
 
