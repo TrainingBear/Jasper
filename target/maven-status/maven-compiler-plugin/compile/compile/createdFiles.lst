@@ -1,6 +1,5 @@
 me\jasper\jasperproject\JMinecraft\Item\Util\TRIGGER$Interact.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Grappling_Hook.class
-me\jasper\jasperproject\JMinecraft\Entity\Mobs\Johny.class
 me\jasper\jasperproject\Dungeon\Dungeon.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorType.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorEquipEvent.class
@@ -64,6 +63,7 @@ me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\TestItem.class
 me\jasper\jasperproject\Dungeon\DungeonHandler.class
 me\jasper\jasperproject\Clock\ClockExecutod.class
 me\jasper\jasperproject\Dungeon\Shapes\TOW_BY_TWO.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\FollowBehavior.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\HoldEvent$onTicking.class
 me\jasper\jasperproject\JMinecraft\Entity\JMob$MobListener.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Assassin_Dagger.class
@@ -109,6 +109,7 @@ me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Warp_Gateway.class
 me\jasper\jasperproject\Dungeon\DungeonMap.class
 me\jasper\jasperproject\Util\Listener\InvenAhhListener$VanishJoinListener.class
 me\jasper\jasperproject\JMinecraft\Player\Ability\Assassin.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\PlayerBehavior.class
 me\jasper\jasperproject\Jam\ClockExecutor.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Teleport.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Animator.class
@@ -144,6 +145,7 @@ me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\Util\Commands\CommandManager.class
 me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\EPlayer.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\JasperEvent.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\HostileBehavior.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Tools\GraplingHook.class
 me\jasper\jasperproject\Util\ContainerMenu\Content.class
 me\jasper\jasperproject\JMinecraft\Loot\Loot.class
@@ -164,7 +166,6 @@ me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Burnt.class
 me\jasper\jasperproject\Bazaar\BazaarCommand.class
 me\jasper\jasperproject\Util\Util.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Pickaxe.class
-me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\NPC.class
 me\jasper\jasperproject\Util\EntityFinder.class
 me\jasper\jasperproject\JMinecraft\Player\Util\DamageResult$1.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Plower.class
