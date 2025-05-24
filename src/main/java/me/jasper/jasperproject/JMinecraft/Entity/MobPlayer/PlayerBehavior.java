@@ -6,16 +6,15 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 public class PlayerBehavior extends BehaviorGoalAdapter {
     @Override
     public void reset() {
-
     }
 
     @Override
     public BehaviorStatus run() {
-        return null;
+        return BehaviorStatus.FAILURE;
     }
 
     @Override
     public boolean shouldExecute() {
-        return false;
+        return true;
     }
 }

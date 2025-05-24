@@ -61,6 +61,7 @@ me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Test_Bow.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\TestItem.class
 me\jasper\jasperproject\Dungeon\DungeonHandler.class
 me\jasper\jasperproject\Dungeon\Shapes\TOW_BY_TWO.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\FollowBehavior.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\HoldEvent$onTicking.class
 me\jasper\jasperproject\JMinecraft\Entity\JMob$MobListener.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Assassin_Dagger.class
@@ -97,6 +98,7 @@ me\jasper\jasperproject\JMinecraft\Player\Ability\Mage$Shoot.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Tools\Farmer_Hoe.class
 me\jasper\jasperproject\Dungeon\Shapes\BOX_BY_BOX.class
 me\jasper\jasperproject\Bazaar\anotation\CategoryType.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\PlayerEntity.class
 me\jasper\jasperproject\Util\TookTimer.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\ItemType.class
 me\jasper\jasperproject\JMinecraft\Entity\Mobs\JZombie.class
@@ -105,6 +107,7 @@ me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Warp_Gateway.class
 me\jasper\jasperproject\Dungeon\DungeonMap.class
 me\jasper\jasperproject\Util\Listener\InvenAhhListener$VanishJoinListener.class
 me\jasper\jasperproject\JMinecraft\Player\Ability\Assassin.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\PlayerBehavior.class
 me\jasper\jasperproject\Jam\ClockExecutor.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Teleport.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Animator.class
@@ -118,6 +121,7 @@ me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Shovel.
 me\jasper\jasperproject\JasperProject$1.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Leggings.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Utilities\Feather_Jumper.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\AggresivePlayer.class
 me\jasper\jasperproject\Bazaar\util\BazaarEnum.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorListener.class
 me\jasper\jasperproject\Util\Listener\ProjectileHit.class
@@ -135,7 +139,9 @@ me\jasper\jasperproject\Util\JKey.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\ItemStats.class
 me\jasper\jasperproject\Jam\ClockExecutor$Detak.class
 me\jasper\jasperproject\Util\Commands\CommandManager.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\EPlayer.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\JasperEvent.class
+me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\HostileBehavior.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Tools\GraplingHook.class
 me\jasper\jasperproject\Util\ContainerMenu\Content.class
 me\jasper\jasperproject\JMinecraft\Loot\Loot.class

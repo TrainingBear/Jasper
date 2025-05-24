@@ -52,6 +52,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Player\EquipmentL
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\Debug.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\Listener\PlotMenuListener.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\ItemType.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\AggresivePlayer.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Player\Ability\Assassin.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\util\ProductExecutor.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JasperItem\ItemAttributes\Stats.java
@@ -64,6 +65,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Util\ItemMan
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\ContainerMenu\Content.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Jam\ClockExecutor.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\EntityCommand.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\EPlayer.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Tools\GraplingHook.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\DebugCommand.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\util\BazaarEnum.java
@@ -112,6 +114,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Util
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\TookTimer.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\util\InventoryConsumer.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\DungeonMap.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\HostileBehavior.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JasperBootstrap.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\ItemAbility.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Heavy_Axe.java
@@ -121,6 +124,7 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\Shape.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\FileConfiguration\Configurator.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Boots.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\DungeonHandler.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\PlayerEntity.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\TOW_BY_TWO.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Jumper.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\PartyFinder.java
@@ -149,11 +153,13 @@ D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\FileConfiguration\Test.
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\Shapes\ONE_BY_ONE.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Dungeon\ExecuteCommand.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\JasperEvent.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\PlayerBehavior.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\DamageDisplay.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\CustomStructure\Structure.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Jam\ClockUtility.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Test_Bow.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\anotation\CategoryType.java
+D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\FollowBehavior.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Bazaar\Component\TaskID.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Chestplate.java
 D:\Fun\Jasper\src\main\java\me\jasper\jasperproject\Util\Listener\ProjectileHit.java

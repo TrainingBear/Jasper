@@ -1,22 +1,43 @@
 package me.jasper.jasperproject.Util;
 
+import me.jasper.jasperproject.JMinecraft.Entity.MobPlayer.PlayerEntity;
 import me.jasper.jasperproject.JMinecraft.Entity.Mobs.JZombie;
 import me.jasper.jasperproject.Util.CustomStructure.Structure;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.craftbukkit.v1_21_R3.boss.CraftBossBar;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
-public class Debug implements CommandExecutor {
+public class Debug implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!(commandSender instanceof Player player)) return false;
-        JZombie zombie = new JZombie(player.getWorld());
-        zombie.getDelegate().spawn(player.getLocation());
+        if(strings.length==1){
+            if(strings[0].equals("kill")){
+                PlayerEntity.kill(player.getLocation());
+                return true;
+            }
+            if(strings[0].equals("killall")){
+                PlayerEntity.killall();
+                return true;
+            }
+        }
+        Location location = player.getLocation().clone();
+        PlayerEntity.test(location.add(12, 0 ,12));
         return true;
     }
 
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
+        return List.of("kill", "killall");
+    }
 }

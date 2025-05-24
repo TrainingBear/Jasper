@@ -1,8 +1,11 @@
 package me.jasper.jasperproject.Util;
 
+import me.jasper.jasperproject.JasperProject;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -20,6 +23,12 @@ import java.util.Stack;
 import java.util.function.Consumer;
 
 public final class Util {
+    public static void debug(String message){
+        String format = "[JDebug] ";
+        Bukkit.broadcast(deserialize(format).color(NamedTextColor.BLUE).append(deserialize(message).color(NamedTextColor.GOLD)));
+        JasperProject.getPlugin().getLogger().info(format+message);
+    }
+
     public static void teleportEntity(LivingEntity e, Location loc, boolean invulWhenTP){
         e.teleport(loc);
         if(!invulWhenTP) e.setNoDamageTicks(0);
