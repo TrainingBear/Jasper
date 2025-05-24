@@ -14,6 +14,7 @@ import me.jasper.jasperproject.Dungeon.DebugCommand;
 import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.Loot.TIER_ONE_CHEST;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
+import me.jasper.jasperproject.JMinecraft.Entity.MobPlayer.PlayerEntity;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
@@ -141,6 +142,7 @@ public final class JasperProject extends JavaPlugin {
         SignGUI.getInstance().destroy();
         Structure.destroyBox();
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
+        PlayerEntity.killall();
     }
 
     private boolean setupEconomy() {

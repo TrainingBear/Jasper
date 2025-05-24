@@ -1,8 +1,8 @@
 name: JasperProject
 version: '${project.version}'
 main: me.jasper.jasperproject.JasperProject
-api-version: '1.20'
-depend: [NBTAPI]
+api-version: '1.21.3'
+depend: [NBTAPI, Citizens]
 commands:
   dungeon:
     description : a
