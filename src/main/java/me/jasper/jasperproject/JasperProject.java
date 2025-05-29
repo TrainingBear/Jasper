@@ -15,6 +15,8 @@ import me.jasper.jasperproject.Dungeon.ExecuteCommand;
 import me.jasper.jasperproject.Dungeon.Loot.TIER_ONE_CHEST;
 import me.jasper.jasperproject.JMinecraft.Entity.JMob;
 import me.jasper.jasperproject.JMinecraft.Entity.MobPlayer.PlayerEntity;
+import me.jasper.jasperproject.JMinecraft.Entity.MobRegistry;
+import me.jasper.jasperproject.JMinecraft.Entity.Mobs.DreadLord;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.Abilities.HoldEvent;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Item.Util.Charge;
@@ -83,6 +85,10 @@ public final class JasperProject extends JavaPlugin {
         ItemManager.registerAll();
         ItemManager.runUpdater();
 
+        MobRegistry.register(
+                new DreadLord()
+        );
+
         this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("dungeon").setExecutor(new DebugCommand());
         this.getCommand("dungeon").setTabCompleter(new DebugCommand());
@@ -143,6 +149,7 @@ public final class JasperProject extends JavaPlugin {
         Structure.destroyBox();
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
         PlayerEntity.killall();
+        MobRegistry.unregister();
     }
 
     private boolean setupEconomy() {

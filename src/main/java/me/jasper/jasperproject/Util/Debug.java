@@ -1,19 +1,15 @@
 package me.jasper.jasperproject.Util;
 
 import me.jasper.jasperproject.JMinecraft.Entity.MobPlayer.PlayerEntity;
-import me.jasper.jasperproject.JMinecraft.Entity.Mobs.JZombie;
-import me.jasper.jasperproject.Util.CustomStructure.Structure;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.craftbukkit.v1_21_R3.boss.CraftBossBar;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.List;
 
 public class Debug implements CommandExecutor, TabCompleter {
@@ -31,7 +27,7 @@ public class Debug implements CommandExecutor, TabCompleter {
             }
         }
         Location location = player.getLocation().clone();
-        PlayerEntity.test(location.add(12, 0 ,12));
+        PlayerEntity.test(location.add(12, 0 ,12), player);
         return true;
     }
 
