@@ -30,6 +30,11 @@ public class Clock {
     // UUID bisa string, serah
     private static boolean isRunning = false;
     private static BukkitTask task;
+    /**
+     * Starting the clock to rotate based on world time <p>
+     * if the clock is already running, it'll do nothing <p><hr>
+     * Note : {@link #setup} first before calling this method
+     */
 
     public static void start() {
         if (uidArmorStand == null || uidMenit == null || uidJam == null || loc == null) {
@@ -45,7 +50,7 @@ public class Clock {
 
                 @Override
                 public void run() {
-                    long time = wrld.getTime() % 24000;
+                    long time = wrld.getTime();
 
                     // Hour hand: full cycle = 12000 ticks
                     long tHour = time % 12000;
@@ -84,6 +89,10 @@ public class Clock {
         } else
             Bukkit.broadcast(Util.deserialize("the clock is already running"));
     }
+    /**
+     * Stopping the clock <hr>
+     * Note : {@link #start} first before calling this method otherwise it'll do nothing
+     */
 
     public static void stop() {
         if (isRunning) {
@@ -92,6 +101,12 @@ public class Clock {
         } else
             Bukkit.broadcast(Util.deserialize("the clock is not running"));
     }
+    /**
+     * Moving the clock to the player location <p>
+     * the yaw of clock will anchored/rounded to 4 direction (0, 90, 180, 270) <p>
+     * @param pler the {@link Player} who called this method <p>
+     * <hr>Note : {@link #setup} first before calling this method otherwise it'll do nothing</h>
+     */
 
     public static void move(Player pler) {
         if (uidArmorStand == null || uidMenit == null || uidJam == null || loc == null) {
@@ -122,7 +137,12 @@ public class Clock {
             pler.sendMessage("the entity may not exist, try remove then setup");
         }
     }
-
+    /**
+     * Spawning the clock to the player location <p>
+     * the yaw of clock will anchored/rounded to 4 direction (0, 90, 180, 270) <p>
+     * @param pler the {@link Player} who called this method <p>
+     * <hr>Note : if the previous clock already there, it'll do nothing</h>
+     */
     public static void setup(Player pler) {
         if (uidArmorStand == null || loc == null) {
             // ========================= urusan armorstandnya ==========================
@@ -171,7 +191,9 @@ public class Clock {
         }
         pler.sendMessage("the clock is already there");
     }
-
+    /**
+     * Removing the clock <p>
+     */
     public static void remove() {
         String msgDebug = "Removing: ";
         if (isRunning)
