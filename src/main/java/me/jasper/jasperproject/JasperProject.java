@@ -4,6 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.mysql.cj.protocol.Protocol;
+
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.util.Listener;
@@ -54,19 +56,19 @@ public final class JasperProject extends JavaPlugin {
     private static Chat chat = null;
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
-    @Getter private static Configurator animationConfig;
-    @Getter private static Configurator dungeonConfig ;
-    @Getter private static Configurator clockConfig;
-    @Getter private static ProtocolManager protocolManager;
+    @Getter private static Configurator animationConfig = new Configurator("Animations");
+    @Getter private static Configurator dungeonConfig = new Configurator("Dungeon");
+    @Getter private static Configurator clockConfig = new Configurator("Clock");
+    @Getter private static ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
     @Override
     public void onEnable() {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
-        animationConfig = new Configurator("Animations");//animationConfig.load(Animation::loadConfig);
-        dungeonConfig = new Configurator("Dungeon");dungeonConfig.load();
+        //animationConfig.load(Animation::loadConfig);
+        dungeonConfig.load();
+        clockConfig.load();
 
-        protocolManager = ProtocolLibrary.getProtocolManager();
         Bazaar.init();
         if(BazaarDatabase.startConnection()){
             this.getLogger().info("Created Bazaar product table!");
