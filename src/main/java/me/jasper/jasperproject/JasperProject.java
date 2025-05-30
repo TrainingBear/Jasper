@@ -85,10 +85,6 @@ public final class JasperProject extends JavaPlugin {
         ItemManager.registerAll();
         ItemManager.runUpdater();
 
-        MobRegistry.register(
-                new DreadLord()
-        );
-
         this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("dungeon").setExecutor(new DebugCommand());
         this.getCommand("dungeon").setTabCompleter(new DebugCommand());
@@ -149,7 +145,7 @@ public final class JasperProject extends JavaPlugin {
         Structure.destroyBox();
         this.getLogger().info("[JasperProject] this plugin has been disabled!");
         PlayerEntity.killall();
-        MobRegistry.unregister();
+        MobRegistry.getInstance().deregisterAll();
     }
 
     private boolean setupEconomy() {

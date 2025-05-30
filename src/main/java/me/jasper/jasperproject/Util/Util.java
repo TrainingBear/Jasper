@@ -31,10 +31,14 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public final class Util {
-    public static void debug(String message){
+    public static void debug(Object... message){
+        StringBuilder messages = new StringBuilder();
+        for (Object o : message) {
+            messages.append(o.toString());
+        }
         String format = "[JDebug] ";
-        Bukkit.broadcast(deserialize(format).color(NamedTextColor.BLUE).append(deserialize(message).color(NamedTextColor.GOLD)));
-        JasperProject.getPlugin().getLogger().info(format+message);
+        Bukkit.broadcast(deserialize(format).color(NamedTextColor.BLUE).append(deserialize(messages.toString()).color(NamedTextColor.GOLD)));
+//        JasperProject.getPlugin().getLogger().info(format+message);
     }
 
     public static String satuan(double health){
@@ -192,43 +196,5 @@ public final class Util {
             return entity;
         }
         return null;
-        minute = minute - (hour) * 60;
-        return hour > 0 ? hour + ":" + minute + ":" + second
-                : minute > 0 ? minute + ":" + second : String.valueOf(second);
-    }
-
-    /**
-     * get ItemStack player head with custom skin
-     *
-     * @param skinLink URL of the skin, using {@link String} of
-     *                 http://textures.minecraft.net/texture/.....
-     * @return {@link ItemStack} player head with custom skin
-     *
-     */
-    public static ItemStack getCustomSkull(String skinLink) {
-        com.destroystokyo.paper.profile.PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
-        try {
-            PlayerTextures textures = profile.getTextures();
-            textures.setSkin(URI.create(skinLink).toURL());
-            profile.setTextures(textures);
-        } catch (MalformedURLException ignored) {
-            return null;
-        }
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-        meta.setPlayerProfile(profile);
-
-        head.setItemMeta(meta);
-        return head;
-    }
-    /** rounding yaw entity of 360 degree to the nearest facing/point
-     *
-     * @param yaw yaw of entity
-     * @param amount amount of facing/point
-     * @return nearest facing/point
-     */
-    public static float roundYaw(float yaw, byte amount) {
-        float anchor = 360f / amount;
-        return (float) (Math.round(yaw / anchor) * anchor);
     }
 }
