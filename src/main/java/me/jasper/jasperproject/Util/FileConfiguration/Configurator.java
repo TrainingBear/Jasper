@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.jasper.jasperproject.JasperProject;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -117,6 +118,11 @@ public final class Configurator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void forceEdit(String name, Consumer<FileConfiguration> editor){
+        newConfig(name);
+        edit(name, editor);
     }
 
     /**

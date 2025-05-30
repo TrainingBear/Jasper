@@ -37,6 +37,13 @@ public final class Util {
         JasperProject.getPlugin().getLogger().info(format+message);
     }
 
+    public static String satuan(double health){
+        if(health >= 1_000_000_000f) return Util.round (health/1_000_000_000 ,1) + "B"; //milyar/billion
+        else if(health >= 1_000_000) return Util.round ( health/1_000_000_000 ,1) +"M";//juta
+        else if(health >= 1_000) return Util.round ( health/1_000,1)+"k"; //seribu
+        else return health+"";
+    }
+
     public static void teleportEntity(LivingEntity e, Location loc, boolean invulWhenTP) {
         e.teleport(loc);
         if(!invulWhenTP) e.setNoDamageTicks(0);

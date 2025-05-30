@@ -4,6 +4,9 @@ import me.jasper.jasperproject.JasperProject;
 import org.bukkit.NamespacedKey;
 
 public final class JKey {
+    public static final NamespacedKey JPlayer = new NamespacedKey(JasperProject.getPlugin(), "JasperPlayer");
+    public static final NamespacedKey TargetAble = new NamespacedKey(JasperProject.getPlugin(), "Targetable");
+
     public static final NamespacedKey JasperItem = new NamespacedKey(JasperProject.getPlugin(), "JasperItem");
     public static final NamespacedKey CustomName = new NamespacedKey(JasperProject.getPlugin(), "CustomName");
     public static final NamespacedKey Stats = new NamespacedKey(JasperProject.getPlugin(), "item_stats");
@@ -16,9 +19,6 @@ public final class JKey {
     public static final NamespacedKey UpgradeAble = new NamespacedKey(JasperProject.getPlugin(), "UpgradeAble");
     public static final NamespacedKey UnlimitedUpgradeAble = new NamespacedKey(JasperProject.getPlugin(), "UnlimitedUpgradeAble");
     public static final NamespacedKey Upgraded = new NamespacedKey(JasperProject.getPlugin(), "Upgraded");
-
-
-
 
     public static final NamespacedKey key_range = new NamespacedKey(JasperProject.getPlugin(), "range");
     public static final NamespacedKey key_cooldown = new NamespacedKey(JasperProject.getPlugin(), "cooldown");

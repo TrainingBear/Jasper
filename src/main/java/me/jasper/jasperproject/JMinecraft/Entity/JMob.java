@@ -1,8 +1,10 @@
 package me.jasper.jasperproject.JMinecraft.Entity;
 
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+import com.google.common.base.Optional;
 import lombok.Getter;
 import lombok.Setter;
+import me.jasper.jasperproject.JMinecraft.Entity.Traits.HPTrait;
 import me.jasper.jasperproject.JMinecraft.Player.JPlayer;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
@@ -10,10 +12,13 @@ import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.BukkitAdapter;
 import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -263,7 +268,14 @@ public class JMob implements Listener {
             damage_display.text(e.getResult().getDisplay());
             damage_display.setBillboard(Display.Billboard.CENTER);
 
-            updateDisplay(e.getEntity());
+            if(CitizensAPI.getNPCRegistry().isNPC(e.getEntity())){
+                NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getEntity());
+                Optional<HPTrait> hp = npc.getTraitOptional(HPTrait.class);
+                if(hp.isPresent())
+                    npc.setName( ChatColor.GRAY+"[Lv."+hp.get().getLvl()+"] "
+                        +ChatColor.GREEN+hp.get().getName()+ChatColor.GRAY+" | "+ChatColor.RED
+                        +Util.satuan(entity.getHealth()) +"/"+Util.satuan(entity.getMaxHealth())+" ❤ ");
+            }
         }
 
         @Override
