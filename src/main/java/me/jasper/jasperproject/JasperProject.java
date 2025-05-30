@@ -58,18 +58,23 @@ public final class JasperProject extends JavaPlugin {
     private static Chat chat = null;
     @Getter private static JasperProject plugin;
     @Getter private static PluginManager PM;
-    @Getter private static Configurator animationConfig = new Configurator("Animations");
-    @Getter private static Configurator dungeonConfig = new Configurator("Dungeon");
-    @Getter private static Configurator clockConfig = new Configurator("Clock");
-    @Getter private static ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+    @Getter private static Configurator animationConfig;
+    @Getter private static Configurator dungeonConfig;
+    @Getter private static Configurator clockConfig;
+    @Getter private static ProtocolManager protocolManager;
 
     @Override
     public void onEnable() {
         plugin = this;
         PM = Bukkit.getServer().getPluginManager();
+        protocolManager = ProtocolLibrary.getProtocolManager();
         //animationConfig.load(Animation::loadConfig);
+        animationConfig = new Configurator("Animations");
+        dungeonConfig = new Configurator("Dungeons");
+        clockConfig = new Configurator("Clock");
         dungeonConfig.load();
         clockConfig.load();
+        me.jasper.jasperproject.Clock.Clock.initialize();
 
         Bazaar.init();
         if(BazaarDatabase.startConnection()){
