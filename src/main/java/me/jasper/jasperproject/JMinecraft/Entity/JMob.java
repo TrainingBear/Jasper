@@ -273,8 +273,8 @@ public class JMob implements Listener {
                 Optional<HPTrait> hp = npc.getTraitOptional(HPTrait.class);
                 if(hp.isPresent())
                     npc.setName( ChatColor.GRAY+"[Lv."+hp.get().getLvl()+"] "
-                        +ChatColor.GREEN+hp.get().getName()+ChatColor.GRAY+" | "+ChatColor.RED
-                        +Util.satuan(entity.getHealth()) +"/"+Util.satuan(entity.getMaxHealth())+" ❤ ");
+                        +ChatColor.GREEN+hp.get().getName()+ChatColor.GRAY+" | "+ChatColor.RED+
+            Util.satuan(entity.getHealth()) +"/"+Util.satuan(entity.getMaxHealth())+" ❤ ");
             }
         }
 

@@ -1,6 +1,9 @@
 package me.jasper.jasperproject.Util;
 
+import me.jasper.jasperproject.JMinecraft.Entity.MobFactory;
 import me.jasper.jasperproject.JMinecraft.Entity.MobPlayer.PlayerEntity;
+import me.jasper.jasperproject.JMinecraft.Entity.MobRegistry;
+import me.jasper.jasperproject.JMinecraft.Entity.Mobs.DreadLord;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,12 +25,13 @@ public class Debug implements CommandExecutor, TabCompleter {
                 return true;
             }
             if(strings[0].equals("killall")){
-                PlayerEntity.killall();
+                MobRegistry.getInstance().deregisterAll();
                 return true;
             }
         }
         Location location = player.getLocation().clone();
-        PlayerEntity.test(location.add(12, 0 ,12), player);
+        MobFactory factory = new DreadLord();
+        factory.spawn(location);
         return true;
     }
 

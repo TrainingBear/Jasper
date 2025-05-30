@@ -31,10 +31,14 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public final class Util {
-    public static void debug(String message){
+    public static void debug(Object... message){
+        StringBuilder messages = new StringBuilder();
+        for (Object o : message) {
+            messages.append(o.toString());
+        }
         String format = "[JDebug] ";
-        Bukkit.broadcast(deserialize(format).color(NamedTextColor.BLUE).append(deserialize(message).color(NamedTextColor.GOLD)));
-        JasperProject.getPlugin().getLogger().info(format+message);
+        Bukkit.broadcast(deserialize(format).color(NamedTextColor.BLUE).append(deserialize(messages.toString()).color(NamedTextColor.GOLD)));
+//        JasperProject.getPlugin().getLogger().info(format+message);
     }
 
     public static String satuan(double health){

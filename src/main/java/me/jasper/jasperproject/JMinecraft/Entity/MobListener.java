@@ -8,4 +8,9 @@ public class MobListener implements Listener {
     @EventHandler
     public void NPCDamagedEvent(NPCDamageEvent e){
     }
+
+    @EventHandler
+    public void onDeath(NPCDamageEvent e){
+        e.getNPC().destroy();
+    }
 }
