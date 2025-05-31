@@ -17,7 +17,8 @@ public class CalculatorMath implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String @NotNull [] args) {
         try {
-            if(args != null) sender.sendMessage("Hasil: " + mathcalculatorcalculate(String.join("",args)));
+            if (args != null)
+                sender.sendMessage("Hasil: " + mathcalculatorcalculate(String.join("", args)));
         } catch (RuntimeException e) {
             switch (e.getMessage()) {
                 case "uns":
@@ -325,6 +326,38 @@ public class CalculatorMath implements CommandExecutor {
                     if (!eat('('))
                         handleUnsupportedCharacter('(');
                     x = Math.cbrt(parseExpression());
+                    if (!eat(')'))
+                        handleUnsupportedCharacter(')');
+                } else if (isMatch("flr")) {
+                    pos += 2;
+                    nextChar();
+                    if (!eat('('))
+                        handleUnsupportedCharacter('(');
+                    x = Math.floor(parseExpression());
+                    if (!eat(')'))
+                        handleUnsupportedCharacter(')');
+                } else if (isMatch("rnd")) {
+                    pos += 2;
+                    nextChar();
+                    if (!eat('('))
+                        handleUnsupportedCharacter('(');
+                    x = Math.round(parseExpression());
+                    if (!eat(')'))
+                        handleUnsupportedCharacter(')');
+                } else if (isMatch("sin")) {
+                    pos += 2;
+                    nextChar();
+                    if (!eat('('))
+                        handleUnsupportedCharacter('(');
+                    x = Math.sin(parseExpression());
+                    if (!eat(')'))
+                        handleUnsupportedCharacter(')');
+                } else if (isMatch("cos")) {
+                    pos += 2;
+                    nextChar();
+                    if (!eat('('))
+                        handleUnsupportedCharacter('(');
+                    x = Math.cos(parseExpression());
                     if (!eat(')'))
                         handleUnsupportedCharacter(')');
                 } else {
