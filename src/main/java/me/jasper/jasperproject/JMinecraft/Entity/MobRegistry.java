@@ -6,6 +6,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.npc.CitizensNPC;
 import net.citizensnpcs.npc.CitizensNPCRegistry;
@@ -53,7 +54,7 @@ public final class MobRegistry extends CitizensNPCRegistry {
     }
     @Override
     public NPC createNPC(EntityType type, String name) {
-        return this.createNPC(type, UUID.randomUUID(), data.createUniqueNPCId(this), name);
+        return this.createNPC(type, UUID.randomUUID(), 0, name);
     }
     @Override
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
@@ -74,13 +75,12 @@ public final class MobRegistry extends CitizensNPCRegistry {
     public void deregister(NPC npc) {
         npc.despawn(DespawnReason.REMOVAL);
         String name = npc.getOrAddTrait(HPTrait.class).getName();
-        this.mobs.get(name).remove(npc.getId());
+        this.mobs.get(name).remove(npc);
     }
     @Override
     public void deregisterAll(){
         for (List<NPC> value : mobs.values()) {
             for (NPC npc : value) {
-                npc.getEntity().remove();
                 npc.destroy();
             }
         }
