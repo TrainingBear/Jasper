@@ -213,7 +213,7 @@ public final class Configurator {
         Configurator config321 = new Configurator("Config321");
 
         ///                     EDITOR
-
+    
         /// gini caranya buat config baru
         config321.newConfig("yml123");
 
