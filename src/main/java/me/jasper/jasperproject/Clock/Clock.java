@@ -30,6 +30,10 @@ public class Clock {
             uidJam;
     private static boolean isRunning = false;
     private static BukkitTask task;
+    private static Block blockBefore;
+    private static Material bloBefMat;
+    private static BlockData bloBefDat;
+    private static Location loc;
 
     /**
      * Starting the clock to rotate based on world time
@@ -61,17 +65,14 @@ public class Clock {
                 { 0, 1 }
         };
         Location temp = Bukkit.getEntity(uidArmorStand).getLocation().add(0, .5f, 0).toBlockLocation();
+        loc = temp.clone().add(temp.getDirection().normalize().multiply(-1));
         task = new BukkitRunnable() {
-            final Location loc = temp.clone().add(temp.getDirection().normalize().multiply(-1));
             final byte[] xz = mapping[Math.floorMod(Math.round(loc.getYaw() / 90f), 4)];
             final World wrld = loc.getWorld();
             final Entity jrmJam = Bukkit.getEntity(uidJam);
             final Entity jrmMenit = Bukkit.getEntity(uidMenit);
             boolean flipflop = false;
             byte curIndex;
-            Block blockBefore;
-            Material bloBefMat;
-            BlockData bloBefDat;
 
             @Override
             public void run() {
@@ -155,11 +156,17 @@ public class Clock {
      */
 
     public static void stop() {
-        if (isRunning) {
-            task.cancel();
-            isRunning = false;
-        } else
+        if (!isRunning) {
             Util.debug("the clock is not running");
+            return;
+        }
+        blockBefore.setType(bloBefMat);
+        blockBefore.setBlockData(bloBefDat);
+        task.cancel();
+        isRunning = false;
+        blockBefore = null;
+        bloBefMat = null;
+        bloBefDat = null;
     }
 
     /**
@@ -178,6 +185,10 @@ public class Clock {
     public static void move(Player pler) {
         if (uidArmorStand == null || uidMenit == null || uidJam == null) {
             pler.sendMessage("the variable is null, try remove then setup");
+            return;
+        }
+        if (isRunning) {
+            pler.sendMessage("clock is still running, stop it first");
             return;
         }
         Location newloc = pler.getLocation();
