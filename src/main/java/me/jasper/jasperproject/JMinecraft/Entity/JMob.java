@@ -128,6 +128,7 @@ public class JMob implements Listener {
         @EventHandler
         public void onHurt(EntityDamageByEntityEvent e){
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
+            if(MobRegistry.getInstance().isNPC(e.getDamager())) return;
 
             DamageResult result = null;
             if((e.getDamager() instanceof Player player)){
@@ -254,8 +255,9 @@ public class JMob implements Listener {
         public void onDamage(DamageEvent e){
             if(e.isCancelled()) return;
             Random rdm = new Random();
-            double width = e.getEntity().getWidth();
-            Location location = e.getEntity().getEyeLocation().clone();
+            LivingEntity entity = e.getEntity();
+            double width = entity.getWidth();
+            Location location = entity.getEyeLocation().clone();
             location.add(
                     rdm.nextDouble(-width, width),
                     rdm.nextFloat(-1f, 1f),
@@ -268,13 +270,14 @@ public class JMob implements Listener {
             damage_display.text(e.getResult().getDisplay());
             damage_display.setBillboard(Display.Billboard.CENTER);
 
-            if(CitizensAPI.getNPCRegistry().isNPC(e.getEntity())){
-                NPC npc = CitizensAPI.getNPCRegistry().getNPC(e.getEntity());
+            if(CitizensAPI.getNPCRegistry().isNPC(entity)){
+                NPC npc = CitizensAPI.getNPCRegistry().getNPC(entity);
                 Optional<HPTrait> hp = npc.getTraitOptional(HPTrait.class);
-                if(hp.isPresent())
+                if(hp.isPresent()){
                     npc.setName( ChatColor.GRAY+"[Lv."+hp.get().getLvl()+"] "
-                        +ChatColor.GREEN+hp.get().getName()+ChatColor.GRAY+" | "+ChatColor.RED+
-            Util.satuan(entity.getHealth()) +"/"+Util.satuan(entity.getMaxHealth())+" ❤ ");
+                            +ChatColor.BLACK+hp.get().getName2()+ChatColor.GRAY+" | "+ChatColor.RED
+                            +Util.satuan(entity.getHealth()-e.getResult().getFinal_damage()) +"/"+Util.satuan(entity.getMaxHealth())+" ❤ ");
+                }
             }
         }
 
