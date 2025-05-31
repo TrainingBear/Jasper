@@ -1,19 +1,20 @@
 package me.jasper.jasperproject.JMinecraft.Entity.Traits;
 
+import io.papermc.paper.entity.LookAnchor;
 import lombok.Builder;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Entity.MobRegistry;
-import me.jasper.jasperproject.Util.Util;
 import net.citizensnpcs.api.ai.AttackStrategy;
-import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.trait.Trait;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Getter
@@ -29,8 +30,9 @@ public class AgressiveTrait extends Trait {
     private float speed = 1.5f;
     private boolean aggressive;
     private AttackStrategy strategy;
+    private BiConsumer<LivingEntity, LivingEntity> while_navigating;
 
-    public AgressiveTrait(LivingEntity target, Function<LivingEntity, Boolean> filter, Iterator<LivingEntity> victims, int instinct_range, int follow_range, int attack_range, int delay, float speed, boolean aggressive, AttackStrategy strategy) {
+    public AgressiveTrait(LivingEntity target, Function<LivingEntity, Boolean> filter, Iterator<LivingEntity> victims, int instinct_range, int follow_range, int attack_range, int delay, float speed, boolean aggressive, AttackStrategy strategy, BiConsumer<LivingEntity, LivingEntity> while_navigating) {
         super("Aggressive");
         this.target = target;
         this.filter = filter;
@@ -42,6 +44,7 @@ public class AgressiveTrait extends Trait {
         this.speed = speed==0?this.speed:speed;
         this.aggressive = aggressive;
         this.strategy=strategy;
+        this.while_navigating = while_navigating;
     }
 
     @Override
@@ -50,18 +53,24 @@ public class AgressiveTrait extends Trait {
         if(delay-- <= 0){
             delay = 10;
             if(target==null){
-                if(npc.getNavigator().isNavigating()) npc.getNavigator().setTarget(null, aggressive);
                 target = getVictim();
             }
             else {
-                double distance = npc.getEntity().getLocation().distance(target.getLocation());
-                if(target.isDead() || distance > follow_range) {
+                Location location = target.getEyeLocation();
+                double distance = npc.getEntity().getLocation().distance(location);
+                if(target.isDead() || distance > follow_range ) {
                     target = null;
+                    if(npc.getNavigator().isNavigating()) npc.getNavigator().setTarget(target, aggressive);
                     return;
                 }
+                npc.getNavigator().setPaused(distance < attack_range);
+                if(npc.getNavigator().isNavigating() && while_navigating !=null){
+                    while_navigating.accept(((LivingEntity) npc.getEntity()), target);
+                }
                 npc.getNavigator().setTarget(target, aggressive);
+                npc.getEntity().lookAt(location.getX(), location.getY(), location.getZ(), LookAnchor.EYES);
                 npc.getNavigator().getLocalParameters().speedModifier(speed);
-                npc.getNavigator().getLocalParameters().attackRange(attack_range);
+                npc.getNavigator().getLocalParameters().attackRange(attack_range+1);
                 npc.getNavigator().getLocalParameters().attackStrategy(strategy == null? (livingEntity, livingEntity1) -> {
                     livingEntity.attack(livingEntity1);
                     livingEntity.swingOffHand();

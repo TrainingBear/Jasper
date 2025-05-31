@@ -1,7 +1,10 @@
 package me.jasper.jasperproject.JMinecraft.Entity;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Entity.Traits.HPTrait;
+import me.jasper.jasperproject.Util.Util;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -18,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MobRegistry extends CitizensNPCRegistry {
     private static MobRegistry instance;
@@ -27,19 +31,22 @@ public final class MobRegistry extends CitizensNPCRegistry {
         }
         return instance;
     }
-    private final MemoryNPCDataStore data = new MemoryNPCDataStore();
-    @Getter private final Map<String, List<NPC>> mobs = new HashMap<>();
+    private AtomicInteger ids_controler = new AtomicInteger();
+    @Getter private final Map<String, Multiset<NPC>> mobs = new HashMap<>();
+    private final MemoryNPCDataStore data = new MemoryNPCDataStore(){
+        @Override
+        public int createUniqueNPCId(NPCRegistry registry) {
+            return ids_controler.getAndIncrement();
+        }
+    };
     private MobRegistry() {
         super(null);
     }
 
-    public List<NPC> getMob(String name){
-        return mobs.get(name);
-    }
+//    public List<NPC> getMob(String name){
+//        return mobs.get(name);
+//    }
 
-    public List<NPC> getMob(Class<? extends MobFactory> clazz){
-        return mobs.get(clazz.getSimpleName());
-    }
     @Override
     public NPC createNPCUsingItem(EntityType type, String name, ItemStack item) {
         NPC npc = createNPC(type, name);
@@ -54,7 +61,7 @@ public final class MobRegistry extends CitizensNPCRegistry {
     }
     @Override
     public NPC createNPC(EntityType type, String name) {
-        return this.createNPC(type, UUID.randomUUID(), 0, name);
+        return this.createNPC(type, UUID.randomUUID(), data.createUniqueNPCId(this), name);
     }
     @Override
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
@@ -62,7 +69,7 @@ public final class MobRegistry extends CitizensNPCRegistry {
         Objects.requireNonNull(type, "type cannot be null");
         CitizensNPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
         npc.getOrAddTrait(MobType.class).setType(type);
-        mobs.computeIfAbsent(name, k->new ArrayList<>()).add(npc);
+        mobs.computeIfAbsent(name, k-> HashMultiset.create()).add(npc);
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
         if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
             npc.addTrait(ArmorStandTrait.class);
@@ -74,12 +81,15 @@ public final class MobRegistry extends CitizensNPCRegistry {
     @Override
     public void deregister(NPC npc) {
         npc.despawn(DespawnReason.REMOVAL);
-        String name = npc.getOrAddTrait(HPTrait.class).getName();
-        this.mobs.get(name).remove(npc);
+        com.google.common.base.Optional<HPTrait> hp = npc.getTraitOptional(HPTrait.class);
+        if(hp.isPresent()){
+            String name = hp.get().getName();
+            this.mobs.get(name).remove(npc);
+        }
     }
     @Override
     public void deregisterAll(){
-        for (List<NPC> value : mobs.values()) {
+        for (Multiset<NPC> value : mobs.values()) {
             for (NPC npc : value) {
                 npc.destroy();
             }

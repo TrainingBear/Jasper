@@ -6,6 +6,7 @@ me\jasper\jasperproject\JMinecraft\Entity\Traits\HPTrait.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorEquipEvent.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand$1.class
 me\jasper\jasperproject\JMinecraft\Player\Ability\Mage.class
+me\jasper\jasperproject\Util\Debug$1.class
 me\jasper\jasperproject\Dungeon\DungeonGenerator.class
 me\jasper\jasperproject\Dungeon\Dungeon$DungeonListener.class
 me\jasper\jasperproject\Dungeon\Dungeon$PlayerGrave.class
@@ -125,6 +126,7 @@ me\jasper\jasperproject\Util\SignGUI$SignGUIListener.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Enchant.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Shovel.class
 me\jasper\jasperproject\JasperProject$1.class
+me\jasper\jasperproject\JMinecraft\Entity\MobRegistry$1.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Leggings.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Utilities\Feather_Jumper.class
 me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\AggresivePlayer.class

@@ -1,6 +1,0 @@
-name: JasperProject
-version: '${project.version}'
-main: me.jasper.jasperproject.JasperProject
-description: Paper Test Plugin
-api-version: '1.21.1'
-bootstrapper: me.jasper.jasperproject.JasperBootstrap

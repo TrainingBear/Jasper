@@ -128,7 +128,8 @@ public class JMob implements Listener {
         @EventHandler
         public void onHurt(EntityDamageByEntityEvent e){
             if(!(e.getEntity() instanceof LivingEntity entity)) return;
-            if(MobRegistry.getInstance().isNPC(entity)) return;
+            if(MobRegistry.getInstance().isNPC(e.getDamager())) return;
+
             DamageResult result = null;
             if((e.getDamager() instanceof Player player)){
                 JPlayer jPlayer = JPlayer.getJPlayer(player);
