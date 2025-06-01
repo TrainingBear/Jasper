@@ -9,6 +9,7 @@ import com.mysql.cj.protocol.Protocol;
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.util.Listener;
+import me.jasper.jasperproject.Clock.Clock;
 import me.jasper.jasperproject.Clock.ClockExecutod;
 import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
@@ -147,6 +148,7 @@ public final class JasperProject extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Clock.stop();
         this.getLogger().info("[JasperProject] Disabling...");
         SignGUI.getInstance().destroy();
         Structure.destroyBox();

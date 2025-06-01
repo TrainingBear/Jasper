@@ -23,6 +23,7 @@ public class ClockExecutod implements CommandExecutor, TabCompleter {
                 case "stop" -> Clock.stop();
                 case "remove" -> Clock.remove();
                 case "setup" -> Clock.setup(pler);
+                case "ring" -> Clock.ringChime();
             }
             return true;
         }
@@ -34,7 +35,8 @@ public class ClockExecutod implements CommandExecutor, TabCompleter {
             "move",
             "stop",
             "remove",
-            "setup");
+            "setup",
+            "ring");
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,

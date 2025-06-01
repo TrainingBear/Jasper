@@ -21,6 +21,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class Heal extends ItemAbility {
@@ -83,7 +84,7 @@ public class Heal extends ItemAbility {
                 ));
                 this.player.sendActionBar(MiniMessage.miniMessage().deserialize("<green>Heal "+"▍".repeat(duration)));
                 this.player.getWorld().spawnParticle(
-                        Particle.HEART , this.player.getLocation().add(0,0.8f,0) ,3,0.26f,0.35f,0.26f
+                        Particle.HEART , this.player.getLocation().add(0,0.8f,0) ,new Random().nextInt(1, 5),0.26f,0.35f,0.26f
                 );
                 duration--;
             }

@@ -1,7 +1,6 @@
 package me.jasper.jasperproject.Clock;
 
 import java.util.UUID;
-import java.util.Vector;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,6 +20,7 @@ import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import lombok.Getter;
 import me.jasper.jasperproject.JasperProject;
 import me.jasper.jasperproject.Util.Util;
 
@@ -28,7 +28,7 @@ public class Clock {
     static UUID uidArmorStand,
             uidMenit,
             uidJam;
-    private static boolean isRunning = false;
+    private static boolean isRunning = false, isRinging = false;
     private static BukkitTask task;
     private static Block blockBefore;
     private static Material bloBefMat;
@@ -77,10 +77,10 @@ public class Clock {
             @Override
             public void run() {
 
-                final long time = wrld.getTime();
+                final int time = (int) wrld.getTime();
 
                 // Hour hand: full cycle = 12000 ticks
-                long tHour = time % 12000;
+                int tHour = time % 12000;
                 float yawH, pitchH;
                 byte indx = (byte) (time % 6000 * 0.001d);
                 Location blokLocs = loc.clone();
@@ -125,7 +125,7 @@ public class Clock {
                 jrmJam.setRotation(yawH, pitchH);
                 // =============================================================================
                 // Minute hand: cycle = 1000 ticks
-                long tMin = time % 1000;
+                int tMin = time % 1000;
                 float yawM, pitchM;
                 if (tMin <= 500) {
                     yawM = loc.getYaw() - 90f;
@@ -136,16 +136,22 @@ public class Clock {
                 }
                 jrmMenit.setRotation(yawM, pitchM);
 
-                if (flipflop) {
+                if (time >= 6000 && time <= 6100) {
+                    if (!isRinging) {
+                        ringChime(loc, 2f);
+                        isRinging = true;
+                    }
+                } else isRinging = false;
+                
+                if (flipflop)
                     wrld.playSound(loc, Sound.BLOCK_BAMBOO_WOOD_BUTTON_CLICK_ON, 4.8f, 2f);
-                    flipflop = false;
-                } else {
+                else
                     wrld.playSound(loc, Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 4.8f, 2f);
-                    flipflop = true;
-                }
+                flipflop = !flipflop;
             }
         }.runTaskTimer(JasperProject.getPlugin(), 0, 20);
         isRunning = true;
+
     }
 
     /**
@@ -178,7 +184,8 @@ public class Clock {
      * @param pler the {@link Player} who called this method
      *             <p>
      *             <hr>
-     *             Note : {@link #setup} first before calling this method otherwise
+     *             Note : {@link #setup} first and {@link #stop} first if started,
+     *             before calling this method otherwise
      *             it'll do nothing</h>
      */
 
@@ -228,7 +235,8 @@ public class Clock {
      */
     public static void setup(Player pler) {
         if (uidArmorStand != null || uidJam != null || uidMenit != null) {
-            pler.sendMessage("the clock is already there");
+            pler.sendMessage("the clock is already there at " + loc.getWorld().getName() + " " + loc.getBlockX() + " "
+                    + loc.getBlockY() + " " + loc.getBlockZ());
             return;
         }
         // ========================= urusan armorstandnya ==========================
@@ -357,5 +365,73 @@ public class Clock {
             JasperProject.getClockConfig().forceEdit("Clock", c -> c.set("UUID_Jarum_Menit", ""));
 
         Bukkit.getLogger().info(msgDebug);
+    }
+
+    /**
+     * just for half debugging purpose
+     * 
+     * @see {@link #ringChime(Location, float)}
+     */
+    public static void ringChime() {
+        if (loc == null || uidArmorStand == null || uidJam == null || uidMenit == null) {
+            Util.debug("the variable is null, setup or start first");
+            return;
+        }
+        ringChime(loc, 1f);
+    }
+
+    /**
+     * ring a melody/chime, set the note as u wish bruv
+     * <p>
+     * soon klo make API nbs, ganti njeng
+     * 
+     * @param locat  the {@link Location} to ring
+     * @param volume the volume, how far the ring can be heard
+     */
+    private static void ringChime(Location locat, float volume) {
+        // ============================================================
+        Note[] note = {
+                new Note(Sound.BLOCK_BELL_USE, 1f),
+                null,
+                new Note(Sound.BLOCK_BELL_USE, .75f),
+                new Note(Sound.BLOCK_BELL_USE, 1f),
+                new Note(Sound.BLOCK_BELL_USE, 1.25f),
+                new Note(Sound.BLOCK_BELL_USE, 1.5f)
+        };
+        // ================================================================
+        new BukkitRunnable() {
+            byte indekshit = 0;
+            World wrld = locat.getWorld();
+
+            @Override
+            public void run() {
+                if (indekshit >= note.length) {
+                    cancel();
+                }
+                if (note[indekshit] == null) {
+                    indekshit++;
+                    return;
+                }
+                Note not = note[indekshit];
+                wrld.playSound(locat, not.getSound(), volume, not.getPitch());
+                indekshit++;
+            }
+        }.runTaskTimer(JasperProject.getPlugin(), 0, 7);// delay per not
+    }
+
+    /**
+     * for storage of chime/melody note
+     * 
+     * @see {@link #ringChime(location, float)}
+     */
+    @Getter
+    private static class Note {
+        private Sound sound;
+        private float pitch;
+
+        private Note(Sound suaraRakyat, float pitch) {
+            this.sound = suaraRakyat;
+            this.pitch = pitch;
+        }
     }
 }
