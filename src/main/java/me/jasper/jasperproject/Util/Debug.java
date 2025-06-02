@@ -15,6 +15,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,15 +29,12 @@ public class Debug implements CommandExecutor, TabCompleter {
         if(strings.length==1){
             if(strings[0].equals("start")){
                 bukkitTask = new BukkitRunnable() {
-                    int degree = 0;
                     @Override
                     public void run() {
                         Location center = player.getLocation();
-                        double x = center.getX() + 3 * Math.cos(Math.toRadians(degree));
-                        double y = center.getZ() + 3 * Math.sin(Math.toRadians(degree));
-                        Location location = new Location(player.getWorld(), x, center.getY(), y);
-                        player.getWorld().spawnParticle(Particle.FLAME, location, 10, 0, 0, 0, 0);
-                        degree+=10;
+                        Vector dir = center.getDirection();
+                        Util.debug(dir.getX(), ", ", dir.getY(), ", ", dir.getZ());
+                        player.getLocation().add(dir);
                     }
                 }.runTaskTimer(JasperProject.getPlugin(), 1, 1);
                 return true;

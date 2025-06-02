@@ -63,14 +63,13 @@ public class AgressiveTrait extends Trait {
                     if(npc.getNavigator().isNavigating()) npc.getNavigator().setTarget(target, aggressive);
                     return;
                 }
-                npc.getNavigator().setPaused(distance < attack_range);
-                if(npc.getNavigator().isNavigating() && while_navigating !=null){
+                if(npc.getNavigator().isNavigating() && while_navigating !=null && distance > attack_range){
                     while_navigating.accept(((LivingEntity) npc.getEntity()), target);
                 }
                 npc.getNavigator().setTarget(target, aggressive);
                 npc.getEntity().lookAt(location.getX(), location.getY(), location.getZ(), LookAnchor.EYES);
                 npc.getNavigator().getLocalParameters().speedModifier(speed);
-                npc.getNavigator().getLocalParameters().attackRange(attack_range+1);
+                npc.getNavigator().getLocalParameters().attackRange(attack_range);
                 npc.getNavigator().getLocalParameters().attackStrategy(strategy == null? (livingEntity, livingEntity1) -> {
                     livingEntity.attack(livingEntity1);
                     livingEntity.swingOffHand();
