@@ -80,13 +80,13 @@ public class Clock {
                 final int time = (int) wrld.getTime();
 
                 // Hour hand: full cycle = 12000 ticks
-                int tHour = time % 12000;
+                int tHour = time % 12_000;
                 float yawH, pitchH;
-                byte indx = (byte) (time % 6000 * 0.001d);
+                byte indx = (byte) (time % 6_000 * 0.001d);
                 Location blokLocs = loc.clone();
                 if (tHour <= 6000) {// kanan
                     yawH = loc.getYaw() + 90f;
-                    pitchH = 90f - (tHour / 6000f) * 180f;
+                    pitchH = 90f - (tHour / 6_000f) * 180f;
                     indx = (byte) (-indx + 6);
                     blokLocs = loc.clone().add(
                             (xz[0] > 0 ? xy[indx][0] : xz[0] < 0 ? -xy[indx][0] : 0),
@@ -95,7 +95,7 @@ public class Clock {
                     );
                 } else { // kanan
                     yawH = loc.getYaw() - 90f;
-                    pitchH = -90f + ((tHour - 6000) / 6000f) * 180f;
+                    pitchH = -90f + ((tHour - 6_000) / 6_000f) * 180f;
 
                     blokLocs = loc.clone().add(
                             (xz[0] > 0 ? -xy[indx][0] : xz[0] < 0 ? xy[indx][0] : 0),
@@ -125,7 +125,7 @@ public class Clock {
                 jrmJam.setRotation(yawH, pitchH);
                 // =============================================================================
                 // Minute hand: cycle = 1000 ticks
-                int tMin = time % 1000;
+                int tMin = time % 1_000;
                 float yawM, pitchM;
                 if (tMin <= 500) {
                     yawM = loc.getYaw() - 90f;
@@ -136,7 +136,7 @@ public class Clock {
                 }
                 jrmMenit.setRotation(yawM, pitchM);
 
-                if (time >= 6000 && time <= 6100) {
+                if (time >= 6_000 && time <= 6_100) {
                     if (!isRinging) {
                         ringChime(loc, 2f);
                         isRinging = true;
