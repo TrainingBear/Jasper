@@ -67,7 +67,7 @@ public class CalculatorMath implements CommandExecutor {
         }
         m.appendTail(sb);
         return handlePercent(
-                sb.toString().replaceAll("\\s+", "")
+                sb.toString()
                         .replace(",", ".")
                         .replace("×", "*")
                         .replace("÷", "/")

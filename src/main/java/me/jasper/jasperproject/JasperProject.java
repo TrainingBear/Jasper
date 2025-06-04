@@ -116,6 +116,7 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new Charge(),this);
         PM.registerEvents(new Mage(), this);
         PM.registerEvents(new Mage.Shoot(), this);
+        PM.registerEvents(new Mage.Attack(), this);
         PM.registerEvents(TIER_ONE_CHEST.INSTANCE, this);
 
         /// Ini command register di pindah di Bootstrap soon,
