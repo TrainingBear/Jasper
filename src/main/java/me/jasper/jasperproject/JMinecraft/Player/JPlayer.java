@@ -3,19 +3,16 @@ package me.jasper.jasperproject.JMinecraft.Player;
 import lombok.Getter;
 import lombok.Setter;
 import me.jasper.jasperproject.JMinecraft.Item.ItemAttributes.ItemType;
-import me.jasper.jasperproject.JMinecraft.Item.Util.TRIGGER;
 import me.jasper.jasperproject.JMinecraft.Player.Ability.Mage;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorEquipEvent;
 import me.jasper.jasperproject.JMinecraft.Player.EquipmentListeners.ArmorType;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageResult;
 import me.jasper.jasperproject.JMinecraft.Player.Util.DamageType;
 import me.jasper.jasperproject.Util.JKey;
-import me.jasper.jasperproject.Util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Arrow;
@@ -24,7 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -36,52 +33,43 @@ import java.util.*;
 
 @Getter
 public class JPlayer implements Listener {
-    @Getter
-    private static final Map<UUID, JPlayer> onlinePlayers = new HashMap<>();
+    @Getter private static final Map<UUID, JPlayer> onlinePlayers = new HashMap<>();
     Map<ArmorType, ItemStack> lastItems = new HashMap<>(ArmorType.values().length);
-    @Setter
-    private String lastInstance;
+    @Setter private String lastInstance;
     private UUID UUID;
 
-    public JPlayer() {
-    }
+    public JPlayer(){ }
 
-    public JPlayer(Player player) {
+    public JPlayer(Player player){
         this.UUID = player.getUniqueId();
     }
 
-    public static JPlayer register(Player player) {
-        if (!onlinePlayers.containsKey(player.getUniqueId())) {
+    public static JPlayer register(Player player){
+        if(!onlinePlayers.containsKey(player.getUniqueId())){
             onlinePlayers.put(player.getUniqueId(), new JPlayer(player));
         }
         return onlinePlayers.get(player.getUniqueId());
     }
-
-    public static JPlayer unregister(Player player) {
+    public static JPlayer unregister(Player player){
         return onlinePlayers.remove(player.getUniqueId());
     }
-
-    public static JPlayer getJPlayer(Player player) {
+    public static JPlayer getJPlayer(Player player){
         return register(player);
     }
-
-    public static Player getBukkitPlayer(JPlayer player) {
+    public static Player getBukkitPlayer(JPlayer player){
         return Bukkit.getPlayer(player.getUUID());
     }
 
-    public PlayerGroup createGroup(JPlayer... member) {
+    public PlayerGroup createGroup(JPlayer... member){
         PlayerGroup playerGroup = new PlayerGroup(this);
         playerGroup.addMember(List.of(member));
         return playerGroup;
     }
 
-    public DamageResult shoot(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier,
-            float force, float arrow_damage) {
+    public DamageResult shoot(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier, float force, float arrow_damage){
         Player bukkitPlayer = getBukkitPlayer();
         Map<Stats, Float> player_stats;
-        boolean valid = weapon.hasItemMeta() && weapon.getItemMeta().getPersistentDataContainer().has(JKey.Category)
-                && ItemType.isMelee(weapon.getItemMeta().getPersistentDataContainer().get(JKey.Category,
-                        PersistentDataType.STRING));
+        boolean valid = weapon.hasItemMeta() && weapon.getItemMeta().getPersistentDataContainer().has(JKey.Category) && ItemType.isMelee(weapon.getItemMeta().getPersistentDataContainer().get(JKey.Category, PersistentDataType.STRING));
         player_stats = Stats.getCombatStats(bukkitPlayer, valid ? weapon : null);
         player_stats.put(Stats.DAMAGE, arrow_damage);
         DamageResult result = DamageResult.builder(player_stats)
@@ -89,88 +77,52 @@ public class JPlayer implements Listener {
                 .type(DamageType.PROJECTILE)
                 .force(force)
                 .build();
-        result.setFinal_damage(result.getFinal_damage() * modifier);
-        if (target != null)
-            target.damage(result.getFinal_damage(),
-                    DamageSource.builder(org.bukkit.damage.DamageType.FALLING_STALACTITE)
-                            .withCausingEntity(bukkitPlayer).withDirectEntity(bukkitPlayer).build());
+        result.setFinal_damage(result.getFinal_damage()*modifier);
+        if(target!=null)target.damage(result.getFinal_damage(), DamageSource.builder(org.bukkit.damage.DamageType.FALLING_STALACTITE) .withCausingEntity(bukkitPlayer) .withDirectEntity(bukkitPlayer) .build() );
         return result;
     }
-
-    public DamageResult attack(@Nullable LivingEntity target, ItemStack weapon, boolean critical) {
+    public DamageResult attack(@Nullable LivingEntity target, ItemStack weapon, boolean critical){
         return attack(target, weapon, critical, 1f);
     }
-
-    public DamageResult attack(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier) {
+    public DamageResult attack(@Nullable LivingEntity target, ItemStack weapon, boolean critical, float modifier){
         Player bukkitPlayer = getBukkitPlayer();
         Map<Stats, Float> player_stats;
-        boolean valid = weapon.hasItemMeta() && weapon.getItemMeta().getPersistentDataContainer().has(JKey.Category)
-                && ItemType.isMelee(weapon.getItemMeta().getPersistentDataContainer().get(JKey.Category,
-                        PersistentDataType.STRING));
+        boolean valid = weapon.hasItemMeta() && weapon.getItemMeta().getPersistentDataContainer().has(JKey.Category) && ItemType.isMelee(weapon.getItemMeta().getPersistentDataContainer().get(JKey.Category, PersistentDataType.STRING));
         player_stats = Stats.getCombatStats(bukkitPlayer, valid ? weapon : null);
-        boolean isCritical = bukkitPlayer.isSneaking() && critical
-                && (!bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS)
-                        || !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA)
-                        || !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON)
-                        || !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) || !bukkitPlayer.isFrozen());
+        boolean isCritical = bukkitPlayer.isSneaking()&& critical&& ( !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) || !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) || !bukkitPlayer.hasPotionEffect(PotionEffectType.POISON) || !bukkitPlayer.hasPotionEffect(PotionEffectType.WITHER) || !bukkitPlayer.isFrozen());
         DamageResult result = DamageResult.builder(player_stats)
                 .critical(isCritical)
                 .type(DamageType.MELEE)
                 .build();
-        if (target != null)
-            target.damage(result.getFinal_damage() * modifier,
-                    DamageSource.builder(org.bukkit.damage.DamageType.FALLING_BLOCK).withCausingEntity(bukkitPlayer)
-                            .withDirectEntity(bukkitPlayer).build());
+        if(target!=null)target.damage(result.getFinal_damage()*modifier, DamageSource.builder(org.bukkit.damage.DamageType.FALLING_BLOCK) .withCausingEntity(bukkitPlayer) .withDirectEntity(bukkitPlayer) .build() );
         return result;
     }
 
-    public Player getBukkitPlayer() {
+    public Player getBukkitPlayer(){
         return Bukkit.getPlayer(this.UUID);
     }
 
-    public void setLastItems(ArmorType type, ItemStack item) {
+
+    public void setLastItems(ArmorType type, ItemStack item){
         lastItems.put(type, item);
     }
 
-    public @Nullable ItemStack getLastItems(ArmorType type) {
-        return lastItems.get(type);
-    }
+    public @Nullable ItemStack getLastItems(ArmorType type){ return lastItems.get(type); }
 
     @EventHandler
-    public void onEquip(ArmorEquipEvent e) {
-        if (e.isCancelled())
-            return;
+    public void onEquip(ArmorEquipEvent e){
+        if(e.isCancelled()) return;
         Player player = e.getPlayer();
         Stats.apply(player, e.getNewArmorPiece(), e.getType());
     }
 
     @EventHandler
-    public void onLeftClick(PlayerInteractEvent e) {
-        if (!TRIGGER.Interact.LEFT_CLICK(e))
-            return;
-        Player pleryer = e.getPlayer();
-        Map<Stats, Float> player_stats = Stats.getCombatStats(pleryer, e.getItem());
-        PersistentDataContainer pdc = pleryer.getPersistentDataContainer();
-
-        if (pdc.has(JKey.Ability)// sementara, nanti if condition biasa diganti
-                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key)
-                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER)
-                        .get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key)) {
-
-            final byte range = 20; // in block, i believe...
-
-            LivingEntity entiTarget = Util.getTargetEntity(pleryer, range, false);
-            Location target = entiTarget != null ? entiTarget.getLocation().add(0, entiTarget.getHeight() / 2, 0)
-                    : Util.getTargetBlock(pleryer, range).getLocation();
-
-            Bukkit.getPluginManager().callEvent(new Mage.Attack(player_stats, pleryer, e.getItem(), target, .6f));
-        }
+    public void onSwapHotbar(PlayerItemHeldEvent e){
     }
 
     @EventHandler
-    public void onShoot(EntityShootBowEvent e) {
-        if (!(e.getEntity() instanceof Player bukkitPlayer))
-            return;
+    public void onShoot(EntityShootBowEvent e){
+        if(!(e.getEntity() instanceof Player bukkitPlayer)) return;
         Map<Stats, Float> player_stats = Stats.getCombatStats(bukkitPlayer, e.getBow());
         boolean critical = !bukkitPlayer.hasPotionEffect(PotionEffectType.BLINDNESS) ||
                 !bukkitPlayer.hasPotionEffect(PotionEffectType.NAUSEA) ||
@@ -180,12 +132,12 @@ public class JPlayer implements Listener {
         PersistentDataContainer pdc = bukkitPlayer.getPersistentDataContainer();
         if (pdc.has(JKey.Ability)
                 && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).has(Mage.key)
-                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER)
-                        .get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key)) {
+                && pdc.get(JKey.Ability, PersistentDataType.TAG_CONTAINER).get(Mage.key, PersistentDataType.TAG_CONTAINER).has(Mage.Shoot.key)){
             Level nmsWorld = ((CraftWorld) bukkitPlayer.getWorld()).getHandle();
             Mage.Shoot shoot = new Mage.Shoot(bukkitPlayer,
                     new WitherSkull(EntityType.WITHER_SKULL, nmsWorld),
-                    player_stats);
+                    player_stats
+            );
             shoot.setCritical(critical);
             Bukkit.getPluginManager().callEvent(shoot);
             e.getProjectile().remove();
@@ -194,7 +146,7 @@ public class JPlayer implements Listener {
         DamageResult result = DamageResult.builder(player_stats)
                 .type(DamageType.PROJECTILE)
                 .build();
-        if (e.getProjectile() instanceof Arrow arrow) {
+        if(e.getProjectile() instanceof Arrow arrow){
             boolean crit = player_stats.get(Stats.CRIT_CHANCE) >= new Random().nextInt(100) + 1;
             arrow.setCritical(critical && crit);
             arrow.setDamage(player_stats.get(Stats.DAMAGE));
