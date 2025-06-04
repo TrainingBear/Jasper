@@ -125,7 +125,7 @@ public class Mage extends PlayerAbility {
 
             final Vector direction = dir3D.clone().normalize();
             Vector perp;
-            if (Math.abs(direction.getX()) < 1e-4 && Math.abs(direction.getZ()) < 1e-4)
+            if (Math.abs(direction.getX()) < 1e-4 && Math.abs(direction.getZ()) < 1e-4) // 1e-4 mean = 0.0001
                 perp = direction.clone().crossProduct(new Vector(1, 0, 0));
             else
                 perp = direction.clone().crossProduct(new Vector(0, 1, 0));
@@ -133,7 +133,7 @@ public class Mage extends PlayerAbility {
 
             final double amplitude = 0.48; // tinggi puncak gelombang
             final double frequency = Math.PI / 3; // frekuensi gelombang
-            
+
             Set<LivingEntity> attackedEntites = new HashSet<>();
             final double step = 0.9;
             for (double t = 0; t <= totalDistance; t += step) {
