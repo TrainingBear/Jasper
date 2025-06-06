@@ -46,7 +46,7 @@ public class DreadLord extends MobFactory {
                 double y = center.getZ() + 3 * Math.sin(Math.toRadians(degree));
                 npc.getNavigator().setTarget(new Location(t.getWorld(), x, npc.getEntity().getLocation().getY(), y));
                 npc.getNavigator().setPaused(false);
-                degree = degree.get() >= 360 ? 0 : degree.addAndGet(10);
+                // degree = degree.get() >= 360 ? 0 : degree.addAndGet(10);
                 return true;
             }
             return false;

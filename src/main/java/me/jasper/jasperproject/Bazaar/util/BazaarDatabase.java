@@ -36,11 +36,7 @@ public abstract class BazaarDatabase {
                             "  UNIQUE KEY name (name)" +
                             ")");
         } catch (SQLException e) {
-            if(e.getMessage().startsWith("Access denied")){
-                Bukkit.getLogger().warning(e.getMessage());
-                return false;
-            }
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Bazaar database[SQL] catched a problem! "+e.getMessage());
             return false;
         }
     }
