@@ -135,6 +135,7 @@ me\jasper\jasperproject\Bazaar\util\BazaarEnum.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorListener.class
 me\jasper\jasperproject\Util\Listener\ProjectileHit.class
 me\jasper\jasperproject\Util\Listener\AutoSaveListener.class
+me\jasper\jasperproject\JMinecraft\Entity\Mobs\DreadLord$1ref.class
 me\jasper\jasperproject\Jam\ClockUtility$1.class
 me\jasper\jasperproject\JMinecraft\Player\Util\DamageResult$Builder$1.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Enchants\Sharpness.class

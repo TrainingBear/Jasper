@@ -33,10 +33,12 @@ public class Debug implements CommandExecutor, TabCompleter {
                     public void run() {
                         Location center = player.getLocation();
                         Vector dir = center.getDirection();
-                        Util.debug(dir.getX(), ", ", dir.getY(), ", ", dir.getZ());
-                        player.getLocation().add(dir);
+                        dir.setY(0);
+//                        Util.debug(dir.getX(), ", ", dir.getY(), ", ", dir.getZ());
+//                        player.getLocation().add(dir);
+                        player.setVelocity(center.toVector().subtract(dir).multiply(1));
                     }
-                }.runTaskTimer(JasperProject.getPlugin(), 1, 1);
+                }.runTaskTimer(JasperProject.getPlugin(), 10, 10);
                 return true;
             }
             if(strings[0].equals("stop")){

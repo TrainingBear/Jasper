@@ -28,6 +28,7 @@ import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -44,10 +45,8 @@ public class DreadLord extends MobFactory {
         NPC npc = registry.createNPC(EntityType.PLAYER, name);
         HPTrait dreadLord = new HPTrait("Dread Lord", lvl);
         LookClose lookClose = new LookClose();
-        BiConsumer<LivingEntity, LivingEntity> while_targeting = (e, t) -> {
-            e.setJumping(true);
-            Location location = e.getLocation();
-            e.setVelocity(location.toVector().subtract(location.getDirection().normalize()).multiply(100));
+        BiConsumer<NPC, LivingEntity> while_targeting = (n, target) -> {
+//            n.getNavigator().getLocalParameters().speedModifier()
         };
         class ref{
             private int deg = 0;
@@ -60,34 +59,39 @@ public class DreadLord extends MobFactory {
         ref var = new ref();
         AttackStrategy strategy = (a, t)->{
             if(!MobRegistry.getInstance().isNPC(a)) return false;
-
-            boolean occur = ThreadLocalRandom.current().nextBoolean();
-
             Location center = t.getLocation();
             double x = center.getX() + 3 * Math.cos(Math.toRadians(var.getAndIncrease(25)));
             double y = center.getZ() + 3 * Math.sin(Math.toRadians(var.getAndIncrease(25)));
+            boolean occur = ThreadLocalRandom.current().nextBoolean();
             Location location = new Location(t.getWorld(), x, a.getLocation().getY(), y);
             if(occur){
                 if(a instanceof Player playera) {
                     ServerPlayer player = ((CraftPlayer) playera).getHandle();
                     byte flag = 0x02;
                     player.setShiftKeyDown(true);
-                    playera.setSneaking(true);
-                    player.setGlowingTag(true);
-                    playera.setGlowing(true);
                     SynchedEntityData.DataValue<Byte> data = new SynchedEntityData.DataValue<>(0, EntityDataSerializers.BYTE, flag);
                     ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(player.getId(), List.of(data));
                     if(t instanceof Player target){
-                        Util.debug("Occured");
                         ((CraftPlayer) target).getHandle().connection.send(packet);
                     }
+                    a.setJumping(true);
+                    a.attack(t);
+                    a.swingOffHand();
+                    if(isSafe(location)) a.setVelocity(location.toVector().subtract(a.getLocation().toVector()).multiply(0.11f));
+                    a.getWorld().spawnParticle(Particle.FLAME, location, 10, 0, 0, 0, 0);
                 }
             }
-            a.setJumping(true);
-            a.attack(t);
-            a.swingOffHand();
-            if(isSafe(location)) a.setVelocity(location.toVector().subtract(a.getLocation().toVector()).multiply(0.11f));
-            a.getWorld().spawnParticle(Particle.FLAME, location, 10, 0, 0, 0, 0);
+            else {
+                ((CraftPlayer) a).getHandle().setShiftKeyDown(false);
+                a.setJumping(true);
+                a.attack(t);
+                a.swingOffHand();
+                if(isSafe(location)) a.setVelocity(location.toVector().subtract(a.getLocation().toVector()).multiply(0.11f));
+                a.getWorld().spawnParticle(Particle.FLAME, location, 10, 0, 0, 0, 0);
+                if(a instanceof Player bukit) {
+                    ((CraftPlayer) bukit).getHandle().setShiftKeyDown(false);
+                }
+            }
             return true;
         };
         Goal wannderGoal = WanderGoal.builder(npc).xrange(5).yrange(5).delay(160).build();

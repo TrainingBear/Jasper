@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import me.jasper.jasperproject.JMinecraft.Entity.MobRegistry;
 import net.citizensnpcs.api.ai.AttackStrategy;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.Trait;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Getter
@@ -30,9 +30,9 @@ public class AgressiveTrait extends Trait {
     private float speed = 1.5f;
     private boolean aggressive;
     private AttackStrategy strategy;
-    private BiConsumer<LivingEntity, LivingEntity> while_navigating;
+    private BiConsumer<NPC, LivingEntity> while_navigating;
 
-    public AgressiveTrait(LivingEntity target, Function<LivingEntity, Boolean> filter, Iterator<LivingEntity> victims, int instinct_range, int follow_range, int attack_range, int delay, float speed, boolean aggressive, AttackStrategy strategy, BiConsumer<LivingEntity, LivingEntity> while_navigating) {
+    public AgressiveTrait(LivingEntity target, Function<LivingEntity, Boolean> filter, Iterator<LivingEntity> victims, int instinct_range, int follow_range, int attack_range, int delay, float speed, boolean aggressive, AttackStrategy strategy, BiConsumer<NPC, LivingEntity> while_navigating) {
         super("Aggressive");
         this.target = target;
         this.filter = filter;
@@ -64,7 +64,7 @@ public class AgressiveTrait extends Trait {
                     return;
                 }
                 if(npc.getNavigator().isNavigating() && while_navigating !=null && distance > attack_range){
-                    while_navigating.accept(((LivingEntity) npc.getEntity()), target);
+                    while_navigating.accept(npc, target);
                 }
                 npc.getNavigator().setTarget(target, aggressive);
                 npc.getEntity().lookAt(location.getX(), location.getY(), location.getZ(), LookAnchor.EYES);
