@@ -6,13 +6,11 @@ import me.jasper.jasperproject.Util.JKey;
 import me.jasper.jasperproject.Util.Util;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.BlockIterator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +52,7 @@ public class Teleport extends ItemAbility{
         Player player = e.getPlayer();
 
         Location beforeTP = e.getPlayer().getLocation();
-        Location target = getTargetBlock(player, e.getRange()).getLocation().add(0.5, 0, 0.5);
+        Location target = Util.getTargetBlock(player, e.getRange()).getLocation().add(0.5, 0, 0.5);
         target.setYaw(player.getLocation().getYaw());
         target.setPitch(player.getLocation().getPitch());
 
@@ -84,19 +82,6 @@ public class Teleport extends ItemAbility{
             e.setCancelled(true);
         }
     }
-
-    private Block getTargetBlock(Player player, int range) {
-        BlockIterator iter = new BlockIterator(player, range);
-        Block block = iter.next();
-        Block lastBlock = block;
-        while (iter.hasNext()) {
-            block = iter.next();
-            if (block.getType() == Material.AIR) lastBlock = block;
-            else return lastBlock;
-        }
-        return lastBlock;
-    }
-
 
     @Override
     protected List<Component> createLore() {

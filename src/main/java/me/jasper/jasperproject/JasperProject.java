@@ -9,6 +9,7 @@ import com.mysql.cj.protocol.Protocol;
 import lombok.Getter;
 import me.jasper.jasperproject.Bazaar.Bazaar;
 import me.jasper.jasperproject.Bazaar.util.Listener;
+import me.jasper.jasperproject.Clock.Clock;
 import me.jasper.jasperproject.Clock.ClockExecutod;
 import me.jasper.jasperproject.Bazaar.util.BazaarDatabase;
 
@@ -115,6 +116,7 @@ public final class JasperProject extends JavaPlugin {
         PM.registerEvents(new Charge(),this);
         PM.registerEvents(new Mage(), this);
         PM.registerEvents(new Mage.Shoot(), this);
+        PM.registerEvents(new Mage.Attack(), this);
         PM.registerEvents(TIER_ONE_CHEST.INSTANCE, this);
 
         /// Ini command register di pindah di Bootstrap soon,
@@ -147,6 +149,7 @@ public final class JasperProject extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Clock.stop();
         this.getLogger().info("[JasperProject] Disabling...");
         SignGUI.getInstance().destroy();
         Structure.destroyBox();

@@ -5,7 +5,6 @@ me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorType.class
 me\jasper\jasperproject\JMinecraft\Entity\Traits\HPTrait.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorEquipEvent.class
 me\jasper\jasperproject\Dungeon\ExecuteCommand$1.class
-me\jasper\jasperproject\JMinecraft\Player\Ability\Mage.class
 me\jasper\jasperproject\Util\Debug$1.class
 me\jasper\jasperproject\Dungeon\DungeonGenerator.class
 me\jasper\jasperproject\Dungeon\Dungeon$DungeonListener.class
@@ -52,7 +51,6 @@ me\jasper\jasperproject\JMinecraft\Item\Product\Utilities\Healing_Wand.class
 me\jasper\jasperproject\Jam\ClockUtility.class
 me\jasper\jasperproject\JMinecraft\Entity\MobFactory.class
 me\jasper\jasperproject\Jam\ClockUtility$2.class
-me\jasper\jasperproject\JasperProject.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Cooldown.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Jumper.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Plower$1.class
@@ -69,6 +67,7 @@ me\jasper\jasperproject\Clock\ClockExecutod.class
 me\jasper\jasperproject\Dungeon\Shapes\TOW_BY_TWO.class
 me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\FollowBehavior.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\HoldEvent$onTicking.class
+me\jasper\jasperproject\Util\Commands\CalculatorMath$Parser.class
 me\jasper\jasperproject\JMinecraft\Entity\JMob$MobListener.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Assassin_Dagger.class
 me\jasper\jasperproject\Util\Commands\JasperCommand.class
@@ -95,7 +94,6 @@ me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\ItemAbility.class
 me\jasper\jasperproject\Dungeon\CreatedRoom.class
 me\jasper\jasperproject\Bazaar\Component\COMP.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Utilities\Healing_Staff.class
-me\jasper\jasperproject\JMinecraft\Player\PlayerBukkitCommand.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Warper.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Weapons\Burst_Bow.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Rarity.class
@@ -130,7 +128,6 @@ me\jasper\jasperproject\JMinecraft\Entity\MobRegistry$1.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Leggings.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Utilities\Feather_Jumper.class
 me\jasper\jasperproject\JMinecraft\Entity\MobPlayer\AggresivePlayer.class
-me\jasper\jasperproject\Util\Commands\CalculatorMath$1.class
 me\jasper\jasperproject\Bazaar\util\BazaarEnum.class
 me\jasper\jasperproject\JMinecraft\Player\EquipmentListeners\ArmorListener.class
 me\jasper\jasperproject\Util\Listener\ProjectileHit.class
@@ -158,6 +155,7 @@ me\jasper\jasperproject\Util\ContainerMenu\Content.class
 me\jasper\jasperproject\JMinecraft\Loot\Loot.class
 me\jasper\jasperproject\Animation\PaperAnimationCommand.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Bash$3.class
+me\jasper\jasperproject\Clock\Clock$2.class
 me\jasper\jasperproject\Bazaar\Component\BazaarStock.class
 me\jasper\jasperproject\JMinecraft\Entity\Traits\AgressiveTrait.class
 me\jasper\jasperproject\Bazaar\util\OrderResult$Type.class
@@ -173,6 +171,7 @@ me\jasper\jasperproject\Util\ContainerMenu\Container.class
 me\jasper\jasperproject\JMinecraft\Item\ItemAttributes\Abilities\Burnt.class
 me\jasper\jasperproject\Bazaar\BazaarCommand.class
 me\jasper\jasperproject\Util\Util.class
+me\jasper\jasperproject\Clock\Clock$Note.class
 me\jasper\jasperproject\JMinecraft\Item\Product\Series\Titanium\Titanium_Pickaxe.class
 me\jasper\jasperproject\Util\EntityFinder.class
 me\jasper\jasperproject\JMinecraft\Player\Util\DamageResult$1.class

@@ -99,11 +99,6 @@ public class BackStab extends ItemAbility {
         player.getWorld().spawnParticle(
                 Particle.DUST, player.getLocation().add(0, 1, 0), 60, .3f, .4f, .3f, 0,
                 new Particle.DustOptions(Color.fromRGB(60, 60, 60), 2f), false);
-
-        e.getPlayer().sendMessage(
-                MiniMessage.miniMessage().deserialize("<red><b>INVALID!</b> There's no entity on sight"));
-        return;
-
     }
 
     @Override
